@@ -60,6 +60,7 @@ tags: [YOLO, ONNX, ROS2, TensorRT, 部署]
 | `source_ref` | 本地相对路径或 URL | 必须有，能溯源到原文 |
 | `verified_at` | `YYYY-MM-DD` | 最近一次技术核验日期 |
 | `tags` | 关键词数组 | 搜索用，3–6 个 |
+| `hint` | 一句话 | **选填**。索引阶段还没写答案时，用一句套路提示代替空白，比留「待补充」有用 |
 
 ### status
 

@@ -96,7 +96,8 @@ def main() -> int:
 
         # 正文小节
         need = list(SECTIONS)
-        if meta.get("qtype") == "coding":
+        # 只有「给出代码片段让你判断输出」的题才需要 ## 题目 节
+        if meta.get("qtype") == "coding" and meta.get("lab_src"):
             need += CODING_SECTIONS
         for s in need:
             if not re.search(rf"^##+\s*{s}", body, re.M):
