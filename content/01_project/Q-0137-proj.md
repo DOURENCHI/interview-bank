@@ -1,120 +1,96 @@
 ---
 id: Q-0137
-title: Dice 和 IoU 你报哪个？为什么分割更常用 Dice？
+title: BOOT0 和 BOOT1 是干什么的？接错会怎样？
 module: 01_project
-sub: 跟骨分割（科研）
+sub: 本科毕设·4G 测温
 priority: P0
 difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
-status: indexed
-source_type: self_exp
-source_ref: 方向与规划/项目/跟骨（数据集与预处理，未成文）
+status: answered
+source_type: self_doc
+source_ref: 方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf
 verified_at: 2026-11-09
-tags: [项目深挖, 医学影像, 图文]
+tags: [项目深挖, 毕设, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**问**：评价指标怎么选？为什么论文里分割几乎都报 Dice？只报 Dice 够吗？
+**现象**：程序下载成功但跑不起来。
 
-<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
-<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
+**问**：为什么？BOOT 引脚怎么配？
 
-<rect x="60" y="78" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/>
-<text x="216" y="95" font-size="10" fill="#665c49">512×512</text>
+<svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="dpar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="240" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">本科毕设：四层链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">题目的落脚点是「链路可行性验证」，不是「精度达标的测温仪」</text>
 
-<rect x="60" y="116" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.70"/>
-<text x="176" y="133" font-size="10" fill="#665c49">256×256</text>
+<rect x="20" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="90" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">DHT11</text>
+<text x="90" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">单总线 40 位</text>
+<text x="90" y="130" font-size="10" fill="#665c49" text-anchor="middle">0–50℃ ±2℃</text>
 
-<rect x="60" y="154" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.55"/>
-<text x="140" y="171" font-size="10" fill="#665c49">128×128</text>
+<rect x="184" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="254" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
+<text x="254" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">寄存器配 GPIO</text>
+<text x="254" y="130" font-size="10" fill="#665c49" text-anchor="middle">关中断读脉宽</text>
 
-<rect x="60" y="192" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.40"/>
-<text x="112" y="209" font-size="10" fill="#665c49">64×64</text>
+<rect x="348" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="418" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">RS485</text>
+<text x="418" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">差分传输</text>
+<text x="418" y="130" font-size="10" fill="#665c49" text-anchor="middle">抗共模干扰</text>
 
-<rect x="60" y="230" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.28"/>
-<text x="92" y="247" font-size="10" fill="#665c49">32×32</text>
+<rect x="512" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="582" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">4G DTU</text>
+<text x="582" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">Cat.1 透传</text>
+<text x="582" y="130" font-size="10" fill="#665c49" text-anchor="middle">AT 指令 + 超时</text>
 
-<rect x="300" y="230" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/>
-<text x="332" y="247" font-size="10" fill="#665c49"></text>
+<rect x="676" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="746" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">云端</text>
+<text x="746" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">曲线与展示</text>
+<text x="746" y="130" font-size="10" fill="#665c49" text-anchor="middle">注册包判据</text>
 
-<rect x="300" y="192" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.40"/>
-<text x="352" y="209" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="154" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.55"/>
-<text x="380" y="171" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="116" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/>
-<text x="416" y="133" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="78" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.85"/>
-<text x="456" y="95" font-size="10" fill="#665c49"></text>
-
-<path d="M178,80 L300,80"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M152,118 L300,118"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M188,156 L300,156"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M224,194 L300,194"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<text x="470" y="120" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
-<text x="470" y="140" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
-<text x="470" y="157" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
-<text x="470" y="186" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
-<text x="470" y="204" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
-<text x="470" y="221" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
-<text x="20" y="270" font-size="11" fill="#665c49">蓝色 = 编码器（下采样，感受野变大）　绿色 = 解码器（上采样，恢复分辨率）</text>
+<line x1="160" y1="106" x2="180" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="324" y1="106" x2="344" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="488" y1="106" x2="508" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="652" y1="106" x2="672" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<rect x="348" y="160" width="304" height="50" rx="8" fill="#faede8" stroke="#a63a2e"/>
+<text x="500" y="180" font-size="11" fill="#a63a2e" text-anchor="middle">已知短板：量程 0–50℃，夏季沥青路面可达 60℃+</text>
+<text x="500" y="198" font-size="11" fill="#a63a2e" text-anchor="middle">这不是精度问题，是「测不到」</text>
 </svg>
 
 ## 口述答案
 
-> 待补充。核心：Dice 对小目标梯度更友好；但 Dice 高不代表边界准。
+> 决定上电后从哪启动。BOOT0=0 从 Flash 启动，正常运行用；
+> BOOT0=1 且 BOOT1=0 从系统存储器启动，里面是厂家固化的 bootloader，用于串口下载；
+> 两个都置 1 从内部 SRAM 启动，调试用。
+> 所以正常运行 BOOT0 必须接地，否则程序跑不起来——这是个很容易犯的低级错误。
 
 ## 讲深一层
 
-关系：`Dice = 2·IoU / (1 + IoU)`，单调对应但数值不同。
+| BOOT0 | BOOT1 | 启动区 | 用途 |
+|---|---|---|---|
+| 0 | x | Flash | 正常运行 |
+| 1 | 0 | 系统存储器 | 串口下载 |
+| 1 | 1 | SRAM | 调试 |
 
-偏爱 Dice 的原因：
-
-| 原因 | 说明 |
-|---|---|
-| 对小目标更敏感 | 前景小时 IoU 梯度被背景淹没 |
-| 可做损失函数 | Dice Loss 对不平衡鲁棒 |
-| 临床易解释 | 「重叠了多少」好理解 |
-
-**Dice 高不代表边界准**：大目标内部填满但边缘粗糙时 Dice 仍很高。所以医学影像还要 HD95。
+「下载成功但不运行」的排查：先看 BOOT0，再看复位电路，最后才怀疑程序。
 
 ## 高频追问
 
-待补充。
+1. **串口下载为什么要拉高 BOOT0？** —— 要进厂家 bootloader，它不在 Flash 里。
+2. **下载完要拨回来吗？** —— 要，否则复位后还是进 bootloader。
+3. **SWD 下载需要改 BOOT0 吗？** —— 不需要，SWD 直接操作 Flash。
 
 ## 易错点
 
-- ❌ 只报 Dice 不报 HD95 —— 忽略边界质量
-- ❌ 不说是几折的均值 ± 标准差
-- ✅ 分清「内部指标 vs 边界指标」
+- ❌ 下载完忘了拨回 BOOT0
+- ❌ 把 BOOT 当成「启动模式选择」以外的东西
+- ✅ 记住三种组合
 
 ## 关联项目
 
-- `方向与规划/项目/跟骨/result`
-
-## 来源
-
-医学图像分割评价惯例
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf` §6.1 第一档 Q8

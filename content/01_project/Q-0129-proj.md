@@ -1,8 +1,8 @@
 ---
 id: Q-0129
-title: 日志级别怎么识别？为什么匹配串要带空格？
+title: 介绍一下你的本科毕设，四层链路分别是什么？
 module: 01_project
-sub: Linux 日志分析
+sub: 本科毕设·4G 测温
 priority: P0
 difficulty: 2
 roles: [系统工程, 感知]
@@ -10,91 +10,89 @@ companies: []
 qtype: project
 status: answered
 source_type: self_doc
-source_ref: 方向与规划/项目/Linux日志分析工具/Linux日志分析工具_项目说明书.pdf
+source_ref: 方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf
 verified_at: 2026-11-09
-tags: [项目深挖, Linux, 图文]
+tags: [项目深挖, 毕设, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：日志里级别有多种写法：`[INFO]`、`INFO:`、` INFO `。
+**背景**：题目「基于 4G 通信的道路温度获取方法」，落脚点是**链路可行性验证**，
+不是精度达标的测温仪。
 
-**问**：怎么识别？为什么带空格？这个做法有什么问题？
+**问**：四层分别是什么？你亲手做了什么？
 
-<svg viewBox="0 0 860 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="lgar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="230" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">日志工具的数据流：先筛后统计</text>
-<text x="20" y="48" font-size="12" fill="#665c49">顺序决定了报告里的数字和用户看到的筛选条件对不对得上</text>
+<svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="dpar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="240" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">本科毕设：四层链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">题目的落脚点是「链路可行性验证」，不是「精度达标的测温仪」</text>
 
-<rect x="20" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="93" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">getline 逐行读</text>
-<text x="93" y="119" font-size="11" fill="#665c49" text-anchor="middle">内存 O(1) 行</text>
+<rect x="20" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="90" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">DHT11</text>
+<text x="90" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">单总线 40 位</text>
+<text x="90" y="130" font-size="10" fill="#665c49" text-anchor="middle">0–50℃ ±2℃</text>
 
-<rect x="192" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="265" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">关键词筛选</text>
-<text x="265" y="119" font-size="11" fill="#665c49" text-anchor="middle">过滤整行</text>
+<rect x="184" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="254" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
+<text x="254" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">寄存器配 GPIO</text>
+<text x="254" y="130" font-size="10" fill="#665c49" text-anchor="middle">关中断读脉宽</text>
 
-<rect x="364" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="437" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">时间筛选</text>
-<text x="437" y="119" font-size="11" fill="#665c49" text-anchor="middle">HH:MM:SS 字符串比</text>
+<rect x="348" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="418" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">RS485</text>
+<text x="418" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">差分传输</text>
+<text x="418" y="130" font-size="10" fill="#665c49" text-anchor="middle">抗共模干扰</text>
 
-<rect x="536" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="609" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">分级统计</text>
-<text x="609" y="119" font-size="11" fill="#665c49" text-anchor="middle">只统计通过的行</text>
+<rect x="512" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="582" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">4G DTU</text>
+<text x="582" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">Cat.1 透传</text>
+<text x="582" y="130" font-size="10" fill="#665c49" text-anchor="middle">AT 指令 + 超时</text>
 
-<rect x="708" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="781" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">报告输出</text>
-<text x="781" y="119" font-size="11" fill="#665c49" text-anchor="middle">终端 + 文件</text>
+<rect x="676" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="746" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">云端</text>
+<text x="746" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">曲线与展示</text>
+<text x="746" y="130" font-size="10" fill="#665c49" text-anchor="middle">注册包判据</text>
 
-<line x1="166" y1="105" x2="188" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="338" y1="105" x2="360" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="510" y1="105" x2="532" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="682" y1="105" x2="704" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<rect x="192" y="152" width="318" height="46" rx="8" fill="#faede8" stroke="#a63a2e" stroke-dasharray="4 3"/>
-<text x="351" y="172" font-size="11" fill="#a63a2e" text-anchor="middle">第一版把这两步写反了：先统计后筛选</text>
-<text x="351" y="189" font-size="11" fill="#a63a2e" text-anchor="middle">结果筛了 300 行，报告总数还是 5000</text>
+<line x1="160" y1="106" x2="180" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="324" y1="106" x2="344" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="488" y1="106" x2="508" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="652" y1="106" x2="672" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<rect x="348" y="160" width="304" height="50" rx="8" fill="#faede8" stroke="#a63a2e"/>
+<text x="500" y="180" font-size="11" fill="#a63a2e" text-anchor="middle">已知短板：量程 0–50℃，夏季沥青路面可达 60℃+</text>
+<text x="500" y="198" font-size="11" fill="#a63a2e" text-anchor="middle">这不是精度问题，是「测不到」</text>
 </svg>
 
 ## 口述答案
 
-> 用 string::find 找级别子串，带空格是为了**避免误匹配**——不加空格，`INFORMATION` 里的 INFO 也会命中。
-> 但这是个已知的不健壮设计：它依赖级别两侧恰好有空格，格式一变（比如 `[INFO]`）就失效。
-> 更好的做法是按分隔符解析字段，或者用正则加词边界。
-> 这条我写进了改进计划——**能主动说出局限，比硬说没问题可信**。
+> 一句话：把路面温度采上来、用 4G 发到云端、能在网页上看曲线。
+> 四层：DHT11 贴地测温、STM32F103 主控、RS485 接 4G Cat.1 DTU、云端展示。
+> 我的工作量不在「采一个温度」，而在把链路打通并可控——
+> DHT11 单总线时序严，我用寄存器配 GPIO 做方向切换、采样时关中断；
+> DTU 那层封了 AT 指令收发函数，必须匹配到期望应答才算成功。
 
 ## 讲深一层
 
-| 方案 | 健壮性 | 成本 |
+| 层 | 器件/协议 | 关键点 |
 |---|---|---|
-| 整行 find(" INFO ") | 低 | 极低 |
-| 按分隔符切字段 | 中 | 需要解析逻辑 |
-| 正则 `\b(INFO)\b` | 高 | 正则开销 |
-| 结构化日志（JSON） | 最高 | 依赖格式 |
+| 测量 | DHT11 | 单总线，40 位，脉宽编码 |
+| 主控 | STM32F103 | 寄存器配 GPIO、微秒延时、关中断 |
+| 传输 | RS485 | 差分，抗共模干扰，可长线 |
+| 通信 | 4G Cat.1 DTU | AT 指令 + 超时判据 + 注册包 |
+| 应用 | 云端 | 曲线、时间戳依赖 RTC |
 
 ## 高频追问
 
-1. **std::regex 支持 \b 吗？** —— 支持。
-2. **find 和正则谁快？** —— find 快很多，日志量大时差异明显。
-3. **一行出现两个级别词？** —— 子串匹配取第一个，可能取错。
+1. **为什么用 RS485 不用 TTL？** —— 差分抗干扰，距离可达千米级。
+2. **Cat.1 和 NB-IoT 怎么选？** —— Cat.1 约 5/10 Mbps，适合小数据量要实时；NB-IoT 百 kbps 级适合抄表。
+3. **怎么确认连上云了？** —— DTU 注册后云端回固定注册包 `0xAF 0x20 0x7E 0x00 0x01 0x5A`。
 
 ## 易错点
 
-- ❌ 说「find 找 INFO 就行」 —— 没考虑误匹配
-- ❌ 被问格式变化答不上 —— 应主动承认是局限
-- ✅ 把「当时怎么做 / 现在会怎么做」分开讲
+- ❌ 说「DHT11 是红外测温」 —— 论文里笔误过，面试说错是硬伤
+- ❌ 只讲功能不讲难点 —— 像课程实验
+- ✅ 带出「时序严 + 超时判据 + 量程短板」三件真事
 
 ## 关联项目
 
-- `Linux日志分析工具_项目说明书.pdf` §5 后续改进计划（第 3 条）
-
-## 来源
-
-本人项目说明书
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf` §5 四个模块的技术细节

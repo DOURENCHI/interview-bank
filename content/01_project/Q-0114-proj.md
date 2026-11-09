@@ -1,8 +1,8 @@
 ---
 id: Q-0114
-title: 两个轴独立控制时，机械干涉和抖动怎么解决？
+title: 分段计时加起来 7.21ms，端到端却是 7.94ms，差的 0.73ms 在哪？
 module: 01_project
-sub: 二维云台
+sub: YOLO 部署
 priority: P0
 difficulty: 3
 roles: [系统工程, 感知]
@@ -10,97 +10,82 @@ companies: []
 qtype: project
 status: answered
 source_type: self_doc
-source_ref: 方向与规划/项目/二维云台/二维云台项目_课程讲义.html
+source_ref: 方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html
 verified_at: 2026-11-09
-tags: [项目深挖, 嵌入式, 图文]
+tags: [项目深挖, YOLO, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：水平轴和俯仰轴的舵机装在同一支架上，一起动的时候出现卡顿和抖动。
+**现象**：把预处理、推理、后处理分别计时相加得 7.21 ms，实测端到端 7.94 ms，差 0.73 ms。
 
-**问**：原因是什么？怎么处理？
+**问**：这 0.73 ms 是什么？
 
-<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="gmar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="250" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">二维云台：开环控制，没有反馈</text>
-<text x="20" y="48" font-size="12" fill="#665c49">SG90 舵机按脉宽定位，不回读角度 —— 这是它和闭环云台的根本差别</text>
+<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="ylat" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">端到端延迟演进（ms，本机实测）</text>
+<text x="20" y="48" font-size="12" fill="#665c49">条越长越慢。红色那条是反例：套了两层封装，比原生还慢</text>
 
-<rect x="20" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="85" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
-<text x="85" y="120" font-size="11" fill="#665c49" text-anchor="middle">定时器 PWM</text>
+<text x="196" y="86" font-size="12" fill="#2d2a21" text-anchor="end">Python + PyTorch</text>
+<rect x="206" y="71" width="560" height="22" rx="4" fill="#665c49" opacity="0.85"/>
+<text x="774" y="86" font-size="12" font-weight="700" fill="#665c49">14.96</text>
 
-<rect x="186" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="251" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">PWM 50Hz</text>
-<text x="251" y="120" font-size="11" fill="#665c49" text-anchor="middle">0.5–2.5ms</text>
+<text x="196" y="118" font-size="12" fill="#2d2a21" text-anchor="end">Python + ORT</text>
+<rect x="206" y="103" width="476" height="22" rx="4" fill="#1b5e8c" opacity="0.85"/>
+<text x="690" y="118" font-size="12" font-weight="700" fill="#1b5e8c">12.71</text>
 
-<rect x="352" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="417" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">SG90 舵机</text>
-<text x="417" y="120" font-size="11" fill="#665c49" text-anchor="middle">180° 位置型</text>
+<text x="196" y="150" font-size="12" fill="#2d2a21" text-anchor="end">Python 套框架封装</text>
+<rect x="206" y="135" width="474" height="22" rx="4" fill="#a63a2e" opacity="0.85"/>
+<text x="688" y="150" font-size="12" font-weight="700" fill="#a63a2e">12.65 反例</text>
 
-<rect x="518" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="583" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">机械支架</text>
-<text x="583" y="120" font-size="11" fill="#665c49" text-anchor="middle">水平 + 俯仰</text>
+<text x="196" y="182" font-size="12" fill="#2d2a21" text-anchor="end">C++ + CUDA EP</text>
+<rect x="206" y="167" width="498" height="22" rx="4" fill="#12666e" opacity="0.85"/>
+<text x="712" y="182" font-size="12" font-weight="700" fill="#12666e">13.31</text>
 
-<rect x="684" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="749" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">限位保护</text>
-<text x="749" y="120" font-size="11" fill="#665c49" text-anchor="middle">软件钳位</text>
+<text x="196" y="214" font-size="12" fill="#2d2a21" text-anchor="end">C++ + TensorRT EP</text>
+<rect x="206" y="199" width="297" height="22" rx="4" fill="#2e6b3e" opacity="0.85"/>
+<text x="511" y="214" font-size="12" font-weight="700" fill="#2e6b3e">7.94</text>
 
-<line x1="150" y1="107" x2="182" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="316" y1="107" x2="348" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="482" y1="107" x2="514" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="648" y1="107" x2="680" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<path d="M749,136 L749,170 L85,170 L85,138" fill="none" stroke="#a63a2e"
-      stroke-width="1.4" stroke-dasharray="5 4"/>
-<text x="417" y="188" font-size="11" fill="#a63a2e" text-anchor="middle">
-缺反馈：角度靠脉宽推算，堵转/机械干涉都不自知</text>
-<text x="20" y="216" font-size="12" fill="#2d2a21">所以两个必做：</text>
-<text x="20" y="234" font-size="12" fill="#2d2a21">· 软件限位（钳位到 0–180° 内，避免打齿） · 独立 5V/2A 供电（舵机启动电流会拉垮板子供电）</text>
+<line x1="206" y1="70" x2="206" y2="228" stroke="#dbcba5" stroke-width="1"/>
+<text x="20" y="262" font-size="12" fill="#2d2a21">纯推理 vs 端到端要分开看：纯 TensorRT 只要 1.97 ms，但端到端 7.94 ms ——</text>
+<text x="20" y="280" font-size="12" fill="#2d2a21">中间的 6 ms 是采集、预处理、后处理、拷贝，优化推理只能解决其中一部分。</text>
+<text x="20" y="306" font-size="11" fill="#a63a2e">纪律：不同次测量之间只比相对值，不跨口径比绝对值。</text>
 </svg>
 
 ## 口述答案
 
-> 两个原因。一是**机械干涉**：两个舵机的运动范围在结构上重叠，转到某些角度会顶住，
-> 表现是堵转、发热、电流飙升。解法是先用软件把各自的行程限制在不干涉的区间，必要时改支架结构。
-> 二是**供电不足导致的抖动**：两个舵机同时启动电流叠加，电压跌落，舵机内部电路工作不稳。
-> 解法是独立电源加大电容。
+> 主要是**段与段之间的开销没被计入**：每轮约 7 MB 的内存分配与释放、
+> 缓存失效、函数调用与数据传递的间隙。
+> 分段计时只统计每段内部耗时，段间是空的。
+> 后来做了 buffer 复用（把每帧都申请释放的缓冲改成复用），这部分就降下来了。
 
 ## 讲深一层
 
-排查顺序（先硬件后软件）：
+分段计时为什么天然偏小：
 
-| 步 | 检查 | 判断依据 |
-|---|---|---|
-| 1 | 单独动一个轴是否正常 | 正常说明是叠加问题 |
-| 2 | 手动转轴是否有卡点 | 有卡点 = 机械干涉 |
-| 3 | 同时动时量 5V 轨 | 掉压 = 供电不足 |
-| 4 | 看电流 | 峰值是否超电源能力 |
+| 漏算项 | 说明 |
+|---|---|
+| 分配/释放 | 每帧 malloc/free 的开销 |
+| 缓存影响 | 上段写的数据下段要重新载入 |
+| 同步开销 | 线程间等待 |
+| 计时粒度 | 打点本身的精度 |
+
+原则：**分段用来看占比，端到端用来对外报数**，两者不能互相替代。
 
 ## 高频追问
 
-1. **为什么不先调代码？** —— 机械和供电问题调代码解决不了，容易越调越乱。
-2. **抖动和干涉怎么区分？** —— 干涉是「到某个角度卡住」，抖动是「全程小幅震荡」。
-3. **软件限位能完全避免干涉吗？** —— 只能避免已知的干涉区，结构问题还得改结构。
+1. **怎么做 buffer 复用？** —— 预分配固定缓冲，每帧覆盖写。
+2. **复用的风险？** —— 多线程下要保证不冲突。
+3. **怎么验证就是这部分？** —— 做完复用后重测，差值缩小就对上了。
 
 ## 易错点
 
-- ❌ 一遇抖动就加滤波/延时 —— 掩盖症状不解决根因
-- ❌ 忽略「两个同时动」这个叠加条件
-- ✅ 先分离变量（单独测一个轴），这是排查的基本功
+- ❌ 拿分段相加当端到端
+- ❌ 忽略分配释放的开销
+- ✅ 两个数字都报，并解释差异
 
 ## 关联项目
 
-- `二维云台项目_课程讲义.html` 第 4 课 · 双轴独立控制
-- 同文档 第 5 课 · 机械安装与供电
-
-## 来源
-
-本人项目调试记录
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html` §A3 踩过的坑一览（第 15 条）

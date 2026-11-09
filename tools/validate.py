@@ -97,6 +97,9 @@ def main() -> int:
 
         # 正文小节
         need = list(SECTIONS)
+        # 项目深挖不要求「来源」：出处已经写进「关联项目」的文档路径里
+        if meta.get("qtype") == "project":
+            need = [s for s in need if s != "来源"]
         # 只有「给出代码片段让你判断输出」的题才需要 ## 题目 节
         if meta.get("qtype") == "coding" and meta.get("lab_src"):
             need += CODING_SECTIONS

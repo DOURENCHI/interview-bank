@@ -1,106 +1,96 @@
 ---
 id: Q-0109
-title: 介绍一下二维云台这个项目，用了什么硬件和技术栈？
+title: 只拷了 onnxruntime.dll，为什么 CUDA 还是不生效？
 module: 01_project
-sub: 二维云台
+sub: YOLO 部署
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [系统工程, 感知]
 companies: []
 qtype: project
 status: answered
 source_type: self_doc
-source_ref: 方向与规划/项目/二维云台/二维云台项目_课程讲义.html
+source_ref: 方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html
 verified_at: 2026-11-09
-tags: [项目深挖, 嵌入式, 图文]
+tags: [项目深挖, YOLO, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**背景**：基础版周期 3–6 周，难度自评 3/10。
+**场景**：做分发包时手工把 `onnxruntime.dll` 拷过去，程序能跑，但没有 GPU 加速。
 
-**问**：硬件清单、软件栈、实现到什么程度？
+**问**：缺了什么？怎么避免这类问题？
 
-<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="gmar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="250" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">二维云台：开环控制，没有反馈</text>
-<text x="20" y="48" font-size="12" fill="#665c49">SG90 舵机按脉宽定位，不回读角度 —— 这是它和闭环云台的根本差别</text>
+<svg viewBox="0 0 860 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="ypar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="230" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">从权重到上车：四段链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">每一段的产物格式不同，出问题时先定位是哪一段</text>
 
-<rect x="20" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="85" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
-<text x="85" y="120" font-size="11" fill="#665c49" text-anchor="middle">定时器 PWM</text>
+<rect x="20" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="95" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">① best.pt</text>
+<text x="95" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">PyTorch 权重</text>
+<text x="95" y="130" font-size="11" fill="#665c49" text-anchor="middle">mAP50 0.680 (test)</text>
 
-<rect x="186" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="251" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">PWM 50Hz</text>
-<text x="251" y="120" font-size="11" fill="#665c49" text-anchor="middle">0.5–2.5ms</text>
+<rect x="196" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="271" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">② ONNX</text>
+<text x="271" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">9.41 MB</text>
+<text x="271" y="130" font-size="11" fill="#665c49" text-anchor="middle">opset 固定 / 动态轴</text>
 
-<rect x="352" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="417" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">SG90 舵机</text>
-<text x="417" y="120" font-size="11" fill="#665c49" text-anchor="middle">180° 位置型</text>
+<rect x="372" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="447" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">③ engine</text>
+<text x="447" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">11.79 MB</text>
+<text x="447" y="130" font-size="11" fill="#665c49" text-anchor="middle">绑显卡与 TRT 版本</text>
 
-<rect x="518" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="583" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">机械支架</text>
-<text x="583" y="120" font-size="11" fill="#665c49" text-anchor="middle">水平 + 俯仰</text>
+<rect x="548" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="623" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">④ C++ 推理</text>
+<text x="623" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">7.94 ms 端到端</text>
+<text x="623" y="130" font-size="11" fill="#665c49" text-anchor="middle">CUDA / TRT EP</text>
 
-<rect x="684" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="749" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">限位保护</text>
-<text x="749" y="120" font-size="11" fill="#665c49" text-anchor="middle">软件钳位</text>
+<rect x="724" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="799" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">⑤ ROS2 节点</text>
+<text x="799" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">自定义 msg</text>
+<text x="799" y="130" font-size="11" fill="#665c49" text-anchor="middle">QoS SensorData</text>
 
-<line x1="150" y1="107" x2="182" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="316" y1="107" x2="348" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="482" y1="107" x2="514" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="648" y1="107" x2="680" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<path d="M749,136 L749,170 L85,170 L85,138" fill="none" stroke="#a63a2e"
-      stroke-width="1.4" stroke-dasharray="5 4"/>
-<text x="417" y="188" font-size="11" fill="#a63a2e" text-anchor="middle">
-缺反馈：角度靠脉宽推算，堵转/机械干涉都不自知</text>
-<text x="20" y="216" font-size="12" fill="#2d2a21">所以两个必做：</text>
-<text x="20" y="234" font-size="12" fill="#2d2a21">· 软件限位（钳位到 0–180° 内，避免打齿） · 独立 5V/2A 供电（舵机启动电流会拉垮板子供电）</text>
+<line x1="170" y1="103" x2="192" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="346" y1="103" x2="368" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="522" y1="103" x2="544" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="698" y1="103" x2="720" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<text x="20" y="172" font-size="12" fill="#a63a2e">最容易翻车的两处：</text>
+<text x="20" y="192" font-size="12" fill="#2d2a21">· ONNX 导出漏动态轴 → engine 只能按固定分辨率跑，换输入就重建</text>
+<text x="20" y="210" font-size="12" fill="#2d2a21">· engine 绑显卡型号与 TRT 版本 → 换机器必须重建，不能直接下发</text>
 </svg>
 
 ## 口述答案
 
-> 主控是 STM32F103C8T6，Keil + 标准外设库，执行机构是两个 SG90 舵机，做水平和俯仰两个轴。
-> 软件上分五步：定时器出 PWM 控制单轴、封装角度接口并做限位、两轴独立控制、
-> 串口接受角度指令、最后把代码拆成模块。
-> 核心是**用定时器产生 50Hz PWM、靠脉宽调角度**，难点不在代码长短，
-> 在供电和机械干涉这两件硬件上的事。
+> 缺了 `onnxruntime_providers_shared.dll`。ORT 的 provider（CUDA、TensorRT）是插件式加载，
+> 主 DLL 只是壳，provider 实现在单独的 DLL 里。
+> 后来改成用 `onnxruntime*.dll` 通配符全拷，而不是逐个点名。
+> 更彻底的是写脚本递归收集依赖，最后收集到 44 个 DLL。
 
 ## 讲深一层
 
-| 层 | 内容 | 关键点 |
+| 做法 | 可靠性 | 成本 |
 |---|---|---|
-| 主控 | STM32F103C8T6 | 标准外设库，非 HAL |
-| 执行 | SG90 × 2 | **180° 位置型**，不是连续旋转型 |
-| 驱动 | 定时器 PWM | 50 Hz，0.5–2.5 ms 对应 0–180° |
-| 交互 | 串口 | 接收目标角度 |
-| 供电 | 外部 5V/2A | 不能从板子取电 |
+| 手工点名拷 | 低，漏一个就静默降级 | 人工 |
+| 通配符 `onnxruntime*.dll` | 中 | 低 |
+| 脚本递归收集 | 高 | 前期投入 |
+
+关键：**缺 DLL 不一定报错**，可能只是少一个 provider，于是静默降级。
 
 ## 高频追问
 
-1. **为什么不用 HAL 库？** —— 项目定的是标准外设库，直接操作寄存器，对时序更可控。
-2. **两个轴要不要做联动？** —— 基础版独立控制，联动会引入坐标变换，属于进阶。
-3. **做到什么程度算完成？** —— 两轴都能按指令定位、有限位保护、连续运行不抖。
+1. **怎么知道还缺哪些 DLL？** —— 干净环境跑一遍看提示，或用 Dependencies 工具。
+2. **为什么不静态链接？** —— 踩过坑，`-static-libstdc++` 会带来别的问题。
+3. **44 个 DLL 太多？** —— 可以打包成安装程序，但不能省。
 
 ## 易错点
 
-- ❌ 说成「做个摄像头云台」 —— 基础版没有视觉跟踪
-- ❌ 把「两轴独立」说成「两轴协同」 —— 前者是分别给角度，后者要解算
-- ✅ 主动说清难度和规模，别夸大
+- ❌ 只拷主 DLL —— provider 不在里面
+- ❌ 在开发机测一遍就以为好了 —— 开发机 PATH 里有
+- ✅ 一定要在干净环境验证
 
 ## 关联项目
 
-- `方向与规划/项目/二维云台/二维云台项目_课程讲义.html` §1.1 项目基准
-- 同文档 §1.2 项目路线（五个阶段）
-
-## 来源
-
-本人项目（课程讲义 2026-10-15）
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html` §A3 踩过的坑一览（第 4、9 条）

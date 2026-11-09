@@ -1,10 +1,10 @@
 ---
 id: Q-0107
-title: 为什么没把 TensorRT engine 直接交付给用户？
+title: 对比 pt 和 ONNX 的输出差异很大，为什么怀疑是「没做 fuse」？
 module: 01_project
 sub: YOLO 部署
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
@@ -19,91 +19,69 @@ proj_seed: true
 
 ## 题目
 
-**实测数据**：ONNX 9.41 MB，TensorRT FP16 engine 11.79 MB；分发包 exe + DLL 共 78.7 MB / 44 个。
+**现象**：拿原始 `.pt` 和导出的 ONNX 比对检测结果，数值差异大得可疑。
 
-**问**：engine 已经是优化好的产物，为什么不直接给？给了会怎样？
+**问**：可能是什么原因？对比前该做什么？
 
-<svg viewBox="0 0 860 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="ypar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="230" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">从权重到上车：四段链路</text>
-<text x="20" y="48" font-size="12" fill="#665c49">每一段的产物格式不同，出问题时先定位是哪一段</text>
+<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="yacc" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="250" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">每一步掉了多少精度（mAP50，valid 集 187 图 / 839 框）</text>
+<text x="20" y="48" font-size="12" fill="#665c49">真正掉点在 pt→ONNX，不在精度位宽上</text>
+<line x1="60" y1="80" x2="800" y2="80" stroke="#dbcba5" stroke-width="2"/>
 
-<rect x="20" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="95" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">① best.pt</text>
-<text x="95" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">PyTorch 权重</text>
-<text x="95" y="130" font-size="11" fill="#665c49" text-anchor="middle">mAP50 0.680 (test)</text>
+<circle cx="110" cy="80" r="7" fill="#665c49"/>
+<text x="110" y="64" font-size="12" font-weight="700" fill="#665c49" text-anchor="middle">0.6407</text>
+<text x="110" y="104" font-size="11" fill="#665c49" text-anchor="middle">原始 pt</text>
 
-<rect x="196" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="271" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">② ONNX</text>
-<text x="271" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">9.41 MB</text>
-<text x="271" y="130" font-size="11" fill="#665c49" text-anchor="middle">opset 固定 / 动态轴</text>
+<circle cx="330" cy="80" r="7" fill="#1b5e8c"/>
+<text x="330" y="64" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">0.6329</text>
+<text x="330" y="104" font-size="11" fill="#665c49" text-anchor="middle">ONNX</text>
 
-<rect x="372" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="447" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">③ engine</text>
-<text x="447" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">11.79 MB</text>
-<text x="447" y="130" font-size="11" fill="#665c49" text-anchor="middle">绑显卡与 TRT 版本</text>
+<circle cx="550" cy="80" r="7" fill="#12666e"/>
+<text x="550" y="64" font-size="12" font-weight="700" fill="#12666e" text-anchor="middle">0.6327</text>
+<text x="550" y="104" font-size="11" fill="#665c49" text-anchor="middle">engine FP32</text>
 
-<rect x="548" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="623" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">④ C++ 推理</text>
-<text x="623" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">7.94 ms 端到端</text>
-<text x="623" y="130" font-size="11" fill="#665c49" text-anchor="middle">CUDA / TRT EP</text>
+<circle cx="750" cy="80" r="7" fill="#2e6b3e"/>
+<text x="750" y="64" font-size="12" font-weight="700" fill="#2e6b3e" text-anchor="middle">0.6323</text>
+<text x="750" y="104" font-size="11" fill="#665c49" text-anchor="middle">engine FP16</text>
 
-<rect x="724" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="799" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">⑤ ROS2 节点</text>
-<text x="799" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">自定义 msg</text>
-<text x="799" y="130" font-size="11" fill="#665c49" text-anchor="middle">QoS SensorData</text>
-
-<line x1="170" y1="103" x2="192" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
-<line x1="346" y1="103" x2="368" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
-<line x1="522" y1="103" x2="544" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
-<line x1="698" y1="103" x2="720" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
-<text x="20" y="172" font-size="12" fill="#a63a2e">最容易翻车的两处：</text>
-<text x="20" y="192" font-size="12" fill="#2d2a21">· ONNX 导出漏动态轴 → engine 只能按固定分辨率跑，换输入就重建</text>
-<text x="20" y="210" font-size="12" fill="#2d2a21">· engine 绑显卡型号与 TRT 版本 → 换机器必须重建，不能直接下发</text>
+<line x1="110" y1="140" x2="330" y2="140" stroke="#a63a2e" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="220" y="158" font-size="12" fill="#a63a2e" text-anchor="middle">−0.0078（换后处理路径）</text>
+<line x1="330" y1="140" x2="750" y2="140" stroke="#2e6b3e" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="540" y="158" font-size="12" fill="#2e6b3e" text-anchor="middle">−0.0006（FP32→FP16 几乎无损）</text>
+<text x="20" y="196" font-size="12" fill="#2d2a21">面试时这句最有用：FP16 掉的那点精度，比更换后处理路径的影响小一个数量级。</text>
+<text x="20" y="218" font-size="12" fill="#2d2a21">所以「量化会不会掉点」的答案取决于基线 —— 基线本身换过实现，讨论量化就没意义。</text>
 </svg>
 
 ## 口述答案
 
-> 因为 engine 绑显卡架构和 TensorRT 版本，换台机器就加载失败或者性能崩掉。
-> 它不是模型文件，更接近「针对本机编译出来的产物」。
-> 所以我交付的是 exe + DLL + ONNX，engine 在目标机上首次运行时现场生成并缓存。
-> 代价是首次启动慢一点，收益是换机器不用重新找我编译。
+> 大概率是**对比的基线不对**：`.pt` 没做 `model.fuse()`，而导出 ONNX 时
+> Conv+BN 会被融合成一层。两个图结构不同，输出自然有差。
+> 正确做法是对比前先 `model.fuse()`，让两边结构一致，剩下的差异才是导出引入的。
+> 这是「先对齐基线再比」的通用原则。
 
 ## 讲深一层
 
-三种交付形态的取舍：
+fuse 做了什么：把 Conv 和紧跟的 BatchNorm 合并成一个卷积，
+权重按 `W' = W * γ / sqrt(σ² + ε)` 重算，BN 偏置并入 Conv 偏置。
 
-| 形态 | 可移植 | 首次启动 | 性能 |
-|---|---|---|---|
-| 只给 pt | ✅ | 需装 PyTorch | 差 |
-| 给 ONNX | ✅ | 需现场建 engine | 好（建完） |
-| 给 engine | ❌ | 快 | 最好 |
-
-工程上还要考虑：CUDA 运行库 1–2 GB 是否随包、DLL 依赖（44 个）、目标机有没有 GPU。
+| 对比方式 | 差异来源 |
+|---|---|
+| 未 fuse vs 已 fuse 的 ONNX | 结构性差异，无意义 |
+| 已 fuse pt vs ONNX | 导出引入的差异，有意义 |
 
 ## 高频追问
 
-1. **现场建 engine 要多久？** —— 分钟量级，可以做进度提示或首启动预生成。
-2. **缓存放哪？** —— 用户目录或程序目录，用显卡型号 + TRT 版本做 key。
-3. **没 GPU 的机器怎么办？** —— 降级到 CPU EP，但要提前告知性能预期。
+1. **fuse 会掉精度吗？** —— 数值上有微小差异，但数学上等价。
+2. **怎么确认 fuse 生效了？** —— 打印模型结构，看 BN 层是否消失。
+3. **还有别的基线错位吗？** —— 有，输入归一化方式不同、letterbox 参数不同。
 
 ## 易错点
 
-- ❌ 以为 engine 是「更小的模型文件」 —— 它更大且不可移植
-- ❌ 交付时不带 CUDA 运行库 —— 客户机器上启动失败
-- ✅ 说清「不可移植」这个本质，而不是只说「不方便」
+- ❌ 直接比 pt 和 ONNX —— 基线不同，结论不可信
+- ❌ 看到差异大就怀疑量化 —— 先排除结构差异
+- ✅ 说清「先对齐基线再比」
 
 ## 关联项目
 
-- `YOLO_部署实施记录.html` §交付形态：什么能交、什么不该交
-- 同文档 §几笔「代价账」
-
-## 来源
-
-本人项目实测
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html` §A3 踩过的坑一览（第 2 条）

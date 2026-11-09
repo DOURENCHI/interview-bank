@@ -1,117 +1,97 @@
 ---
 id: Q-0135
-title: 跟骨 X 光的分割难点在哪？和自然图像分割有什么不同？
+title: 8MHz 晶振怎么变成 72MHz？为什么选 8MHz？
 module: 01_project
-sub: 跟骨分割（科研）
+sub: 本科毕设·4G 测温
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [系统工程, 感知]
 companies: []
 qtype: project
-status: indexed
-source_type: self_exp
-source_ref: 方向与规划/项目/跟骨（数据集与预处理，未成文）
+status: answered
+source_type: self_doc
+source_ref: 方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf
 verified_at: 2026-11-09
-tags: [项目深挖, 医学影像, 图文]
+tags: [项目深挖, 毕设, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**问**：医学 X 光的分割比自然图像难在哪？为什么 U-Net 的跳跃连接在这里特别重要？
+**问**：时钟是怎么上去的？为什么不用别的频率？
 
-<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
-<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
+<svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="dpar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="240" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">本科毕设：四层链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">题目的落脚点是「链路可行性验证」，不是「精度达标的测温仪」</text>
 
-<rect x="60" y="78" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/>
-<text x="216" y="95" font-size="10" fill="#665c49">512×512</text>
+<rect x="20" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="90" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">DHT11</text>
+<text x="90" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">单总线 40 位</text>
+<text x="90" y="130" font-size="10" fill="#665c49" text-anchor="middle">0–50℃ ±2℃</text>
 
-<rect x="60" y="116" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.70"/>
-<text x="176" y="133" font-size="10" fill="#665c49">256×256</text>
+<rect x="184" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="254" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
+<text x="254" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">寄存器配 GPIO</text>
+<text x="254" y="130" font-size="10" fill="#665c49" text-anchor="middle">关中断读脉宽</text>
 
-<rect x="60" y="154" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.55"/>
-<text x="140" y="171" font-size="10" fill="#665c49">128×128</text>
+<rect x="348" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="418" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">RS485</text>
+<text x="418" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">差分传输</text>
+<text x="418" y="130" font-size="10" fill="#665c49" text-anchor="middle">抗共模干扰</text>
 
-<rect x="60" y="192" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.40"/>
-<text x="112" y="209" font-size="10" fill="#665c49">64×64</text>
+<rect x="512" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="582" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">4G DTU</text>
+<text x="582" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">Cat.1 透传</text>
+<text x="582" y="130" font-size="10" fill="#665c49" text-anchor="middle">AT 指令 + 超时</text>
 
-<rect x="60" y="230" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.28"/>
-<text x="92" y="247" font-size="10" fill="#665c49">32×32</text>
+<rect x="676" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="746" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">云端</text>
+<text x="746" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">曲线与展示</text>
+<text x="746" y="130" font-size="10" fill="#665c49" text-anchor="middle">注册包判据</text>
 
-<rect x="300" y="230" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/>
-<text x="332" y="247" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="192" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.40"/>
-<text x="352" y="209" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="154" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.55"/>
-<text x="380" y="171" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="116" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/>
-<text x="416" y="133" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="78" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.85"/>
-<text x="456" y="95" font-size="10" fill="#665c49"></text>
-
-<path d="M178,80 L300,80"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M152,118 L300,118"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M188,156 L300,156"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M224,194 L300,194"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<text x="470" y="120" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
-<text x="470" y="140" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
-<text x="470" y="157" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
-<text x="470" y="186" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
-<text x="470" y="204" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
-<text x="470" y="221" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
-<text x="20" y="270" font-size="11" fill="#665c49">蓝色 = 编码器（下采样，感受野变大）　绿色 = 解码器（上采样，恢复分辨率）</text>
+<line x1="160" y1="106" x2="180" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="324" y1="106" x2="344" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="488" y1="106" x2="508" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="652" y1="106" x2="672" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<rect x="348" y="160" width="304" height="50" rx="8" fill="#faede8" stroke="#a63a2e"/>
+<text x="500" y="180" font-size="11" fill="#a63a2e" text-anchor="middle">已知短板：量程 0–50℃，夏季沥青路面可达 60℃+</text>
+<text x="500" y="198" font-size="11" fill="#a63a2e" text-anchor="middle">这不是精度问题，是「测不到」</text>
 </svg>
 
 ## 口述答案
 
-> 待补充。可从四个角度切入：边界模糊、对比度低、类别极不平衡、数据量小。
+> 走时钟树：8 MHz 外部晶振作 HSE，经 PLL 锁相环 **9 倍频**得到 72 MHz 作系统时钟，
+> 再通过 AHB/APB 分频给各外设。
+> 选 8 MHz 是因为它是 STM32F103 的标准外部晶振值，配 9 倍频正好是这颗芯片的最高主频 72 MHz。
 
 ## 讲深一层
 
-| 难点 | 表现 | 对策 |
-|---|---|---|
-| 边界模糊 | 骨与软组织灰度接近 | 边界加权损失、深监督 |
-| 低对比度 | 灰阶集中 | 窗宽窗位、CLAHE |
-| 类别不平衡 | 骨占比小 | Dice / Tversky Loss |
-| 数据量小 | 标注贵 | 迁移学习、强增强、交叉验证 |
-| 个体差异 | 骨折形态差异大 | 多尺度、注意力 |
+| 环节 | 参数 |
+|---|---|
+| HSE | 8 MHz |
+| PLL 倍频 | ×9 |
+| SYSCLK | 72 MHz |
+| AHB | 72 MHz |
+| APB1 | 36 MHz（最高限） |
+| APB2 | 72 MHz |
+| ADC | 由 PCLK2 分频，最高 14 MHz |
 
-跳跃连接的作用：把下采样前的高分辨率特征直接拼到上采样，补回池化丢掉的边界信息。
+注意 APB1 最高只能 36 MHz，这个限制容易踩。
 
 ## 高频追问
 
-待补充。
+1. **能不能超到 100 MHz？** —— 有人试过，但超出规格，不稳定。
+2. **内部 RC 振铃能代替吗？** —— HSI 是 8 MHz 但精度差（±1%），串口通信容易出错。
+3. **PLL 输入有什么要求？** —— 一般要求 1–25 MHz，8 MHz 在范围内。
 
 ## 易错点
 
-- ❌ 泛泛说「医学图像难」 —— 要落到具体成像特性
-- ✅ 每说一个难点，配一个实际用过的对策
+- ❌ 只记 72 MHz 不知道 APB1 限 36
+- ❌ 以为倍频可以随便设
+- ✅ 说清「HSE → PLL → SYSCLK → 总线分频」这条链
 
 ## 关联项目
 
-- `方向与规划/项目/跟骨/跟骨_预处理`
-
-## 来源
-
-医学影像分割通用问题 + 本人课题
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf` §6.1 第一档 Q6

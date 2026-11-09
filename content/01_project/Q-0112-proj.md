@@ -1,106 +1,103 @@
 ---
 id: Q-0112
-title: 开环控制有什么局限？限位保护你是怎么做的？
+title: C++ 直接调 TensorRT 返回垃圾值，为什么最后改用 ORT 的 TRT EP？
 module: 01_project
-sub: 二维云台
+sub: YOLO 部署
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
 status: answered
 source_type: self_doc
-source_ref: 方向与规划/项目/二维云台/二维云台项目_课程讲义.html
+source_ref: 方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html
 verified_at: 2026-11-09
-tags: [项目深挖, 嵌入式, 图文]
+tags: [项目深挖, YOLO, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：SG90 只接受脉宽指令，不回读实际角度。
+**现象**：C++ 里直接调 TensorRT 的 API 做推理，能跑，但输出是垃圾值。
 
-**问**：这意味着什么？限位怎么做？
+**环境**：GCC 编译的程序，链接的是 MSVC 构建的 TensorRT 库。
 
-<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="gmar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="250" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">二维云台：开环控制，没有反馈</text>
-<text x="20" y="48" font-size="12" fill="#665c49">SG90 舵机按脉宽定位，不回读角度 —— 这是它和闭环云台的根本差别</text>
+**问**：根因是什么？为什么最后的解法是「不直接调」？
 
-<rect x="20" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="85" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
-<text x="85" y="120" font-size="11" fill="#665c49" text-anchor="middle">定时器 PWM</text>
+<svg viewBox="0 0 860 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="ypar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="230" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">从权重到上车：四段链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">每一段的产物格式不同，出问题时先定位是哪一段</text>
 
-<rect x="186" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="251" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">PWM 50Hz</text>
-<text x="251" y="120" font-size="11" fill="#665c49" text-anchor="middle">0.5–2.5ms</text>
+<rect x="20" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="95" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">① best.pt</text>
+<text x="95" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">PyTorch 权重</text>
+<text x="95" y="130" font-size="11" fill="#665c49" text-anchor="middle">mAP50 0.680 (test)</text>
 
-<rect x="352" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="417" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">SG90 舵机</text>
-<text x="417" y="120" font-size="11" fill="#665c49" text-anchor="middle">180° 位置型</text>
+<rect x="196" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="271" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">② ONNX</text>
+<text x="271" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">9.41 MB</text>
+<text x="271" y="130" font-size="11" fill="#665c49" text-anchor="middle">opset 固定 / 动态轴</text>
 
-<rect x="518" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="583" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">机械支架</text>
-<text x="583" y="120" font-size="11" fill="#665c49" text-anchor="middle">水平 + 俯仰</text>
+<rect x="372" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="447" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">③ engine</text>
+<text x="447" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">11.79 MB</text>
+<text x="447" y="130" font-size="11" fill="#665c49" text-anchor="middle">绑显卡与 TRT 版本</text>
 
-<rect x="684" y="78" width="130" height="58" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="749" y="102" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">限位保护</text>
-<text x="749" y="120" font-size="11" fill="#665c49" text-anchor="middle">软件钳位</text>
+<rect x="548" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="623" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">④ C++ 推理</text>
+<text x="623" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">7.94 ms 端到端</text>
+<text x="623" y="130" font-size="11" fill="#665c49" text-anchor="middle">CUDA / TRT EP</text>
 
-<line x1="150" y1="107" x2="182" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="316" y1="107" x2="348" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="482" y1="107" x2="514" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<line x1="648" y1="107" x2="680" y2="107" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#gmar)"/>
-<path d="M749,136 L749,170 L85,170 L85,138" fill="none" stroke="#a63a2e"
-      stroke-width="1.4" stroke-dasharray="5 4"/>
-<text x="417" y="188" font-size="11" fill="#a63a2e" text-anchor="middle">
-缺反馈：角度靠脉宽推算，堵转/机械干涉都不自知</text>
-<text x="20" y="216" font-size="12" fill="#2d2a21">所以两个必做：</text>
-<text x="20" y="234" font-size="12" fill="#2d2a21">· 软件限位（钳位到 0–180° 内，避免打齿） · 独立 5V/2A 供电（舵机启动电流会拉垮板子供电）</text>
+<rect x="724" y="70" width="150" height="66" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="799" y="96" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">⑤ ROS2 节点</text>
+<text x="799" y="116" font-size="11" fill="#2d2a21" text-anchor="middle">自定义 msg</text>
+<text x="799" y="130" font-size="11" fill="#665c49" text-anchor="middle">QoS SensorData</text>
+
+<line x1="170" y1="103" x2="192" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="346" y1="103" x2="368" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="522" y1="103" x2="544" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<line x1="698" y1="103" x2="720" y2="103" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#ypar)"/>
+<text x="20" y="172" font-size="12" fill="#a63a2e">最容易翻车的两处：</text>
+<text x="20" y="192" font-size="12" fill="#2d2a21">· ONNX 导出漏动态轴 → engine 只能按固定分辨率跑，换输入就重建</text>
+<text x="20" y="210" font-size="12" fill="#2d2a21">· engine 绑显卡型号与 TRT 版本 → 换机器必须重建，不能直接下发</text>
 </svg>
 
 ## 口述答案
 
-> 意味着这是**开环**：我发出「转到 90°」的指令，但舵机到底转到没有、有没有被卡住，程序不知道。
-> 所以限位只能在软件侧做钳位——把目标角度卡在 0–180° 之间，超出的直接截断，
-> 避免指令打到机械极限把齿轮打坏。
-> 更彻底的做法是加限位开关或读电位器做闭环，但基础版没做。
+> 根因是**跨编译器 ABI 不兼容**：TensorRT 的 C++ 接口有虚函数，
+> GCC 和 MSVC 的 vtable 布局不同，通过基类指针调用时跳到了错误的槽位，
+> 于是读到垃圾数据。
+> 这不是配置问题，是二进制层面的不兼容，改代码绕不过去。
+> 最后改用 ONNX Runtime 的 TensorRT EP——ORT 的 C 接口稳定，
+> 它内部再用自己的工具链去调 TRT。
 
 ## 讲深一层
 
-开环的三种失效模式：
+这和我们 C++ 那组「跨编译器传 `std::string`」是同一件事的两个侧面：
 
-| 失效 | 表现 | 软件能否感知 |
+| 场景 | 现象 | 本质 |
 |---|---|---|
-| 指令超限 | 打齿、堵转 | 钳位即可预防 |
-| 机械干涉 | 卡住、发热 | **不能**，无反馈 |
-| 负载过重 | 抖动、不到位 | **不能** |
+| 跨编译器传 `std::string` | 长字符串乱码 | SSO 布局不同 |
+| 跨编译器调虚基类 | 跳到错误函数 | vtable 布局不同 |
+| 跨编译器传 struct | 字段错位 | 对齐/填充规则不同 |
 
-闭环需要反馈源：限位开关（离散）、电位器/编码器（连续）、或者视觉（外部）。
+**推论**：跨 ABI 边界只用 C 接口或 POD，这是硬约束。
 
 ## 高频追问
 
-1. **钳位写在驱动层还是应用层？** —— 驱动层，保证任何调用都不会越界。
-2. **怎么知道舵机真的到位了？** —— 开环下不知道，只能靠时间和经验假设。
-3. **加闭环要改什么？** —— 加反馈采集 + 控制律（最简单的比例控制）。
+1. **为什么 ORT 能跨？** —— 它的 C API 只有指针和基本类型，不依赖 C++ 二进制布局。
+2. **MSVC 和 GCC 的 vtable 差在哪？** —— 虚函数排列、RTTI 结构、调用约定都不同。
+3. **有别的办法吗？** —— 用 MSVC 编译整个程序，或让 TRT 部分单独成 DLL 用 C 接口暴露。
 
 ## 易错点
 
-- ❌ 把开环说成「闭环控制」 —— 一追问反馈源就露
-- ❌ 只在调用处钳位 —— 换个调用点就漏
-- ✅ 主动说「无反馈是这套方案的固有局限」
+- ❌ 以为是参数传错 —— 会查很久查不到
+- ❌ 试图用 `extern "C"` 包住 TRT 的 C++ 类 —— 语法不允许
+- ✅ 记住「跨编译器 = 跨 ABI，只有 C 接口安全」
 
 ## 关联项目
 
-- `二维云台项目_课程讲义.html` 第 3 课 · 角度封装与限位保护
-
-## 来源
-
-本人项目
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/YOLO_Road_Detection/YOLO_部署实施记录.html` §A3 踩过的坑一览（第 12 条）
+- 交叉参考：`content/02_cpp` 的「跨编译器传 std::string」那题

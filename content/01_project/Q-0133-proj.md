@@ -1,101 +1,96 @@
 ---
 id: Q-0133
-title: 这个项目有什么局限？给你两周先改什么？
+title: STM32 读这个传感器为什么不用 ADC？
 module: 01_project
-sub: Linux 日志分析
+sub: 本科毕设·4G 测温
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
 status: answered
 source_type: self_doc
-source_ref: 方向与规划/项目/Linux日志分析工具/Linux日志分析工具_项目说明书.pdf
+source_ref: 方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf
 verified_at: 2026-11-09
-tags: [项目深挖, Linux, 图文]
+tags: [项目深挖, 毕设, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：说明书里自己列了改进计划。
+**场景**：有人一听「温度传感器」就想到要接 ADC。
 
-**问**：局限在哪？优先级怎么排？
+**问**：为什么 DHT11 不需要？什么情况下才需要 ADC？
 
-<svg viewBox="0 0 860 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="lgar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="230" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">日志工具的数据流：先筛后统计</text>
-<text x="20" y="48" font-size="12" fill="#665c49">顺序决定了报告里的数字和用户看到的筛选条件对不对得上</text>
+<svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="dpar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="240" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">本科毕设：四层链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">题目的落脚点是「链路可行性验证」，不是「精度达标的测温仪」</text>
 
-<rect x="20" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="93" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">getline 逐行读</text>
-<text x="93" y="119" font-size="11" fill="#665c49" text-anchor="middle">内存 O(1) 行</text>
+<rect x="20" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="90" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">DHT11</text>
+<text x="90" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">单总线 40 位</text>
+<text x="90" y="130" font-size="10" fill="#665c49" text-anchor="middle">0–50℃ ±2℃</text>
 
-<rect x="192" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="265" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">关键词筛选</text>
-<text x="265" y="119" font-size="11" fill="#665c49" text-anchor="middle">过滤整行</text>
+<rect x="184" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="254" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
+<text x="254" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">寄存器配 GPIO</text>
+<text x="254" y="130" font-size="10" fill="#665c49" text-anchor="middle">关中断读脉宽</text>
 
-<rect x="364" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="437" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">时间筛选</text>
-<text x="437" y="119" font-size="11" fill="#665c49" text-anchor="middle">HH:MM:SS 字符串比</text>
+<rect x="348" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="418" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">RS485</text>
+<text x="418" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">差分传输</text>
+<text x="418" y="130" font-size="10" fill="#665c49" text-anchor="middle">抗共模干扰</text>
 
-<rect x="536" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="609" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">分级统计</text>
-<text x="609" y="119" font-size="11" fill="#665c49" text-anchor="middle">只统计通过的行</text>
+<rect x="512" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="582" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">4G DTU</text>
+<text x="582" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">Cat.1 透传</text>
+<text x="582" y="130" font-size="10" fill="#665c49" text-anchor="middle">AT 指令 + 超时</text>
 
-<rect x="708" y="74" width="146" height="62" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
-<text x="781" y="99" font-size="13" font-weight="700" fill="#1b5e8c" text-anchor="middle">报告输出</text>
-<text x="781" y="119" font-size="11" fill="#665c49" text-anchor="middle">终端 + 文件</text>
+<rect x="676" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="746" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">云端</text>
+<text x="746" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">曲线与展示</text>
+<text x="746" y="130" font-size="10" fill="#665c49" text-anchor="middle">注册包判据</text>
 
-<line x1="166" y1="105" x2="188" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="338" y1="105" x2="360" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="510" y1="105" x2="532" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<line x1="682" y1="105" x2="704" y2="105" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#lgar)"/>
-<rect x="192" y="152" width="318" height="46" rx="8" fill="#faede8" stroke="#a63a2e" stroke-dasharray="4 3"/>
-<text x="351" y="172" font-size="11" fill="#a63a2e" text-anchor="middle">第一版把这两步写反了：先统计后筛选</text>
-<text x="351" y="189" font-size="11" fill="#a63a2e" text-anchor="middle">结果筛了 300 行，报告总数还是 5000</text>
+<line x1="160" y1="106" x2="180" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="324" y1="106" x2="344" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="488" y1="106" x2="508" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="652" y1="106" x2="672" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<rect x="348" y="160" width="304" height="50" rx="8" fill="#faede8" stroke="#a63a2e"/>
+<text x="500" y="180" font-size="11" fill="#a63a2e" text-anchor="middle">已知短板：量程 0–50℃，夏季沥青路面可达 60℃+</text>
+<text x="500" y="198" font-size="11" fill="#a63a2e" text-anchor="middle">这不是精度问题，是「测不到」</text>
 </svg>
 
 ## 口述答案
 
-> 三条：时间跨天会算错、级别识别依赖空格、README 里有些功能没逐条实测。
-> 优先级我选**跨天 > 级别识别 > 功能验证**，依据是「后果严重性 × 触发概率」：
-> 跨天错误直接让结果错，凌晨日志很常见；级别识别是健壮性问题；功能验证成本最低但影响可信度。
-> 两周计划：时间改造半天、级别重构两天、剩下补测试和 README 对齐。
+> 因为 DHT11 输出的已经是**校准过的数字信号**，MCU 只做时序解析，不涉及模拟量采集。
+> 需要 ADC 的是热敏电阻、热电偶这类**模拟传感器**——
+> 它们输出的是电压或电阻变化，必须有 ADC 和信号调理。
+> 这是选型时的第一层区分：数字输出还是模拟输出。
 
 ## 讲深一层
 
-| 问题 | 后果 | 概率 | 优先级 |
+| 类型 | 例子 | 接口 | 是否需要 ADC |
 |---|---|---|---|
-| 跨天算错 | 结果错 | 高 | 高 |
-| 级别识别失效 | 统计错 | 中 | 中 |
-| 功能未验证 | 可信度受损 | 高 | 中高（成本最低） |
+| 数字传感器 | DHT11、DS18B20 | 单总线 / I2C | 否 |
+| 模拟传感器 | NTC 热敏电阻 | 分压后接 ADC | 是 |
+| 微弱信号 | 热电偶 | 需运放 + ADC | 是 |
 
-注意第三条的「后果」不是功能错误，而是可信度——面试场景下它其实最该先做。
+DHT11 内部其实有 ADC（测 NTC），但那是在传感器内部完成的，对外是数字接口。
 
 ## 高频追问
 
-1. **为什么没做跨天？** —— 测试数据都在同一天，覆盖不足。
-2. **怎么补测？** —— 边界用例：跨天、空文件、超长行、格式异常。
-3. **两周够吗？** —— 够改前两条，测试期间才是主要工作量。
+1. **模拟传感器有什么优势？** —— 便宜、响应快、量程可定制。
+2. **热电偶为什么要运放？** —— 输出是 µV 级，直接进 ADC 分辨不出来。
+3. **数字传感器就没有问题吗？** —— 有，时序复杂、多为单总线、不能长距离。
 
 ## 易错点
 
-- ❌ 说「没什么局限」 —— 不诚实
-- ❌ 只列局限不给优先级 —— 没判断力
-- ✅ 用「后果 × 概率」论证，并承认覆盖不足
+- ❌ 说「传感器都要 ADC」
+- ❌ 混淆「内部有 ADC」和「需要外部 ADC」
+- ✅ 按「输出是数字还是模拟」来分类
 
 ## 关联项目
 
-- `Linux日志分析工具_项目说明书.pdf` §5 后续改进计划
-
-## 来源
-
-本人项目说明书
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf` §6.1 第一档 Q4

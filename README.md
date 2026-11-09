@@ -73,8 +73,11 @@ python tools/seed.py            # 算法机考 / 医学影像 / 机器人学 / �
 python tools/seed_algo.py       # 算法题（40/20/20/20 分布）
 python tools/seed_acm.py        # ACM 输入输出专项
 python tools/seed_cpp_sdk.py    # C++ 工程化与 SDK 子方向
-python tools/seed_proj_a.py     # 项目深挖 A：YOLO 部署 / 二维云台 / 本科毕设
-python tools/seed_proj_b.py     # 项目深挖 B：西门子杯 / Linux 日志分析 / 跟骨分割
+python tools/seed_yolo.py       # 项目深挖：YOLO 部署（16 道）
+python tools/seed_gimbal.py     # 项目深挖：二维云台 + 本科毕设（22 道）
+python tools/seed_sie.py        # 项目深挖：西门子杯 MRP 环网（15 道）
+python tools/seed_log.py        # 项目深挖：Linux 日志分析（15 道）
+python tools/seed_bone.py       # 项目深挖：跟骨分割科研（10 道，答案待填）
 
 # 4. 校验字段、号段、小节完整性
 python tools/validate.py

@@ -1,123 +1,97 @@
 ---
 id: Q-0134
-title: 介绍一下你的科研课题：跟骨分割在做什么？
+title: 为什么单总线要在输出和输入之间切 GPIO 方向？
 module: 01_project
-sub: 跟骨分割（科研）
+sub: 本科毕设·4G 测温
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
-status: indexed
-source_type: self_exp
-source_ref: 方向与规划/项目/跟骨（数据集与预处理，未成文）
+status: answered
+source_type: self_doc
+source_ref: 方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf
 verified_at: 2026-11-09
-tags: [项目深挖, 医学影像, 图文]
+tags: [项目深挖, 毕设, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**背景**：研究生主线课题，跟骨 X 光影像分割，基于 U-Net / MONAI，目标是一作论文。
+**问**：一根线怎么能既发又收？不切会怎样？
 
-**已知条件**：数据集在 `方向与规划/项目/跟骨/`（含 `跟骨`、`跟骨_预处理`、`result`），
-但目前没有成文的方法与结果文档。
+<svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="dpar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="240" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">本科毕设：四层链路</text>
+<text x="20" y="48" font-size="12" fill="#665c49">题目的落脚点是「链路可行性验证」，不是「精度达标的测温仪」</text>
 
-**问**：用 1 分钟说清临床目标、数据、方法、当前结果、局限。**这道题的答案只能你自己填。**
+<rect x="20" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="90" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">DHT11</text>
+<text x="90" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">单总线 40 位</text>
+<text x="90" y="130" font-size="10" fill="#665c49" text-anchor="middle">0–50℃ ±2℃</text>
 
-<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
-<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
+<rect x="184" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="254" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">STM32F103</text>
+<text x="254" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">寄存器配 GPIO</text>
+<text x="254" y="130" font-size="10" fill="#665c49" text-anchor="middle">关中断读脉宽</text>
 
-<rect x="60" y="78" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/>
-<text x="216" y="95" font-size="10" fill="#665c49">512×512</text>
+<rect x="348" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="418" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">RS485</text>
+<text x="418" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">差分传输</text>
+<text x="418" y="130" font-size="10" fill="#665c49" text-anchor="middle">抗共模干扰</text>
 
-<rect x="60" y="116" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.70"/>
-<text x="176" y="133" font-size="10" fill="#665c49">256×256</text>
+<rect x="512" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="582" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">4G DTU</text>
+<text x="582" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">Cat.1 透传</text>
+<text x="582" y="130" font-size="10" fill="#665c49" text-anchor="middle">AT 指令 + 超时</text>
 
-<rect x="60" y="154" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.55"/>
-<text x="140" y="171" font-size="10" fill="#665c49">128×128</text>
+<rect x="676" y="74" width="140" height="64" rx="8" fill="#f3e9d2" stroke="#dbcba5"/>
+<text x="746" y="98" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">云端</text>
+<text x="746" y="116" font-size="10" fill="#2d2a21" text-anchor="middle">曲线与展示</text>
+<text x="746" y="130" font-size="10" fill="#665c49" text-anchor="middle">注册包判据</text>
 
-<rect x="60" y="192" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.40"/>
-<text x="112" y="209" font-size="10" fill="#665c49">64×64</text>
-
-<rect x="60" y="230" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.28"/>
-<text x="92" y="247" font-size="10" fill="#665c49">32×32</text>
-
-<rect x="300" y="230" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/>
-<text x="332" y="247" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="192" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.40"/>
-<text x="352" y="209" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="154" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.55"/>
-<text x="380" y="171" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="116" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/>
-<text x="416" y="133" font-size="10" fill="#665c49"></text>
-
-<rect x="300" y="78" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.85"/>
-<text x="456" y="95" font-size="10" fill="#665c49"></text>
-
-<path d="M178,80 L300,80"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M152,118 L300,118"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M188,156 L300,156"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<path d="M224,194 L300,194"
-      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
-
-<text x="470" y="120" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
-<text x="470" y="140" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
-<text x="470" y="157" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
-<text x="470" y="186" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
-<text x="470" y="204" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
-<text x="470" y="221" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
-<text x="20" y="270" font-size="11" fill="#665c49">蓝色 = 编码器（下采样，感受野变大）　绿色 = 解码器（上采样，恢复分辨率）</text>
+<line x1="160" y1="106" x2="180" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="324" y1="106" x2="344" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="488" y1="106" x2="508" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<line x1="652" y1="106" x2="672" y2="106" stroke="#1b5e8c" stroke-width="1.6" marker-end="url(#dpar)"/>
+<rect x="348" y="160" width="304" height="50" rx="8" fill="#faede8" stroke="#a63a2e"/>
+<text x="500" y="180" font-size="11" fill="#a63a2e" text-anchor="middle">已知短板：量程 0–50℃，夏季沥青路面可达 60℃+</text>
+<text x="500" y="198" font-size="11" fill="#a63a2e" text-anchor="middle">这不是精度问题，是「测不到」</text>
 </svg>
 
 ## 口述答案
 
-> 待补充。建议结构：临床问题（为什么要自动分割跟骨）→ 数据与方法（X 光 + U-Net）
-> → 当前结果（Dice / HD95，几折）→ 明确局限。
+> 因为同一根 DATA 线有两个驱动方：起始信号是主机发的，那一刻 MCU 必须是输出；
+> 响应和数据是 DHT11 发的，那一刻 MCU 必须切成输入去读。
+> 如果不切，两个器件同时驱动同一根线会冲突——轻则读不到，重则损坏。
+> 这也是为什么它的驱动不能只用普通 GPIO 读写，要动态改寄存器里的模式位。
 
 ## 讲深一层
 
-答辩前必须能答的三层：
+实现要点：
 
-| 层 | 要准备的问题 |
-|---|---|
-| 临床 | 跟骨分割用在哪？骨折分型、术前规划、角度测量？ |
-| 数据 | 多少例？谁标的？标注一致性怎么保证？分辨率与预处理？ |
-| 方法 | 为什么 U-Net？损失函数？评价指标？基线是什么？ |
+| 阶段 | GPIO 方向 | 动作 |
+|---|---|---|
+| 发起始 | 输出 | 拉低 ≥18 ms |
+| 释放 | 输出→输入 | 拉高后立刻切输入 |
+| 读数据 | 输入 | 测脉宽 |
+| 结束后 | 输入（或输出高） | 保持空闲 |
+
+F103 上改的是 `GPIOx->CRH/CRL` 里的 MODE 位。
 
 ## 高频追问
 
-待补充。
+1. **为什么不加上拉电阻？** —— 单总线是开漏结构，没上拉就没有明确高电平。
+2. **切方向要多久？** —— 越短越好，慢了会错过从机响应。
+3. **能用开漏输出 + 外部上拉代替切方向吗？** —— 部分场景可以，但读的时候仍要确保只由从机驱动。
 
 ## 易错点
 
-- ❌ 只讲「我用了 U-Net」 —— 面试官要听的是「为什么这么选」
-- ❌ 报 Dice 不说多少例、怎么划分
-- ✅ 主动交代数据规模与标注质量，这是医学影像面试的核心可信度
+- ❌ 认为「读的时候也保持输出」 —— 会冲突
+- ❌ 忘了上拉电阻
+- ✅ 说清「一主一从轮流驱动同一根线」
 
 ## 关联项目
 
-- `方向与规划/项目/跟骨/`（数据集与预处理结果）
-- `方向与规划/项目/跟骨/result`（实验结果）
-
-## 来源
-
-研究生科研课题（尚未成文）
-
-## 出现记录
-
-| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
-|---|---|---|---|---|---|
-| — | — | — | — | 待填 | — |
+- `方向与规划/项目/毕设/本科毕设_面试口述稿与专业问答_完整版.pdf` §6.1 第一档 Q5
