@@ -45,6 +45,7 @@ def parse_fm(text: str) -> tuple[dict, str]:
         line = line.rstrip()
         if line and ":" in line and not line.lstrip().startswith("#"):
             k, _, v = line.partition(":")
+            v = re.sub(r"\s+#.*$", "", v).strip()
             meta[k.strip()] = v.strip().strip('"\'')
     return meta, text[end + 4:]
 

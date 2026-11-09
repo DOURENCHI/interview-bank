@@ -6,7 +6,7 @@ sub: 数组哈希
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]
-companies: [华为车BU, 亿嘉和]
+companies: []
 qtype: coding
 status: indexed
 source_type: inferred

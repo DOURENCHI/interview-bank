@@ -6,7 +6,7 @@ sub: 4G道路测温
 priority: P0
 difficulty: 3
 roles: [嵌入式]
-companies: [亿嘉和]
+companies: []
 qtype: project
 status: answered
 source_type: self_doc

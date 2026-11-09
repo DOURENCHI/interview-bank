@@ -6,7 +6,7 @@ sub: 4G道路测温
 priority: P0
 difficulty: 2
 roles: [嵌入式, 感知]
-companies: [亿嘉和, 华为车BU]
+companies: []
 qtype: project
 status: answered
 source_type: self_doc

@@ -65,7 +65,7 @@ sub: {lang}语言细节
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
-companies: [华为车BU, 亿嘉和]
+companies: []
 qtype: coding
 status: answered
 source_type: self_doc
@@ -124,7 +124,7 @@ sub: {lang} ACM输入输出
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]
-companies: [华为车BU, 亿嘉和]
+companies: []
 qtype: coding
 status: draft
 source_type: self_doc

@@ -192,7 +192,7 @@ sub: {cat}
 priority: P0
 difficulty: {diff}
 roles: [AI算法, 端侧部署]
-companies: [华为车BU, 亿嘉和]
+companies: []
 qtype: coding
 status: indexed
 source_type: inferred

@@ -44,7 +44,8 @@ def parse_fm(text: str) -> tuple[dict, str]:
         if not line or line.lstrip().startswith("#") or ":" not in line:
             continue
         k, _, v = line.partition(":")
-        k, v = k.strip(), v.strip()
+        # 去掉行内注释，否则 `key: []  # 说明` 会被当成字符串
+        k, v = k.strip(), re.sub(r"\s+#.*$", "", v).strip()
         if v.startswith("[") and v.endswith("]"):
             items = [x.strip().strip('"\'') for x in v[1:-1].split(",")]
             meta[k] = [x for x in items if x]

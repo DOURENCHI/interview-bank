@@ -84,7 +84,7 @@ sub: {sub}
 priority: {pri}
 difficulty: {diff}
 roles: []
-companies: [华为车BU, 亿嘉和]
+companies: []
 qtype: principle
 status: indexed
 source_type: inferred
