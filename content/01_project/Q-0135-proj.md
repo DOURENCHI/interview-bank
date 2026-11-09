@@ -1,68 +1,114 @@
 ---
 id: Q-0135
-title: MRP 环网里，为什么 PROFINET 看门狗要设成 200ms 以上？
+title: 跟骨 X 光的分割难点在哪？和自然图像分割有什么不同？
 module: 01_project
-sub: 西门子项目
+sub: 跟骨分割（科研）
 priority: P0
 difficulty: 3
 roles: [系统工程, 感知]
 companies: []
 qtype: project
-status: answered
-source_type: self_doc
-source_ref: 方向与规划/项目/西门子/西门子杯_面试口述稿与问答.pdf
+status: indexed
+source_type: self_exp
+source_ref: 方向与规划/项目/跟骨（数据集与预处理，未成文）
 verified_at: 2026-11-09
-tags: [项目深挖, 西门子杯]
+tags: [项目深挖, 医学影像, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：环网配好了，故障切换也正常，但一拔线 PLC 就报 IO 设备断连，环网像是白做了。
+**问**：医学 X 光的分割比自然图像难在哪？为什么 U-Net 的跳跃连接在这里特别重要？
 
-**问**：问题出在哪？
+<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
+<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
+
+<rect x="60" y="78" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/>
+<text x="216" y="95" font-size="10" fill="#665c49">512×512</text>
+
+<rect x="60" y="116" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.70"/>
+<text x="176" y="133" font-size="10" fill="#665c49">256×256</text>
+
+<rect x="60" y="154" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.55"/>
+<text x="140" y="171" font-size="10" fill="#665c49">128×128</text>
+
+<rect x="60" y="192" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.40"/>
+<text x="112" y="209" font-size="10" fill="#665c49">64×64</text>
+
+<rect x="60" y="230" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.28"/>
+<text x="92" y="247" font-size="10" fill="#665c49">32×32</text>
+
+<rect x="300" y="230" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/>
+<text x="332" y="247" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="192" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.40"/>
+<text x="352" y="209" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="154" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.55"/>
+<text x="380" y="171" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="116" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/>
+<text x="416" y="133" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="78" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.85"/>
+<text x="456" y="95" font-size="10" fill="#665c49"></text>
+
+<path d="M178,80 L300,80"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M152,118 L300,118"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M188,156 L300,156"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M224,194 L300,194"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<text x="470" y="120" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
+<text x="470" y="140" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
+<text x="470" y="157" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
+<text x="470" y="186" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
+<text x="470" y="204" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
+<text x="470" y="221" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
+<text x="20" y="270" font-size="11" fill="#665c49">蓝色 = 编码器（下采样，感受野变大）　绿色 = 解码器（上采样，恢复分辨率）</text>
+</svg>
 
 ## 口述答案
 
-**要点**
-
-- 出在 **PROFINET IO 的看门狗时间**。看门狗是 PLC 判断「对方还活着」的超时阈值。
-- MRP 环网的最大恢复时间就是 **200ms**，如果看门狗设得比 200ms 短，故障切换这段时间里 IO 已经判超时、连接被拆掉了——环网还没切完，业务已经断了。
-- 所以规则是：**看门狗 ≥ 环网恢复时间**，工程上取 200ms 或更大。
+> 待补充。可从四个角度切入：边界模糊、对比度低、类别极不平衡、数据量小。
 
 ## 讲深一层
 
-这里的本质是**两层超时的耦合**：
-
-| 层 | 机制 | 时间量级 |
+| 难点 | 表现 | 对策 |
 |---|---|---|
-| 链路层 | MRP 检测环口故障并切换 | ≤200ms |
-| 应用层 | PROFINET 看门狗判 IO 超时 | 可配置，默认往往 100ms 级 |
+| 边界模糊 | 骨与软组织灰度接近 | 边界加权损失、深监督 |
+| 低对比度 | 灰阶集中 | 窗宽窗位、CLAHE |
+| 类别不平衡 | 骨占比小 | Dice / Tversky Loss |
+| 数据量小 | 标注贵 | 迁移学习、强增强、交叉验证 |
+| 个体差异 | 骨折形态差异大 | 多尺度、注意力 |
 
-如果上层超时比下层恢复快，就会出现「下层正在自愈，上层已经放弃」——冗余机制形同虚设。
-
-这个思路可以推广到很多地方：**上层超时必须大于下层的最大恢复时间**，否则重试、熔断、切换全都无效。
+跳跃连接的作用：把下采样前的高分辨率特征直接拼到上采样，补回池化丢掉的边界信息。
 
 ## 高频追问
 
-1. **看门狗设得越大越好吗？** —— 不是。太大会导致真实断线时反应迟钝，故障持续时间变长。要在「扛得住切换」和「及时发现真故障」之间取。
-2. **这个参数在博图里在哪配？** —— PROFINET IO 系统里，设备属性中的更新时间/看门狗倍数。
-3. **除了看门狗，还有什么要注意？** —— 环网端口必须全双工、速率不低于 100Mbps，否则切换时间不可控。
+待补充。
 
 ## 易错点
 
-- ❌ 只配环网不看上层超时 —— 典型的"配了但没用"
-- ❌ 把看门狗当成"心跳间隔" —— 它是超时阈值，语义不同
-- ✅ 记住 200ms 这个数字，并能说出它和 MRP 恢复时间的关系
+- ❌ 泛泛说「医学图像难」 —— 要落到具体成像特性
+- ✅ 每说一个难点，配一个实际用过的对策
 
 ## 关联项目
 
-西门子杯（现场调试踩过的坑）
+- `方向与规划/项目/跟骨/跟骨_预处理`
 
 ## 来源
 
-PROFINET IO 看门狗机制；MRP 恢复时间指标
+医学影像分割通用问题 + 本人课题
 
 ## 出现记录
 

@@ -219,8 +219,10 @@ def collect_sources():
                 docs.append({"file": f, "module": mod, "priority": pri,
                              "sub": pick_sub(f.stem, re.sub(r"_从.*|_全套.*|讲义|教程", "", f.stem))})
 
+    # 项目深挖不自动抽取：那里的题干必须写清背景和数据，机器抽出来的太模糊。
+    # 由 tools/seed_proj_a.py / seed_proj_b.py 人工维护。
     proj = ENG / "方向与规划" / "项目"
-    if proj.is_dir():
+    if False and proj.is_dir():
         for f in sorted(proj.glob("*/*.html")):
             if "_bak" in f.name or any(p in SKIP_DIRS for p in f.parts):
                 continue

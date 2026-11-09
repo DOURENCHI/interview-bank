@@ -85,6 +85,18 @@ def render_md(md: str) -> str:
         ln = lines[i]
         s = ln.strip()
 
+        # 内联 SVG：原样输出，不能转义（题卡插图用手写 SVG，不用位图）
+        if s.startswith("<svg"):
+            buf = []
+            while i < n:
+                buf.append(lines[i])
+                if "</svg>" in lines[i]:
+                    break
+                i += 1
+            out.append("\n".join(buf))
+            i += 1
+            continue
+
         # 代码块
         if s.startswith("```"):
             j = i + 1
@@ -254,6 +266,8 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .body table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}
 .body th,.body td{border:1px solid var(--line);padding:6px 9px;text-align:left}
 .body th{background:var(--soft)}
+.body svg{width:100%;height:auto;display:block;margin:14px 0;
+  border:1px solid var(--line);border-radius:8px;background:var(--paper)}
 .todo{color:#a63a2e;font-style:italic}
 .wrongmark{font-size:12px;color:var(--red);border:1px solid var(--red);
   border-radius:5px;padding:2px 7px;margin-top:4px;cursor:pointer;background:transparent}

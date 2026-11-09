@@ -39,7 +39,7 @@
 
 | 模块 | 目录 | 优先级 | 理由 |
 |---|---|---|---|
-| 项目深挖 | `content/01_project` | **P0** | 面试官最有兴趣、最容易追问、也最难造假。**按项目分子方向**：YOLO 部署 / 二维云台 / 西门子杯 / Linux 日志分析 / 跟骨分割 / 本科毕设 |
+| 项目深挖 | `content/01_project` | **P0** | 面试官最有兴趣、最容易追问、也最难造假。**按项目分子方向**：YOLO 部署 / 二维云台 / 西门子杯 / Linux 日志分析 / 跟骨分割 / 本科毕设。**全部人工出题，每题配手写 SVG 插图**，题干带实测数据 |
 | C++ | `content/02_cpp` | **P0** | 就业基础，与项目同步练。**子方向**：语言基础 / 对象模型 / STL 容器 / 时间与算法 / Qt / **工程化与 SDK**（动态库、ABI、接口设计，对应岗位偏好链第一位的 SDK 岗） |
 | Linux | `content/03_linux` | **P0** | 就业基础，系统编程 + 调试 + 性能分析 |
 | 算法与机考 | `content/04_algo` | **P0** | 校招笔试硬门槛。**ACM 模式读写在 2026 年内就要解决** |
@@ -73,7 +73,8 @@ python tools/seed.py            # 算法机考 / 医学影像 / 机器人学 / �
 python tools/seed_algo.py       # 算法题（40/20/20/20 分布）
 python tools/seed_acm.py        # ACM 输入输出专项
 python tools/seed_cpp_sdk.py    # C++ 工程化与 SDK 子方向
-python tools/seed_project.py    # 项目深挖（西门子杯 / Linux 日志 / 跟骨）
+python tools/seed_proj_a.py     # 项目深挖 A：YOLO 部署 / 二维云台 / 本科毕设
+python tools/seed_proj_b.py     # 项目深挖 B：西门子杯 / Linux 日志分析 / 跟骨分割
 
 # 4. 校验字段、号段、小节完整性
 python tools/validate.py

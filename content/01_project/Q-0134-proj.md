@@ -1,67 +1,120 @@
 ---
 id: Q-0134
-title: 为什么用环网而不是普通星型？MRP 和生成树怎么选？
+title: 介绍一下你的科研课题：跟骨分割在做什么？
 module: 01_project
-sub: 西门子项目
+sub: 跟骨分割（科研）
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [系统工程, 感知]
 companies: []
 qtype: project
-status: answered
-source_type: self_doc
-source_ref: 方向与规划/项目/西门子/西门子杯_面试口述稿与问答.pdf
+status: indexed
+source_type: self_exp
+source_ref: 方向与规划/项目/跟骨（数据集与预处理，未成文）
 verified_at: 2026-11-09
-tags: [项目深挖, 西门子杯]
+tags: [项目深挖, 医学影像, 图文]
 auto: true
 proj_seed: true
 ---
 
 ## 题目
 
-**场景**：产线上一条关键链路断了就停机。
+**背景**：研究生主线课题，跟骨 X 光影像分割，基于 U-Net / MONAI，目标是一作论文。
 
-**问**：网络结构上怎么保证单点故障不影响通信？为什么选 MRP 而不是 RSTP？
+**已知条件**：数据集在 `方向与规划/项目/跟骨/`（含 `跟骨`、`跟骨_预处理`、`result`），
+但目前没有成文的方法与结果文档。
+
+**问**：用 1 分钟说清临床目标、数据、方法、当前结果、局限。**这道题的答案只能你自己填。**
+
+<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
+<rect x="0" y="0" width="860" height="330" fill="#fffcf3"/>
+<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
+<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
+
+<rect x="60" y="78" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/>
+<text x="216" y="95" font-size="10" fill="#665c49">512×512</text>
+
+<rect x="60" y="116" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.70"/>
+<text x="176" y="133" font-size="10" fill="#665c49">256×256</text>
+
+<rect x="60" y="154" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.55"/>
+<text x="140" y="171" font-size="10" fill="#665c49">128×128</text>
+
+<rect x="60" y="192" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.40"/>
+<text x="112" y="209" font-size="10" fill="#665c49">64×64</text>
+
+<rect x="60" y="230" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.28"/>
+<text x="92" y="247" font-size="10" fill="#665c49">32×32</text>
+
+<rect x="300" y="230" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/>
+<text x="332" y="247" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="192" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.40"/>
+<text x="352" y="209" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="154" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.55"/>
+<text x="380" y="171" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="116" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/>
+<text x="416" y="133" font-size="10" fill="#665c49"></text>
+
+<rect x="300" y="78" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.85"/>
+<text x="456" y="95" font-size="10" fill="#665c49"></text>
+
+<path d="M178,80 L300,80"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M152,118 L300,118"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M188,156 L300,156"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<path d="M224,194 L300,194"
+      fill="none" stroke="#9a5a12" stroke-width="1.3" stroke-dasharray="5 3"/>
+
+<text x="470" y="120" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
+<text x="470" y="140" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
+<text x="470" y="157" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
+<text x="470" y="186" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
+<text x="470" y="204" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
+<text x="470" y="221" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
+<text x="20" y="270" font-size="11" fill="#665c49">蓝色 = 编码器（下采样，感受野变大）　绿色 = 解码器（上采样，恢复分辨率）</text>
+</svg>
 
 ## 口述答案
 
-**要点**
-
-- 星型拓扑的根节点或任一上行链路是**单点故障**，断了整段就失联。环网提供**冗余路径**，一条断另一条顶上。
-- 选 **MRP**（IEC 62439-2）而不是 RSTP，核心原因是**切换时间**：MRP 典型恢复时间 **200ms 以内**，RSTP 通常要秒级。
-- 而且 MRP 是 **PROFINET 标准定义的环网协议**、工作在 MAC 层（二层），和西门子生态天然配套；RSTP 是通用协议，切换慢且收敛过程对实时 IO 不友好。
+> 待补充。建议结构：临床问题（为什么要自动分割跟骨）→ 数据与方法（X 光 + U-Net）
+> → 当前结果（Dice / HD95，几折）→ 明确局限。
 
 ## 讲深一层
 
-| 维度 | MRP | RSTP |
-|---|---|---|
-| 标准 | IEC 62439-2（PROFINET 定义） | IEEE 802.1w |
-| 典型恢复时间 | ≤200ms（环网规模相关） | 秒级 |
-| 工作层次 | 二层，MAC 层 | 二层 |
-| 拓扑 | 单环 | 任意（含多环、网状） |
-| 角色 | 1 个 Manager + 若干 Client | 根桥 + 指定桥 |
+答辩前必须能答的三层：
 
-MRP 正常态时 Manager 会**阻塞一个环口**，让环在逻辑上变成线型——这是为了防广播风暴。故障时它打开被阻塞的口，数据走另一侧。
+| 层 | 要准备的问题 |
+|---|---|
+| 临床 | 跟骨分割用在哪？骨折分型、术前规划、角度测量？ |
+| 数据 | 多少例？谁标的？标注一致性怎么保证？分辨率与预处理？ |
+| 方法 | 为什么 U-Net？损失函数？评价指标？基线是什么？ |
 
 ## 高频追问
 
-1. **环网规模有限制吗？** —— 有。MRP 单环建议不超过 50 个节点，规模越大恢复时间越长。
-2. **为什么正常态要阻塞一个口？** —— 不阻塞就形成环路，广播帧会无限循环，瞬间打爆网络。
-3. **多环怎么办？** —— 用 MRP 互连（MRP Interconnection）或换用更大规模的冗余协议。
+待补充。
 
 ## 易错点
 
-- ❌ 说"环网就是两条路" —— 没说到阻塞环口防风暴这个机制
-- ❌ 只讲可靠性不讲切换时间 —— 工业场景里切换时间是硬指标
-- ✅ 说清「200ms 恢复 + PROFINET 标准配套」这两个选型理由
+- ❌ 只讲「我用了 U-Net」 —— 面试官要听的是「为什么这么选」
+- ❌ 报 Dice 不说多少例、怎么划分
+- ✅ 主动交代数据规模与标注质量，这是医学影像面试的核心可信度
 
 ## 关联项目
 
-西门子杯（MRP 环网组态）
+- `方向与规划/项目/跟骨/`（数据集与预处理结果）
+- `方向与规划/项目/跟骨/result`（实验结果）
 
 ## 来源
 
-IEC 62439-2；PROFINET 环网冗余规范
+研究生科研课题（尚未成文）
 
 ## 出现记录
 

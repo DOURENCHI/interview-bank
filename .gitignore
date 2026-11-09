@@ -4,3 +4,5 @@ dist/_shot*.png
 .venv/
 *.tmp
 dist/_probe.html
+dist/_*.html
+dist/_*.png
