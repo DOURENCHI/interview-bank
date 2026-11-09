@@ -1,6 +1,6 @@
 ---
 id: Q-1672
-title: 这段 C++ 代码输出什么？（37 流与字符串处理 · 第 59 题）
+title: 这段 C++ 代码输出什么？（37 流与字符串处理 · 第 60 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-istringstream iss("1 2 3");
-int x, sum = 0;
-while (iss >> x) sum += x;
-cout << sum;
+cout << setw(6) << setfill('0') << 42
+     << " " << fixed << setprecision(2) << 3.14159;
 ```
 
-- **A.** 6
-- **B.** 123
-- **C.** 3
-- **D.** 1 2 3
+- **A.** 000042 3.14
+- **B.** 42 3.14
+- **C.** 000042 3.14159
+- **D.** 00042 3.14
 
 ## 口述答案
 
-答案是 **A. 6**，实际输出 `6`。
+答案是 **A. 000042 3.14**，实际输出 `000042 3.14`。
 
-用 while(iss >> x) 逐个读整数并累加；读取失败或到达末尾时表达式为假，循环自然结束。不要写 while(!iss.eof())，它会让最后一项多处理一次。
+setw(6) + setfill('0') 补成 6 位得 000042；fixed 配合 setprecision(2) 是小数点后 2 位，得 3.14（不加 fixed 则是 2 位有效数字 3.1）。setw 只对下一项有效，setfill / fixed / precision 持续有效。
 
 ## 讲深一层
 

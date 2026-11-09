@@ -1,10 +1,10 @@
 ---
 id: Q-1863
-title: 删除有序数组中的重复项：为什么返回长度而不是新数组？
+title: 颜色分类：三指针的边界怎么定才不出错？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 1
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 数组]
-hint: 题目要求原地修改，返回值是有效长度，调用方按前 k 个读。
+tags: [三指针, 分区]
+hint: 0 区右边界 p0、2 区左边界 p2、当前 p。遇到 2 交换后 p 不能自增，换过来的是未检元素。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：题目要求原地修改，返回值是有效长度，调用方按前 k 个读。
+**套路**：0 区右边界 p0、2 区左边界 p2、当前 p。遇到 2 交换后 p 不能自增，换过来的是未检元素。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

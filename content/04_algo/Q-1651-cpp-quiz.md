@@ -1,6 +1,6 @@
 ---
 id: Q-1651
-title: 这段 C++ 代码输出什么？（29 序列容器 · 第 38 题）
+title: 这段 C++ 代码输出什么？（29 序列容器 · 第 39 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v(5);
-v.reserve(100);
-vector<int>(v).swap(v);
-cout << v.size() << " " << v.capacity();
+vector<int> v{1,2,3};
+try { cout << v.at(5); }
+catch (const out_of_range&) { cout << "E"; }
 ```
 
-- **A.** 5 5
-- **B.** 5 100
-- **C.** 100 5
-- **D.** 0 0
+- **A.** E
+- **B.** 0
+- **C.** 3
+- **D.** 运行崩溃
 
 ## 口述答案
 
-答案是 **A. 5 5**，实际输出 `5 5`。
+答案是 **A. E**，实际输出 `E`。
 
-用拷贝构造出的临时 vector（容量紧贴 size）与原容器交换，临时对象析构时带走那块大内存；size 仍是 5，容量收缩到 5。C++11 起也可写 v.shrink_to_fit()，但只是非强制建议。
+at() 会检查越界并抛 std::out_of_range，异常被 catch 住所以输出 E；operator[] 不检查越界，是未定义行为（可能读到垃圾值，也可能崩溃）。
 
 ## 讲深一层
 

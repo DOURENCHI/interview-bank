@@ -2,7 +2,7 @@
 id: Q-0101
 title: 介绍一下你的本科毕设
 module: 01_project
-sub: 4G道路测温
+sub: 本科毕设·4G 测温
 priority: P0
 difficulty: 2
 roles: [嵌入式, 感知]

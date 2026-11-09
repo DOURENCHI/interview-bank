@@ -1,10 +1,10 @@
 ---
 id: Q-1867
-title: 相交链表：长度差法和「走两遍」各自原理？
+title: 回文链表：O(1) 空间怎么做？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 链表]
-hint: 走两遍：a 走完接 b、b 走完接 a，路径等长必然同时到交点。长度差法本质相同。
+tags: [快慢指针, 反转链表]
+hint: 快慢指针找中点，反转后半段，再逐个比较。注意奇偶长度的中点处理。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：走两遍：a 走完接 b、b 走完接 a，路径等长必然同时到交点。长度差法本质相同。
+**套路**：快慢指针找中点，反转后半段，再逐个比较。注意奇偶长度的中点处理。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

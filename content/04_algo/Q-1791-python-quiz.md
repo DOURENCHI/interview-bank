@@ -1,6 +1,6 @@
 ---
 id: Q-1791
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 97 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 98 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,25 @@ lab_src: quiz
 
 ```python
 import torch
-rnn = torch.nn.RNN(4, 5, batch_first=True)
-out, h = rnn(torch.randn(2, 7, 4))
-print(tuple(out.shape), tuple(h.shape))
+cell = torch.nn.RNNCell(4, 5)
+h = torch.zeros(2, 5)
+shapes = []
+for _ in range(3):
+    h = cell(torch.randn(2, 4), h)
+    shapes.append(tuple(h.shape))
+print(shapes)
 ```
 
-- **A.** (2, 7, 5) (1, 2, 5)
-- **B.** ((2, 4, 7), (2, 5, 1))
-- **C.** ((2, 7, 5), (2, 5))
-- **D.** ((1, 2, 5), (2, 7, 5))
+- **A.** [(2, 5), (2, 5), (2, 5)]
+- **B.** [(2, 4), (2, 4), (2, 4)]
+- **C.** [(2, 6), (2, 6), (2, 6)]
+- **D.** [(5, 2), (5, 2), (5, 2)]
 
 ## 口述答案
 
-答案是 **A. (2, 7, 5) (1, 2, 5)**，实际输出 `(2, 7, 5) (1, 2, 5)`。
+答案是 **A. [(2, 5), (2, 5), (2, 5)]**，实际输出 `[(2, 5), (2, 5), (2, 5)]`。
 
-batch_first=True 时输入 (批, 序列长, 特征)，输出 (2,7,5)；h 是最后隐状态 (层数1, 批2, 隐层5)。
+RNNCell 一次处理一个时间步，输入 (批, 输入特征4)、隐状态 (批, 隐层5)，输出隐状态形状恒为 (2,5)。
 
 ## 讲深一层
 

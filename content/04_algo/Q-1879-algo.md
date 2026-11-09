@@ -1,10 +1,10 @@
 ---
 id: Q-1879
-title: 单词搜索：回溯的剪枝和状态恢复怎么做？
+title: 二叉树的最大深度：递归和层序各自怎么算？
 module: 04_algo
 sub: DFS BFS
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [回溯, DFS, 网格]
-hint: 越界或不匹配立即返回 false；匹配后临时标记已访问，四方向递归，返回前恢复。
+tags: [DFS, BFS, 二叉树]
+hint: 递归 1+max(左,右)；层序数层数。前者更短，后者能顺带拿到宽度。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：越界或不匹配立即返回 false；匹配后临时标记已访问，四方向递归，返回前恢复。
+**套路**：递归 1+max(左,右)；层序数层数。前者更短，后者能顺带拿到宽度。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

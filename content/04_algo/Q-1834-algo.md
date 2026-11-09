@@ -1,10 +1,10 @@
 ---
 id: Q-1834
-title: 螺旋矩阵：边界怎么收缩才不会漏或重？
+title: 矩阵置零：不用额外空间怎么标记要清零的行列？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [矩阵, 模拟]
-hint: 维护上下左右四个边界，每走完一条边收缩一格，循环条件是 top<=bottom 且 left<=right。
+tags: [矩阵, 原地]
+hint: 用第一行和第一列当标记位，另外单独记第一行、第一列本身是否需要清零。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：维护上下左右四个边界，每走完一条边收缩一格，循环条件是 top<=bottom 且 left<=right。
+**套路**：用第一行和第一列当标记位，另外单独记第一行、第一列本身是否需要清零。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

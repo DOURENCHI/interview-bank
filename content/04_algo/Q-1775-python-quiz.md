@@ -1,6 +1,6 @@
 ---
 id: Q-1775
-title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 81 题）
+title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 82 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,27 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-from torch.utils.data import Dataset, DataLoader
-class DS(Dataset):
-    def __init__(self):
-        self.x = torch.tensor([1.0, 2.0, 3.0])
-    def __len__(self):
-        return 3
-    def __getitem__(self, i):
-        return self.x[i] * 10, self.x[i]
-print([xb.tolist() for xb, _ in DataLoader(DS(), batch_size=3)])
+s = torch.sigmoid(torch.tensor([0.0, 2.0, 4.0]))
+print([round(v, 6) for v in s.tolist()])
 ```
 
-- **A.** [[10.0, 20.0, 30.0]]
-- **B.** [[1.0, 2.0, 3.0]]
-- **C.** [[10.0], [20.0], [30.0]]
-- **D.** [[30.0, 20.0, 10.0]]
+- **A.** [0.5, 0.880797, 0.982014]
+- **B.** [0.5, 0.5, 0.5]
+- **C.** [0.5, 0.119203, 0.017986]
+- **D.** [0.0, 2.0, 4.0]
 
 ## 口述答案
 
-答案是 **A. [[10.0, 20.0, 30.0]]**，实际输出 `[[10.0, 20.0, 30.0]]`。
+答案是 **A. [0.5, 0.880797, 0.982014]**，实际输出 `[0.5, 0.880797, 0.982014]`。
 
-__getitem__ 返回 (输入, 标签) 二元组时 DataLoader 才能默认成对堆叠；返回单值时 collate 会把单个元素当序列处理，形状会变成 (3,) 而不是 (1,3)。
+sigmoid 把任意实数压进 (0,1)，0 → 0.5、2 → 0.8808、4 → 0.9820。它是单调的，不能区分 2 和 4 这种大小关系。
 
 ## 讲深一层
 
@@ -62,4 +55,4 @@ __getitem__ 返回 (输入, 标签) 二元组时 DataLoader 才能默认成对�
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 06 Dataset 与 DataLoader
+`教学文档/Python实验台/Python考点实验台.html` · 07 分类：逻辑回归与交叉熵

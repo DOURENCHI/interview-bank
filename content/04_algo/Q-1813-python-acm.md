@@ -1,6 +1,6 @@
 ---
 id: Q-1813
-title: 手写梯度下降：w 一步步走向 2.0 的 ACM 输入输出怎么写？
+title: PyTorch 版线性回归：完整训练循环 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,39 +23,52 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-xs = [1.0, 2.0, 3.0]
-ys = [2.0, 4.0, 6.0]
+import torch
+
+torch.manual_seed(1)
+
+x_data = torch.Tensor([[1.0], [2.0], [3.0]])
+y_data = torch.Tensor([[2.0], [4.0], [6.0]])
 
 
-def cost(w):
-    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
+class LinearModel(torch.nn.Module):
+    def __init__(self):
+        super(LinearModel, self).__init__()
+        self.linear = torch.nn.Linear(1, 1)
+
+    def forward(self, x):
+        return self.linear(x)
 
 
-def grad(w):
-    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
+model = LinearModel()
+criterion = torch.nn.MSELoss(reduction="sum")
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
+for epoch in range(100):
+    y_pred = model(x_data)
+    loss = criterion(y_pred, y_data)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    if epoch % 20 == 0:
+        print(f"Epoch {epoch}: loss={loss.item():.4f}")
 
-w = 1.0
-print(f"初始 w={w:.4f} cost={cost(w):.4f} grad={grad(w):.4f}")
-for step in range(100):
-    g = grad(w)
-    w -= 0.01 * g
-    if step < 3 or step % 25 == 0:
-        print(f"Epoch {step}: w={w:.4f} cost={cost(w):.4f}")
-print(f"最终 w={w:.4f}（真实值 2.0）")
+print("w =", round(model.linear.weight.item(), 4))
+print("b =", round(model.linear.bias.item(), 4))
+print("predict 4h =", round(model(torch.Tensor([[4.0]])).item(), 4))
 ```
 
 输出样例：
 
 ```
-初始 w=1.0000 cost=4.6667 grad=-9.3333
-Epoch 0: w=1.0933 cost=3.8362
-Epoch 1: w=1.1780 cost=3.1535
-Epoch 2: w=1.2547 cost=2.5923
-Epoch 25: w=1.9217 cost=0.0286
-Epoch 50: w=1.9932 cost=0.0002
-Epoch 75: w=1.9994 cost=0.0000
-最终 w=1.9999（真实值 2.0）
+Epoch 0: loss=39.3106
+Epoch 20: loss=0.0101
+Epoch 40: loss=0.0076
+Epoch 60: loss=0.0057
+Epoch 80: loss=0.0043
+w = 1.9622
+b = 0.086
+predict 4h = 7.9346
 ```
 
 ## 口述答案

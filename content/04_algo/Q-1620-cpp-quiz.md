@@ -1,6 +1,6 @@
 ---
 id: Q-1620
-title: 这段 C++ 代码输出什么？（05 控制结构 · 第 7 题）
+title: 这段 C++ 代码输出什么？（05 控制结构 · 第 8 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,25 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-int x = 2;
-switch (x) {
-    case 1: cout << "A";
-    case 2: cout << "B";
-    case 3: cout << "C";
-    default: cout << "D";
-}
+int i, c = 0;
+for (i = 0; i < 10; i += 3) c++;
+cout << c << " " << i;
 ```
 
-- **A.** B
-- **B.** BC
-- **C.** BCD
-- **D.** BD
+- **A.** 3 9
+- **B.** 4 10
+- **C.** 4 12
+- **D.** 3 12
 
 ## 口述答案
 
-答案是 **C. BCD**，实际输出 `BCD`。
+答案是 **C. 4 12**，实际输出 `4 12`。
 
-没有 break 会贯穿：从 case 2 进入，一路执行到 switch 结束。
+i 依次取 0、3、6、9，共 4 次；之后 i 变成 12，条件不成立，循环结束。
 
 ## 讲深一层
 

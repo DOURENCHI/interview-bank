@@ -1,10 +1,10 @@
 ---
 id: Q-1844
-title: 字符串转换整数 atoi：边界有哪几处坑？
+title: 实现 strStr()：KMP 的 next 数组到底在算什么？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, 边界]
-hint: 前导空格、正负号、非数字截断、int 溢出（用 long long 或提前判边界）。顺序错就出错。
+tags: [字符串, KMP]
+hint: next[i] 是模式串前 i 个字符的最长相等前后缀长度。失配时据此跳转，主串指针不回退。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：前导空格、正负号、非数字截断、int 溢出（用 long long 或提前判边界）。顺序错就出错。
+**套路**：next[i] 是模式串前 i 个字符的最长相等前后缀长度。失配时据此跳转，主串指针不回退。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

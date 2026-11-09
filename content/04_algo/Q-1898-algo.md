@@ -1,10 +1,10 @@
 ---
 id: Q-1898
-title: 打家劫舍 II：环形怎么拆成两个线性？
+title: 股票买卖含冷冻期：状态机 DP 有哪几个状态？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 环形]
-hint: 首尾不能同时偷，分别算「不偷第一个」和「不偷最后一个」，取较大值。
+tags: [DP, 状态机]
+hint: 持有 / 不持有且冷冻 / 不持有可买，三态转移。状态定义清楚，转移就自然。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：首尾不能同时偷，分别算「不偷第一个」和「不偷最后一个」，取较大值。
+**套路**：持有 / 不持有且冷冻 / 不持有可买，三态转移。状态定义清楚，转移就自然。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

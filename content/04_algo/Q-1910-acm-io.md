@@ -1,10 +1,10 @@
 ---
 id: Q-1910
-title: 输入里混着数字和字符串，C++ 怎么读不串行？
+title: Python 机考第一行两个整数，怎么写最快？
 module: 04_algo
-sub: C++ 读写
+sub: Python 读写
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,72 +12,68 @@ status: answered
 source_type: self_doc
 source_ref: 机考 ACM 模式通用写法整理
 verified_at: 2026-11-09
-tags: [ACM, 输入输出, 机考, C++ 读写]
+tags: [ACM, 输入输出, 机考, Python 读写]
 auto: true
 acm_seed: true
 ---
 
 ## 题目
 
-**输入**：第一行 `n`；随后 `n` 行，每行形如 `名字 分数`（名字不含空格）。
-**输出**：按分数降序，输出 `名字 分数`。
+**输入**：第一行 `n m`，接下来 `n` 行每行 `m` 个整数。
+**输出**：元素之和。
 
 ```
 输入样例
-3
-tom 90
-amy 95
-bob 88
+2 3
+1 2 3
+4 5 6
 
 输出样例
-amy 95
-tom 90
-bob 88
+21
 ```
 
 ## 口述答案
 
-```cpp
-#include <bits/stdc++.h>
-using namespace std;
+```python
+import sys
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+def main():
+    data = sys.stdin.read().split()
+    it = iter(data)
+    n = int(next(it)); m = int(next(it))
+    total = 0
+    for _ in range(n * m):
+        total += int(next(it))
+    print(total)
 
-    int n; cin >> n;
-    vector<pair<string,int>> v(n);
-    for (int i = 0; i < n; ++i) cin >> v[i].first >> v[i].second;
-
-    stable_sort(v.begin(), v.end(),
-                [](auto& a, auto& b){ return a.second > b.second; });
-
-    for (auto& p : v) cout << p.first << ' ' << p.second << '\n';
-    return 0;
-}
+main()
 ```
 
 ## 讲深一层
 
-`cin >> string` 读的是「到下一个空白为止」，所以名字里**不能有空格**。题面说「名字不含空格」就能直接用；如果名字可能含空格（如 `Li Ming`），就必须 `getline` 整行再切分——这是两道完全不同的题。
+Python 机考的核心思路是：**一次性读完全部输入，再按需要切片**。因为 `input()` 每调一次就是一次系统调用级别的开销，百万行时会明显拖慢。
 
-排序稳定性：
-- `sort` 不稳定，同分元素的相对顺序不定
-- `stable_sort` 稳定，保持输入顺序
+三种读法对比：
 
-题面若要求「同分按输入顺序」，必须用 `stable_sort`，或者排序时把原始下标作为第二关键字。
+| 写法 | 速度 | 适用 |
+|---|---|---|
+| `input()` 逐行 | 最慢 | 行数少，逻辑按行处理 |
+| `sys.stdin.readline()` | 快 2–3 倍 | 需要按行处理 |
+| `sys.stdin.read().split()` | 最快 | **数字为主的题，首选** |
+
+`split()` 不传参数时按任意空白切分（空格、Tab、换行都算），所以上面完全不用管「换行在哪」，和 C++ 的 `cin >>` 等价。
 
 ## 高频追问
 
-1. **`cin >> string` 遇到空行怎么办？** —— 会跳过空白继续找下一个 token，不会返回空串。想读空行必须 `getline`。
-2. **`pair` 的默认比较是什么？** —— 先比 `first` 再比 `second`。这里要按分数降序，所以必须自定义比较器。
-3. **`auto&` 在 lambda 参数里为什么带 `&`？** —— 避免拷贝。用 `const auto&` 更严谨。
+1. **`iter` + `next` 是必须的吗？** —— 不是，但用它按需取 token 比维护下标 `i` 更不容易越界。
+2. **`sys.stdin.read()` 会不会内存爆？** —— 会。几十万 token 没问题，上千万就要改按行读。
+3. **为什么包一层 `main()`？** —— 局部变量比全局变量快（`LOAD_FAST` vs `LOAD_GLOBAL`），数据量大时有可观差距。
 
 ## 易错点
 
-- ❌ 用 `sort` 但题面要求稳定 —— 同分顺序错
-- ❌ 比较器写成 `>=` —— `sort` 要求严格弱序，`>=` 会越界崩溃
-- ❌ 名字含空格却用 `cin >>` —— 只读到第一个词
+- ❌ 用 `input()` 读百万行 —— 超时
+- ❌ `split()` 后发现 token 数不够 —— 题面格式看错了，加断言能早发现
+- ❌ 忘了 `int()` 转换 —— 字符串累加会变成拼接
 
 ## 关联项目
 
@@ -85,4 +81,4 @@ int main() {
 
 ## 来源
 
-`istream::operator>>(string)` 与 `stable_sort` 语义
+`sys.stdin.read` / `str.split` 语义

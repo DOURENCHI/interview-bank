@@ -1,6 +1,6 @@
 ---
 id: Q-1641
-title: 这段 C++ 代码输出什么？（21 STL 容器 · 第 28 题）
+title: 这段 C++ 代码输出什么？（21 STL 容器 · 第 29 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v = {3, 1, 4};
-v.pop_back();
-v.push_back(9);
-cout << v.size() << v[2];
+map<string, int> m;
+m["b"] = 2;
+m["a"] = 1;
+int z = m["c"];
+for (auto &p : m) cout << p.first;
 ```
 
-- **A.** 39
-- **B.** 34
-- **C.** 49
-- **D.** 24
+- **A.** ba
+- **B.** ab
+- **C.** abc
+- **D.** bac
 
 ## 口述答案
 
-答案是 **A. 39**，实际输出 `39`。
+答案是 **C. abc**，实际输出 `abc`。
 
-pop_back 删掉 4，push_back 在末尾加上 9：v = {3, 1, 9}。
+map 按键排序；用 [] 读一个不存在的键会自动插入它（值为 0）。
 
 ## 讲深一层
 

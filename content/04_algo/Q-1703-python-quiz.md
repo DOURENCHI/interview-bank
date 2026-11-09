@@ -1,6 +1,6 @@
 ---
 id: Q-1703
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 9 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 10 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(1 == 1.0, 1 == 1, [] == [], [] is [])
+print("abc".upper(), "A,B".split(","), "  x ".strip())
 ```
 
-- **A.** True True True False
-- **B.** True True True True
-- **C.** True False True False
-- **D.** False True False False
+- **A.** ABC ['A', 'B'] x
+- **B.** ABC ('A', 'B') x
+- **C.** abc ['A', 'B'] x
+- **D.** ABC ['A,B'] 'x'
 
 ## 口述答案
 
-答案是 **A. True True True False**，实际输出 `True True True False`。
+答案是 **A. ABC ['A', 'B'] x**，实际输出 `ABC ['A', 'B'] x`。
 
-== 比的是值，1 == 1.0 为真；两个空列表内容相等但不是同一个对象，所以 == 为 True、is 为 False——这是 Python 新手最常踩的坑之一。
+split 无参时按空白切分，传了分隔符就按分隔符切，返回列表；strip 只去掉两端空白。
 
 ## 讲深一层
 

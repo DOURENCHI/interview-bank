@@ -1,10 +1,10 @@
 ---
 id: Q-1890
-title: 0-1 背包：为什么内层循环必须倒序？
+title: 分割等和子集：怎么转化成 0-1 背包？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -13,14 +13,14 @@ source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
 tags: [DP, 背包]
-hint: 倒序保证 dp[j] 用的是上一轮的值；正序会让同一物品被重复选，变成完全背包。
+hint: 目标和 = sum/2，问能否凑出这个和。sum 为奇数直接 false。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：倒序保证 dp[j] 用的是上一轮的值；正序会让同一物品被重复选，变成完全背包。
+**套路**：目标和 = sum/2，问能否凑出这个和。sum 为奇数直接 false。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

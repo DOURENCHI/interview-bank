@@ -1,6 +1,6 @@
 ---
 id: Q-1721
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 27 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 28 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(1 == 1.0, 1 == 1.0, [1, 2] == [1.0, 2.0])
+print(id(None) == id(None), None is None)
 ```
 
-- **A.** True True True
-- **B.** True False True
-- **C.** False True True
-- **D.** True True False
+- **A.** True True
+- **B.** True False
+- **C.** False True
+- **D.** False False
 
 ## 口述答案
 
-答案是 **A. True True True**，实际输出 `True True True`。
+答案是 **A. True True**，实际输出 `True True`。
 
-数值比较跨类型按值判定，1 == 1.0 为真；列表比较逐元素比，1 == 1.0 也为真，所以整个列表相等。
+None 是单例，解释器里只有一个，所以 id 相同、is 也为 True——判空推荐写「x is None」。
 
 ## 讲深一层
 

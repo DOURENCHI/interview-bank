@@ -1,6 +1,6 @@
 ---
 id: Q-1680
-title: 抽象类与多态 的 ACM 输入输出怎么写？
+title: 类模板 Stack 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,36 +23,25 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-class Shape {
+template <typename T>
+class Stack {
+    vector<T> data;
 public:
-    virtual double area() const = 0;
-    virtual ~Shape() {}
-};
-class Circle : public Shape {
-    double r;
-public:
-    Circle(double r) : r(r) {}
-    double area() const override { return 3.14159 * r * r; }
-};
-class Rect : public Shape {
-    double w, h;
-public:
-    Rect(double w, double h) : w(w), h(h) {}
-    double area() const override { return w * h; }
+    void push(const T &x) { data.push_back(x); }
+    T pop() { T x = data.back(); data.pop_back(); return x; }
+    bool empty() const { return data.empty(); }
 };
 int main() {
-    vector<unique_ptr<Shape>> shapes;
-    shapes.push_back(make_unique<Circle>(1));
-    shapes.push_back(make_unique<Rect>(3, 4));
-    for (auto &s : shapes) cout << s->area() << '\n';
+    Stack<string> s;
+    s.push("C"); s.push("+"); s.push("+");
+    while (!s.empty()) cout << s.pop();
 }
 ```
 
 输出样例：
 
 ```
-3.14159
-12
+++C
 ```
 
 ## 口述答案
@@ -77,4 +66,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 19
+`教学文档/C++实验台/C++考点实验台.html` · 20

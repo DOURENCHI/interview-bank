@@ -1,10 +1,10 @@
 ---
 id: Q-1857
-title: 无重复字符的最长子串：左边界为什么要取 max？
+title: 最小覆盖子串：need 和 window 两个计数器怎么维护？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -13,14 +13,14 @@ source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
 tags: [滑窗, 哈希]
-hint: left = max(left, last[c]+1)。不取 max 的话，遇到更早出现过的字符会把窗口往回拉。
+hint: need 记目标频次，window 记当前窗口；用 valid 记已满足的字符种类数，等于 need 大小就尝试收缩。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：left = max(left, last[c]+1)。不取 max 的话，遇到更早出现过的字符会把窗口往回拉。
+**套路**：need 记目标频次，window 记当前窗口；用 valid 记已满足的字符种类数，等于 need 大小就尝试收缩。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

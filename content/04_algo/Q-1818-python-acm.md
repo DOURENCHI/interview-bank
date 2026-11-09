@@ -1,6 +1,6 @@
 ---
 id: Q-1818
-title: CNN：卷积、池化与维度计算 的 ACM 输入输出怎么写？
+title: RNN / LSTM / GRU 的形状对照 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -26,35 +26,34 @@ lab_src: snip
 import torch
 import torch.nn as nn
 
-x = torch.arange(25, dtype=torch.float32).reshape(1, 1, 5, 5)
-conv = nn.Conv2d(1, 1, kernel_size=3, bias=False)
-with torch.no_grad():
-    conv.weight.fill_(1.0)
-out = conv(x)
-print("5x5 经 3x3 卷积 ->", tuple(out.shape))
-print("输出值", out.reshape(-1).tolist())
+seq = torch.randn(2, 7, 4)
 
-pool = nn.MaxPool2d(2)
-print("2x2 池化 ->", tuple(pool(torch.tensor([[[[1.0, 2.0], [3.0, 4.0]]]])).shape))
+rnn = nn.RNN(4, 5, batch_first=True)
+out, h = rnn(seq)
+print("RNN  输出", tuple(out.shape), "hidden", tuple(h.shape))
 
-flat = nn.Sequential(nn.Conv2d(1, 10, 3), nn.ReLU(), nn.MaxPool2d(2), nn.Flatten())
-print("28x28 全流程 ->", tuple(flat(torch.randn(1, 1, 28, 28)).shape))
+lstm = nn.LSTM(4, 5, batch_first=True)
+print("LSTM 输出", tuple(lstm(seq)[0].shape))
 
-print("尺寸公式 (28-3)//2+1 =", (28 - 3) // 2 + 1)
+gru = nn.GRU(4, 5, batch_first=True)
+print("GRU  输出", tuple(gru(seq)[0].shape))
 
-c11 = nn.Conv2d(64, 32, 1)
-print("1x1 卷积 ->", tuple(c11(torch.randn(1, 64, 8, 8)).shape), "权重", tuple(c11.weight.shape))
+cell = nn.RNNCell(4, 5)
+hh = torch.zeros(2, 5)
+for t in range(3):
+    hh = cell(torch.randn(2, 4), hh)
+    print(f"第 {t + 1} 个时间步 hidden", tuple(hh.shape))
 ```
 
 输出样例：
 
 ```
-5x5 经 3x3 卷积 -> (1, 1, 3, 3)
-输出值 [54.0, 63.0, 72.0, 99.0, 108.0, 117.0, 144.0, 153.0, 162.0]
-2x2 池化 -> (1, 1, 1, 1)
-28x28 全流程 -> (1, 1690)
-尺寸公式 (28-3)//2+1 = 13
-1x1 卷积 -> (1, 32, 8, 8) 权重 (32, 64, 1, 1)
+RNN  输出 (2, 7, 5) hidden (1, 2, 5)
+LSTM 输出 (2, 7, 5)
+GRU  输出 (2, 7, 5)
+第 1 个时间步 hidden (2, 5)
+第 2 个时间步 hidden (2, 5)
+第 3 个时间步 hidden (2, 5)
 ```
 
 ## 口述答案

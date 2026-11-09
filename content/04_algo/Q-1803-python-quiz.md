@@ -1,6 +1,6 @@
 ---
 id: Q-1803
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 109 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 110 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -23,21 +23,20 @@ lab_src: quiz
 import torch
 torch.manual_seed(10)
 d = torch.nn.Dropout(0.5)
-d.train()
-out = d(torch.ones(1000))
-print(round(float((out == 0).float().mean()), 4))
+d.eval()
+print(round(float(d(torch.ones(10)).sum()), 4))
 ```
 
-- **A.** 0.499
-- **B.** 0.5, 
-- **C.** 0.999
-- **D.** 0.0
+- **A.** 10.0
+- **B.** 0.0
+- **C.** 5.0
+- **D.** 1.0
 
 ## 口述答案
 
-答案是 **A. 0.499**，实际输出 `0.499`。
+答案是 **A. 10.0**，实际输出 `10.0`。
 
-Dropout 在 train 模式按 p=0.5 随机置零，实测 1000 个里有 499 个是 0，接近 0.5。
+eval 模式关闭 Dropout，10 个 1 原样通过，和是 10.0。推理时忘了 model.eval() 是最常见的线上事故。
 
 ## 讲深一层
 

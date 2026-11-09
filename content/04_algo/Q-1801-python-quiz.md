@@ -1,6 +1,6 @@
 ---
 id: Q-1801
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 107 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 108 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,33 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(9)
-m = torch.nn.Linear(1, 1)
-opt = torch.optim.SGD(m.parameters(), lr=1e4)
-xs = torch.Tensor([[1.0], [2.0], [3.0]])
-ys = torch.Tensor([[2.0], [4.0], [6.0]])
-crit = torch.nn.MSELoss(reduction="sum")
-first = None
-for _ in range(5):
-    loss = crit(m(xs), ys)
-    opt.zero_grad()
-    loss.backward()
-    opt.step()
-    if first is None:
-        first = loss.item()
-print(round(first, 4), round(loss.item(), 4), loss.item() > first)
+m = torch.nn.Linear(2, 1)
+print(m.weight_decay if hasattr(m, "weight_decay") else "n/a")
 ```
 
-- **A.** 48.404 inf True
-- **B.** (48.404, 0.0, False)
-- **C.** (0.0, 48.404, True)
-- **D.** (48.404, 48.404, False)
+- **A.** n/a
+- **B.** 0.01
+- **C.** 0.0
+- **D.** 1e-4
 
 ## 口述答案
 
-答案是 **A. 48.404 inf True**，实际输出 `48.404 inf True`。
+答案是 **A. n/a**，实际输出 `n/a`。
 
-学习率 1e4 太大，一步就冲过头，损失变成 inf（溢出）。看到 inf/nan 先怀疑学习率。
+weight_decay 是优化器的参数不是层的参数，所以 Linear 上没有这个属性——要写在 torch.optim.SGD(..., weight_decay=...) 里。
 
 ## 讲深一层
 

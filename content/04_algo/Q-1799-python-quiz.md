@@ -1,6 +1,6 @@
 ---
 id: Q-1799
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 105 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 106 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,22 +22,22 @@ lab_src: quiz
 ```python
 import torch
 m = torch.nn.Linear(2, 1)
-m(torch.ones(1, 2)).sum().backward()
-g = float(m.weight.grad.sum())
-m.zero_grad()
-print(round(g, 6), m.weight.grad)
+opt = torch.optim.Adam(m.parameters(), lr=0.01)
+m(torch.randn(4, 2)).sum().backward()
+opt.step()
+print(tuple(opt.state[m.weight].keys()))
 ```
 
-- **A.** 2.0 None
-- **B.** (2.0, 0.0)
-- **C.** (None, None)
-- **D.** (1.0, 1.0)
+- **A.** ('step', 'exp_avg', 'exp_avg_sq')
+- **B.** ('exp_avg',)
+- **C.** ('step',)
+- **D.** ()
 
 ## 口述答案
 
-答案是 **A. 2.0 None**，实际输出 `2.0 None`。
+答案是 **A. ('step', 'exp_avg', 'exp_avg_sq')**，实际输出 `('step', 'exp_avg', 'exp_avg_sq')`。
 
-zero_grad 之后梯度变成 None（不是 0），因为 PyTorch 用 None 表示「没有梯度」以节省内存；这是判断有没有清零成功的标志。
+Adam 为每个参数维护步数、一阶动量和二阶动量三个状态，这是它比 SGD 收敛快的原因。
 
 ## 讲深一层
 

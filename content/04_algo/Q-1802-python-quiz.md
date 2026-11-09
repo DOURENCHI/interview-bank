@@ -1,6 +1,6 @@
 ---
 id: Q-1802
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 108 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 109 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,23 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Linear(2, 1)
-print(m.weight_decay if hasattr(m, "weight_decay") else "n/a")
+torch.manual_seed(10)
+d = torch.nn.Dropout(0.5)
+d.train()
+out = d(torch.ones(1000))
+print(round(float((out == 0).float().mean()), 4))
 ```
 
-- **A.** n/a
-- **B.** 0.01
-- **C.** 0.0
-- **D.** 1e-4
+- **A.** 0.499
+- **B.** 0.5, 
+- **C.** 0.999
+- **D.** 0.0
 
 ## 口述答案
 
-答案是 **A. n/a**，实际输出 `n/a`。
+答案是 **A. 0.499**，实际输出 `0.499`。
 
-weight_decay 是优化器的参数不是层的参数，所以 Linear 上没有这个属性——要写在 torch.optim.SGD(..., weight_decay=...) 里。
+Dropout 在 train 模式按 p=0.5 随机置零，实测 1000 个里有 499 个是 0，接近 0.5。
 
 ## 讲深一层
 

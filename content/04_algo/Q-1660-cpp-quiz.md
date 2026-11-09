@@ -1,6 +1,6 @@
 ---
 id: Q-1660
-title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 47 题）
+title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 48 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,21 +20,22 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v{1,3,3,3,5};
-cout << lower_bound(v.begin(),v.end(),3)-v.begin()
-     << " " << upper_bound(v.begin(),v.end(),3)-v.begin();
+int a[4] = {3,1,4,2};
+sort(a, a+4);
+cout << binary_search(a,a+4,3) << " "
+     << binary_search(a,a+4,5);
 ```
 
-- **A.** 1 4
-- **B.** 1 3
-- **C.** 2 4
-- **D.** 3 4
+- **A.** 1 0
+- **B.** 0 1
+- **C.** 1 1
+- **D.** 0 0
 
 ## 口述答案
 
-答案是 **A. 1 4**，实际输出 `1 4`。
+答案是 **A. 1 0**，实际输出 `1 0`。
 
-lower_bound 返回第一个「不小于 3」的位置 1，upper_bound 返回第一个「大于 3」的位置 4；相减就是相等元素个数 3。前提是区间已排序，复杂度 O(log n)。
+binary_search 只回答「是否存在」，返回 bool（输出 1 / 0），不返回位置；必须先排序，否则结果无意义。要位置用 lower_bound。
 
 ## 讲深一层
 

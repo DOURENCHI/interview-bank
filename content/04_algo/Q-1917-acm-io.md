@@ -1,6 +1,6 @@
 ---
 id: Q-1917
-title: Python 读百万级数据超时，怎么优化输入？
+title: Python 要输出很多行，怎么避免 print 拖慢整体？
 module: 04_algo
 sub: Python 读写
 priority: P0
@@ -19,10 +19,18 @@ acm_seed: true
 
 ## 题目
 
-**输入**：`n` 个数（`n ≤ 1e6`），求最大值。
-**输出**：最大值。
+**输入**：`n`（`n ≤ 2e5`）。
+**输出**：`1` 到 `n`，每行一个。
 
-典型「算法对但 IO 超时」场景。
+```
+输入样例
+3
+
+输出样例
+1
+2
+3
+```
 
 ## 口述答案
 
@@ -30,40 +38,51 @@ acm_seed: true
 import sys
 
 def main():
-    data = sys.stdin.buffer.read().split()
-    n = int(data[0])
-    mx = max(map(int, data[1:n + 1]))
-    sys.stdout.write(str(mx))
+    n = int(sys.stdin.readline())
+    out = []
+    for i in range(1, n + 1):
+        out.append(str(i))
+    sys.stdout.write("\n".join(out))
 
 main()
 ```
 
 ## 讲深一层
 
-关键在 `sys.stdin.buffer`：它拿到的是**字节流**，跳过文本解码这一层。
+`print` 的开销不只是写数据，还包括参数解析、`sep`/`end` 处理、类型转换。二十万次调用能积累出秒级差距。
 
-| 写法 | 相对速度 | 说明 |
-|---|---|---|
-| `input()` 逐行 | 1x | 每次都要解码 + 去换行 |
-| `sys.stdin.readline()` | 2–3x | 仍走文本层 |
-| `sys.stdin.read()` | 5x | 一次读完，文本层 |
-| `sys.stdin.buffer.read()` | 8–10x | **字节层，最快** |
+三种输出方式对比：
 
-`buffer.read().split()` 得到的是 `bytes` 列表，`int(b'123')` 是合法的（Python 会自动转），所以后面照常处理。
+| 写法 | 适用 |
+|---|---|
+| 循环 `print` | 行数少（几百），可读性优先 |
+| 攒列表 + `'\n'.join` + 一次 `write` | **推荐**，通用且快 |
+| 生成器 + `writelines` | 内存紧张时，逐块写 |
 
-另一个隐藏瓶颈是 `print`：每次 `print` 都要拼缓冲并可能 flush。循环里输出几万行时，攒成列表再 `'\n'.join` 一次性写，能差出好几秒。
+内存权衡：攒列表会占内存（二十万行约几 MB，可接受）；如果输出是百万行，改用分批写入：
+
+```python
+buf = []
+for i in range(1, n + 1):
+    buf.append(str(i))
+    if len(buf) == 10000:
+        sys.stdout.write("\n".join(buf) + "\n")
+        buf.clear()
+if buf:
+    sys.stdout.write("\n".join(buf) + "\n")
+```
 
 ## 高频追问
 
-1. **`bytes` 和 `str` 混用会出错吗？** —— `int()` 和比较都能用，但 `b'abc' == 'abc'` 是 `False`。只要不混着比字符串就没事。
-2. **`sys.setrecursionlimit` 要不要设？** —— 写递归 DFS 时务必设，默认 1000 层，图/树题容易爆。设到 1e6 还要注意真爆栈时进程会崩。
-3. **PyPy 会不会更快？** —— 循环密集的题快很多，但机考环境用什么由平台决定，不能假设。
+1. **`join` 之后要不要补最后一个换行？** —— 通常要，多数 OJ 容忍没有，但补上更安全。
+2. **`print` 加 `flush=False` 有用吗？** —— 默认就不 flush，除非开了 `flush=True`，这个参数帮不上忙。
+3. **`writelines` 比 `join` 快吗？** —— 差不多，但 `writelines` 不会自动加分隔符，要每行自带 `\n`。
 
 ## 易错点
 
-- ❌ 用 `input()` 读百万行 —— 必超时
-- ❌ 循环 `print` —— 输出成瓶颈
-- ❌ `buffer.read()` 后又想 `split()` 按行处理 —— 换行已被切掉，得自己重新组装
+- ❌ 循环里 `print` 加 `flush=True` —— 每次都刷盘，最慢
+- ❌ `join` 忘记元素是字符串 —— TypeError
+- ❌ 分块写时忘了最后一块 —— 尾部数据丢失
 
 ## 关联项目
 
@@ -71,4 +90,4 @@ main()
 
 ## 来源
 
-`sys.stdin.buffer` 与 CPython IO 开销
+CPython `print` 实现与缓冲写入

@@ -1,6 +1,6 @@
 ---
 id: Q-1798
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 104 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 105 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,20 +22,22 @@ lab_src: quiz
 ```python
 import torch
 m = torch.nn.Linear(2, 1)
-opt = torch.optim.SGD(m.parameters(), lr=0.1, momentum=0.9)
-print(opt.param_groups[0]["lr"], opt.param_groups[0]["momentum"])
+m(torch.ones(1, 2)).sum().backward()
+g = float(m.weight.grad.sum())
+m.zero_grad()
+print(round(g, 6), m.weight.grad)
 ```
 
-- **A.** 0.1 0.9
-- **B.** (0.01, 0.9)
-- **C.** (0.1, 0.0)
-- **D.** (0.9, 0.1)
+- **A.** 2.0 None
+- **B.** (2.0, 0.0)
+- **C.** (None, None)
+- **D.** (1.0, 1.0)
 
 ## 口述答案
 
-答案是 **A. 0.1 0.9**，实际输出 `0.1 0.9`。
+答案是 **A. 2.0 None**，实际输出 `2.0 None`。
 
-SGD 的 lr 是学习率、momentum 是动量系数；param_groups[0] 里存着超参，可以随时改。
+zero_grad 之后梯度变成 None（不是 0），因为 PyTorch 用 None 表示「没有梯度」以节省内存；这是判断有没有清零成功的标志。
 
 ## 讲深一层
 

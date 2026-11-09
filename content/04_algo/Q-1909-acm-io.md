@@ -1,6 +1,6 @@
 ---
 id: Q-1909
-title: 数据量到了十万级，C++ 读入太慢超时怎么办？
+title: 输入里混着数字和字符串，C++ 怎么读不串行？
 module: 04_algo
 sub: C++ 读写
 priority: P0
@@ -19,10 +19,21 @@ acm_seed: true
 
 ## 题目
 
-**输入**：`n` 个数（`n ≤ 1e6`），求最大值。
-**输出**：最大值。
+**输入**：第一行 `n`；随后 `n` 行，每行形如 `名字 分数`（名字不含空格）。
+**输出**：按分数降序，输出 `名字 分数`。
 
-这是典型的「算法对但 IO 超时」场景。
+```
+输入样例
+3
+tom 90
+amy 95
+bob 88
+
+输出样例
+amy 95
+tom 90
+bob 88
+```
 
 ## 口述答案
 
@@ -31,53 +42,42 @@ acm_seed: true
 using namespace std;
 
 int main() {
-    ios::sync_with_stdio(false);   // 关 C/C++ 流同步
-    cin.tie(nullptr);              // 解除 cin 与 cout 绑定
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int n; cin >> n;
-    int mx = INT_MIN, x;
-    for (int i = 0; i < n; ++i) { cin >> x; if (x > mx) mx = x; }
-    cout << mx << '\n';
+    vector<pair<string,int>> v(n);
+    for (int i = 0; i < n; ++i) cin >> v[i].first >> v[i].second;
+
+    stable_sort(v.begin(), v.end(),
+                [](auto& a, auto& b){ return a.second > b.second; });
+
+    for (auto& p : v) cout << p.first << ' ' << p.second << '\n';
     return 0;
-}
-```
-
-再快一档是手写快读（百万级以上才需要）：
-
-```cpp
-static inline int read() {
-    int x = 0, f = 1; char c = getchar();
-    while (c < '0' || c > '9') { if (c == '-') f = -1; c = getchar(); }
-    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = getchar(); }
-    return x * f;
 }
 ```
 
 ## 讲深一层
 
-三档速度，按数据量选：
+`cin >> string` 读的是「到下一个空白为止」，所以名字里**不能有空格**。题面说「名字不含空格」就能直接用；如果名字可能含空格（如 `Li Ming`），就必须 `getline` 整行再切分——这是两道完全不同的题。
 
-| 做法 | 相对速度 | 适用 |
-|---|---|---|
-| 默认 `cin` | 1x | 1e4 以内 |
-| `sync_with_stdio(false)` + `tie(nullptr)` | 3–5x | 1e5–1e6，**大多数机考够用** |
-| 手写 `getchar` 快读 | 8–10x | 1e6 以上，或已知卡 IO |
+排序稳定性：
+- `sort` 不稳定，同分元素的相对顺序不定
+- `stable_sort` 稳定，保持输入顺序
 
-原理：`sync_with_stdio(false)` 让 `cin` 不再每次和 `stdin` 同步缓冲区；`tie(nullptr)` 让 `cin` 读之前不再先 flush `cout`（默认是绑定的，每读一次可能刷一次输出）。
-
-**注意 `tie(nullptr)` 必须在任何 IO 之前调用**，中途调用无效。
+题面若要求「同分按输入顺序」，必须用 `stable_sort`，或者排序时把原始下标作为第二关键字。
 
 ## 高频追问
 
-1. **关了 sync 还能用 `scanf` 吗？** —— 能编译，但两套缓冲各自为政，输出顺序会乱。全用一套。
-2. **`getchar_unlocked` 是什么？** —— POSIX 的非线程安全版本，更快，但 Windows/MSVC 没有。机考环境不确定就用 `getchar`。
-3. **怎么知道是 IO 慢还是算法慢？** —— 看数据点：小数据过、大数据超时，多半是复杂度；所有点都临界超时，才怀疑 IO。
+1. **`cin >> string` 遇到空行怎么办？** —— 会跳过空白继续找下一个 token，不会返回空串。想读空行必须 `getline`。
+2. **`pair` 的默认比较是什么？** —— 先比 `first` 再比 `second`。这里要按分数降序，所以必须自定义比较器。
+3. **`auto&` 在 lambda 参数里为什么带 `&`？** —— 避免拷贝。用 `const auto&` 更严谨。
 
 ## 易错点
 
-- ❌ 只关 sync 不开 tie —— 提速有限
-- ❌ 用 `endl` —— 刚省下的时间又还回去
-- ❌ 手写快读没处理负数和 EOF —— 边界全错
+- ❌ 用 `sort` 但题面要求稳定 —— 同分顺序错
+- ❌ 比较器写成 `>=` —— `sort` 要求严格弱序，`>=` 会越界崩溃
+- ❌ 名字含空格却用 `cin >>` —— 只读到第一个词
 
 ## 关联项目
 
@@ -85,4 +85,4 @@ static inline int read() {
 
 ## 来源
 
-C++ 流缓冲机制；竞赛快读惯例
+`istream::operator>>(string)` 与 `stable_sort` 语义

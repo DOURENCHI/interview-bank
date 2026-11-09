@@ -1,10 +1,10 @@
 ---
 id: Q-1884
-title: 路径总和 II：回溯时怎么恢复路径？
+title: N 皇后：怎么用三个数组做到 O(1) 冲突判断？
 module: 04_algo
 sub: DFS BFS
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [回溯, DFS, 二叉树]
-hint: 进入节点 push，递归左右，返回前 pop。少一次 pop 就会串路径。
+tags: [回溯, 位运算]
+hint: 列数组、主对角线（row-col+n）、副对角线（row+col）。放前查三个，放完标记，回溯时撤销。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：进入节点 push，递归左右，返回前 pop。少一次 pop 就会串路径。
+**套路**：列数组、主对角线（row-col+n）、副对角线（row+col）。放前查三个，放完标记，回溯时撤销。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

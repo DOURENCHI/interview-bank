@@ -1,6 +1,6 @@
 ---
 id: Q-1794
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 100 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 101 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,23 @@ lab_src: quiz
 
 ```python
 import torch
-gru = torch.nn.GRU(4, 5, batch_first=True)
-print(tuple(gru(torch.randn(2, 7, 4))[0].shape))
+bn = torch.nn.BatchNorm1d(3)
+bn.train()
+bn(torch.randn(4, 3))
+bn.eval()
+print(tuple(bn(torch.randn(4, 3)).shape))
 ```
 
-- **A.** (2, 7, 5)
-- **B.** ((2, 7, 4),)
-- **C.** ((1, 2, 5),)
-- **D.** ((2, 4, 5),)
+- **A.** (4, 3)
+- **B.** ((4, 1),)
+- **C.** ((1, 3),)
+- **D.** ((4, 3), (4, 3))
 
 ## 口述答案
 
-答案是 **A. (2, 7, 5)**，实际输出 `(2, 7, 5)`。
+答案是 **A. (4, 3)**，实际输出 `(4, 3)`。
 
-GRU 参数比 LSTM 少（只有更新门和重置门），但输出形状与 RNN/LSTM 完全一致。
+BatchNorm1d 保持形状不变，只做归一化；train 模式用当前批统计量，eval 模式用运行均值方差。
 
 ## 讲深一层
 

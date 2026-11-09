@@ -1,6 +1,6 @@
 ---
 id: Q-1679
-title: 运算符重载：复数 的 ACM 输入输出怎么写？
+title: 抽象类与多态 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,25 +23,36 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-class Complex {
-    double re, im;
+class Shape {
 public:
-    Complex(double r = 0, double i = 0) : re(r), im(i) {}
-    Complex operator+(const Complex &o) const { return Complex(re + o.re, im + o.im); }
-    friend ostream &operator<<(ostream &os, const Complex &c) {
-        return os << c.re << '+' << c.im << 'i';
-    }
+    virtual double area() const = 0;
+    virtual ~Shape() {}
+};
+class Circle : public Shape {
+    double r;
+public:
+    Circle(double r) : r(r) {}
+    double area() const override { return 3.14159 * r * r; }
+};
+class Rect : public Shape {
+    double w, h;
+public:
+    Rect(double w, double h) : w(w), h(h) {}
+    double area() const override { return w * h; }
 };
 int main() {
-    Complex a(1, 2), b(3, 4);
-    cout << a + b << '\n';
+    vector<unique_ptr<Shape>> shapes;
+    shapes.push_back(make_unique<Circle>(1));
+    shapes.push_back(make_unique<Rect>(3, 4));
+    for (auto &s : shapes) cout << s->area() << '\n';
 }
 ```
 
 输出样例：
 
 ```
-4+6i
+3.14159
+12
 ```
 
 ## 口述答案
@@ -66,4 +77,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 15
+`教学文档/C++实验台/C++考点实验台.html` · 19

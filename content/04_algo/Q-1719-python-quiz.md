@@ -1,6 +1,6 @@
 ---
 id: Q-1719
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 25 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 26 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print([i for i in range(5) if i % 2 == 0], {i: i * i for i in range(3)})
+print(isinstance(1, int), isinstance(True, int), isinstance("a", str))
 ```
 
-- **A.** [0, 2, 4] {0: 0, 1: 1, 2: 4}
-- **B.** [0, 2, 4] {0: 0, 1: 1, 2: 8}
-- **C.** [1, 3] {0: 0, 1: 1, 2: 4}
-- **D.** [0, 2, 4] {1: 1, 2: 4}
+- **A.** True True True
+- **B.** True False True
+- **C.** False True True
+- **D.** True True False
 
 ## 口述答案
 
-答案是 **A. [0, 2, 4] {0: 0, 1: 1, 2: 4}**，实际输出 `[0, 2, 4] {0: 0, 1: 1, 2: 4}`。
+答案是 **A. True True True**，实际输出 `True True True`。
 
-列表推导式的 if 是过滤条件不是三元表达式；字典推导式是 {键: 值}，键取 i、值取 i*i。
+bool 是 int 的子类（Python 里 True 本质就是 1），所以 isinstance(True, int) 为 True——这是很多 if 判断写错的根源。
 
 ## 讲深一层
 

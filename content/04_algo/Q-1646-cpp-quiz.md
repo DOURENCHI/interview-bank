@@ -1,6 +1,6 @@
 ---
 id: Q-1646
-title: 这段 C++ 代码输出什么？（25 智能指针 · 第 33 题）
+title: 这段 C++ 代码输出什么？（28 迭代器与 string · 第 34 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,25 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-auto a = make_shared<int>(1);
-auto b = a;
-{
-    auto c = b;
-    cout << a.use_count();
-}
-cout << a.use_count();
+string s = "hello@sina.com";
+cout << s.substr(0, s.find('@'));
 ```
 
-- **A.** 32
-- **B.** 33
-- **C.** 22
-- **D.** 31
+- **A.** hello
+- **B.** hello@
+- **C.** hello@sina.com
+- **D.** 编译错误
 
 ## 口述答案
 
-答案是 **A. 32**，实际输出 `32`。
+答案是 **A. hello**，实际输出 `hello`。
 
-a、b、c 共享同一个对象，计数是 3；c 离开作用域后减为 2。
+find 返回 '@' 的下标 5；substr(0, 5) 的第二个参数是长度、不是结束下标，所以取前 5 个字符。find 找不到时返回 string::npos，不能当下标用。
 
 ## 讲深一层
 
@@ -59,4 +54,4 @@ a、b、c 共享同一个对象，计数是 3；c 离开作用域后减为 2。
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 25 智能指针
+`教学文档/C++实验台/C++考点实验台.html` · 28 迭代器与 string

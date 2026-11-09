@@ -1,10 +1,10 @@
 ---
 id: Q-1904
-title: 第一行给组数 T，多组用例怎么组织？
+title: cin 读完后接 getline，为什么会读到空串？
 module: 04_algo
 sub: C++ 读写
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -19,20 +19,18 @@ acm_seed: true
 
 ## 题目
 
-**输入**：第一行 `T` 表示组数。每组一行 `n`，下一行 `n` 个整数。
-**输出**：每组输出这 `n` 个数的和。
+**输入**：第一行一个整数 `n`；随后 `n` 行，每行一个可能含空格的字符串。
+**输出**：逐行原样输出，并在前面加行号。
 
 ```
 输入样例
 2
-3
-1 2 3
-2
-10 20
+hello world
+foo bar baz
 
 输出样例
-6
-30
+1: hello world
+2: foo bar baz
 ```
 
 ## 口述答案
@@ -45,12 +43,13 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T; cin >> T;
-    while (T--) {
-        int n; cin >> n;
-        long long s = 0;
-        for (int i = 0; i < n; ++i) { int x; cin >> x; s += x; }
-        cout << s << '\n';
+    int n; cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');   // ← 少这行就全错
+
+    for (int i = 1; i <= n; ++i) {
+        string s;
+        getline(cin, s);
+        cout << i << ": " << s << '\n';
     }
     return 0;
 }
@@ -58,32 +57,35 @@ int main() {
 
 ## 讲深一层
 
-多组用例的关键不是循环，而是**状态复位**：每组开始时，所有累加量、标记数组、容器都要重新初始化。
+这是 C++ 机考**第一大坑**，机制如下：
 
-初学者最常见的错误是「第一组对、第二组错」——因为上一组的数据残留在全局数组或静态变量里。养成习惯：**变量定义在循环内部**，能局部就局部。
-
-```cpp
-while (T--) {
-    int n; cin >> n;
-    long long s = 0;              // 在循环内定义，天然每组归零
-    vector<int> a(n);             // 同上
-    ...
-}
+```
+输入缓冲区：  "2\nhello world\nfoo bar baz\n"
+cin >> n 后：  n = 2，缓冲区剩 "\nhello world\n..."
+getline   ：  遇到第一个字符就是 '\n' → 立即返回空串
 ```
 
-如果数据量大、必须复用大数组，就显式 `fill(a.begin(), a.end(), 0)`，不要靠运气。
+所以第一行 `getline` 永远拿到 `""`，后面的内容整体错位一行。修法有三种，选第一种：
+
+| 写法 | 说明 |
+|---|---|
+| `cin.ignore(max, '\n')` | **推荐**。丢弃到行尾（含换行） |
+| `cin.get()` | 只吃一个字符，够用但表达不清 |
+| `getline` 前单独读一行 | 也有效，多一次无用调用 |
+
+反过来也成立：`getline` 之后接 `cin >>`，如果整行都被 `getline` 吃掉了，不会有残留问题。**只有 `>>` → `getline` 这个方向需要 ignore。**
 
 ## 高频追问
 
-1. **`T` 组数据但每组规模不同，内存怎么安排？** —— 优先每组内重新申请；`vector` 的 `clear()` 不释放容量，能复用又不反复分配。
-2. **输出时每组之间要不要空行？** —— **严格按题面**。题面没说就一行一个答案。多一个空行可能被判错。
-3. **`while (T--)` 里 `T` 变成 -1 有问题吗？** —— 循环结束后 `T` 是 -1，不影响正确性，但别再拿它当组数用。
+1. **如果输入行尾是 `\r\n`（Windows 换行）呢？** —— `getline` 按 `\n` 切，`\r` 会留在串尾。要做字符串比较就 `if (!s.empty() && s.back() == '\r') s.pop_back();`
+2. **`ignore` 能不能不带参数？** —— `cin.ignore()` 只丢一个字符，不够。
+3. **能不能统一全用 `getline` 再解析？** —— 可以，而且更稳：所有行都 `getline`，数字用 `stoi` / `stringstream` 转。代价是慢一点。
 
 ## 易错点
 
-- ❌ 累加变量定义在循环外 —— 第二组接着第一组累加
-- ❌ 用全局数组但不清零 —— 典型「对一半错一半」
-- ❌ 题目说「每组之间输出空行」却忘了 —— 格式错
+- ❌ 不 ignore 直接 `getline` —— 第一行空串，全部错位
+- ❌ `cin.sync()` 当 ignore 用 —— 行为不确定
+- ❌ 每轮循环都 ignore —— 会把有效数据也吃掉
 
 ## 关联项目
 
@@ -91,4 +93,4 @@ while (T--) {
 
 ## 来源
 
-多组测试用例通用模式
+`istream` 缓冲语义；`getline` 遇 `\n` 立即返回

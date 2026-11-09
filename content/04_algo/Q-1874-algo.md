@@ -1,6 +1,6 @@
 ---
 id: Q-1874
-title: 腐烂的橘子：多源 BFS 的分钟数怎么算？
+title: 01 矩阵：多源 BFS 求最近距离怎么初始化？
 module: 04_algo
 sub: DFS BFS
 priority: P0
@@ -13,14 +13,14 @@ source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
 tags: [BFS, 多源]
-hint: 所有腐烂橘子同时入队作为第 0 层，每扩一层 minutes+1；结束后还有新鲜橘子则返回 -1。
+hint: 所有 0 入队、距离设 0，BFS 逐层外扩，第一次到达即最短。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：所有腐烂橘子同时入队作为第 0 层，每扩一层 minutes+1；结束后还有新鲜橘子则返回 -1。
+**套路**：所有 0 入队、距离设 0，BFS 逐层外扩，第一次到达即最短。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

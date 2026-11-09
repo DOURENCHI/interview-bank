@@ -1,6 +1,6 @@
 ---
 id: Q-1642
-title: 这段 C++ 代码输出什么？（21 STL 容器 · 第 29 题）
+title: 这段 C++ 代码输出什么？（22 lambda · 第 30 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,23 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-map<string, int> m;
-m["b"] = 2;
-m["a"] = 1;
-int z = m["c"];
-for (auto &p : m) cout << p.first;
+int x = 1;
+auto f = [x] { return x; };
+auto g = [&x] { return x; };
+x = 5;
+cout << f() << g();
 ```
 
-- **A.** ba
-- **B.** ab
-- **C.** abc
-- **D.** bac
+- **A.** 15
+- **B.** 55
+- **C.** 11
+- **D.** 51
 
 ## 口述答案
 
-答案是 **C. abc**，实际输出 `abc`。
+答案是 **A. 15**，实际输出 `15`。
 
-map 按键排序；用 [] 读一个不存在的键会自动插入它（值为 0）。
+[x] 在创建 lambda 时拷贝一份 x（当时是 1）；[&x] 引用外面的 x，调用时已经是 5。
 
 ## 讲深一层
 
@@ -57,4 +57,4 @@ map 按键排序；用 [] 读一个不存在的键会自动插入它（值为 0�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 21 STL 容器
+`教学文档/C++实验台/C++考点实验台.html` · 22 lambda

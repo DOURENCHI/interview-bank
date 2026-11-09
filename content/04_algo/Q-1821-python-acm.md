@@ -1,6 +1,6 @@
 ---
 id: Q-1821
-title: 权重存取与可复现性 的 ACM 输入输出怎么写？
+title: 算法：双指针原地移除元素 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,44 +23,29 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-import os
-import tempfile
+def remove_element(nums, val):
+    """原地移除所有等于 val 的元素，返回新长度。"""
+    k = 0
+    for i in range(len(nums)):
+        if nums[i] != val:
+            nums[k] = nums[i]
+            k += 1
+    return k
 
-import torch
-import torch.nn as nn
 
-torch.manual_seed(11)
-m = nn.Linear(2, 1)
-sd = {k: v.clone() for k, v in m.state_dict().items()}
-m2 = nn.Linear(2, 1)
-m2.load_state_dict(sd)
-print("state_dict 键", tuple(m.state_dict().keys()))
-print("权重一致", bool(torch.equal(m.weight, m2.weight)),
-      "偏置一致", bool(torch.equal(m.bias, m2.bias)))
-
-torch.manual_seed(12)
-m3 = nn.Linear(3, 2)
-path = os.path.join(tempfile.gettempdir(), "_py_lab_state.pt")
-torch.save(m3.state_dict(), path)
-m4 = nn.Linear(3, 2)
-m4.load_state_dict(torch.load(path, weights_only=True))
-os.remove(path)
-print("存盘往返一致", bool(torch.equal(m3.weight, m4.weight)))
-
-torch.manual_seed(13)
-a = torch.randn(3).tolist()
-torch.manual_seed(13)
-b = torch.randn(3).tolist()
-print("固定 seed 可复现", a == b, [round(v, 6) for v in a])
+a = [0, 1, 2, 2, 3, 0, 4, 2]
+k = remove_element(a, 2)
+print("新长度", k)
+print("有效前缀", a[:k])
+print("尾部是残留值，不用管", a[k:])
 ```
 
 输出样例：
 
 ```
-state_dict 键 ('weight', 'bias')
-权重一致 True 偏置一致 True
-存盘往返一致 True
-固定 seed 可复现 True [-0.111659, -1.14561, 1.410316]
+新长度 5
+有效前缀 [0, 1, 3, 0, 4]
+尾部是残留值，不用管 [0, 4, 2]
 ```
 
 ## 口述答案

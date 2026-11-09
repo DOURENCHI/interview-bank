@@ -1,6 +1,6 @@
 ---
 id: Q-1705
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 11 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 12 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,20 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```python
-a = [3, 1, 2]
-print(a.sort(), sorted([3, 1, 2]))
+d = {"a": 1}
+print(d.get("b", 0), d.get("a"), len(d))
 ```
 
-- **A.** None [1, 2, 3]
-- **B.** ([1, 2, 3], [1, 2, 3])
-- **C.** ([3, 1, 2], [1, 2, 3])
-- **D.** (None, None)
+- **A.** 0 1 1
+- **B.** None 1 1
+- **C.** 0 1 2
+- **D.** 1 1 1
 
 ## 口述答案
 
-答案是 **A. None [1, 2, 3]**，实际输出 `None [1, 2, 3]`。
+答案是 **A. 0 1 1**，实际输出 `0 1 1`。
 
-list.sort() 是原地排序，返回 None；sorted() 返回新列表不改原对象。要「排序结果又拿新列表」就用 sorted。
+get 找不到键返回默认值（这里是 0），不会像 d["b"] 那样抛 KeyError；len(d) 是键的个数，此时仍是 1（get 不会插入键）。
 
 ## 讲深一层
 

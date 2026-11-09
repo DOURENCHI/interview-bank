@@ -1,6 +1,6 @@
 ---
 id: Q-1722
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 28 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 29 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(id(None) == id(None), None is None)
+print(min([3, 1, 2]), max("a", "b"), sorted("cba"))
 ```
 
-- **A.** True True
-- **B.** True False
-- **C.** False True
-- **D.** False False
+- **A.** 1 b ['a', 'b', 'c']
+- **B.** 1 a ['a', 'b', 'c']
+- **C.** 1 b ['c', 'b', 'a']
+- **D.** 3 b ['a', 'b', 'c']
 
 ## 口述答案
 
-答案是 **A. True True**，实际输出 `True True`。
+答案是 **A. 1 b ['a', 'b', 'c']**，实际输出 `1 b ['a', 'b', 'c']`。
 
-None 是单例，解释器里只有一个，所以 id 相同、is 也为 True——判空推荐写「x is None」。
+max 对字符串按字符码比较，"b" > "a"；sorted 返回列表不是字符串，sorted("cba") 得 ['a','b','c']。
 
 ## 讲深一层
 

@@ -1,10 +1,10 @@
 ---
 id: Q-1860
-title: 长度最小的子数组：滑窗和前缀和+二分怎么选？
+title: 滑动窗口最大值：单调队列为什么能做到 O(n)？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [滑窗, 前缀和]
-hint: 全是正数时滑窗 O(n) 最优；有负数时滑窗失效，得用前缀和+二分或单调队列。
+tags: [单调队列, 滑窗]
+hint: 队列存下标且值递减，队头就是最大值。每个元素最多进出一次，均摊 O(1)。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：全是正数时滑窗 O(n) 最优；有负数时滑窗失效，得用前缀和+二分或单调队列。
+**套路**：队列存下标且值递减，队头就是最大值。每个元素最多进出一次，均摊 O(1)。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

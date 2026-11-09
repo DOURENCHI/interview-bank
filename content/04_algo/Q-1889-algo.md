@@ -1,10 +1,10 @@
 ---
 id: Q-1889
-title: 零钱兑换：为什么贪心不行，必须 DP？
+title: 0-1 背包：为什么内层循环必须倒序？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 完全背包]
-hint: 面额组合下贪心会错过更优解。dp[j]=min(dp[j], dp[j-coin]+1) 求最少硬币数。
+tags: [DP, 背包]
+hint: 倒序保证 dp[j] 用的是上一轮的值；正序会让同一物品被重复选，变成完全背包。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：面额组合下贪心会错过更优解。dp[j]=min(dp[j], dp[j-coin]+1) 求最少硬币数。
+**套路**：倒序保证 dp[j] 用的是上一轮的值；正序会让同一物品被重复选，变成完全背包。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

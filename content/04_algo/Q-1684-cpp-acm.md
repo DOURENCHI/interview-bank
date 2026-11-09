@@ -1,6 +1,6 @@
 ---
 id: Q-1684
-title: 异常与栈展开 的 ACM 输入输出怎么写？
+title: shared_ptr 引用计数 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,23 +23,28 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-struct Guard {
-    string n;
-    Guard(string n) : n(n) { cout << "+" << n << ' '; }
-    ~Guard() { cout << "-" << n << ' '; }
-};
-void inner() { Guard g("inner"); throw runtime_error("boom"); }
-void outer() { Guard g("outer"); inner(); }
+struct Obj { ~Obj() { cout << "delete\n"; } };
 int main() {
-    try { outer(); }
-    catch (const exception &e) { cout << "caught " << e.what(); }
+    auto a = make_shared<Obj>();
+    cout << a.use_count() << '\n';
+    {
+        auto b = a;
+        cout << a.use_count() << '\n';
+    }
+    cout << a.use_count() << '\n';
+    a.reset();
+    cout << "end\n";
 }
 ```
 
 输出样例：
 
 ```
-+outer +inner -inner -outer caught boom
+1
+2
+1
+delete
+end
 ```
 
 ## 口述答案
@@ -64,4 +69,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 24
+`教学文档/C++实验台/C++考点实验台.html` · 25

@@ -1,6 +1,6 @@
 ---
 id: Q-1750
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 56 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 57 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-x = torch.tensor([1.0], requires_grad=True)
-with torch.no_grad():
-    y = x * 2
-print(y.requires_grad)
+t = torch.tensor([1.0, 2.0])
+print(t.sum().item(), type(t.sum().item()).__name__, t.sum())
 ```
 
-- **A.** False
-- **B.** True
-- **C.** None
-- **D.** 0
+- **A.** 3.0 float tensor(3.)
+- **B.** 3 int tensor(3.)
+- **C.** 3.0 int tensor(3.)
+- **D.** 3.0 float 3.0
 
 ## 口述答案
 
-答案是 **A. False**，实际输出 `False`。
+答案是 **A. 3.0 float tensor(3.)**，实际输出 `3.0 float tensor(3.)`。
 
-no_grad 上下文里所有运算都不记录计算图，输出张量不再需要梯度——推理阶段用它省内存省时间。
+item() 把标量张量转成 Python 数字（这里是 float）；不调 item() 直接 print 得到的是 tensor(3.) 这种张量表示。
 
 ## 讲深一层
 

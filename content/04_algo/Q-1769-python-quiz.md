@@ -1,6 +1,6 @@
 ---
 id: Q-1769
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 75 题）
+title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 76 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,29 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Linear(2, 2)
-for p in m.parameters():
-    p.requires_grad_(False)
-print(any(p.requires_grad for p in m.parameters()))
+from torch.utils.data import Dataset, DataLoader
+class DS(Dataset):
+    def __init__(self, n):
+        self.x = torch.arange(n, dtype=torch.float32).reshape(-1, 1)
+    def __len__(self):
+        return len(self.x)
+    def __getitem__(self, i):
+        return self.x[i]
+ds = DS(10)
+dl = DataLoader(ds, batch_size=4, shuffle=False)
+print(len(ds), len(dl))
 ```
 
-- **A.** False
-- **B.** True
-- **C.** None
-- **D.** 0
+- **A.** 10 3
+- **B.** (10, 4)
+- **C.** (10, 2)
+- **D.** (4, 3)
 
 ## 口述答案
 
-答案是 **A. False**，实际输出 `False`。
+答案是 **A. 10 3**，实际输出 `10 3`。
 
-requires_grad_(False) 冻结参数后，any 判断为 False。做迁移学习或只训部分层时就靠它。
+数据集有 10 个样本，batch_size=4 整除 10？不能整除，最后一批是 2 个，所以 ceil(10/4) = 3 批。
 
 ## 讲深一层
 
@@ -57,4 +64,4 @@ requires_grad_(False) 冻结参数后，any 判断为 False。做迁移学习或
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 05 nn.Module 与训练循环
+`教学文档/Python实验台/Python考点实验台.html` · 06 Dataset 与 DataLoader

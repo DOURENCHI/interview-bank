@@ -1,6 +1,6 @@
 ---
 id: Q-1652
-title: 这段 C++ 代码输出什么？（29 序列容器 · 第 39 题）
+title: 这段 C++ 代码输出什么？（29 序列容器 · 第 40 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,21 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v{1,2,3};
-try { cout << v.at(5); }
-catch (const out_of_range&) { cout << "E"; }
+deque<int> d{2,3};
+d.push_front(1); d.push_back(4);
+for (int x : d) cout << x;
 ```
 
-- **A.** E
-- **B.** 0
-- **C.** 3
-- **D.** 运行崩溃
+- **A.** 1234
+- **B.** 2134
+- **C.** 2341
+- **D.** 1324
 
 ## 口述答案
 
-答案是 **A. E**，实际输出 `E`。
+答案是 **A. 1234**，实际输出 `1234`。
 
-at() 会检查越界并抛 std::out_of_range，异常被 catch 住所以输出 E；operator[] 不检查越界，是未定义行为（可能读到垃圾值，也可能崩溃）。
+deque 两头插入都是 O(1)：push_front(1) 放到最前，push_back(4) 追加到最后，遍历得 1234。vector 没有 push_front。
 
 ## 讲深一层
 

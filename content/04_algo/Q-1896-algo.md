@@ -1,10 +1,10 @@
 ---
 id: Q-1896
-title: 单词拆分：为什么用 DP 而不是 DFS 暴搜？
+title: 乘积最大子数组：为什么要同时维护最大和最小？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 字符串]
-hint: 暴搜会重复计算同一后缀。dp[i] 表示前 i 个字符能否拆分，枚举分割点。
+tags: [DP, 数组]
+hint: 负数会让最小值翻成最大值，所以两个都要留；遇到负数时先交换再更新。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：暴搜会重复计算同一后缀。dp[i] 表示前 i 个字符能否拆分，枚举分割点。
+**套路**：负数会让最小值翻成最大值，所以两个都要留；遇到负数时先交换再更新。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

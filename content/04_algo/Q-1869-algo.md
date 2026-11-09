@@ -1,10 +1,10 @@
 ---
 id: Q-1869
-title: 有序数组的平方：为什么从两端取最大？
+title: 验证回文串：怎么跳过非字母数字字符？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 数组]
-hint: 负数平方后可能最大，最大值必在两端。双指针从两端取大者倒序填入。
+tags: [双指针, 字符串]
+hint: 双指针向中间靠，遇到非字母数字就跳过，比较时统一大小写。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：负数平方后可能最大，最大值必在两端。双指针从两端取大者倒序填入。
+**套路**：双指针向中间靠，遇到非字母数字就跳过，比较时统一大小写。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

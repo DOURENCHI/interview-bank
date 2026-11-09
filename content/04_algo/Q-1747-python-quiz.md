@@ -1,6 +1,6 @@
 ---
 id: Q-1747
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 53 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 54 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-x = torch.tensor([1.0, 2.0], requires_grad=True)
-y = x * x
-y.sum().backward()
-print(x.grad.tolist())
+w = torch.tensor([1.0, 2.0], requires_grad=True)
+loss = (3 * w).sum()
+loss.backward()
+print(w.grad.tolist())
 ```
 
-- **A.** [2.0, 4.0]
-- **B.** [1.0, 4.0]
-- **C.** [2.0, 2.0]
-- **D.** [4.0, 4.0]
+- **A.** [3.0, 3.0]
+- **B.** [1.0, 2.0]
+- **C.** [3.0, 6.0]
+- **D.** [6.0, 6.0]
 
 ## 口述答案
 
-答案是 **A. [2.0, 4.0]**，实际输出 `[2.0, 4.0]`。
+答案是 **A. [3.0, 3.0]**，实际输出 `[3.0, 3.0]`。
 
-y = x²，dy/dx = 2x，代入 1 和 2 得 2 和 4。自动微分对每个元素分别算梯度。
+loss = 3w 之和，每个 w 的梯度都是 3。乘法把标量梯度「广播」到每个元素。
 
 ## 讲深一层
 

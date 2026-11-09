@@ -1,10 +1,10 @@
 ---
 id: Q-1855
-title: 字符串解码：嵌套括号怎么处理？
+title: 盛最多水的容器：为什么移动矮的一侧不会漏掉最优解？
 module: 04_algo
-sub: 数组哈希
+sub: 双指针滑窗
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [栈, 字符串]
-hint: 两个栈：一个存倍数、一个存之前的字符串；遇 ] 就弹出拼接。
+tags: [双指针, 贪心]
+hint: 面积由短边决定。移动长边只会让宽度变小、高度不会变大，所以只能移短边。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：两个栈：一个存倍数、一个存之前的字符串；遇 ] 就弹出拼接。
+**套路**：面积由短边决定。移动长边只会让宽度变小、高度不会变大，所以只能移短边。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

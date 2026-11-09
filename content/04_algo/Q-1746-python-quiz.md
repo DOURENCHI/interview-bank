@@ -1,6 +1,6 @@
 ---
 id: Q-1746
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 52 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 53 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
-(x * 2).sum().backward()
+x = torch.tensor([1.0, 2.0], requires_grad=True)
+y = x * x
+y.sum().backward()
 print(x.grad.tolist())
 ```
 
-- **A.** [2.0, 2.0, 2.0]
-- **B.** [1.0, 1.0, 1.0]
-- **C.** [2.0, 4.0, 6.0]
-- **D.** [0.0, 0.0, 0.0]
+- **A.** [2.0, 4.0]
+- **B.** [1.0, 4.0]
+- **C.** [2.0, 2.0]
+- **D.** [4.0, 4.0]
 
 ## 口述答案
 
-答案是 **A. [2.0, 2.0, 2.0]**，实际输出 `[2.0, 2.0, 2.0]`。
+答案是 **A. [2.0, 4.0]**，实际输出 `[2.0, 4.0]`。
 
-z = 2x，dz/dx = 2，所以每个元素的梯度都是 2——线性函数的梯度是常数。
+y = x²，dy/dx = 2x，代入 1 和 2 得 2 和 4。自动微分对每个元素分别算梯度。
 
 ## 讲深一层
 

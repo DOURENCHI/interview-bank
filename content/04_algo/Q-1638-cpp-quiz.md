@@ -1,6 +1,6 @@
 ---
 id: Q-1638
-title: 这段 C++ 代码输出什么？（18 虚函数 · 第 25 题）
+title: 这段 C++ 代码输出什么？（18 虚析构 · 第 26 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,26 +20,24 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-struct A { virtual void g() { cout << "A"; } };
-struct B : A { void g() { cout << "B"; } };
+struct B { ~B() { cout << "~B"; } };
+struct D : B { ~D() { cout << "~D"; } };
 int main() {
-    B b;
-    A a = b;
-    A &r = b;
-    a.g(); r.g();
+    B *p = new D;
+    delete p;
 }
 ```
 
-- **A.** AA
-- **B.** AB
-- **C.** BA
-- **D.** BB
+- **A.** ~B
+- **B.** ~D~B
+- **C.** ~B~D
+- **D.** ~D
 
 ## 口述答案
 
-答案是 **B. AB**，实际输出 `AB`。
+答案是 **A. ~B**，实际输出 `~B`。
 
-A a = b 发生对象切片，a 就是一个 A；引用 r 绑定的仍是 B 对象，虚函数按真实类型调用。
+基类析构函数不是虚函数，通过基类指针 delete 只调用 ~B，~D 没执行。改成 virtual ~B() 才会输出 ~D~B。
 
 ## 讲深一层
 
@@ -60,4 +58,4 @@ A a = b 发生对象切片，a 就是一个 A；引用 r 绑定的仍是 B 对�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 18 虚函数
+`教学文档/C++实验台/C++考点实验台.html` · 18 虚析构

@@ -1,6 +1,6 @@
 ---
 id: Q-1659
-title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 46 题）
+title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 47 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v{1,2,3};
-transform(v.begin(), v.end(), v.begin(),
-  [](int x){ return x * 2; });
-for (int x : v) cout << x;
+vector<int> v{1,3,3,3,5};
+cout << lower_bound(v.begin(),v.end(),3)-v.begin()
+     << " " << upper_bound(v.begin(),v.end(),3)-v.begin();
 ```
 
-- **A.** 246
-- **B.** 123
-- **C.** 235
-- **D.** 2 4 6
+- **A.** 1 4
+- **B.** 1 3
+- **C.** 2 4
+- **D.** 3 4
 
 ## 口述答案
 
-答案是 **A. 246**，实际输出 `246`。
+答案是 **A. 1 4**，实际输出 `1 4`。
 
-transform 对每个元素应用一元操作并写到目标区间，这里就地翻倍成 2 4 6；输出时没有空格，所以连成 246。输入输出区间可以相同。
+lower_bound 返回第一个「不小于 3」的位置 1，upper_bound 返回第一个「大于 3」的位置 4；相减就是相等元素个数 3。前提是区间已排序，复杂度 O(log n)。
 
 ## 讲深一层
 

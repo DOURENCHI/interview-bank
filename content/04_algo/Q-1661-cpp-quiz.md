@@ -1,6 +1,6 @@
 ---
 id: Q-1661
-title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 48 题）
+title: 这段 C++ 代码输出什么？（32 函数对象与谓词 · 第 49 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-int a[4] = {3,1,4,2};
-sort(a, a+4);
-cout << binary_search(a,a+4,3) << " "
-     << binary_search(a,a+4,5);
+struct Odd {
+  bool operator()(int x) const { return x % 2 != 0; }
+};
+vector<int> v{1,2,3,4,5};
+cout << count_if(v.begin(), v.end(), Odd());
 ```
 
-- **A.** 1 0
-- **B.** 0 1
-- **C.** 1 1
-- **D.** 0 0
+- **A.** 3
+- **B.** 2
+- **C.** 5
+- **D.** 编译错误
 
 ## 口述答案
 
-答案是 **A. 1 0**，实际输出 `1 0`。
+答案是 **A. 3**，实际输出 `3`。
 
-binary_search 只回答「是否存在」，返回 bool（输出 1 / 0），不返回位置；必须先排序，否则结果无意义。要位置用 lower_bound。
+函数对象（仿函数）是重载了 operator() 的类实例，count_if 对每个元素调用它；1 3 5 为奇数共 3 个。相比普通函数，它可以带状态。
 
 ## 讲深一层
 
@@ -56,4 +57,4 @@ binary_search 只回答「是否存在」，返回 bool（输出 1 / 0），不�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 31 STL 算法
+`教学文档/C++实验台/C++考点实验台.html` · 32 函数对象与谓词

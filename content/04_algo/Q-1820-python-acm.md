@@ -1,6 +1,6 @@
 ---
 id: Q-1820
-title: 优化器、超参与发散排查 的 ACM 输入输出怎么写？
+title: 权重存取与可复现性 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,48 +23,44 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
+import os
+import tempfile
+
 import torch
 import torch.nn as nn
 
-torch.manual_seed(1)
-m = torch.nn.Linear(2, 1)
-sgd = torch.optim.SGD(m.parameters(), lr=0.1, momentum=0.9)
-print("SGD 超参 lr =", sgd.param_groups[0]["lr"], "momentum =", sgd.param_groups[0]["momentum"])
+torch.manual_seed(11)
+m = nn.Linear(2, 1)
+sd = {k: v.clone() for k, v in m.state_dict().items()}
+m2 = nn.Linear(2, 1)
+m2.load_state_dict(sd)
+print("state_dict 键", tuple(m.state_dict().keys()))
+print("权重一致", bool(torch.equal(m.weight, m2.weight)),
+      "偏置一致", bool(torch.equal(m.bias, m2.bias)))
 
-adam = torch.optim.Adam(m.parameters(), lr=0.01)
-m(torch.randn(4, 2)).sum().backward()
-adam.step()
-print("Adam 状态键", tuple(adam.state[m.weight].keys()))
+torch.manual_seed(12)
+m3 = nn.Linear(3, 2)
+path = os.path.join(tempfile.gettempdir(), "_py_lab_state.pt")
+torch.save(m3.state_dict(), path)
+m4 = nn.Linear(3, 2)
+m4.load_state_dict(torch.load(path, weights_only=True))
+os.remove(path)
+print("存盘往返一致", bool(torch.equal(m3.weight, m4.weight)))
 
-m(torch.ones(1, 2)).sum().backward()
-g = float(m.weight.grad.sum())
-m.zero_grad()
-print("清零前梯度", round(g, 6), "| 清零后", m.weight.grad)
-
-torch.manual_seed(9)
-big = torch.nn.Linear(1, 1)
-opt = torch.optim.SGD(big.parameters(), lr=1e4)
-xs = torch.Tensor([[1.0], [2.0], [3.0]])
-ys = torch.Tensor([[2.0], [4.0], [6.0]])
-crit = nn.MSELoss(reduction="sum")
-first = None
-for _ in range(5):
-    loss = crit(big(xs), ys)
-    opt.zero_grad()
-    loss.backward()
-    opt.step()
-    if first is None:
-        first = loss.item()
-print(f"lr=1e4 首轮 loss {first:.4f} -> 末轮 {loss.item():.4f}（发散）")
+torch.manual_seed(13)
+a = torch.randn(3).tolist()
+torch.manual_seed(13)
+b = torch.randn(3).tolist()
+print("固定 seed 可复现", a == b, [round(v, 6) for v in a])
 ```
 
 输出样例：
 
 ```
-SGD 超参 lr = 0.1 momentum = 0.9
-Adam 状态键 ('step', 'exp_avg', 'exp_avg_sq')
-清零前梯度 0.769743 | 清零后 None
-lr=1e4 首轮 loss 48.4040 -> 末轮 inf（发散）
+state_dict 键 ('weight', 'bias')
+权重一致 True 偏置一致 True
+存盘往返一致 True
+固定 seed 可复现 True [-0.111659, -1.14561, 1.410316]
 ```
 
 ## 口述答案

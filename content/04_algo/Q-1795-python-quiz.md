@@ -1,6 +1,6 @@
 ---
 id: Q-1795
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 101 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 102 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,23 +21,28 @@ lab_src: quiz
 
 ```python
 import torch
-bn = torch.nn.BatchNorm1d(3)
-bn.train()
-bn(torch.randn(4, 3))
-bn.eval()
-print(tuple(bn(torch.randn(4, 3)).shape))
+import torch.nn as nn
+import torch.nn.functional as F
+class Res(nn.Module):
+    def __init__(self, c):
+        super().__init__()
+        self.c1 = nn.Conv2d(c, c, 3, padding=1)
+        self.c2 = nn.Conv2d(c, c, 3, padding=1)
+    def forward(self, x):
+        return x + self.c2(F.relu(self.c1(x)))
+print(tuple(Res(8)(torch.randn(1, 8, 16, 16)).shape))
 ```
 
-- **A.** (4, 3)
-- **B.** ((4, 1),)
-- **C.** ((1, 3),)
-- **D.** ((4, 3), (4, 3))
+- **A.** (1, 8, 16, 16)
+- **B.** ((1, 16, 16, 16),)
+- **C.** ((1, 8, 14, 14),)
+- **D.** ((1, 8, 8, 8),)
 
 ## 口述答案
 
-答案是 **A. (4, 3)**，实际输出 `(4, 3)`。
+答案是 **A. (1, 8, 16, 16)**，实际输出 `(1, 8, 16, 16)`。
 
-BatchNorm1d 保持形状不变，只做归一化；train 模式用当前批统计量，eval 模式用运行均值方差。
+padding=1 保持空间尺寸，残差相加要求形状一致，所以残差块进出形状完全相同——这是残差能「深下去」的前提。
 
 ## 讲深一层
 

@@ -1,10 +1,10 @@
 ---
 id: Q-1861
-title: 滑动窗口最大值：单调队列为什么能做到 O(n)？
+title: 移动零：快慢指针原地怎么做？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [单调队列, 滑窗]
-hint: 队列存下标且值递减，队头就是最大值。每个元素最多进出一次，均摊 O(1)。
+tags: [双指针, 数组]
+hint: 慢指针指向下一个非零该放的位置，快指针扫；遇到非零就交换。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：队列存下标且值递减，队头就是最大值。每个元素最多进出一次，均摊 O(1)。
+**套路**：慢指针指向下一个非零该放的位置，快指针扫；遇到非零就交换。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

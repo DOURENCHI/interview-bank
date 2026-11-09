@@ -1,6 +1,6 @@
 ---
 id: Q-1700
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 6 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 7 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```python
-print((1, 2, 3)[1], [1, 2, 3][1], len("hello"))
+a = [1, 2, 3]
+try:
+    print(a[3])
+except IndexError as e:
+    print("IndexError")
 ```
 
-- **A.** 2 2 5
-- **B.** 1 1 5
-- **C.** 2 2 4
-- **D.** 3 3 5
+- **A.** 3
+- **B.** IndexError
+- **C.** None
+- **D.** []
 
 ## 口述答案
 
-答案是 **A. 2 2 5**，实际输出 `2 2 5`。
+答案是 **B. IndexError**，实际输出 `IndexError`。
 
-下标从 0 起，元组和列表都取到第 1 个元素即 2；len("hello") 是 5 个字符（不是 6，Python 字符串没有结尾的 \0）。
+越界访问会抛 IndexError 而不是返回 None，必须靠 try/except 捕获——这是 Python 与 C++ 数组最大的行为差异之一。
 
 ## 讲深一层
 

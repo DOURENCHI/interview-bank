@@ -1,6 +1,6 @@
 ---
 id: Q-1807
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 113 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 114 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,19 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-print(torch.device("cpu"), torch.zeros(2).device)
+m = torch.nn.Linear(2, 1)
+with torch.inference_mode():
+    out = m(torch.ones(1, 2))
+print(out.requires_grad)
 ```
 
-- **A.** cpu cpu
-- **B.** cpu:0 cpu:0
-- **C.** cuda:0 cuda:0
-- **D.** None None
+- **A.** False
+- **B.** True
+- **C.** None
+- **D.** 0
 
 ## 口述答案
 
-答案是 **A. cpu cpu**，实际输出 `cpu cpu`。
+答案是 **A. False**，实际输出 `False`。
 
-本机是 CPU 版 PyTorch，device 就是 cpu；装了 CUDA 版才会出现 cuda:0。
+inference_mode 比 no_grad 更彻底，连版本计数都不记，推理首选；no_grad 也能达到不建图的效果。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1783
-title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 89 题）
+title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 90 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,23 +21,21 @@ lab_src: quiz
 
 ```python
 import torch
-logits = torch.tensor([0.5, -0.5, 1.5])
-y = torch.tensor([1.0, 0.0, 1.0])
-a = float(torch.nn.BCELoss()(torch.sigmoid(logits), y))
-b = float(torch.nn.BCEWithLogitsLoss()(logits, y))
-print(round(a, 6), round(b, 6))
+y = torch.tensor([0.0] * 90 + [1.0] * 10)
+p = torch.tensor([0.0] * 100)
+print(round(float((y == p).float().mean()), 6))
 ```
 
-- **A.** 0.383189 0.383189
-- **B.** (0.383189, 0.693147)
-- **C.** (0.5, 0.5)
-- **D.** (0.0, 0.0)
+- **A.** 0.9
+- **B.** 0.1
+- **C.** 1.0
+- **D.** 0.0
 
 ## 口述答案
 
-答案是 **A. 0.383189 0.383189**，实际输出 `0.383189 0.383189`。
+答案是 **A. 0.9**，实际输出 `0.9`。
 
-两种写法数值完全一致（0.383189），这是 BCEWithLogitsLoss 存在的意义：省一次 sigmoid，且数值更稳。
+全预测 0 就有 90% 准确率——类别不平衡时 accuracy 会骗人，这就是要用精确率/召回率/F1 或 AUC 的原因。
 
 ## 讲深一层
 

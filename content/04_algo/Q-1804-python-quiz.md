@@ -1,6 +1,6 @@
 ---
 id: Q-1804
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 110 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 111 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,25 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(10)
-d = torch.nn.Dropout(0.5)
-d.eval()
-print(round(float(d(torch.ones(10)).sum()), 4))
+torch.manual_seed(11)
+m = torch.nn.Linear(2, 1)
+sd = {k: v.clone() for k, v in m.state_dict().items()}
+m(torch.randn(2, 2)).sum().backward()
+m2 = torch.nn.Linear(2, 1)
+m2.load_state_dict(sd)
+print(tuple(m.state_dict().keys()), bool(torch.equal(m.weight, m2.weight)), bool(torch.equal(m.bias, m2.bias)))
 ```
 
-- **A.** 10.0
-- **B.** 0.0
-- **C.** 5.0
-- **D.** 1.0
+- **A.** ('weight', 'bias') True True
+- **B.** ('weight', 'bias') False True
+- **C.** ('param',) True True
+- **D.** ('weight', 'bias') True False
 
 ## 口述答案
 
-答案是 **A. 10.0**，实际输出 `10.0`。
+答案是 **A. ('weight', 'bias') True True**，实际输出 `('weight', 'bias') True True`。
 
-eval 模式关闭 Dropout，10 个 1 原样通过，和是 10.0。推理时忘了 model.eval() 是最常见的线上事故。
+state_dict 是有序字典，键为 weight/bias；load_state_dict 把保存的值装回新模型，两个布尔都为 True。
 
 ## 讲深一层
 

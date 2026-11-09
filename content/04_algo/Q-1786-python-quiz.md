@@ -1,6 +1,6 @@
 ---
 id: Q-1786
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 92 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 93 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-p = torch.nn.MaxPool2d(2)
-x = torch.tensor([[[[1.0, 2.0], [3.0, 4.0]]]])
-print(tuple(p(x).shape), p(x).reshape(-1).tolist())
+m = torch.nn.Sequential(torch.nn.Conv2d(1, 10, 3), torch.nn.ReLU(), torch.nn.MaxPool2d(2), torch.nn.Flatten())
+print(tuple(m(torch.randn(1, 1, 28, 28)).shape))
 ```
 
-- **A.** (1, 1, 1, 1) [4.0]
-- **B.** ((1, 1, 2, 2), [1.0, 2.0, 3.0, 4.0])
-- **C.** ((1, 1, 1, 1), [1.0])
-- **D.** ((1, 1, 2, 2), [4.0])
+- **A.** (1, 1690)
+- **B.** ((1, 10),)
+- **C.** ((1, 1, 28, 28),)
+- **D.** ((1, 784),)
 
 ## 口述答案
 
-答案是 **A. (1, 1, 1, 1) [4.0]**，实际输出 `(1, 1, 1, 1) [4.0]`。
+答案是 **A. (1, 1690)**，实际输出 `(1, 1690)`。
 
-2×2 池化把 2×2 缩成 1×1，取窗口最大值 4.0。池化没有可学参数。
+28 → 卷积3核 26 → 池化 13，13×13×10 = 1690。Flatten 把每张特征图拉平，这正是「320 是怎么来的」那类计算。
 
 ## 讲深一层
 

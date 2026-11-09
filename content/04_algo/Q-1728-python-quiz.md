@@ -1,6 +1,6 @@
 ---
 id: Q-1728
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 34 题）
+title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 35 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,23 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```python
-counter = {"n": 0}
-def bump():
-    counter["n"] += 1
-    return counter["n"]
-print(bump(), bump(), counter["n"])
+import numpy as np
+a = np.array([[1, 2], [3, 4]])
+print(a.shape, a.ndim, a.dtype, a.size)
 ```
 
-- **A.** 1 2 2
-- **B.** 1 1 1
-- **C.** 1 2 3
-- **D.** 0 1 1
+- **A.** (2, 2) 2 int64 4
+- **B.** (2, 2) 2 int32 4
+- **C.** (4,) 1 int64 4
+- **D.** (2, 2) 2 int64 2
 
 ## 口述答案
 
-答案是 **A. 1 2 2**，实际输出 `1 2 2`。
+答案是 **A. (2, 2) 2 int64 4**，实际输出 `(2, 2) 2 int64 4`。
 
-可变对象作为全局变量时函数内的修改会生效，字典内容被就地累加；第三次打印仍是 2，因为 counter 里存的就是 2。
+shape 是各维长度、ndim 是维数、size 是元素总数（2×2=4）；dtype 由字面量推断，整数默认 int64（Linux/macOS）或 int32（Windows）。
 
 ## 讲深一层
 
@@ -57,4 +55,4 @@ print(bump(), bump(), counter["n"])
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 01 Python 语言地基
+`教学文档/Python实验台/Python考点实验台.html` · 02 NumPy 与张量基础

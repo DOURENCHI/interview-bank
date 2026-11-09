@@ -1,6 +1,6 @@
 ---
 id: Q-1758
-title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 64 题）
+title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 65 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,32 +20,25 @@ lab_src: quiz
 ## 题目
 
 ```python
-import torch
-torch.manual_seed(1)
-x = torch.Tensor([[1.0], [2.0], [3.0]])
-y = torch.Tensor([[2.0], [4.0], [6.0]])
-model = torch.nn.Linear(1, 1)
-crit = torch.nn.MSELoss(reduction="sum")
-opt = torch.optim.SGD(model.parameters(), lr=0.01)
-for _ in range(100):
-    pred = model(x)
-    loss = crit(pred, y)
-    opt.zero_grad()
-    loss.backward()
-    opt.step()
-print(round(model.weight.item(), 4), round(model.bias.item(), 4), round(model(torch.Tensor([[4.0]])).item(), 4))
+xs = [1.0, 2.0, 3.0]
+ys = [2.0, 4.0, 6.0]
+def grad(w):
+    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
+def cost(w):
+    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
+print(grad(2.0), cost(2.0))
 ```
 
-- **A.** 1.9622 0.086 7.9346
-- **B.** (2.0, 0.0, 8.0)
-- **C.** (1.9622, 0.086, 8.0)
-- **D.** (2.0, 0.0, 7.9346)
+- **A.** 0.0 0.0
+- **B.** (0.0, 14.0)
+- **C.** (6.0, 0.0)
+- **D.** (0.0, 1.0)
 
 ## 口述答案
 
-答案是 **A. 1.9622 0.086 7.9346**，实际输出 `1.9622 0.086 7.9346`。
+答案是 **A. 0.0 0.0**，实际输出 `0.0 0.0`。
 
-真实关系是 y=2x，但 100 轮 + lr=0.01 还没收敛到位，所以权重是 1.9622 而不是精确的 2.0。实测输出必须认准这个「未完全收敛」的现实。
+w=2 正好是数据的真实斜率，预测全对：梯度为 0（不再需要调整），代价为 0。梯度为 0 就是收敛的判据。
 
 ## 讲深一层
 

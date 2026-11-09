@@ -1,10 +1,10 @@
 ---
 id: Q-1847
-title: 最长连续序列：为什么只从「序列起点」开始扩展？
+title: 和为 K 的子数组：前缀和 + 哈希怎么配合？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 集合]
-hint: 先丢进 set，只对 n-1 不在 set 里的 n 往右数。每个元素最多访问两次，总 O(n)。
+tags: [前缀和, 哈希]
+hint: pre[j]-pre[i]=k 等价于 pre[i]=pre[j]-k。遍历时查哈希里有多少个这样的 pre[i]。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：先丢进 set，只对 n-1 不在 set 里的 n 往右数。每个元素最多访问两次，总 O(n)。
+**套路**：pre[j]-pre[i]=k 等价于 pre[i]=pre[j]-k。遍历时查哈希里有多少个这样的 pre[i]。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

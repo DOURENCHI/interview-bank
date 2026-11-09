@@ -1,6 +1,6 @@
 ---
 id: Q-1639
-title: 这段 C++ 代码输出什么？（18 虚析构 · 第 26 题）
+title: 这段 C++ 代码输出什么？（20 模板 · 第 27 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,24 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-struct B { ~B() { cout << "~B"; } };
-struct D : B { ~D() { cout << "~D"; } };
+template <typename T>
+T mx(T a, T b) { return a > b ? a : b; }
 int main() {
-    B *p = new D;
-    delete p;
+    cout << mx(3, 5) << " " << mx<double>(3, 5.5);
 }
 ```
 
-- **A.** ~B
-- **B.** ~D~B
-- **C.** ~B~D
-- **D.** ~D
+- **A.** 5 5.5
+- **B.** 5 5
+- **C.** 3 5.5
+- **D.** 编译错误
 
 ## 口述答案
 
-答案是 **A. ~B**，实际输出 `~B`。
+答案是 **A. 5 5.5**，实际输出 `5 5.5`。
 
-基类析构函数不是虚函数，通过基类指针 delete 只调用 ~B，~D 没执行。改成 virtual ~B() 才会输出 ~D~B。
+mx(3, 5) 推导出 T = int；显式写 mx<double> 后，3 被转换成 3.0。
 
 ## 讲深一层
 
@@ -58,4 +57,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 18 虚析构
+`教学文档/C++实验台/C++考点实验台.html` · 20 模板

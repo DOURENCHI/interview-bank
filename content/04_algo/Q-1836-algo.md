@@ -1,10 +1,10 @@
 ---
 id: Q-1836
-title: 旋转图像：原地顺时针 90° 怎么推？
+title: 生命游戏：怎么原地更新而不覆盖下一轮要用的状态？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [矩阵, 原地]
-hint: 先转置再左右翻转，比直接做四点交换好写且不易错。
+tags: [矩阵, 位运算, 原地]
+hint: 用复合状态编码：2 表示原活现死、3 表示原死现活，最后统一归一化。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：先转置再左右翻转，比直接做四点交换好写且不易错。
+**套路**：用复合状态编码：2 表示原活现死、3 表示原死现活，最后统一归一化。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

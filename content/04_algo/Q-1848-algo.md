@@ -1,10 +1,10 @@
 ---
 id: Q-1848
-title: 和为 K 的子数组：前缀和 + 哈希怎么配合？
+title: 字符串中第一个唯一字符：为什么用计数数组？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [前缀和, 哈希]
-hint: pre[j]-pre[i]=k 等价于 pre[i]=pre[j]-k。遍历时查哈希里有多少个这样的 pre[i]。
+tags: [哈希, 字符串]
+hint: 只有 26 个小写字母，开数组 O(n+26)；第一遍统计第二遍找首个计数为 1 的，比哈希快。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：pre[j]-pre[i]=k 等价于 pre[i]=pre[j]-k。遍历时查哈希里有多少个这样的 pre[i]。
+**套路**：只有 26 个小写字母，开数组 O(n+26)；第一遍统计第二遍找首个计数为 1 的，比哈希快。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1762
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 68 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 69 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Linear(3, 2)
-print(tuple(m.weight.shape), tuple(m.bias.shape), m.weight.shape[0] * m.weight.shape[1] + 2)
+torch.manual_seed(3)
+m = torch.nn.Linear(2, 1)
+out = m(torch.randn(4, 2))
+print(tuple(out.shape), out.requires_grad)
 ```
 
-- **A.** (2, 3) (2,) 8
-- **B.** ((3, 2), (3,), 8)
-- **C.** ((2, 3), (2,), 6)
-- **D.** ((2, 3), (2,), 2)
+- **A.** (4, 1) True
+- **B.** ((1, 4), True)
+- **C.** ((4, 2), True)
+- **D.** ((4, 1), False)
 
 ## 口述答案
 
-答案是 **A. (2, 3) (2,) 8**，实际输出 `(2, 3) (2,) 8`。
+答案是 **A. (4, 1) True**，实际输出 `(4, 1) True`。
 
-Linear(3,2) 是「3 个输入 → 2 个输出」，权重形状 (out, in) = (2,3)、偏置 2 个，共 2×3+2 = 8 个参数。
+批大小 4、每样本 2 维输入，输出形状 (4,1)；因为参数需要梯度，输出自动带上计算图，requires_grad 为 True。
 
 ## 讲深一层
 

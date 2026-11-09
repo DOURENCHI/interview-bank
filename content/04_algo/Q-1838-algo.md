@@ -1,10 +1,10 @@
 ---
 id: Q-1838
-title: 数组中重复的数据：不用额外空间怎么找？
+title: 最长公共前缀：怎么优雅地逐列比较？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [原地哈希, 数组]
-hint: 用值当索引做符号标记，第二次遇到已是负数就说明重复；或把值换到下标 v-1 上。
+tags: [字符串]
+hint: 以第一个字符串为基准逐位比对所有串，某串越界或不匹配就截断。不要两两求前缀。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：用值当索引做符号标记，第二次遇到已是负数就说明重复；或把值换到下标 v-1 上。
+**套路**：以第一个字符串为基准逐位比对所有串，某串越界或不匹配就截断。不要两两求前缀。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1782
-title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 88 题）
+title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 89 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,23 @@ lab_src: quiz
 
 ```python
 import torch
-logits = torch.tensor([2.0, 1.0, 0.1])
-lp = torch.log_softmax(logits, dim=0)
-print([round(v, 6) for v in lp.tolist()], round(float(torch.nn.NLLLoss()(lp, torch.tensor([0]))), 6))
+logits = torch.tensor([0.5, -0.5, 1.5])
+y = torch.tensor([1.0, 0.0, 1.0])
+a = float(torch.nn.BCELoss()(torch.sigmoid(logits), y))
+b = float(torch.nn.BCEWithLogitsLoss()(logits, y))
+print(round(a, 6), round(b, 6))
 ```
 
-- **A.** [-0.41703, -1.41703, -2.31703] 0.41703
-- **B.** ([0.665241, 0.244728, 0.090031], 0.41703)
-- **C.** ([-0.41703, -1.41703, -2.31703], 1.41703)
-- **D.** ([2.0, 1.0, 0.1], 0.41703)
+- **A.** 0.383189 0.383189
+- **B.** (0.383189, 0.693147)
+- **C.** (0.5, 0.5)
+- **D.** (0.0, 0.0)
 
 ## 口述答案
 
-答案是 **A. [-0.41703, -1.41703, -2.31703] 0.41703**，实际输出 `[-0.41703, -1.41703, -2.31703] 0.41703`。
+答案是 **A. 0.383189 0.383189**，实际输出 `0.383189 0.383189`。
 
-log_softmax 输出对数概率（都是负数），NLLLoss 取负对数似然作损失，与 CrossEntropyLoss 完全等价。
+两种写法数值完全一致（0.383189），这是 BCEWithLogitsLoss 存在的意义：省一次 sigmoid，且数值更稳。
 
 ## 讲深一层
 

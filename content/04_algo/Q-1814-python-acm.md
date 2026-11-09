@@ -1,6 +1,6 @@
 ---
 id: Q-1814
-title: PyTorch 版线性回归：完整训练循环 的 ACM 输入输出怎么写？
+title: nn.Module：参数量、冻结与 train/eval 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -24,51 +24,40 @@ lab_src: snip
 
 ```python
 import torch
+import torch.nn as nn
 
-torch.manual_seed(1)
+torch.manual_seed(3)
 
-x_data = torch.Tensor([[1.0], [2.0], [3.0]])
-y_data = torch.Tensor([[2.0], [4.0], [6.0]])
+m = nn.Linear(3, 2)
+print("weight", tuple(m.weight.shape), "bias", tuple(m.bias.shape))
+print("参数量", sum(p.numel() for p in m.parameters()))
 
+seq = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 1))
+print("Sequential 参数量", sum(p.numel() for p in seq.parameters()))
+print("前向输出形状", tuple(seq(torch.randn(4, 4)).shape))
 
-class LinearModel(torch.nn.Module):
-    def __init__(self):
-        super(LinearModel, self).__init__()
-        self.linear = torch.nn.Linear(1, 1)
+for p in m.parameters():
+    p.requires_grad_(False)
+print("冻结后仍有可训练参数吗", any(p.requires_grad for p in m.parameters()))
 
-    def forward(self, x):
-        return self.linear(x)
-
-
-model = LinearModel()
-criterion = torch.nn.MSELoss(reduction="sum")
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
-
-for epoch in range(100):
-    y_pred = model(x_data)
-    loss = criterion(y_pred, y_data)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    if epoch % 20 == 0:
-        print(f"Epoch {epoch}: loss={loss.item():.4f}")
-
-print("w =", round(model.linear.weight.item(), 4))
-print("b =", round(model.linear.bias.item(), 4))
-print("predict 4h =", round(model(torch.Tensor([[4.0]])).item(), 4))
+torch.manual_seed(5)
+dp = nn.Sequential(nn.Linear(4, 4), nn.Dropout(0.5))
+dp.train()
+a = float(dp(torch.ones(1, 4)).sum().detach())
+dp.eval()
+b = float(dp(torch.ones(1, 4)).sum().detach())
+print(f"train 模式输出和 {a:.4f} | eval 模式输出和 {b:.4f}")
 ```
 
 输出样例：
 
 ```
-Epoch 0: loss=39.3106
-Epoch 20: loss=0.0101
-Epoch 40: loss=0.0076
-Epoch 60: loss=0.0057
-Epoch 80: loss=0.0043
-w = 1.9622
-b = 0.086
-predict 4h = 7.9346
+weight (2, 3) bias (2,)
+参数量 8
+Sequential 参数量 49
+前向输出形状 (4, 1)
+冻结后仍有可训练参数吗 False
+train 模式输出和 3.4002 | eval 模式输出和 1.4552
 ```
 
 ## 口述答案
@@ -93,4 +82,4 @@ predict 4h = 7.9346
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 04 线性模型与梯度下降
+`教学文档/Python实验台/Python考点实验台.html` · 05 nn.Module 与训练循环

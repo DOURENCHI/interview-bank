@@ -1,10 +1,10 @@
 ---
 id: Q-1885
-title: N 皇后：怎么用三个数组做到 O(1) 冲突判断？
+title: 爬楼梯：为什么它和斐波那契是同一道题？
 module: 04_algo
-sub: DFS BFS
+sub: DP
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [回溯, 位运算]
-hint: 列数组、主对角线（row-col+n）、副对角线（row+col）。放前查三个，放完标记，回溯时撤销。
+tags: [DP, 递推]
+hint: 到第 n 阶只能从 n-1 或 n-2 来，dp[n]=dp[n-1]+dp[n-2]。两个变量滚动，O(1) 空间。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：列数组、主对角线（row-col+n）、副对角线（row+col）。放前查三个，放完标记，回溯时撤销。
+**套路**：到第 n 阶只能从 n-1 或 n-2 来，dp[n]=dp[n-1]+dp[n-2]。两个变量滚动，O(1) 空间。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

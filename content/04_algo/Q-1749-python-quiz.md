@@ -1,6 +1,6 @@
 ---
 id: Q-1749
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 55 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 56 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-x = torch.tensor([2.0], requires_grad=True)
-(x * 3).sum().backward()
-(x * 5).sum().backward()
-print(x.grad.tolist())
+x = torch.tensor([1.0], requires_grad=True)
+with torch.no_grad():
+    y = x * 2
+print(y.requires_grad)
 ```
 
-- **A.** [8.0]
-- **B.** [3.0]
-- **C.** [5.0]
-- **D.** [0.0]
+- **A.** False
+- **B.** True
+- **C.** None
+- **D.** 0
 
 ## 口述答案
 
-答案是 **A. [8.0]**，实际输出 `[8.0]`。
+答案是 **A. False**，实际输出 `False`。
 
-梯度默认累加不清零：第二次 backward 又加上 5，累计 3+5=8。PyTorch 不会自动清梯度，这是训练循环里必须 zero_grad 的原因。
+no_grad 上下文里所有运算都不记录计算图，输出张量不再需要梯度——推理阶段用它省内存省时间。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1757
-title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 63 题）
+title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 64 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,28 +20,32 @@ lab_src: quiz
 ## 题目
 
 ```python
-xs = [1.0, 2.0, 3.0]
-ys = [2.0, 4.0, 6.0]
-w = 1.0
-def grad(w):
-    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
-for _ in range(3):
-    w -= 0.01 * grad(w)
-def cost(w):
-    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
-print(round(w, 4), round(cost(w), 4))
+import torch
+torch.manual_seed(1)
+x = torch.Tensor([[1.0], [2.0], [3.0]])
+y = torch.Tensor([[2.0], [4.0], [6.0]])
+model = torch.nn.Linear(1, 1)
+crit = torch.nn.MSELoss(reduction="sum")
+opt = torch.optim.SGD(model.parameters(), lr=0.01)
+for _ in range(100):
+    pred = model(x)
+    loss = crit(pred, y)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()
+print(round(model.weight.item(), 4), round(model.bias.item(), 4), round(model(torch.Tensor([[4.0]])).item(), 4))
 ```
 
-- **A.** 1.2547 2.5923
-- **B.** 1.0933 3.8362
-- **C.** 1.1800 3.1535
-- **D.** 0.7 0.49
+- **A.** 1.9622 0.086 7.9346
+- **B.** (2.0, 0.0, 8.0)
+- **C.** (1.9622, 0.086, 8.0)
+- **D.** (2.0, 0.0, 7.9346)
 
 ## 口述答案
 
-答案是 **A. 1.2547 2.5923**，实际输出 `1.2547 2.5923`。
+答案是 **A. 1.9622 0.086 7.9346**，实际输出 `1.9622 0.086 7.9346`。
 
-每步 w -= 0.01 × 梯度：梯度为负所以 w 增大。三步后 w≈1.2547，代价从 4.6667 降到 2.5923。
+真实关系是 y=2x，但 100 轮 + lr=0.01 还没收敛到位，所以权重是 1.9622 而不是精确的 2.0。实测输出必须认准这个「未完全收敛」的现实。
 
 ## 讲深一层
 

@@ -1,10 +1,10 @@
 ---
 id: Q-1851
-title: LRU 缓存：为什么哈希和双向链表缺一不可？
+title: 两个数组的交集：哈希和排序双指针怎么选？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 链表, 设计]
-hint: 哈希给 O(1) 定位，双向链表给 O(1) 挪到表头或删尾。单链表删节点还要找前驱，不满足 O(1)。
+tags: [哈希, 双指针]
+hint: 量大要 O(n) 用哈希；已排序或要省内存用双指针。要求结果去重时两者都得额外处理。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：哈希给 O(1) 定位，双向链表给 O(1) 挪到表头或删尾。单链表删节点还要找前驱，不满足 O(1)。
+**套路**：量大要 O(n) 用哈希；已排序或要省内存用双指针。要求结果去重时两者都得额外处理。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

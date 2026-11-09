@@ -1,6 +1,6 @@
 ---
 id: Q-1644
-title: 这段 C++ 代码输出什么？（23 流 · 第 31 题）
+title: 这段 C++ 代码输出什么？（24 异常 · 第 32 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,20 +20,26 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-cout << fixed << setprecision(2) << 3.14159 << " ";
-cout << setw(4) << setfill('*') << 7 << 7;
+try {
+    cout << "A";
+    throw 1;
+    cout << "B";
+} catch (int) {
+    cout << "C";
+}
+cout << "D";
 ```
 
-- **A.** 3.14 ***77
-- **B.** 3.14 ***7***7
-- **C.** 3.1 ***77
-- **D.** 3.14 7***7
+- **A.** ACD
+- **B.** ABCD
+- **C.** AD
+- **D.** ABD
 
 ## 口述答案
 
-答案是 **A. 3.14 ***77**，实际输出 `3.14 ***77`。
+答案是 **A. ACD**，实际输出 `ACD`。
 
-fixed 下 setprecision(2) 是两位小数；setw 只对紧跟的下一项有效，所以第二个 7 不再补齐。
+throw 之后的语句不再执行，直接跳到匹配的 catch；处理完继续往下走。
 
 ## 讲深一层
 
@@ -54,4 +60,4 @@ fixed 下 setprecision(2) 是两位小数；setw 只对紧跟的下一项有效�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 23 流
+`教学文档/C++实验台/C++考点实验台.html` · 24 异常

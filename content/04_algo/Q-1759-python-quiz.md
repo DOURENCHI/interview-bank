@@ -1,6 +1,6 @@
 ---
 id: Q-1759
-title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 65 题）
+title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 66 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,25 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```python
-xs = [1.0, 2.0, 3.0]
-ys = [2.0, 4.0, 6.0]
-def grad(w):
-    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
-def cost(w):
-    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
-print(grad(2.0), cost(2.0))
+import numpy as np
+xs = np.array([1.0, 2.0, 3.0])
+ys = np.array([2.0, 4.0, 6.0])
+w = float((xs @ ys) / (xs @ xs))
+print(w)
 ```
 
-- **A.** 0.0 0.0
-- **B.** (0.0, 14.0)
-- **C.** (6.0, 0.0)
-- **D.** (0.0, 1.0)
+- **A.** 2.0
+- **B.** 1.5
+- **C.** 2.5
+- **D.** 3.0
 
 ## 口述答案
 
-答案是 **A. 0.0 0.0**，实际输出 `0.0 0.0`。
+答案是 **A. 2.0**，实际输出 `2.0`。
 
-w=2 正好是数据的真实斜率，预测全对：梯度为 0（不再需要调整），代价为 0。梯度为 0 就是收敛的判据。
+最小二乘闭式解 w = Σxy / Σx² = 28/14 = 2.0。梯度下降是逼近这个值，闭式解一步到位。
 
 ## 讲深一层
 

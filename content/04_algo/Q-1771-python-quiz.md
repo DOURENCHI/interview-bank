@@ -1,6 +1,6 @@
 ---
 id: Q-1771
-title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 77 题）
+title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 78 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -29,26 +29,19 @@ class DS(Dataset):
         return len(self.x)
     def __getitem__(self, i):
         return self.x[i]
-for xb in DataLoader(DS(10), batch_size=4, shuffle=False):
-    print(tuple(xb.shape), xb.reshape(-1).tolist())
+print(len(DataLoader(DS(10), batch_size=4, shuffle=False, drop_last=True)))
 ```
 
-- **A.** (4, 1) [0.0, 1.0, 2.0, 3.0]
-(4, 1) [4.0, 5.0, 6.0, 7.0]
-(2, 1) [8.0, 9.0]
-- **B.** ((4, 1), [0.0, 1.0, 2.0, 3.0]) ((4, 1), [4.0, 5.0, 6.0, 7.0]) ((2, 1), [8.0, 9.0, 0.0, 0.0])
-- **C.** ((10, 1), [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
-- **D.** ((4, 1), [0.0, 1.0, 2.0, 3.0]) ((4, 1), [4.0, 5.0, 6.0, 7.0]) ((2, 1), [8.0, 9.0]) 
+- **A.** 2
+- **B.** 3
+- **C.** 4
+- **D.** 10
 
 ## 口述答案
 
-答案是 **A. (4, 1) [0.0, 1.0, 2.0, 3.0]
-(4, 1) [4.0, 5.0, 6.0, 7.0]
-(2, 1) [8.0, 9.0]**，实际输出 `(4, 1) [0.0, 1.0, 2.0, 3.0]
-(4, 1) [4.0, 5.0, 6.0, 7.0]
-(2, 1) [8.0, 9.0]`。
+答案是 **A. 2**，实际输出 `2`。
 
-DataLoader 默认把每个样本的 tensor 堆叠成批，形状是 (batch, 特征数)；最后一批不满 4 但不会被补零。
+drop_last=True 把不满一批的尾部丢掉，10 个样本只出 2 个满批（8 个样本），最后 2 个被丢弃。
 
 ## 讲深一层
 

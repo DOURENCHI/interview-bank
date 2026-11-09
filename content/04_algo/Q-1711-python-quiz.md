@@ -1,6 +1,6 @@
 ---
 id: Q-1711
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 17 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 18 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print("abc".isalpha(), "123".isdigit(), "a1".isalnum())
+print("%s-%d" % ("a", 5), "{}-{}".format("b", 6), f"c-{7}")
 ```
 
-- **A.** True True True
-- **B.** True True False
-- **C.** False True True
-- **D.** True False True
+- **A.** a-5 b-6 c-7
+- **B.** a-5 b-6 c-{7}
+- **C.** a-5 b-6 c-8
+- **D.** a-%s b-%d c-7
 
 ## 口述答案
 
-答案是 **A. True True True**，实际输出 `True True True`。
+答案是 **A. a-5 b-6 c-7**，实际输出 `a-5 b-6 c-7`。
 
-isalpha 只认字母、isdigit 只认数字、isalnum 字母数字都认，所以 "a1" 三个判断都成立。
+三种格式化写法结果一致；f-string 是 3.6+ 的语法糖，{7} 会求值成 7。
 
 ## 讲深一层
 

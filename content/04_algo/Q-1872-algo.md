@@ -1,10 +1,10 @@
 ---
 id: Q-1872
-title: 岛屿的最大面积：怎么在递归里累计面积？
+title: 被围绕的区域：为什么从边界反向 DFS？
 module: 04_algo
 sub: DFS BFS
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DFS, 网格]
-hint: dfs 返回 1 + 四周返回值之和，越界或为 0 时返回 0。
+tags: [DFS, 网格, 反向思维]
+hint: 与边界连通的 O 一定不会被围。先标记这些，剩下的 O 才翻成 X，正向判断要复杂得多。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：dfs 返回 1 + 四周返回值之和，越界或为 0 时返回 0。
+**套路**：与边界连通的 O 一定不会被围。先标记这些，剩下的 O 才翻成 X，正向判断要复杂得多。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

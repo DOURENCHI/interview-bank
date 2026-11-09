@@ -1,6 +1,6 @@
 ---
 id: Q-1833
-title: 缺失的第一个正数：为什么能把数组本身当哈希表？
+title: 螺旋矩阵：边界怎么收缩才不会漏或重？
 module: 04_algo
 sub: 数组哈希
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [原地哈希, 数组]
-hint: 把值 v 换到下标 v-1 上做原地置换，再扫一遍找第一个 a[i] != i+1。O(n) 时间 O(1) 空间。
+tags: [矩阵, 模拟]
+hint: 维护上下左右四个边界，每走完一条边收缩一格，循环条件是 top<=bottom 且 left<=right。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：把值 v 换到下标 v-1 上做原地置换，再扫一遍找第一个 a[i] != i+1。O(n) 时间 O(1) 空间。
+**套路**：维护上下左右四个边界，每走完一条边收缩一格，循环条件是 top<=bottom 且 left<=right。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

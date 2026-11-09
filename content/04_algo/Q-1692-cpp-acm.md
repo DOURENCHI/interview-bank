@@ -1,6 +1,6 @@
 ---
 id: Q-1692
-title: chrono 固定时长换算 的 ACM 输入输出怎么写？
+title: stringstream 拆分与拼接 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,15 +23,17 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-auto t = chrono::milliseconds(2500);
-cout << "ms=" << t.count()
-     << " s=" << chrono::duration_cast<chrono::seconds>(t).count() << '\n';
+istringstream iss("10 20 30");
+int x, sum = 0;
+while (iss >> x) sum += x;
+ostringstream oss; oss << "sum=" << sum;
+cout << oss.str() << '\n';
 ```
 
 输出样例：
 
 ```
-ms=2500 s=2
+sum=60
 ```
 
 ## 口述答案
@@ -56,4 +58,4 @@ ms=2500 s=2
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 35
+`教学文档/C++实验台/C++考点实验台.html` · 37

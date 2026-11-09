@@ -1,6 +1,6 @@
 ---
 id: Q-1677
-title: 拷贝构造的调用时机 的 ACM 输入输出怎么写？
+title: 深拷贝：各有一块内存 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,28 +23,36 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-class P {
+class Buf {
+    int *data;
+    int n;
 public:
-    int x;
-    P(int v = 0) : x(v) { cout << "C"; }
-    P(const P &o) : x(o.x) { cout << "K"; }
-    P &operator=(const P &o) { x = o.x; cout << "="; return *this; }
+    Buf(int n) : data(new int[n]()), n(n) {}
+    Buf(const Buf &o) : data(new int[o.n]), n(o.n) { copy(o.data, o.data + n, data); }
+    Buf &operator=(const Buf &o) {
+        if (this == &o) return *this;
+        delete[] data;
+        n = o.n;
+        data = new int[n];
+        copy(o.data, o.data + n, data);
+        return *this;
+    }
+    ~Buf() { delete[] data; }
+    int &at(int i) { return data[i]; }
 };
-void byValue(P p) {}
 int main() {
-    P a(1);      // C
-    P b = a;     // K
-    P c(a);      // K
-    b = a;       // =
-    cout << '|';
-    byValue(a);  // K
+    Buf a(3);
+    a.at(0) = 7;
+    Buf b = a;
+    b.at(0) = 99;
+    cout << a.at(0) << ' ' << b.at(0);
 }
 ```
 
 输出样例：
 
 ```
-CKK=|K
+7 99
 ```
 
 ## 口述答案

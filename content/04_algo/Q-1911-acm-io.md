@@ -1,10 +1,10 @@
 ---
 id: Q-1911
-title: Python 机考第一行两个整数，怎么写最快？
+title: Python 一行给不定长整数，怎么读到行尾？
 module: 04_algo
 sub: Python 读写
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -19,17 +19,16 @@ acm_seed: true
 
 ## 题目
 
-**输入**：第一行 `n m`，接下来 `n` 行每行 `m` 个整数。
-**输出**：元素之和。
+**输入**：第一行 `n`；第二行 `n` 个整数（同一行）。
+**输出**：最大值。
 
 ```
 输入样例
-2 3
-1 2 3
-4 5 6
+5
+3 1 4 1 5
 
 输出样例
-21
+5
 ```
 
 ## 口述答案
@@ -38,42 +37,40 @@ acm_seed: true
 import sys
 
 def main():
-    data = sys.stdin.read().split()
-    it = iter(data)
-    n = int(next(it)); m = int(next(it))
-    total = 0
-    for _ in range(n * m):
-        total += int(next(it))
-    print(total)
+    input = sys.stdin.readline
+    n = int(input())
+    a = list(map(int, input().split()))
+    print(max(a[:n]))          # 只取前 n 个，防止行尾有脏数据
 
 main()
 ```
 
 ## 讲深一层
 
-Python 机考的核心思路是：**一次性读完全部输入，再按需要切片**。因为 `input()` 每调一次就是一次系统调用级别的开销，百万行时会明显拖慢。
+`line.split()` 按空白切分，返回字符串列表；`map(int, ...)` 批量转整数。这是 Python 处理「一行多个数」的标准写法。
 
-三种读法对比：
+需要注意的边界：
 
-| 写法 | 速度 | 适用 |
-|---|---|---|
-| `input()` 逐行 | 最慢 | 行数少，逻辑按行处理 |
-| `sys.stdin.readline()` | 快 2–3 倍 | 需要按行处理 |
-| `sys.stdin.read().split()` | 最快 | **数字为主的题，首选** |
+| 情况 | 处理 |
+|---|---|
+| 行尾有空格 | `split()` 自动忽略，没问题 |
+| 这行只有一个数 | 也能正常工作，返回长度 1 的列表 |
+| 数跨了多行 | 这行读法就错了，要用 `sys.stdin.read().split()` |
+| 数字之间有逗号 | 先 `split(',')` 再 `int`，并且要 `strip()` 空格 |
 
-`split()` 不传参数时按任意空白切分（空格、Tab、换行都算），所以上面完全不用管「换行在哪」，和 C++ 的 `cin >>` 等价。
+`sorted` 与内存：`list(map(...))` 会一次性建列表。如果只需要最大值，可以直接 `max(map(int, input().split()))`，省一个列表。
 
 ## 高频追问
 
-1. **`iter` + `next` 是必须的吗？** —— 不是，但用它按需取 token 比维护下标 `i` 更不容易越界。
-2. **`sys.stdin.read()` 会不会内存爆？** —— 会。几十万 token 没问题，上千万就要改按行读。
-3. **为什么包一层 `main()`？** —— 局部变量比全局变量快（`LOAD_FAST` vs `LOAD_GLOBAL`），数据量大时有可观差距。
+1. **`input()` 和 `sys.stdin.readline()` 差别？** —— `input()` 会去掉行尾 `\n`，`readline()` 保留，需要自己 `strip()`。前者还会尝试解析 exec 相关逻辑（Python 3 已简化），略慢。
+2. **`split()` 不带参数和带参数的区别？** —— 不带参数按任意空白切且忽略空串；带参数（如 `split(',')`）按字面切，**会保留空串**。
+3. **数据量很大时 `map` 和列表推导谁快？** —— `map(int, ...)` 通常快一点，且省内存（惰性）。
 
 ## 易错点
 
-- ❌ 用 `input()` 读百万行 —— 超时
-- ❌ `split()` 后发现 token 数不够 —— 题面格式看错了，加断言能早发现
-- ❌ 忘了 `int()` 转换 —— 字符串累加会变成拼接
+- ❌ `int(input())` 读一行多个数 —— 直接 ValueError
+- ❌ 忘了 `strip()` 就用 `readline()` —— 末尾 `\n` 进到数据里
+- ❌ `split(',')` 后不 trim —— `' 2'` 转 int 虽然能过，但字符串比较会错
 
 ## 关联项目
 
@@ -81,4 +78,4 @@ Python 机考的核心思路是：**一次性读完全部输入，再按需要�
 
 ## 来源
 
-`sys.stdin.read` / `str.split` 语义
+`str.split` / `map` 语义

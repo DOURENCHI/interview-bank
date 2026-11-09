@@ -1,6 +1,6 @@
 ---
 id: Q-1698
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 4 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 5 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(int("42"), float("3.5"), str(3.5), bool(""), bool("0"))
+print([1, 2, 3] + [4], [1, 2] * 2, 5 in [1, 2, 3])
 ```
 
-- **A.** 42 3.5 3.5 False True
-- **B.** 42 3.5 3.5 False False
-- **C.** 42 3.5 '3.5' False False
-- **D.** 42 3.5 3.5 True True
+- **A.** [1, 2, 3, 4] [1, 2, 1, 2] False
+- **B.** [1, 2, 3, 4] [1, 2, 1, 2] True
+- **C.** [1, 2, 3, 4] [1, 2] False
+- **D.** [1, 2, 3, 4] [1, 2, 1, 2] TypeError
 
 ## 口述答案
 
-答案是 **A. 42 3.5 3.5 False True**，实际输出 `42 3.5 3.5 False True`。
+答案是 **A. [1, 2, 3, 4] [1, 2, 1, 2] False**，实际输出 `[1, 2, 3, 4] [1, 2, 1, 2] False`。
 
-bool 的判定规则是「非空即真」，不看内容是不是 0：空字符串是 False，但字符串 "0" 非空所以是 True。
+列表相加是拼接、乘法是重复（不是幂）；in 是成员判断，5 不在 [1,2,3] 里所以 False。
 
 ## 讲深一层
 

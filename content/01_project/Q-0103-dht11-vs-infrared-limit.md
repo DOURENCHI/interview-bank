@@ -2,7 +2,7 @@
 id: Q-0103
 title: 你这个方案的局限是什么？为什么用 DHT11 而不是红外测温？
 module: 01_project
-sub: 4G道路测温
+sub: 本科毕设·4G 测温
 priority: P0
 difficulty: 3
 roles: [嵌入式, 感知]

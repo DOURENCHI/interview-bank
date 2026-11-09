@@ -1,6 +1,6 @@
 ---
 id: Q-1764
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 70 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 71 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,26 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Sequential(torch.nn.Linear(4, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1))
-print(sum(p.numel() for p in m.parameters()))
+torch.manual_seed(3)
+m = torch.nn.Linear(1, 1)
+m(torch.ones(1, 1)).sum().backward()
+g1 = float(m.weight.grad.sum())
+m.zero_grad()
+m(torch.ones(1, 1)).sum().backward()
+g2 = float(m.weight.grad.sum())
+print(round(g1, 6), round(g2, 6))
 ```
 
-- **A.** 49
-- **B.** 41
-- **C.** 37
-- **D.** 56
+- **A.** 1.0 1.0
+- **B.** (2.0, 1.0)
+- **C.** (1.0, 2.0)
+- **D.** (0.0, 0.0)
 
 ## 口述答案
 
-答案是 **A. 49**，实际输出 `49`。
+答案是 **A. 1.0 1.0**，实际输出 `1.0 1.0`。
 
-第一层 4×8+8 = 40，第二层 8×1+1 = 9，ReLU 无参数，合计 49。这是判断模型复杂度的第一个数字。
+不调 zero_grad 时梯度会累加成 2.0；清零后再算是 1.0。两者数值相同是巧合（这里权重恰好为 1），关键是「必须清零」这件事。
 
 ## 讲深一层
 

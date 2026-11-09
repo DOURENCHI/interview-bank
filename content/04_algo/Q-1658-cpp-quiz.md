@@ -1,6 +1,6 @@
 ---
 id: Q-1658
-title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 45 题）
+title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 46 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,21 +20,22 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-vector<int> v{1,2,3,4};
-cout << count_if(v.begin(), v.end(),
-  [](int x){ return x % 2 == 0; });
+vector<int> v{1,2,3};
+transform(v.begin(), v.end(), v.begin(),
+  [](int x){ return x * 2; });
+for (int x : v) cout << x;
 ```
 
-- **A.** 2
-- **B.** 3
-- **C.** 1
-- **D.** 4
+- **A.** 246
+- **B.** 123
+- **C.** 235
+- **D.** 2 4 6
 
 ## 口述答案
 
-答案是 **A. 2**，实际输出 `2`。
+答案是 **A. 246**，实际输出 `246`。
 
-count_if 统计使谓词为 true 的元素：1 2 3 4 里偶数只有 2 和 4，共 2 个。谓词可以是 lambda、函数对象或普通函数。
+transform 对每个元素应用一元操作并写到目标区间，这里就地翻倍成 2 4 6；输出时没有空格，所以连成 246。输入输出区间可以相同。
 
 ## 讲深一层
 

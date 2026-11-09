@@ -1,6 +1,6 @@
 ---
 id: Q-1893
-title: 最长公共子序列：二维 DP 的边界怎么设？
+title: 不同路径：为什么组合数也能解？
 module: 04_algo
 sub: DP
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 字符串]
-hint: dp 开 (m+1)×(n+1)，第 0 行第 0 列为 0 表示空串。字符相等取左上+1，否则取上/左较大。
+tags: [DP, 组合数学]
+hint: 一共走 m+n-2 步，其中 m-1 步向下，答案就是 C(m+n-2, m-1)。注意溢出。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：dp 开 (m+1)×(n+1)，第 0 行第 0 列为 0 表示空串。字符相等取左上+1，否则取上/左较大。
+**套路**：一共走 m+n-2 步，其中 m-1 步向下，答案就是 C(m+n-2, m-1)。注意溢出。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

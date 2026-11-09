@@ -1,6 +1,6 @@
 ---
 id: Q-1781
-title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 87 题）
+title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 88 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,20 +22,20 @@ lab_src: quiz
 ```python
 import torch
 logits = torch.tensor([2.0, 1.0, 0.1])
-print(round(float(torch.nn.CrossEntropyLoss()(logits, torch.tensor([0]))), 6),
-      round(float(torch.nn.CrossEntropyLoss()(logits, torch.tensor([0.9, 0.05, 0.05]))), 6))
+lp = torch.log_softmax(logits, dim=0)
+print([round(v, 6) for v in lp.tolist()], round(float(torch.nn.NLLLoss()(lp, torch.tensor([0]))), 6))
 ```
 
-- **A.** 0.41703 0.56203
-- **B.** (0.41703, 0.41703)
-- **C.** (0.56203, 0.41703)
-- **D.** (0.0, 0.0)
+- **A.** [-0.41703, -1.41703, -2.31703] 0.41703
+- **B.** ([0.665241, 0.244728, 0.090031], 0.41703)
+- **C.** ([-0.41703, -1.41703, -2.31703], 1.41703)
+- **D.** ([2.0, 1.0, 0.1], 0.41703)
 
 ## 口述答案
 
-答案是 **A. 0.41703 0.56203**，实际输出 `0.41703 0.56203`。
+答案是 **A. [-0.41703, -1.41703, -2.31703] 0.41703**，实际输出 `[-0.41703, -1.41703, -2.31703] 0.41703`。
 
-CrossEntropyLoss 的输入是 logits 不是概率、目标是类别下标。传概率 [0.9,0.05,0.05] 会被当成 logits 再做一次 softmax，损失就变了。
+log_softmax 输出对数概率（都是负数），NLLLoss 取负对数似然作损失，与 CrossEntropyLoss 完全等价。
 
 ## 讲深一层
 

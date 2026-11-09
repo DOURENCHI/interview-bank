@@ -1,6 +1,6 @@
 ---
 id: Q-1899
-title: 股票买卖含冷冻期：状态机 DP 有哪几个状态？
+title: 正则表达式匹配：DP 状态怎么定义？
 module: 04_algo
 sub: DP
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 状态机]
-hint: 持有 / 不持有且冷冻 / 不持有可买，三态转移。状态定义清楚，转移就自然。
+tags: [DP, 字符串]
+hint: dp[i][j] 表示 s 前 i 个与 p 前 j 个是否匹配；* 要看它和前面那个字符组成「0 次或多次」。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：持有 / 不持有且冷冻 / 不持有可买，三态转移。状态定义清楚，转移就自然。
+**套路**：dp[i][j] 表示 s 前 i 个与 p 前 j 个是否匹配；* 要看它和前面那个字符组成「0 次或多次」。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

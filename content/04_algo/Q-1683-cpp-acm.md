@@ -1,6 +1,6 @@
 ---
 id: Q-1683
-title: sort + lambda 按成绩排序 的 ACM 输入输出怎么写？
+title: 异常与栈展开 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,19 +23,23 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-vector<pair<string, int>> st = {{"Tom", 80}, {"Amy", 95}, {"Bob", 88}};
-sort(st.begin(), st.end(), [](const auto &a, const auto &b) {
-    return a.second > b.second;
-});
-for (auto &[name, score] : st) cout << name << ' ' << score << '\n';
+struct Guard {
+    string n;
+    Guard(string n) : n(n) { cout << "+" << n << ' '; }
+    ~Guard() { cout << "-" << n << ' '; }
+};
+void inner() { Guard g("inner"); throw runtime_error("boom"); }
+void outer() { Guard g("outer"); inner(); }
+int main() {
+    try { outer(); }
+    catch (const exception &e) { cout << "caught " << e.what(); }
+}
 ```
 
 输出样例：
 
 ```
-Amy 95
-Bob 88
-Tom 80
++outer +inner -inner -outer caught boom
 ```
 
 ## 口述答案
@@ -60,4 +64,4 @@ Tom 80
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 22
+`教学文档/C++实验台/C++考点实验台.html` · 24

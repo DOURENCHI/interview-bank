@@ -1,10 +1,10 @@
 ---
 id: Q-1826
-title: 两数之和：为什么一遍哈希就够了，不用双重循环？
+title: 三数之和：怎么保证结果不重复？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 数组]
-hint: 边遍历边存「还差多少→下标」，当前值一命中就返回。O(n) 时间换 O(n) 空间，比 O(n²) 稳。
+tags: [哈希, 双指针, 去重]
+hint: 先排序，固定一个数后用双指针夹逼；跳过与上一个相同的固定值和指针值，否则出重复三元组。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：边遍历边存「还差多少→下标」，当前值一命中就返回。O(n) 时间换 O(n) 空间，比 O(n²) 稳。
+**套路**：先排序，固定一个数后用双指针夹逼；跳过与上一个相同的固定值和指针值，否则出重复三元组。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

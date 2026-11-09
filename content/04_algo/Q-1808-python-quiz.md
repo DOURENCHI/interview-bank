@@ -1,6 +1,6 @@
 ---
 id: Q-1808
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 114 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 115 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,23 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Linear(2, 1)
-with torch.inference_mode():
-    out = m(torch.ones(1, 2))
-print(out.requires_grad)
+torch.manual_seed(13)
+a = torch.randn(3).tolist()
+torch.manual_seed(13)
+b = torch.randn(3).tolist()
+print(a == b, [round(v, 6) for v in a])
 ```
 
-- **A.** False
-- **B.** True
-- **C.** None
-- **D.** 0
+- **A.** True [-0.111659, -1.14561, 1.410316]
+- **B.** (False, [-0.111659, -1.14561, 1.410316])
+- **C.** (True, [0.111659, 1.14561, -1.410316])
+- **D.** (False, [0.0, 0.0, 0.0])
 
 ## 口述答案
 
-答案是 **A. False**，实际输出 `False`。
+答案是 **A. True [-0.111659, -1.14561, 1.410316]**，实际输出 `True [-0.111659, -1.14561, 1.410316]`。
 
-inference_mode 比 no_grad 更彻底，连版本计数都不记，推理首选；no_grad 也能达到不建图的效果。
+固定 seed 后随机序列完全可复现，所以两次结果完全相等。不固定 seed 就没法复现 bug。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1678
-title: 深拷贝：各有一块内存 的 ACM 输入输出怎么写？
+title: 运算符重载：复数 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,36 +23,25 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-class Buf {
-    int *data;
-    int n;
+class Complex {
+    double re, im;
 public:
-    Buf(int n) : data(new int[n]()), n(n) {}
-    Buf(const Buf &o) : data(new int[o.n]), n(o.n) { copy(o.data, o.data + n, data); }
-    Buf &operator=(const Buf &o) {
-        if (this == &o) return *this;
-        delete[] data;
-        n = o.n;
-        data = new int[n];
-        copy(o.data, o.data + n, data);
-        return *this;
+    Complex(double r = 0, double i = 0) : re(r), im(i) {}
+    Complex operator+(const Complex &o) const { return Complex(re + o.re, im + o.im); }
+    friend ostream &operator<<(ostream &os, const Complex &c) {
+        return os << c.re << '+' << c.im << 'i';
     }
-    ~Buf() { delete[] data; }
-    int &at(int i) { return data[i]; }
 };
 int main() {
-    Buf a(3);
-    a.at(0) = 7;
-    Buf b = a;
-    b.at(0) = 99;
-    cout << a.at(0) << ' ' << b.at(0);
+    Complex a(1, 2), b(3, 4);
+    cout << a + b << '\n';
 }
 ```
 
 输出样例：
 
 ```
-7 99
+4+6i
 ```
 
 ## 口述答案
@@ -77,4 +66,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 13
+`教学文档/C++实验台/C++考点实验台.html` · 15

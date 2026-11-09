@@ -1,6 +1,6 @@
 ---
 id: Q-1704
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 10 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 11 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```python
-print("abc".upper(), "A,B".split(","), "  x ".strip())
+a = [3, 1, 2]
+print(a.sort(), sorted([3, 1, 2]))
 ```
 
-- **A.** ABC ['A', 'B'] x
-- **B.** ABC ('A', 'B') x
-- **C.** abc ['A', 'B'] x
-- **D.** ABC ['A,B'] 'x'
+- **A.** None [1, 2, 3]
+- **B.** ([1, 2, 3], [1, 2, 3])
+- **C.** ([3, 1, 2], [1, 2, 3])
+- **D.** (None, None)
 
 ## 口述答案
 
-答案是 **A. ABC ['A', 'B'] x**，实际输出 `ABC ['A', 'B'] x`。
+答案是 **A. None [1, 2, 3]**，实际输出 `None [1, 2, 3]`。
 
-split 无参时按空白切分，传了分隔符就按分隔符切，返回列表；strip 只去掉两端空白。
+list.sort() 是原地排序，返回 None；sorted() 返回新列表不改原对象。要「排序结果又拿新列表」就用 sorted。
 
 ## 讲深一层
 

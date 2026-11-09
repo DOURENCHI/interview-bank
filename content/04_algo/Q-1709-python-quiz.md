@@ -1,6 +1,6 @@
 ---
 id: Q-1709
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 15 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 16 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(all([1, 1]), any([0, 0]), sum([1, 2, 3]), max([1, 5, 3]))
+print(list(range(2, 8, 2)), list(range(3)), len(list(range(0, 10, 3))))
 ```
 
-- **A.** True False 6 5
-- **B.** True False 6 3
-- **C.** False False 6 5
-- **D.** True True 6 5
+- **A.** [2, 4, 6] [0, 1, 2] 4
+- **B.** [2, 4, 6, 8] [0, 1, 2] 4
+- **C.** [2, 4, 6] [0, 1, 2] 3
+- **D.** [2, 4, 6] [1, 2, 3] 4
 
 ## 口述答案
 
-答案是 **A. True False 6 5**，实际输出 `True False 6 5`。
+答案是 **A. [2, 4, 6] [0, 1, 2] 4**，实际输出 `[2, 4, 6] [0, 1, 2] 4`。
 
-all 对空集合返回 True、any 返回 False，这里 all([1,1]) 因为两个 1 都为真所以 True；max 取最大值 5。
+range(2, 8, 2) 左闭右开取到 7 所以是 [2,4,6]；range(0,10,3) 有 0/3/6/9 四个数，长度 4。
 
 ## 讲深一层
 

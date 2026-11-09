@@ -1,10 +1,10 @@
 ---
 id: Q-1892
-title: 编辑距离：三种操作对应 DP 表的哪三个方向？
+title: 最长公共子序列：二维 DP 的边界怎么设？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -13,14 +13,14 @@ source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
 tags: [DP, 字符串]
-hint: 插入看左、删除看上、替换看左上；三者取最小再 +1，字符相等时取左上不 +1。
+hint: dp 开 (m+1)×(n+1)，第 0 行第 0 列为 0 表示空串。字符相等取左上+1，否则取上/左较大。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：插入看左、删除看上、替换看左上；三者取最小再 +1，字符相等时取左上不 +1。
+**套路**：dp 开 (m+1)×(n+1)，第 0 行第 0 列为 0 表示空串。字符相等取左上+1，否则取上/左较大。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

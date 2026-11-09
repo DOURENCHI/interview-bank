@@ -1,10 +1,10 @@
 ---
 id: Q-1914
-title: Python 多组测试用例怎么组织，才不会串数据？
+title: Python 要读一整行（含空格），怎么写？
 module: 04_algo
 sub: Python 读写
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -19,20 +19,18 @@ acm_seed: true
 
 ## 题目
 
-**输入**：第一行 `T` 组数。每组一行 `n`，下一行 `n` 个数。
-**输出**：每组输出这组数的和。
+**输入**：第一行 `n`；随后 `n` 行，每行一个可能含空格的句子。
+**输出**：逐行原样输出，前面加行号。
 
 ```
 输入样例
 2
-3
-1 2 3
-2
-10 20
+hello world
+foo bar baz
 
 输出样例
-6
-30
+1: hello world
+2: foo bar baz
 ```
 
 ## 口述答案
@@ -41,43 +39,40 @@ acm_seed: true
 import sys
 
 def main():
-    data = sys.stdin.read().split()
-    idx = 0
-    T = int(data[idx]); idx += 1
-    res = []
-    for _ in range(T):
-        n = int(data[idx]); idx += 1
-        s = 0
-        for _ in range(n):
-            s += int(data[idx]); idx += 1
-        res.append(str(s))
-    print("\n".join(res))
+    input = sys.stdin.readline
+    n = int(input())
+    for i in range(1, n + 1):
+        s = input().rstrip("\n")        # 只去换行，保留行内空格
+        print(f"{i}: {s}")
 
 main()
 ```
 
 ## 讲深一层
 
-多组用例最怕「上一组的数据留在变量里」。Python 比 C++ 好一点：函数内局部变量天然隔离，但两种情况仍会出事：
+关键区别：`split()` 会把空格当分隔符**吃掉**，`rstrip("\n")` 只去掉行尾换行符，行内空格完整保留。
 
-1. 可变默认参数：`def f(a=[])` —— 默认列表在多次调用间共享
-2. 循环外定义的列表没清空：`buf = []` 在 `for` 外面
+对比三种去空白方式：
 
-养成习惯：**每组需要的容器都在组内新建**。
+| 写法 | 行为 | 什么时候用 |
+|---|---|---|
+| `s.rstrip("\n")` | 只去尾部换行 | **读整行内容时** |
+| `s.strip()` | 去首尾所有空白（含空格） | 读数字/单 token 时 |
+| 不去 | 保留 `\n` | 几乎从不 |
 
-下标指针写法（`idx`）比 `iter/next` 更好调试——出错时能打印 `idx` 看读到哪了。数据量超大时 `next()` 略快，但差别很小。
+如果一行里既有空格又不能用 `split()`，就得手工截取——比如「名字 + 一串数字」这种混合格式。
 
 ## 高频追问
 
-1. **`idx` 越界怎么办？** —— 说明题面格式理解错了。机考时加一句 `assert idx <= len(data)`，本地能立刻发现问题。
-2. **组间要输出空行怎么办？** —— `res.append(str(s)); if _ < T-1: res.append("")`，注意最后一组后面不加。
-3. **能不能用 `iter` + `next`？** —— 能，更简洁但不好查错。两者都可接受。
+1. **`rstrip("\n")` 和 `rstrip()` 有区别吗？** —— 有。不带参数会去掉**所有**尾部空白，包括有意义的前导/尾随空格。读文本时必须带参数。
+2. **`input()` 要不要再 `rstrip`？** —— 不用，`input()` 已经去掉行尾换行。但它不能用在需要保留行尾空格的场景（极少）。
+3. **Windows 下读到 `\r\n` 怎么办？** —— `rstrip("\r\n")` 两个都去掉。
 
 ## 易错点
 
-- ❌ 累积变量定义在循环外 —— 第二组接着第一组
-- ❌ 用可变对象当默认参数 —— 跨调用污染
-- ❌ 组间空行多输出一个 —— 格式错
+- ❌ 用 `split()[0]` 取整行 —— 只拿到第一个词
+- ❌ 用 `strip()` 读句子 —— 句首句尾的空格被吃掉
+- ❌ 忘了 `int(input())` 后行位置 —— `readline` 不会多读，这里安全
 
 ## 关联项目
 
@@ -85,4 +80,4 @@ main()
 
 ## 来源
 
-多组用例通用模式
+`str.rstrip` 与 `input()` 语义

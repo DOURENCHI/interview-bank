@@ -1,6 +1,6 @@
 ---
 id: Q-1751
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 57 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 58 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-t = torch.tensor([1.0, 2.0])
-print(t.sum().item(), type(t.sum().item()).__name__, t.sum())
+m = torch.arange(6).reshape(2, 3)
+print(tuple(m.shape), m[0].tolist(), m[:, 1].tolist())
 ```
 
-- **A.** 3.0 float tensor(3.)
-- **B.** 3 int tensor(3.)
-- **C.** 3.0 int tensor(3.)
-- **D.** 3.0 float 3.0
+- **A.** (2, 3) [0, 1, 2] [1, 4]
+- **B.** ((2, 3), [0, 3], [1, 4])
+- **C.** ((3, 2), [0, 1, 2], [1, 4])
+- **D.** ((2, 3), [0, 1, 2], [0, 3])
 
 ## 口述答案
 
-答案是 **A. 3.0 float tensor(3.)**，实际输出 `3.0 float tensor(3.)`。
+答案是 **A. (2, 3) [0, 1, 2] [1, 4]**，实际输出 `(2, 3) [0, 1, 2] [1, 4]`。
 
-item() 把标量张量转成 Python 数字（这里是 float）；不调 item() 直接 print 得到的是 tensor(3.) 这种张量表示。
+arange(6) 得 0..5，reshape(2,3) 按行填成 [[0,1,2],[3,4,5]]；m[:,1] 取每行的第 1 列即 1 和 4。
 
 ## 讲深一层
 

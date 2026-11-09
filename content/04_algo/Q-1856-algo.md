@@ -1,6 +1,6 @@
 ---
 id: Q-1856
-title: 盛最多水的容器：为什么移动矮的一侧不会漏掉最优解？
+title: 无重复字符的最长子串：左边界为什么要取 max？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 贪心]
-hint: 面积由短边决定。移动长边只会让宽度变小、高度不会变大，所以只能移短边。
+tags: [滑窗, 哈希]
+hint: left = max(left, last[c]+1)。不取 max 的话，遇到更早出现过的字符会把窗口往回拉。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：面积由短边决定。移动长边只会让宽度变小、高度不会变大，所以只能移短边。
+**套路**：left = max(left, last[c]+1)。不取 max 的话，遇到更早出现过的字符会把窗口往回拉。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

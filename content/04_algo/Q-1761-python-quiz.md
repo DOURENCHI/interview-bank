@@ -1,6 +1,6 @@
 ---
 id: Q-1761
-title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 67 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 68 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,28 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```python
-xs = [1.0, 2.0, 3.0]
-ys = [2.0, 4.0, 6.0]
-w = 1.0
-def grad(w):
-    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
-def cost(w):
-    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
-for _ in range(10):
-    w -= 1.0 * grad(w)
-print(round(w, 4), round(cost(w), 4))
+import torch
+m = torch.nn.Linear(3, 2)
+print(tuple(m.weight.shape), tuple(m.bias.shape), m.weight.shape[0] * m.weight.shape[1] + 2)
 ```
 
-- **A.** -1615055826.8985 1.2172558208808118e+19
-- **B.** (-1.6151, 2.0)
-- **C.** (0.0, 0.0)
-- **D.** (1.0, 4.6667)
+- **A.** (2, 3) (2,) 8
+- **B.** ((3, 2), (3,), 8)
+- **C.** ((2, 3), (2,), 6)
+- **D.** ((2, 3), (2,), 2)
 
 ## 口述答案
 
-答案是 **A. -1615055826.8985 1.2172558208808118e+19**，实际输出 `-1615055826.8985 1.2172558208808118e+19`。
+答案是 **A. (2, 3) (2,) 8**，实际输出 `(2, 3) (2,) 8`。
 
-学习率从 0.01 放大到 1.0 后步子太大直接发散：w 变成天文数字、代价爆炸。梯度下降必须配足够小的学习率。
+Linear(3,2) 是「3 个输入 → 2 个输出」，权重形状 (out, in) = (2,3)、偏置 2 个，共 2×3+2 = 8 个参数。
 
 ## 讲深一层
 
@@ -62,4 +55,4 @@ print(round(w, 4), round(cost(w), 4))
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 04 线性模型与梯度下降
+`教学文档/Python实验台/Python考点实验台.html` · 05 nn.Module 与训练循环

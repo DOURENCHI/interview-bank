@@ -1,6 +1,6 @@
 ---
 id: Q-1816
-title: 自定义 Dataset 与 DataLoader 分批 的 ACM 输入输出怎么写？
+title: 分类：sigmoid、softmax 与三种交叉熵 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -24,45 +24,36 @@ lab_src: snip
 
 ```python
 import torch
-from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
 
+logits_b = torch.tensor([2.0, -2.0])
+y_b = torch.tensor([1.0, 0.0])
+print("sigmoid", [round(v, 6) for v in torch.sigmoid(logits_b).tolist()])
+print("BCELoss          ", round(float(nn.BCELoss()(torch.sigmoid(logits_b), y_b)), 6))
+print("BCEWithLogitsLoss", round(float(nn.BCEWithLogitsLoss()(logits_b, y_b)), 6))
 
-class ToyDataset(Dataset):
-    def __init__(self, n):
-        self.x = torch.arange(n, dtype=torch.float32).reshape(-1, 1)
-        self.y = self.x * 2
+logits_m = torch.tensor([2.0, 1.0, 0.1])
+sm = torch.softmax(logits_m, dim=0)
+print("softmax", [round(v, 6) for v in sm.tolist()], "sum", round(float(sm.sum()), 6))
+print("CrossEntropyLoss", round(float(nn.CrossEntropyLoss()(logits_m, torch.tensor([0]))), 6))
+lp = torch.log_softmax(logits_m, dim=0)
+print("NLLLoss          ", round(float(nn.NLLLoss()(lp, torch.tensor([0]))), 6))
 
-    def __len__(self):
-        return len(self.x)
-
-    def __getitem__(self, i):
-        return self.x[i], self.y[i]
-
-
-ds = ToyDataset(10)
-dl = DataLoader(ds, batch_size=4, shuffle=False)
-print("样本数", len(ds), "批数", len(dl))
-for xb, yb in dl:
-    print("x", xb.reshape(-1).tolist(), "y", yb.reshape(-1).tolist())
-
-print("drop_last=True 后批数", len(DataLoader(ds, batch_size=4, drop_last=True)))
-
-torch.manual_seed(0)
-seen = []
-for xb, _ in DataLoader(ds, batch_size=2, shuffle=True):
-    seen.extend(xb.reshape(-1).tolist())
-print("shuffle 后顺序", seen)
+y = torch.tensor([0.0] * 90 + [1.0] * 10)
+p = torch.tensor([0.0] * 100)
+print("全预测多数类的准确率", round(float((y == p).float().mean()), 6))
 ```
 
 输出样例：
 
 ```
-样本数 10 批数 3
-x [0.0, 1.0, 2.0, 3.0] y [0.0, 2.0, 4.0, 6.0]
-x [4.0, 5.0, 6.0, 7.0] y [8.0, 10.0, 12.0, 14.0]
-x [8.0, 9.0] y [16.0, 18.0]
-drop_last=True 后批数 2
-shuffle 后顺序 [6.0, 7.0, 1.0, 4.0, 2.0, 0.0, 9.0, 8.0, 3.0, 5.0]
+sigmoid [0.880797, 0.119203]
+BCELoss           0.126928
+BCEWithLogitsLoss 0.126928
+softmax [0.659001, 0.242433, 0.098566] sum 1.0
+CrossEntropyLoss 0.41703
+NLLLoss           0.41703
+全预测多数类的准确率 0.9
 ```
 
 ## 口述答案
@@ -87,4 +78,4 @@ shuffle 后顺序 [6.0, 7.0, 1.0, 4.0, 2.0, 0.0, 9.0, 8.0, 3.0, 5.0]
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 06 Dataset 与 DataLoader
+`教学文档/Python实验台/Python考点实验台.html` · 07 分类：逻辑回归与交叉熵

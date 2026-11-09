@@ -1,6 +1,6 @@
 ---
 id: Q-1875
-title: 01 矩阵：多源 BFS 求最近距离怎么初始化？
+title: 课程表：拓扑排序怎么判断有环？
 module: 04_algo
 sub: DFS BFS
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [BFS, 多源]
-hint: 所有 0 入队、距离设 0，BFS 逐层外扩，第一次到达即最短。
+tags: [拓扑排序, BFS]
+hint: 统计入度，入度为 0 的入队；出队计数若小于节点总数，剩下那些就在环里。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：所有 0 入队、距离设 0，BFS 逐层外扩，第一次到达即最短。
+**套路**：统计入度，入度为 0 的入队；出队计数若小于节点总数，剩下那些就在环里。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

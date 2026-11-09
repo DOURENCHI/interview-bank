@@ -1,10 +1,10 @@
 ---
 id: Q-1839
-title: 最长公共前缀：怎么优雅地逐列比较？
+title: 字符串相乘：为什么要转成数组模拟竖式？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 1
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串]
-hint: 以第一个字符串为基准逐位比对所有串，某串越界或不匹配就截断。不要两两求前缀。
+tags: [字符串, 数学]
+hint: 结果长度最多 m+n，用 int 数组存每位累加值，最后统一进位。直接转整数会溢出。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：以第一个字符串为基准逐位比对所有串，某串越界或不匹配就截断。不要两两求前缀。
+**套路**：结果长度最多 m+n，用 int 数组存每位累加值，最后统一进位。直接转整数会溢出。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

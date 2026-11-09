@@ -1,6 +1,6 @@
 ---
 id: Q-1765
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 71 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 72 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,26 +21,32 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(3)
+torch.manual_seed(4)
 m = torch.nn.Linear(1, 1)
-m(torch.ones(1, 1)).sum().backward()
-g1 = float(m.weight.grad.sum())
-m.zero_grad()
-m(torch.ones(1, 1)).sum().backward()
-g2 = float(m.weight.grad.sum())
-print(round(g1, 6), round(g2, 6))
+opt = torch.optim.SGD(m.parameters(), lr=0.01)
+xs = torch.Tensor([[1.0], [2.0], [3.0]])
+ys = torch.Tensor([[2.0], [4.0], [6.0]])
+crit = torch.nn.MSELoss(reduction="sum")
+losses = []
+for _ in range(50):
+    loss = crit(m(xs), ys)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()
+    losses.append(round(loss.item(), 4))
+print(losses[0], losses[-1], losses[-1] < losses[0])
 ```
 
-- **A.** 1.0 1.0
-- **B.** (2.0, 1.0)
-- **C.** (1.0, 2.0)
-- **D.** (0.0, 0.0)
+- **A.** 46.8943 0.1329 True
+- **B.** (46.8943, 46.8943, False)
+- **C.** (0.1329, 46.8943, False)
+- **D.** (46.8943, 0.1329, False)
 
 ## 口述答案
 
-答案是 **A. 1.0 1.0**，实际输出 `1.0 1.0`。
+答案是 **A. 46.8943 0.1329 True**，实际输出 `46.8943 0.1329 True`。
 
-不调 zero_grad 时梯度会累加成 2.0；清零后再算是 1.0。两者数值相同是巧合（这里权重恰好为 1），关键是「必须清零」这件事。
+50 轮后损失从 46.89 降到 0.13，第三项 True 说明确实在下降。这是判断训练循环写对了的最直接证据。
 
 ## 讲深一层
 

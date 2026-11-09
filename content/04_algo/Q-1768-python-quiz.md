@@ -1,6 +1,6 @@
 ---
 id: Q-1768
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 74 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 75 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,19 +22,21 @@ lab_src: quiz
 ```python
 import torch
 m = torch.nn.Linear(2, 2)
-print(all(p.requires_grad for p in m.parameters()))
+for p in m.parameters():
+    p.requires_grad_(False)
+print(any(p.requires_grad for p in m.parameters()))
 ```
 
-- **A.** True
-- **B.** False
+- **A.** False
+- **B.** True
 - **C.** None
 - **D.** 0
 
 ## 口述答案
 
-答案是 **A. True**，实际输出 `True`。
+答案是 **A. False**，实际输出 `False`。
 
-nn.Module 的参数默认 requires_grad=True，所以全部为真——这是梯度能自动回传的前提。
+requires_grad_(False) 冻结参数后，any 判断为 False。做迁移学习或只训部分层时就靠它。
 
 ## 讲深一层
 

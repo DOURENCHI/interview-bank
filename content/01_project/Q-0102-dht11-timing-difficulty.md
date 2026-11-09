@@ -2,7 +2,7 @@
 id: Q-0102
 title: DHT11 的驱动难点在哪？
 module: 01_project
-sub: 4G道路测温
+sub: 本科毕设·4G 测温
 priority: P0
 difficulty: 3
 roles: [嵌入式]

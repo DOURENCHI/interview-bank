@@ -1,10 +1,10 @@
 ---
 id: Q-1840
-title: 字符串相乘：为什么要转成数组模拟竖式？
+title: 反转字符串中的单词：怎么处理多余空格？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, 数学]
-hint: 结果长度最多 m+n，用 int 数组存每位累加值，最后统一进位。直接转整数会溢出。
+tags: [字符串, 双指针]
+hint: 先整体反转再逐词反转；或用双指针从后往前扫，跳过连续空格。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：结果长度最多 m+n，用 int 数组存每位累加值，最后统一进位。直接转整数会溢出。
+**套路**：先整体反转再逐词反转；或用双指针从后往前扫，跳过连续空格。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

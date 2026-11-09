@@ -1,6 +1,6 @@
 ---
 id: Q-1800
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 106 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 107 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,23 +21,33 @@ lab_src: quiz
 
 ```python
 import torch
-m = torch.nn.Linear(2, 1)
-opt = torch.optim.Adam(m.parameters(), lr=0.01)
-m(torch.randn(4, 2)).sum().backward()
-opt.step()
-print(tuple(opt.state[m.weight].keys()))
+torch.manual_seed(9)
+m = torch.nn.Linear(1, 1)
+opt = torch.optim.SGD(m.parameters(), lr=1e4)
+xs = torch.Tensor([[1.0], [2.0], [3.0]])
+ys = torch.Tensor([[2.0], [4.0], [6.0]])
+crit = torch.nn.MSELoss(reduction="sum")
+first = None
+for _ in range(5):
+    loss = crit(m(xs), ys)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()
+    if first is None:
+        first = loss.item()
+print(round(first, 4), round(loss.item(), 4), loss.item() > first)
 ```
 
-- **A.** ('step', 'exp_avg', 'exp_avg_sq')
-- **B.** ('exp_avg',)
-- **C.** ('step',)
-- **D.** ()
+- **A.** 48.404 inf True
+- **B.** (48.404, 0.0, False)
+- **C.** (0.0, 48.404, True)
+- **D.** (48.404, 48.404, False)
 
 ## 口述答案
 
-答案是 **A. ('step', 'exp_avg', 'exp_avg_sq')**，实际输出 `('step', 'exp_avg', 'exp_avg_sq')`。
+答案是 **A. 48.404 inf True**，实际输出 `48.404 inf True`。
 
-Adam 为每个参数维护步数、一阶动量和二阶动量三个状态，这是它比 SGD 收敛快的原因。
+学习率 1e4 太大，一步就冲过头，损失变成 inf（溢出）。看到 inf/nan 先怀疑学习率。
 
 ## 讲深一层
 

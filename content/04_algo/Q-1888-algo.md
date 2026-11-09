@@ -1,10 +1,10 @@
 ---
 id: Q-1888
-title: 最长递增子序列：O(n²) 和 O(n log n) 两种解法差在哪？
+title: 零钱兑换：为什么贪心不行，必须 DP？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 二分]
-hint: O(n²) 是 dp[i]=max(dp[j])+1；O(n log n) 用 tails 存各长度的最小结尾，二分定位替换。
+tags: [DP, 完全背包]
+hint: 面额组合下贪心会错过更优解。dp[j]=min(dp[j], dp[j-coin]+1) 求最少硬币数。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：O(n²) 是 dp[i]=max(dp[j])+1；O(n log n) 用 tails 存各长度的最小结尾，二分定位替换。
+**套路**：面额组合下贪心会错过更优解。dp[j]=min(dp[j], dp[j-coin]+1) 求最少硬币数。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

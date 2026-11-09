@@ -1,6 +1,6 @@
 ---
 id: Q-1669
-title: 这段 C++ 代码输出什么？（35 chrono 与时间 · 第 56 题）
+title: 这段 C++ 代码输出什么？（36 智能指针与移动语义 · 第 57 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,20 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-cout << chrono::duration_cast<chrono::milliseconds>(
-       chrono::seconds(2)).count();
+auto a = make_shared<int>(7);
+{ auto b = a; cout << a.use_count() << " "; }
+cout << a.use_count();
 ```
 
-- **A.** 2000
-- **B.** 2
-- **C.** 200
-- **D.** 20
+- **A.** 2 1
+- **B.** 1 1
+- **C.** 2 2
+- **D.** 1 0
 
 ## 口述答案
 
-答案是 **A. 2000**，实际输出 `2000`。
+答案是 **A. 2 1**，实际输出 `2 1`。
 
-秒转毫秒是放大，不丢精度，2s = 2000ms；反方向（毫秒转秒）才可能截断。ROS2 里 rclcpp::Duration 与 std::chrono 互转时也要先统一单位。
+拷贝 shared_ptr 使引用计数从 1 增到 2；离开内层作用域析构 b 后减回 1。计数归零才真正 delete 对象；互持有 shared_ptr 会造成循环引用，需要 weak_ptr 打破。
 
 ## 讲深一层
 
@@ -54,4 +55,4 @@ cout << chrono::duration_cast<chrono::milliseconds>(
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 35 chrono 与时间
+`教学文档/C++实验台/C++考点实验台.html` · 36 智能指针与移动语义

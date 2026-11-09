@@ -1,6 +1,6 @@
 ---
 id: Q-1635
-title: 这段 C++ 代码输出什么？（16 继承 · 第 22 题）
+title: 这段 C++ 代码输出什么？（17 虚基类 · 第 23 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,26 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-struct B { B() { cout << "B"; } ~B() { cout << "b"; } };
-struct M { M() { cout << "M"; } ~M() { cout << "m"; } };
-struct D : B {
-    M m;
-    D() { cout << "D"; }
-    ~D() { cout << "d"; }
-};
-int main() { D d; }
+struct F { F(int x = 0) { cout << x; } };
+struct S : virtual F { S() : F(1) {} };
+struct T : virtual F { T() : F(2) {} };
+struct ST : S, T { ST() : F(9) {} };
+int main() { ST st; }
 ```
 
-- **A.** BMDdmb
-- **B.** DMBbmd
-- **C.** MBDdbm
-- **D.** BMDbmd
+- **A.** 9
+- **B.** 12
+- **C.** 129
+- **D.** 912
 
 ## 口述答案
 
-答案是 **A. BMDdmb**，实际输出 `BMDdmb`。
+答案是 **A. 9**，实际输出 `9`。
 
-构造：基类 → 成员 → 自己；析构顺序正好相反。
+虚基类由最终派生类 ST 直接构造，且只构造一次；S、T 初始化列表里的 F(1)、F(2) 被忽略。
 
 ## 讲深一层
 
@@ -60,4 +57,4 @@ int main() { D d; }
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 16 继承
+`教学文档/C++实验台/C++考点实验台.html` · 17 虚基类

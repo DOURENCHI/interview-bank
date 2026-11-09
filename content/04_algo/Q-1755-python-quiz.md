@@ -1,6 +1,6 @@
 ---
 id: Q-1755
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 61 题）
+title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 62 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,20 +20,24 @@ lab_src: quiz
 ## 题目
 
 ```python
-import torch
-print(torch.tensor([1, 2]).dtype, torch.tensor([1.0]).dtype, torch.tensor([1, 2]).device)
+xs = [1.0, 2.0, 3.0]
+ys = [2.0, 4.0, 6.0]
+w = 1.0
+cost = sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
+grad = sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
+print(round(cost, 4), round(grad, 4))
 ```
 
-- **A.** torch.int64 torch.float32 cpu
-- **B.** torch.int32 torch.float64 cpu
-- **C.** torch.int64 torch.float32 cuda
-- **D.** torch.int64 torch.float32 cpu:0
+- **A.** 4.6667 -9.3333
+- **B.** 4.6667 9.3333
+- **C.** 14.0 -28.0
+- **D.** 0.0 0.0
 
 ## 口述答案
 
-答案是 **A. torch.int64 torch.float32 cpu**，实际输出 `torch.int64 torch.float32 cpu`。
+答案是 **A. 4.6667 -9.3333**，实际输出 `4.6667 -9.3333`。
 
-整数字面量默认 int64、浮点默认 float32；device 是 cpu（CPU 版 PyTorch 没有 cuda）。装 CUDA 版 torch 才会是 cuda:0。
+w=1 时预测为 1/2/3，误差 -1/-2/-3，平方和 1+4+9=14 除以 3 得 4.6667；梯度是 loss 对 w 的导数，为负说明增大 w 能减小损失。
 
 ## 讲深一层
 
@@ -54,4 +58,4 @@ print(torch.tensor([1, 2]).dtype, torch.tensor([1.0]).dtype, torch.tensor([1, 2]
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 03 autograd 与计算图
+`教学文档/Python实验台/Python考点实验台.html` · 04 线性模型与梯度下降

@@ -1,10 +1,10 @@
 ---
-id: Q-1900
-title: 正则表达式匹配：DP 状态怎么定义？
+id: Q-1825
+title: 两数之和：为什么一遍哈希就够了，不用双重循环？
 module: 04_algo
-sub: DP
+sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 字符串]
-hint: dp[i][j] 表示 s 前 i 个与 p 前 j 个是否匹配；* 要看它和前面那个字符组成「0 次或多次」。
+tags: [哈希, 数组]
+hint: 边遍历边存「还差多少→下标」，当前值一命中就返回。O(n) 时间换 O(n) 空间，比 O(n²) 稳。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：dp[i][j] 表示 s 前 i 个与 p 前 j 个是否匹配；* 要看它和前面那个字符组成「0 次或多次」。
+**套路**：边遍历边存「还差多少→下标」，当前值一命中就返回。O(n) 时间换 O(n) 空间，比 O(n²) 稳。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

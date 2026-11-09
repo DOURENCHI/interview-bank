@@ -1,6 +1,6 @@
 ---
 id: Q-1634
-title: 这段 C++ 代码输出什么？（14 静态成员 · 第 21 题）
+title: 这段 C++ 代码输出什么？（16 继承 · 第 22 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,29 +20,26 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-struct S {
-    static int n;
-    S() { n++; }
-    ~S() { n--; }
+struct B { B() { cout << "B"; } ~B() { cout << "b"; } };
+struct M { M() { cout << "M"; } ~M() { cout << "m"; } };
+struct D : B {
+    M m;
+    D() { cout << "D"; }
+    ~D() { cout << "d"; }
 };
-int S::n = 0;
-int main() {
-    S a;
-    { S b, c; cout << S::n; }
-    cout << S::n;
-}
+int main() { D d; }
 ```
 
-- **A.** 31
-- **B.** 33
-- **C.** 11
-- **D.** 32
+- **A.** BMDdmb
+- **B.** DMBbmd
+- **C.** MBDdbm
+- **D.** BMDbmd
 
 ## 口述答案
 
-答案是 **A. 31**，实际输出 `31`。
+答案是 **A. BMDdmb**，实际输出 `BMDdmb`。
 
-静态成员 n 所有对象共享：块内有 3 个对象；块结束 b、c 析构后剩 1 个。
+构造：基类 → 成员 → 自己；析构顺序正好相反。
 
 ## 讲深一层
 
@@ -63,4 +60,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 14 静态成员
+`教学文档/C++实验台/C++考点实验台.html` · 16 继承

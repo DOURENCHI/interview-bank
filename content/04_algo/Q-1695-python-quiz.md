@@ -1,6 +1,6 @@
 ---
 id: Q-1695
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 1 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 2 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(type(3), type(3.0), type("a"), type([1]))
+print(7 // 2, 7 / 2, -7 // 2, 7 % 3, -7 % 3)
 ```
 
-- **A.** <class 'int'> <class 'float'> <class 'str'> <class 'list'>
-- **B.** <class 'int'> <class 'float'> <class 'str'> <class 'tuple'>
-- **C.** <class 'int'> <class 'double'> <class 'str'> <class 'list'>
-- **D.** <class 'number'> <class 'float'> <class 'str'> <class 'array'>
+- **A.** 3 3.5 -4 1 2
+- **B.** 3 3.5 -3 1 2
+- **C.** 3 3.5 -4 1 -1
+- **D.** 4 3.5 -3 2 2
 
 ## 口述答案
 
-答案是 **A. <class 'int'> <class 'float'> <class 'str'> <class 'list'>**，实际输出 `<class 'int'> <class 'float'> <class 'str'> <class 'list'>`。
+答案是 **A. 3 3.5 -4 1 2**，实际输出 `3 3.5 -4 1 2`。
 
-Python 里 int / float / str / list 都是内置类型，浮点数只有一种 float（没有 double），列表是 list，元组才是 tuple。
+// 是向下取整除法（向负无穷取整），所以 -7 // 2 = -4 而不是 -3；/ 永远得到 float；% 的结果符号跟除数，这里 -7 % 3 = 2。
 
 ## 讲深一层
 

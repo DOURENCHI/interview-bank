@@ -1,6 +1,6 @@
 ---
 id: Q-1822
-title: 算法：双指针原地移除元素 的 ACM 输入输出怎么写？
+title: 算法：二分查找与排序查找 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,29 +23,38 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-def remove_element(nums, val):
-    """原地移除所有等于 val 的元素，返回新长度。"""
-    k = 0
-    for i in range(len(nums)):
-        if nums[i] != val:
-            nums[k] = nums[i]
-            k += 1
-    return k
+def bsearch(a, target):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == target:
+            return mid
+        if a[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
 
 
-a = [0, 1, 2, 2, 3, 0, 4, 2]
-k = remove_element(a, 2)
-print("新长度", k)
-print("有效前缀", a[:k])
-print("尾部是残留值，不用管", a[k:])
+a = [1, 3, 5, 7, 9, 11, 13, 15]
+for t in (11, 4):
+    print("找", t, "->", bsearch(a, t))
+
+import bisect
+
+print("bisect_left 找 9 ->", bisect.bisect_left(a, 9))
+print("bisect_left 找 10 ->", bisect.bisect_left(a, 10))
+print("插入位置（保持有序）", bisect.insort(a, 10), "->", a)
 ```
 
 输出样例：
 
 ```
-新长度 5
-有效前缀 [0, 1, 3, 0, 4]
-尾部是残留值，不用管 [0, 4, 2]
+找 11 -> 5
+找 4 -> -1
+bisect_left 找 9 -> 4
+bisect_left 找 10 -> 5
+插入位置（保持有序） None -> [1, 3, 5, 7, 9, 10, 11, 13, 15]
 ```
 
 ## 口述答案

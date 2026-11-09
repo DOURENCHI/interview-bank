@@ -1,6 +1,6 @@
 ---
 id: Q-1729
-title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 35 题）
+title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 36 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,19 +22,19 @@ lab_src: quiz
 ```python
 import numpy as np
 a = np.array([[1, 2], [3, 4]])
-print(a.shape, a.ndim, a.dtype, a.size)
+print(a[0, 1], a[1], a[:, 0], a[0, :])
 ```
 
-- **A.** (2, 2) 2 int64 4
-- **B.** (2, 2) 2 int32 4
-- **C.** (4,) 1 int64 4
-- **D.** (2, 2) 2 int64 2
+- **A.** 2 [3 4] [1 3] [1 2]
+- **B.** 1 [3 4] [1 3] [1 2]
+- **C.** 2 [3 4] [1 3] [3 4]
+- **D.** 2 [3 4] [3 1] [1 2]
 
 ## 口述答案
 
-答案是 **A. (2, 2) 2 int64 4**，实际输出 `(2, 2) 2 int64 4`。
+答案是 **A. 2 [3 4] [1 3] [1 2]**，实际输出 `2 [3 4] [1 3] [1 2]`。
 
-shape 是各维长度、ndim 是维数、size 是元素总数（2×2=4）；dtype 由字面量推断，整数默认 int64（Linux/macOS）或 int32（Windows）。
+a[0,1] 取第 0 行第 1 列；a[1] 取整行；a[:,0] 取所有行的第 0 列；a[0,:] 取第 0 行全部。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1657
-title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 44 题）
+title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 45 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,20 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-int a[5] = {5,2,9,1,6};
-cout << accumulate(a, a+5, 0);
+vector<int> v{1,2,3,4};
+cout << count_if(v.begin(), v.end(),
+  [](int x){ return x % 2 == 0; });
 ```
 
-- **A.** 23
-- **B.** 22
-- **C.** 24
-- **D.** 编译错误
+- **A.** 2
+- **B.** 3
+- **C.** 1
+- **D.** 4
 
 ## 口述答案
 
-答案是 **A. 23**，实际输出 `23`。
+答案是 **A. 2**，实际输出 `2`。
 
-accumulate 在 <numeric> 里，按左闭右开区间从初值 0 开始累加，得 23。初值写成 0.0 就会按 double 累加，类型由初值决定。
+count_if 统计使谓词为 true 的元素：1 2 3 4 里偶数只有 2 和 4，共 2 个。谓词可以是 lambda、函数对象或普通函数。
 
 ## 讲深一层
 

@@ -1,10 +1,10 @@
 ---
 id: Q-1897
-title: 乘积最大子数组：为什么要同时维护最大和最小？
+title: 打家劫舍 II：环形怎么拆成两个线性？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 数组]
-hint: 负数会让最小值翻成最大值，所以两个都要留；遇到负数时先交换再更新。
+tags: [DP, 环形]
+hint: 首尾不能同时偷，分别算「不偷第一个」和「不偷最后一个」，取较大值。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：负数会让最小值翻成最大值，所以两个都要留；遇到负数时先交换再更新。
+**套路**：首尾不能同时偷，分别算「不偷第一个」和「不偷最后一个」，取较大值。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

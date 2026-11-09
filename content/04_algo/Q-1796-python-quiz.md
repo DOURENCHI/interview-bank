@@ -1,6 +1,6 @@
 ---
 id: Q-1796
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 102 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 103 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,28 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-class Res(nn.Module):
-    def __init__(self, c):
-        super().__init__()
-        self.c1 = nn.Conv2d(c, c, 3, padding=1)
-        self.c2 = nn.Conv2d(c, c, 3, padding=1)
-    def forward(self, x):
-        return x + self.c2(F.relu(self.c1(x)))
-print(tuple(Res(8)(torch.randn(1, 8, 16, 16)).shape))
+emb = torch.nn.Embedding(100, 16)
+print(tuple(emb(torch.tensor([1, 2, 3])).shape), emb.weight.shape)
 ```
 
-- **A.** (1, 8, 16, 16)
-- **B.** ((1, 16, 16, 16),)
-- **C.** ((1, 8, 14, 14),)
-- **D.** ((1, 8, 8, 8),)
+- **A.** (3, 16) torch.Size([100, 16])
+- **B.** ((100, 16), torch.Size([100, 16]))
+- **C.** ((3, 100), torch.Size([100, 16]))
+- **D.** ((16, 3), torch.Size([100, 16]))
 
 ## 口述答案
 
-答案是 **A. (1, 8, 16, 16)**，实际输出 `(1, 8, 16, 16)`。
+答案是 **A. (3, 16) torch.Size([100, 16])**，实际输出 `(3, 16) torch.Size([100, 16])`。
 
-padding=1 保持空间尺寸，残差相加要求形状一致，所以残差块进出形状完全相同——这是残差能「深下去」的前提。
+Embedding 把 3 个下标各查成 16 维向量，输出 (3,16)；权重表是 (词表100, 维度16)。
 
 ## 讲深一层
 

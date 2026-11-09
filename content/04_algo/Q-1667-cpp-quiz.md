@@ -1,6 +1,6 @@
 ---
 id: Q-1667
-title: 这段 C++ 代码输出什么？（34 类型转换与模板 · 第 54 题）
+title: 这段 C++ 代码输出什么？（35 chrono 与时间 · 第 55 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,22 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-template<class T> T add(T a, T b){ return a + b; }
-int main() {
-  cout << add<int>(2,3) << " " << add<double>(1.5,2.5);
-}
+auto d = chrono::milliseconds(1500);
+cout << chrono::duration_cast<chrono::seconds>(d).count()
+     << " " << d.count();
 ```
 
-- **A.** 5 4
-- **B.** 5 4.0
-- **C.** 5 4.5
-- **D.** 编译错误
+- **A.** 1 1500
+- **B.** 1.5 1500
+- **C.** 2 1500
+- **D.** 1500 1
 
 ## 口述答案
 
-答案是 **A. 5 4**，实际输出 `5 4`。
+答案是 **A. 1 1500**，实际输出 `1 1500`。
 
-显式指定 T 后分别实例化 int 与 double 版本，结果是 5 和 4.0；cout 默认不显示末尾的 .0，所以输出 5 4。推导必须一致，add(2, 2.5) 会编译失败。
+duration_cast 从细粒度向粗粒度转换时向零截断，1500ms 变 1 秒；原 duration 的 count() 仍以毫秒为单位，是 1500。类型里带着单位，不会把秒和毫秒混用。
 
 ## 讲深一层
 
@@ -56,4 +55,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 34 类型转换与模板
+`教学文档/C++实验台/C++考点实验台.html` · 35 chrono 与时间

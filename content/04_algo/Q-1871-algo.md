@@ -1,6 +1,6 @@
 ---
 id: Q-1871
-title: 岛屿数量：DFS 和 BFS 各自的取舍？
+title: 岛屿的最大面积：怎么在递归里累计面积？
 module: 04_algo
 sub: DFS BFS
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DFS, BFS, 网格]
-hint: DFS 代码短但递归深度可能爆栈；BFS 用队列稳但要额外空间。都要把访问过的置 0 防重访。
+tags: [DFS, 网格]
+hint: dfs 返回 1 + 四周返回值之和，越界或为 0 时返回 0。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：DFS 代码短但递归深度可能爆栈；BFS 用队列稳但要额外空间。都要把访问过的置 0 防重访。
+**套路**：dfs 返回 1 + 四周返回值之和，越界或为 0 时返回 0。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

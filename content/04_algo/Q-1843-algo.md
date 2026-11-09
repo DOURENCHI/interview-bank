@@ -1,6 +1,6 @@
 ---
 id: Q-1843
-title: 最长回文子串：中心扩展为什么比 DP 好写？
+title: 字符串转换整数 atoi：边界有哪几处坑？
 module: 04_algo
 sub: 数组哈希
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, 中心扩展]
-hint: 枚举 2n-1 个中心（单字符和双字符中心）向两边扩。O(n²) 但常数小，不用二维表。
+tags: [字符串, 边界]
+hint: 前导空格、正负号、非数字截断、int 溢出（用 long long 或提前判边界）。顺序错就出错。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：枚举 2n-1 个中心（单字符和双字符中心）向两边扩。O(n²) 但常数小，不用二维表。
+**套路**：前导空格、正负号、非数字截断、int 溢出（用 long long 或提前判边界）。顺序错就出错。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

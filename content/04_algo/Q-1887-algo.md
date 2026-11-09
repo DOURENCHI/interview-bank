@@ -1,10 +1,10 @@
 ---
 id: Q-1887
-title: 打家劫舍：状态转移里「选或不选」怎么表达？
+title: 最长递增子序列：O(n²) 和 O(n log n) 两种解法差在哪？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 1
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 线性]
-hint: dp[i]=max(dp[i-1], dp[i-2]+nums[i])：不偷当前就继承前一个，偷当前就得跳过前一个。
+tags: [DP, 二分]
+hint: O(n²) 是 dp[i]=max(dp[j])+1；O(n log n) 用 tails 存各长度的最小结尾，二分定位替换。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：dp[i]=max(dp[i-1], dp[i-2]+nums[i])：不偷当前就继承前一个，偷当前就得跳过前一个。
+**套路**：O(n²) 是 dp[i]=max(dp[j])+1；O(n log n) 用 tails 存各长度的最小结尾，二分定位替换。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1706
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 12 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 13 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,20 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-d = {"a": 1}
-print(d.get("b", 0), d.get("a"), len(d))
+print(hash("x") == hash("x"), "x" == "x")
 ```
 
-- **A.** 0 1 1
-- **B.** None 1 1
-- **C.** 0 1 2
-- **D.** 1 1 1
+- **A.** True True
+- **B.** True False
+- **C.** False True
+- **D.** False False
 
 ## 口述答案
 
-答案是 **A. 0 1 1**，实际输出 `0 1 1`。
+答案是 **A. True True**，实际输出 `True True`。
 
-get 找不到键返回默认值（这里是 0），不会像 d["b"] 那样抛 KeyError；len(d) 是键的个数，此时仍是 1（get 不会插入键）。
+同一字符串的 hash 相同且内容相等，所以两个表达式都是 True；Python 用字典+链表实现哈希表，hash 相等不必然相等，但这里两者都满足。
 
 ## 讲深一层
 

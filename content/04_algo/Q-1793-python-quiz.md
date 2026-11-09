@@ -1,6 +1,6 @@
 ---
 id: Q-1793
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 99 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 100 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-lstm = torch.nn.LSTM(4, 5, batch_first=True)
-print(tuple(lstm(torch.randn(2, 7, 4))[0].shape))
+gru = torch.nn.GRU(4, 5, batch_first=True)
+print(tuple(gru(torch.randn(2, 7, 4))[0].shape))
 ```
 
 - **A.** (2, 7, 5)
-- **B.** ((2, 4, 7),)
+- **B.** ((2, 7, 4),)
 - **C.** ((1, 2, 5),)
-- **D.** ((2, 7, 4),)
+- **D.** ((2, 4, 5),)
 
 ## 口述答案
 
 答案是 **A. (2, 7, 5)**，实际输出 `(2, 7, 5)`。
 
-LSTM 与 RNN 输出形状相同 (批, 序列长, 隐层)，区别在于内部多了门控与细胞状态。
+GRU 参数比 LSTM 少（只有更新门和重置门），但输出形状与 RNN/LSTM 完全一致。
 
 ## 讲深一层
 

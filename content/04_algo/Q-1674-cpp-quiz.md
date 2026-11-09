@@ -1,6 +1,6 @@
 ---
 id: Q-1674
-title: 这段 C++ 代码输出什么？（38 多线程与状态机 · 第 61 题）
+title: 这段 C++ 代码输出什么？（38 多线程与状态机 · 第 62 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,23 +20,24 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-atomic<int> s{0};
-thread t1([&]{ s += 1; });
-thread t2([&]{ s += 1; });
-t1.join(); t2.join();
-cout << s.load();
+int st = 0; string in = "abab", out;
+for (char c : in) {
+  if (st == 0) { out += toupper(c); st = 1; }
+  else { out += c; st = 0; }
+}
+cout << out;
 ```
 
-- **A.** 2
-- **B.** 0
-- **C.** 1
-- **D.** 结果不确定
+- **A.** AbAb
+- **B.** ABAB
+- **C.** aBaB
+- **D.** abab
 
 ## 口述答案
 
-答案是 **A. 2**，实际输出 `2`。
+答案是 **A. AbAb**，实际输出 `AbAb`。
 
-atomic 的 += 是原子操作，两个线程各加 1 后必为 2；若换成普通 int 并发自增，就是数据竞争，属于未定义行为。join 等待线程结束，detach 则要自己保证被捕获的变量还活着。
+两个状态交替：状态 0 把字符转大写并切到 1，状态 1 原样输出并切回 0，所以 a→A、b→b、a→A、b→b。状态机题的关键是把「当前状态 + 输入 → 次状态」列清楚再推。
 
 ## 讲深一层
 

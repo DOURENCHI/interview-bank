@@ -1,10 +1,10 @@
 ---
 id: Q-1845
-title: 实现 strStr()：KMP 的 next 数组到底在算什么？
+title: 字母异位词分组：为什么排序后的字符串能当 key？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, KMP]
-hint: next[i] 是模式串前 i 个字符的最长相等前后缀长度。失配时据此跳转，主串指针不回退。
+tags: [哈希, 字符串]
+hint: 异位词排序后完全相同，天然等价类。O(n·k log k)；用 26 位计数元组可降到 O(n·k)。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：next[i] 是模式串前 i 个字符的最长相等前后缀长度。失配时据此跳转，主串指针不回退。
+**套路**：异位词排序后完全相同，天然等价类。O(n·k log k)；用 26 位计数元组可降到 O(n·k)。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

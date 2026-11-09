@@ -1,6 +1,6 @@
 ---
 id: Q-1823
-title: 算法：二分查找与排序查找 的 ACM 输入输出怎么写？
+title: 算法：插入排序与内置排序对比 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,38 +23,37 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-def bsearch(a, target):
-    lo, hi = 0, len(a) - 1
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if a[mid] == target:
-            return mid
-        if a[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    return -1
+def insertion_sort(a):
+    a = list(a)
+    for i in range(1, len(a)):
+        key = a[i]
+        j = i - 1
+        while j >= 0 and a[j] > key:
+            a[j + 1] = a[j]
+            j -= 1
+        a[j + 1] = key
+    return a
 
 
-a = [1, 3, 5, 7, 9, 11, 13, 15]
-for t in (11, 4):
-    print("找", t, "->", bsearch(a, t))
+data = [5, 2, 4, 6, 1, 3]
+print("原数组      ", data)
+print("插入排序后  ", insertion_sort(data))
+print("sorted() 后 ", sorted(data))
+print("原数组未被修改", data)
 
-import bisect
-
-print("bisect_left 找 9 ->", bisect.bisect_left(a, 9))
-print("bisect_left 找 10 ->", bisect.bisect_left(a, 10))
-print("插入位置（保持有序）", bisect.insort(a, 10), "->", a)
+print("sorted 关键字参数", sorted([3, 1, 2], key=lambda x: -x))
+print("sorted 带下标", sorted([(2, "b"), (1, "a")], key=lambda p: p[0]))
 ```
 
 输出样例：
 
 ```
-找 11 -> 5
-找 4 -> -1
-bisect_left 找 9 -> 4
-bisect_left 找 10 -> 5
-插入位置（保持有序） None -> [1, 3, 5, 7, 9, 10, 11, 13, 15]
+原数组       [5, 2, 4, 6, 1, 3]
+插入排序后   [1, 2, 3, 4, 5, 6]
+sorted() 后  [1, 2, 3, 4, 5, 6]
+原数组未被修改 [5, 2, 4, 6, 1, 3]
+sorted 关键字参数 [3, 2, 1]
+sorted 带下标 [(1, 'a'), (2, 'b')]
 ```
 
 ## 口述答案

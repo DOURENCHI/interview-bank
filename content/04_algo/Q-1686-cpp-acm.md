@@ -1,6 +1,6 @@
 ---
 id: Q-1686
-title: 移动构造 的 ACM 输入输出怎么写？
+title: 综合实例：成绩管理（核心部分） 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,26 +23,48 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-class Buf {
+class Student {
+    string name;
+    vector<int> scores;
 public:
-    int *data; size_t n;
-    Buf(size_t n) : data(new int[n]), n(n) { cout << "new "; }
-    Buf(const Buf &o) : data(new int[o.n]), n(o.n) { cout << "copy "; }
-    Buf(Buf &&o) noexcept : data(o.data), n(o.n) { o.data = nullptr; o.n = 0; cout << "move "; }
-    ~Buf() { delete[] data; }
+    Student(string n, vector<int> s) : name(move(n)), scores(move(s)) {}
+    int total() const { return accumulate(scores.begin(), scores.end(), 0); }
+    const string &getName() const { return name; }
+    friend ostream &operator<<(ostream &os, const Student &s) {
+        os << left << setw(8) << s.name;
+        for (int x : s.scores) os << right << setw(5) << x;
+        return os << right << setw(7) << s.total();
+    }
 };
 int main() {
-    Buf a(1000);
-    Buf b = a;
-    Buf c = std::move(a);
-    cout << (a.data == nullptr) << ' ' << c.n;
+    vector<Student> all;
+    string name; int a, b, c;
+    while (cin >> name >> a >> b >> c) all.emplace_back(name, vector<int>{a, b, c});
+    sort(all.begin(), all.end(), [](const Student &x, const Student &y) {
+        if (x.total() != y.total()) return x.total() > y.total();
+        return x.getName() < y.getName();
+    });
+    int rank = 1;
+    for (const auto &s : all) cout << rank++ << ". " << s << '\n';
 }
+```
+
+输入样例：
+
+```
+Alice 85 92 78
+Bob 90 88 92
+Carol 78 85 80
+Dave 92 80 83
 ```
 
 输出样例：
 
 ```
-new copy move 1 1000
+1. Bob        90   88   92    270
+2. Alice      85   92   78    255
+3. Dave       92   80   83    255
+4. Carol      78   85   80    243
 ```
 
 ## 口述答案
@@ -67,4 +89,4 @@ new copy move 1 1000
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 26
+`教学文档/C++实验台/C++考点实验台.html` · 27

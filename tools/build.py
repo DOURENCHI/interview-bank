@@ -182,6 +182,7 @@ def load_questions() -> list[dict]:
             "roles": meta.get("roles", []),
             "companies": meta.get("companies", []),
             "tags": meta.get("tags", []),
+            "appearances": meta.get("appearances", []),
             "sourceRef": meta.get("source_ref", ""),
             "html": render_md(body),
             # 搜索用纯文本
@@ -234,6 +235,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .qt{flex:1 1 320px;font-size:15.5px;font-weight:600;line-height:1.55;margin-top:2px}
 .tag{font-size:11px;color:var(--muted);border:1px solid var(--line);
   border-radius:5px;padding:2px 6px;margin-top:5px;white-space:nowrap}
+.tag.appear{color:var(--red);border-color:#d9a89f;background:#fdf1ee}
 .body{display:none;padding:2px 16px 16px;border-top:1px dashed var(--line)}
 .q.open .body{display:block}
 .body h2{font-size:15px;color:var(--blue);margin:18px 0 6px;
@@ -273,6 +275,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <div class="bar">
   <input type="search" id="q" placeholder="搜索题目、标签、答案正文…">
   <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
+  <select id="sub"><option value="">全部子方向</option></select>
   <select id="pri"><option value="">全部优先级</option>
     <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
   <select id="st"><option value="">全部状态</option>
@@ -298,41 +301,57 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 function card(q){
   const isW = wrong.has(q.id);
   const st = q.status === 'indexed' ? '<span class="tag">待补充</span>' : '';
+  const ap = (q.appearances || []).map(a =>
+      `<span class="tag appear" title="真实出现记录">${esc(a)}</span>`).join('');
   return `<article class="q" data-id="${q.id}">
     <div class="qh">
       <span class="pid">${q.id}</span>
       <span class="pri ${q.priority}">${q.priority}</span>
       <div class="qt">${esc(q.title)}</div>
-      <span class="tag">${esc(q.moduleName)}</span>
-      ${st}
+      <span class="tag">${esc(q.sub || q.moduleName)}</span>
+      ${st}${ap}
       <button class="wrongmark ${isW?'on':''}" data-w="${q.id}">${isW?'已标错':'标错'}</button>
     </div>
     <div class="body">${q.html}</div>
   </article>`;
 }
 
+function refreshSubs(){
+  const mod = $('mod').value;
+  const cur = $('sub').value;
+  const set = [...new Set(DATA.filter(q => !mod || q.module === mod)
+                                .map(q => q.sub).filter(Boolean))].sort();
+  $('sub').innerHTML = '<option value="">全部子方向</option>' +
+    set.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  if (set.includes(cur)) $('sub').value = cur;
+}
+
 function render(){
   const kw = $('q').value.trim().toLowerCase();
   const mod = $('mod').value, pri = $('pri').value, st = $('st').value;
+  const sub = $('sub').value;
   const onlyW = $('wrong').checked;
   const hit = DATA.filter(q => {
     if (mod && q.module !== mod) return false;
+    if (sub && q.sub !== sub) return false;
     if (pri && q.priority !== pri) return false;
     if (st && q.status !== st) return false;
     if (onlyW && !wrong.has(q.id)) return false;
     if (!kw) return true;
     const hay = (q.title + ' ' + q.id + ' ' + q.tags.join(' ') +
-                 ' ' + q.sub + ' ' + q.plain).toLowerCase();
+                 ' ' + (q.sub || '') + ' ' + (q.appearances || []).join(' ') +
+                 ' ' + q.plain).toLowerCase();
     return hay.includes(kw);
   });
   list.innerHTML = hit.map(card).join('');
   $('empty').style.display = hit.length ? 'none' : 'block';
   // 搜索/筛选时自动展开，省一次点击
-  if (kw || mod || pri || st || onlyW || OPEN_ALL) {
+  if (kw || mod || pri || st || sub || onlyW || OPEN_ALL) {
     list.querySelectorAll('.q').forEach(el => el.classList.add('open'));
   }
   $('stat').textContent = `共 ${DATA.length} 题 ｜ 当前 ${hit.length} 题 ｜ `
-    + `已答 ${DATA.filter(q=>q.status!=='indexed').length} ｜ 错题 ${wrong.size}`;
+    + `已答 ${DATA.filter(q=>q.status!=='indexed').length} ｜ 错题 ${wrong.size} ｜ `
+    + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length}`;
 }
 
 list.addEventListener('click', e => {
@@ -350,7 +369,9 @@ list.addEventListener('click', e => {
   if (head) head.parentElement.classList.toggle('open');
 });
 
-['q','mod','pri','st','wrong'].forEach(id => $(id).addEventListener('input', render));
+['q','mod','pri','st','sub','wrong'].forEach(id => $(id).addEventListener('input', render));
+$('mod').addEventListener('input', () => { refreshSubs(); render(); });
+refreshSubs();
 render();
 </script>
 </body>

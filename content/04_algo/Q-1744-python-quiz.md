@@ -1,6 +1,6 @@
 ---
 id: Q-1744
-title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 50 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 51 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,21 +20,24 @@ lab_src: quiz
 ## 题目
 
 ```python
-import numpy as np
-a = np.array([1, 2, 3])
-print(a[np.array([0, 2])].tolist())
+import torch
+x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+z = x * 2
+loss = (z - 3).pow(2).sum()
+loss.backward()
+print(x.grad.tolist())
 ```
 
-- **A.** [1, 3]
-- **B.** [0, 2]
-- **C.** [1, 2, 3]
-- **D.** [2, 3]
+- **A.** [-4.0, 4.0, 12.0]
+- **B.** [-4.0, 0.0, 4.0]
+- **C.** [2.0, 4.0, 6.0]
+- **D.** [-8.0, 0.0, 8.0]
 
 ## 口述答案
 
-答案是 **A. [1, 3]**，实际输出 `[1, 3]`。
+答案是 **A. [-4.0, 4.0, 12.0]**，实际输出 `[-4.0, 4.0, 12.0]`。
 
-用整数数组做「花式索引」一次取多个元素，按下标顺序取出 [1, 3]——注意结果是新数组不是原数组的视图。
+loss = (2x-3)² 之和，d/dx = 4(2x-3) = 8x-12，代入 x=1,2,3 得 -4, 4, 12。注意中间结果 x=2 时 z=4 离目标 3 还有 1，所以梯度不为 0。
 
 ## 讲深一层
 
@@ -55,4 +58,4 @@ print(a[np.array([0, 2])].tolist())
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 02 NumPy 与张量基础
+`教学文档/Python实验台/Python考点实验台.html` · 03 autograd 与计算图

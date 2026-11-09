@@ -1,6 +1,6 @@
 ---
 id: Q-1712
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 18 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 19 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print("%s-%d" % ("a", 5), "{}-{}".format("b", 6), f"c-{7}")
+print([1, 2, 3].__class__.__name__, (1,).__class__.__name__, {1: 2}.__class__.__name__)
 ```
 
-- **A.** a-5 b-6 c-7
-- **B.** a-5 b-6 c-{7}
-- **C.** a-5 b-6 c-8
-- **D.** a-%s b-%d c-7
+- **A.** list tuple dict
+- **B.** list int dict
+- **C.** list tuple set
+- **D.** List Tuple Dict
 
 ## 口述答案
 
-答案是 **A. a-5 b-6 c-7**，实际输出 `a-5 b-6 c-7`。
+答案是 **A. list tuple dict**，实际输出 `list tuple dict`。
 
-三种格式化写法结果一致；f-string 是 3.6+ 的语法糖，{7} 会求值成 7。
+三种括号对应 list / tuple / dict，类名首字母小写——这是 Python 官方风格，与 Java 的 List / Map 相反。
 
 ## 讲深一层
 

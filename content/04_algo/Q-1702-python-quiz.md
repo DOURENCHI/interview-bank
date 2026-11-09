@@ -1,6 +1,6 @@
 ---
 id: Q-1702
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 8 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 9 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(round(2.675, 2), round(0.5), round(1.5), round(-0.5))
+print(1 == 1.0, 1 == 1, [] == [], [] is [])
 ```
 
-- **A.** 2.67 0 2 0
-- **B.** 2.68 0 2 -1
-- **C.** 2.67 1 2 0
-- **D.** 2.67 0 1 0
+- **A.** True True True False
+- **B.** True True True True
+- **C.** True False True False
+- **D.** False True False False
 
 ## 口述答案
 
-答案是 **A. 2.67 0 2 0**，实际输出 `2.67 0 2 0`。
+答案是 **A. True True True False**，实际输出 `True True True False`。
 
-round 是「四舍六入五成双」（银行家舍入）：0.5→0、1.5→2、-0.5→0；2.675 的真实二进制值略小于 2.675，所以结果是 2.67。
+== 比的是值，1 == 1.0 为真；两个空列表内容相等但不是同一个对象，所以 == 为 True、is 为 False——这是 Python 新手最常踩的坑之一。
 
 ## 讲深一层
 

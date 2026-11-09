@@ -1,6 +1,6 @@
 ---
 id: Q-1828
-title: 最大子数组和：Kadane 算法为什么只需两个变量？
+title: 买卖股票的最佳时机：一次遍历怎么同时维护最低价和利润？
 module: 04_algo
 sub: 数组哈希
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 贪心, 数组]
-hint: 以 i 结尾的最大和 = max(nums[i], 前一个最大和 + nums[i])。负数前缀直接丢掉，不用回溯。
+tags: [数组, 贪心]
+hint: 先更新历史最低买入价，再用当天价格减它更新利润。顺序不能反，否则会自己减自己。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：以 i 结尾的最大和 = max(nums[i], 前一个最大和 + nums[i])。负数前缀直接丢掉，不用回溯。
+**套路**：先更新历史最低买入价，再用当天价格减它更新利润。顺序不能反，否则会自己减自己。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

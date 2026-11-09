@@ -1,6 +1,6 @@
 ---
 id: Q-1895
-title: 最小路径和：二维 DP 怎么压缩成一维？
+title: 单词拆分：为什么用 DP 而不是 DFS 暴搜？
 module: 04_algo
 sub: DP
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 滚动数组]
-hint: 原地按行更新：dp[j]=min(dp[j], dp[j-1])+grid[i][j]。dp[j] 来自上方，dp[j-1] 来自左方。
+tags: [DP, 字符串]
+hint: 暴搜会重复计算同一后缀。dp[i] 表示前 i 个字符能否拆分，枚举分割点。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：原地按行更新：dp[j]=min(dp[j], dp[j-1])+grid[i][j]。dp[j] 来自上方，dp[j-1] 来自左方。
+**套路**：暴搜会重复计算同一后缀。dp[i] 表示前 i 个字符能否拆分，枚举分割点。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

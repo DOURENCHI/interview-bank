@@ -1,6 +1,6 @@
 ---
 id: Q-1710
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 16 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 17 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(list(range(2, 8, 2)), list(range(3)), len(list(range(0, 10, 3))))
+print("abc".isalpha(), "123".isdigit(), "a1".isalnum())
 ```
 
-- **A.** [2, 4, 6] [0, 1, 2] 4
-- **B.** [2, 4, 6, 8] [0, 1, 2] 4
-- **C.** [2, 4, 6] [0, 1, 2] 3
-- **D.** [2, 4, 6] [1, 2, 3] 4
+- **A.** True True True
+- **B.** True True False
+- **C.** False True True
+- **D.** True False True
 
 ## 口述答案
 
-答案是 **A. [2, 4, 6] [0, 1, 2] 4**，实际输出 `[2, 4, 6] [0, 1, 2] 4`。
+答案是 **A. True True True**，实际输出 `True True True`。
 
-range(2, 8, 2) 左闭右开取到 7 所以是 [2,4,6]；range(0,10,3) 有 0/3/6/9 四个数，长度 4。
+isalpha 只认字母、isdigit 只认数字、isalnum 字母数字都认，所以 "a1" 三个判断都成立。
 
 ## 讲深一层
 

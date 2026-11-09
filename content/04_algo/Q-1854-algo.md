@@ -1,10 +1,10 @@
 ---
 id: Q-1854
-title: 外观数列：怎么从上一项推出下一项？
+title: 字符串解码：嵌套括号怎么处理？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, 模拟]
-hint: 双指针数连续相同字符的个数，拼成「个数+数字」，迭代 n-1 次。
+tags: [栈, 字符串]
+hint: 两个栈：一个存倍数、一个存之前的字符串；遇 ] 就弹出拼接。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：双指针数连续相同字符的个数，拼成「个数+数字」，迭代 n-1 次。
+**套路**：两个栈：一个存倍数、一个存之前的字符串；遇 ] 就弹出拼接。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

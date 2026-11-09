@@ -1,6 +1,6 @@
 ---
 id: Q-1817
-title: 分类：sigmoid、softmax 与三种交叉熵 的 ACM 输入输出怎么写？
+title: CNN：卷积、池化与维度计算 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -26,34 +26,35 @@ lab_src: snip
 import torch
 import torch.nn as nn
 
-logits_b = torch.tensor([2.0, -2.0])
-y_b = torch.tensor([1.0, 0.0])
-print("sigmoid", [round(v, 6) for v in torch.sigmoid(logits_b).tolist()])
-print("BCELoss          ", round(float(nn.BCELoss()(torch.sigmoid(logits_b), y_b)), 6))
-print("BCEWithLogitsLoss", round(float(nn.BCEWithLogitsLoss()(logits_b, y_b)), 6))
+x = torch.arange(25, dtype=torch.float32).reshape(1, 1, 5, 5)
+conv = nn.Conv2d(1, 1, kernel_size=3, bias=False)
+with torch.no_grad():
+    conv.weight.fill_(1.0)
+out = conv(x)
+print("5x5 经 3x3 卷积 ->", tuple(out.shape))
+print("输出值", out.reshape(-1).tolist())
 
-logits_m = torch.tensor([2.0, 1.0, 0.1])
-sm = torch.softmax(logits_m, dim=0)
-print("softmax", [round(v, 6) for v in sm.tolist()], "sum", round(float(sm.sum()), 6))
-print("CrossEntropyLoss", round(float(nn.CrossEntropyLoss()(logits_m, torch.tensor([0]))), 6))
-lp = torch.log_softmax(logits_m, dim=0)
-print("NLLLoss          ", round(float(nn.NLLLoss()(lp, torch.tensor([0]))), 6))
+pool = nn.MaxPool2d(2)
+print("2x2 池化 ->", tuple(pool(torch.tensor([[[[1.0, 2.0], [3.0, 4.0]]]])).shape))
 
-y = torch.tensor([0.0] * 90 + [1.0] * 10)
-p = torch.tensor([0.0] * 100)
-print("全预测多数类的准确率", round(float((y == p).float().mean()), 6))
+flat = nn.Sequential(nn.Conv2d(1, 10, 3), nn.ReLU(), nn.MaxPool2d(2), nn.Flatten())
+print("28x28 全流程 ->", tuple(flat(torch.randn(1, 1, 28, 28)).shape))
+
+print("尺寸公式 (28-3)//2+1 =", (28 - 3) // 2 + 1)
+
+c11 = nn.Conv2d(64, 32, 1)
+print("1x1 卷积 ->", tuple(c11(torch.randn(1, 64, 8, 8)).shape), "权重", tuple(c11.weight.shape))
 ```
 
 输出样例：
 
 ```
-sigmoid [0.880797, 0.119203]
-BCELoss           0.126928
-BCEWithLogitsLoss 0.126928
-softmax [0.659001, 0.242433, 0.098566] sum 1.0
-CrossEntropyLoss 0.41703
-NLLLoss           0.41703
-全预测多数类的准确率 0.9
+5x5 经 3x3 卷积 -> (1, 1, 3, 3)
+输出值 [54.0, 63.0, 72.0, 99.0, 108.0, 117.0, 144.0, 153.0, 162.0]
+2x2 池化 -> (1, 1, 1, 1)
+28x28 全流程 -> (1, 1690)
+尺寸公式 (28-3)//2+1 = 13
+1x1 卷积 -> (1, 32, 8, 8) 权重 (32, 64, 1, 1)
 ```
 
 ## 口述答案
@@ -78,4 +79,4 @@ NLLLoss           0.41703
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 07 分类：逻辑回归与交叉熵
+`教学文档/Python实验台/Python考点实验台.html` · 08 CNN 与 RNN

@@ -1,6 +1,6 @@
 ---
 id: Q-1789
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 95 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 96 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-conv = torch.nn.Conv2d(3, 16, 3)
-x = torch.randn(1, 3, 8, 8)
-print(tuple(conv(x).shape), conv.weight.shape[0])
+c = torch.nn.Conv2d(64, 32, 1)
+print(tuple(c(torch.randn(1, 64, 8, 8)).shape), c.weight.shape)
 ```
 
-- **A.** (1, 16, 6, 6) 16
-- **B.** ((1, 3, 6, 6), 3)
-- **C.** ((1, 16, 8, 8), 16)
-- **D.** ((1, 16, 6, 6), 3)
+- **A.** (1, 32, 8, 8) torch.Size([32, 64, 1, 1])
+- **B.** ((1, 64, 8, 8), torch.Size([32, 64, 1, 1]))
+- **C.** ((1, 32, 8, 8), torch.Size([64, 32, 1, 1]))
+- **D.** ((1, 32, 7, 7), torch.Size([32, 64, 1, 1]))
 
 ## 口述答案
 
-答案是 **A. (1, 16, 6, 6) 16**，实际输出 `(1, 16, 6, 6) 16`。
+答案是 **A. (1, 32, 8, 8) torch.Size([32, 64, 1, 1])**，实际输出 `(1, 32, 8, 8) torch.Size([32, 64, 1, 1])`。
 
-输出通道数由 out_channels=16 决定，空间尺寸由核和输入决定；weight 形状是 (16, 3, 3, 3)，第 0 维就是输出通道 16。
+1×1 卷积只改通道数不改空间尺寸：64→32，8×8 不变；权重形状 (out=32, in=64, 1, 1)。
 
 ## 讲深一层
 

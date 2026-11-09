@@ -1,10 +1,10 @@
 ---
 id: Q-1870
-title: 验证回文串：怎么跳过非字母数字字符？
+title: 岛屿数量：DFS 和 BFS 各自的取舍？
 module: 04_algo
-sub: 双指针滑窗
+sub: DFS BFS
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 字符串]
-hint: 双指针向中间靠，遇到非字母数字就跳过，比较时统一大小写。
+tags: [DFS, BFS, 网格]
+hint: DFS 代码短但递归深度可能爆栈；BFS 用队列稳但要额外空间。都要把访问过的置 0 防重访。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：双指针向中间靠，遇到非字母数字就跳过，比较时统一大小写。
+**套路**：DFS 代码短但递归深度可能爆栈；BFS 用队列稳但要额外空间。都要把访问过的置 0 防重访。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

@@ -1,10 +1,10 @@
 ---
 id: Q-1858
-title: 最小覆盖子串：need 和 window 两个计数器怎么维护？
+title: 找到字符串中所有字母异位词：固定窗口怎么滑？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [滑窗, 哈希]
-hint: need 记目标频次，window 记当前窗口；用 valid 记已满足的字符种类数，等于 need 大小就尝试收缩。
+tags: [滑窗, 计数]
+hint: 窗口长度固定为 p 的长度，每次右进一个左出一个，比较计数数组是否相同。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：need 记目标频次，window 记当前窗口；用 valid 记已满足的字符种类数，等于 need 大小就尝试收缩。
+**套路**：窗口长度固定为 p 的长度，每次右进一个左出一个，比较计数数组是否相同。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

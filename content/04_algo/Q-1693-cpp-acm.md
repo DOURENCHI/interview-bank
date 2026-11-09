@@ -1,6 +1,6 @@
 ---
 id: Q-1693
-title: stringstream 拆分与拼接 的 ACM 输入输出怎么写？
+title: thread + atomic 求和 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,17 +23,18 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-istringstream iss("10 20 30");
-int x, sum = 0;
-while (iss >> x) sum += x;
-ostringstream oss; oss << "sum=" << sum;
-cout << oss.str() << '\n';
+atomic<int> s{0};
+vector<thread> ts;
+for (int k = 1; k <= 4; k++)
+    ts.emplace_back([&s, k]{ s += k; });
+for (auto& t : ts) { t.join(); }
+cout << "sum=" << s.load() << '\n';
 ```
 
 输出样例：
 
 ```
-sum=60
+sum=10
 ```
 
 ## 口述答案
@@ -58,4 +59,4 @@ sum=60
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 37
+`教学文档/C++实验台/C++考点实验台.html` · 38

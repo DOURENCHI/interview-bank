@@ -1,6 +1,6 @@
 ---
 id: Q-1727
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 33 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 34 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,26 +20,23 @@ lab_src: quiz
 ## 题目
 
 ```python
-def outer():
-    x = 1
-    def inner():
-        nonlocal x
-        x += 1
-        return x
-    return inner(), x
-print(outer())
+counter = {"n": 0}
+def bump():
+    counter["n"] += 1
+    return counter["n"]
+print(bump(), bump(), counter["n"])
 ```
 
-- **A.** (2, 2)
-- **B.** (1, 2)
-- **C.** (2, 1)
-- **D.** (1, 1)
+- **A.** 1 2 2
+- **B.** 1 1 1
+- **C.** 1 2 3
+- **D.** 0 1 1
 
 ## 口述答案
 
-答案是 **A. (2, 2)**，实际输出 `(2, 2)`。
+答案是 **A. 1 2 2**，实际输出 `1 2 2`。
 
-nonlocal 把内层作用域的 x 绑定到外层函数的变量，inner() 把 x 改成 2，所以 (inner() 的返回值, 当时的 x) 都是 2。
+可变对象作为全局变量时函数内的修改会生效，字典内容被就地累加；第三次打印仍是 2，因为 counter 里存的就是 2。
 
 ## 讲深一层
 

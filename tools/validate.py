@@ -114,7 +114,7 @@ def main() -> int:
         # 标题问句化（祈使式提问算合规；问号不必在末尾，括号补充说明也算）
         title = meta.get("title", "")
         if not (("？" in title or "?" in title)
-                or re.match(r"^(介绍|讲讲|说说|描述|解释|谈谈|聊)", title)):
+                or re.match(r"^(用一句话|介绍|讲讲|说说|描述|解释|谈谈|聊)", title)):
             warns.append(f"{qid}: 标题不是问句 → {title[:30]}")
 
     for qid, fs in by_id.items():

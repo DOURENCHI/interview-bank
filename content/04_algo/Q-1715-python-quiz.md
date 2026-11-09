@@ -1,6 +1,6 @@
 ---
 id: Q-1715
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 21 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 22 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,20 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-a = [1, 2, 3]
-print(a.index(2), a.count(1))
+print(bin(10), oct(10), hex(255), abs(-3))
 ```
 
-- **A.** 1 1
-- **B.** 2 1
-- **C.** 1 2
-- **D.** 0 1
+- **A.** 0b1010 0o12 0xff 3
+- **B.** 1010 12 ff 3
+- **C.** 0b1010 0o12 0xff -3
+- **D.** 0b1010 0o12 0xFF -3
 
 ## 口述答案
 
-答案是 **A. 1 1**，实际输出 `1 1`。
+答案是 **A. 0b1010 0o12 0xff 3**，实际输出 `0b1010 0o12 0xff 3`。
 
-index 返回下标不是值，2 在下标 1 处；count 统计出现次数，1 出现 1 次。
+bin/oct/hex 都带前缀（0b / 0o / 0x），hex 输出小写；abs(-3) 是 3。
 
 ## 讲深一层
 

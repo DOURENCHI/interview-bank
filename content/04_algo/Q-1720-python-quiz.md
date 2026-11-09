@@ -1,6 +1,6 @@
 ---
 id: Q-1720
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 26 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 27 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,7 +20,7 @@ lab_src: quiz
 ## 题目
 
 ```python
-print(isinstance(1, int), isinstance(True, int), isinstance("a", str))
+print(1 == 1.0, 1 == 1.0, [1, 2] == [1.0, 2.0])
 ```
 
 - **A.** True True True
@@ -32,7 +32,7 @@ print(isinstance(1, int), isinstance(True, int), isinstance("a", str))
 
 答案是 **A. True True True**，实际输出 `True True True`。
 
-bool 是 int 的子类（Python 里 True 本质就是 1），所以 isinstance(True, int) 为 True——这是很多 if 判断写错的根源。
+数值比较跨类型按值判定，1 == 1.0 为真；列表比较逐元素比，1 == 1.0 也为真，所以整个列表相等。
 
 ## 讲深一层
 

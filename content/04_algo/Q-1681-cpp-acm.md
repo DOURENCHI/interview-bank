@@ -1,6 +1,6 @@
 ---
 id: Q-1681
-title: 类模板 Stack 的 ACM 输入输出怎么写？
+title: unordered_map 单词计数 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,25 +23,23 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-template <typename T>
-class Stack {
-    vector<T> data;
-public:
-    void push(const T &x) { data.push_back(x); }
-    T pop() { T x = data.back(); data.pop_back(); return x; }
-    bool empty() const { return data.empty(); }
-};
-int main() {
-    Stack<string> s;
-    s.push("C"); s.push("+"); s.push("+");
-    while (!s.empty()) cout << s.pop();
-}
+unordered_map<string, int> cnt;
+string w;
+while (cin >> w) cnt[w]++;
+for (string k : {"to", "be", "or", "not"})
+    cout << k << ':' << cnt[k] << ' ';
+```
+
+输入样例：
+
+```
+to be or not to be
 ```
 
 输出样例：
 
 ```
-++C
+to:2 be:2 or:1 not:1
 ```
 
 ## 口述答案
@@ -66,4 +64,4 @@ int main() {
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 20
+`教学文档/C++实验台/C++考点实验台.html` · 21

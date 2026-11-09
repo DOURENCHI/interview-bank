@@ -1,10 +1,10 @@
 ---
 id: Q-1827
-title: 三数之和：怎么保证结果不重复？
+title: 最大子数组和：Kadane 算法为什么只需两个变量？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 双指针, 去重]
-hint: 先排序，固定一个数后用双指针夹逼；跳过与上一个相同的固定值和指针值，否则出重复三元组。
+tags: [DP, 贪心, 数组]
+hint: 以 i 结尾的最大和 = max(nums[i], 前一个最大和 + nums[i])。负数前缀直接丢掉，不用回溯。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：先排序，固定一个数后用双指针夹逼；跳过与上一个相同的固定值和指针值，否则出重复三元组。
+**套路**：以 i 结尾的最大和 = max(nums[i], 前一个最大和 + nums[i])。负数前缀直接丢掉，不用回溯。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

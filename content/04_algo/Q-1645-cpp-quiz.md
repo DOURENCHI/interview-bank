@@ -1,6 +1,6 @@
 ---
 id: Q-1645
-title: 这段 C++ 代码输出什么？（24 异常 · 第 32 题）
+title: 这段 C++ 代码输出什么？（25 智能指针 · 第 33 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,26 +20,25 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-try {
-    cout << "A";
-    throw 1;
-    cout << "B";
-} catch (int) {
-    cout << "C";
+auto a = make_shared<int>(1);
+auto b = a;
+{
+    auto c = b;
+    cout << a.use_count();
 }
-cout << "D";
+cout << a.use_count();
 ```
 
-- **A.** ACD
-- **B.** ABCD
-- **C.** AD
-- **D.** ABD
+- **A.** 32
+- **B.** 33
+- **C.** 22
+- **D.** 31
 
 ## 口述答案
 
-答案是 **A. ACD**，实际输出 `ACD`。
+答案是 **A. 32**，实际输出 `32`。
 
-throw 之后的语句不再执行，直接跳到匹配的 catch；处理完继续往下走。
+a、b、c 共享同一个对象，计数是 3；c 离开作用域后减为 2。
 
 ## 讲深一层
 
@@ -60,4 +59,4 @@ throw 之后的语句不再执行，直接跳到匹配的 catch；处理完继�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 24 异常
+`教学文档/C++实验台/C++考点实验台.html` · 25 智能指针

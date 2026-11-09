@@ -1,6 +1,6 @@
 ---
 id: Q-1819
-title: RNN / LSTM / GRU 的形状对照 的 ACM 输入输出怎么写？
+title: 优化器、超参与发散排查 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -26,34 +26,45 @@ lab_src: snip
 import torch
 import torch.nn as nn
 
-seq = torch.randn(2, 7, 4)
+torch.manual_seed(1)
+m = torch.nn.Linear(2, 1)
+sgd = torch.optim.SGD(m.parameters(), lr=0.1, momentum=0.9)
+print("SGD 超参 lr =", sgd.param_groups[0]["lr"], "momentum =", sgd.param_groups[0]["momentum"])
 
-rnn = nn.RNN(4, 5, batch_first=True)
-out, h = rnn(seq)
-print("RNN  输出", tuple(out.shape), "hidden", tuple(h.shape))
+adam = torch.optim.Adam(m.parameters(), lr=0.01)
+m(torch.randn(4, 2)).sum().backward()
+adam.step()
+print("Adam 状态键", tuple(adam.state[m.weight].keys()))
 
-lstm = nn.LSTM(4, 5, batch_first=True)
-print("LSTM 输出", tuple(lstm(seq)[0].shape))
+m(torch.ones(1, 2)).sum().backward()
+g = float(m.weight.grad.sum())
+m.zero_grad()
+print("清零前梯度", round(g, 6), "| 清零后", m.weight.grad)
 
-gru = nn.GRU(4, 5, batch_first=True)
-print("GRU  输出", tuple(gru(seq)[0].shape))
-
-cell = nn.RNNCell(4, 5)
-hh = torch.zeros(2, 5)
-for t in range(3):
-    hh = cell(torch.randn(2, 4), hh)
-    print(f"第 {t + 1} 个时间步 hidden", tuple(hh.shape))
+torch.manual_seed(9)
+big = torch.nn.Linear(1, 1)
+opt = torch.optim.SGD(big.parameters(), lr=1e4)
+xs = torch.Tensor([[1.0], [2.0], [3.0]])
+ys = torch.Tensor([[2.0], [4.0], [6.0]])
+crit = nn.MSELoss(reduction="sum")
+first = None
+for _ in range(5):
+    loss = crit(big(xs), ys)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()
+    if first is None:
+        first = loss.item()
+print(f"lr=1e4 首轮 loss {first:.4f} -> 末轮 {loss.item():.4f}（发散）")
 ```
 
 输出样例：
 
 ```
-RNN  输出 (2, 7, 5) hidden (1, 2, 5)
-LSTM 输出 (2, 7, 5)
-GRU  输出 (2, 7, 5)
-第 1 个时间步 hidden (2, 5)
-第 2 个时间步 hidden (2, 5)
-第 3 个时间步 hidden (2, 5)
+SGD 超参 lr = 0.1 momentum = 0.9
+Adam 状态键 ('step', 'exp_avg', 'exp_avg_sq')
+清零前梯度 0.769743 | 清零后 None
+lr=1e4 首轮 loss 48.4040 -> 末轮 inf（发散）
 ```
 
 ## 口述答案
@@ -78,4 +89,4 @@ GRU  输出 (2, 7, 5)
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 08 CNN 与 RNN
+`教学文档/Python实验台/Python考点实验台.html` · 09 优化、正则化与工程化

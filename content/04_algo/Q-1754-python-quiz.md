@@ -1,6 +1,6 @@
 ---
 id: Q-1754
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 60 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 61 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,19 @@ lab_src: quiz
 
 ```python
 import torch
-a = torch.tensor([1, 2])
-b = torch.tensor([3, 4])
-print(torch.cat([a, b]).tolist(), tuple(torch.stack([a, b]).shape))
+print(torch.tensor([1, 2]).dtype, torch.tensor([1.0]).dtype, torch.tensor([1, 2]).device)
 ```
 
-- **A.** [1, 2, 3, 4] (2, 2)
-- **B.** ([1, 2, 3, 4], (2,))
-- **C.** ([1, 3, 2, 4], (2, 2))
-- **D.** ([1, 2, 3, 4], (4,))
+- **A.** torch.int64 torch.float32 cpu
+- **B.** torch.int32 torch.float64 cpu
+- **C.** torch.int64 torch.float32 cuda
+- **D.** torch.int64 torch.float32 cpu:0
 
 ## 口述答案
 
-答案是 **A. [1, 2, 3, 4] (2, 2)**，实际输出 `[1, 2, 3, 4] (2, 2)`。
+答案是 **A. torch.int64 torch.float32 cpu**，实际输出 `torch.int64 torch.float32 cpu`。
 
-cat 是拼接（形状变长），stack 是堆叠（新增一个维度），所以 stack 后是 (2,2)。
+整数字面量默认 int64、浮点默认 float32；device 是 cpu（CPU 版 PyTorch 没有 cuda）。装 CUDA 版 torch 才会是 cuda:0。
 
 ## 讲深一层
 

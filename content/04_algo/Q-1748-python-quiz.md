@@ -1,6 +1,6 @@
 ---
 id: Q-1748
-title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 54 题）
+title: 这段 Python 代码输出什么？（03 autograd 与计算图 · 第 55 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,22 @@ lab_src: quiz
 
 ```python
 import torch
-w = torch.tensor([1.0, 2.0], requires_grad=True)
-loss = (3 * w).sum()
-loss.backward()
-print(w.grad.tolist())
+x = torch.tensor([2.0], requires_grad=True)
+(x * 3).sum().backward()
+(x * 5).sum().backward()
+print(x.grad.tolist())
 ```
 
-- **A.** [3.0, 3.0]
-- **B.** [1.0, 2.0]
-- **C.** [3.0, 6.0]
-- **D.** [6.0, 6.0]
+- **A.** [8.0]
+- **B.** [3.0]
+- **C.** [5.0]
+- **D.** [0.0]
 
 ## 口述答案
 
-答案是 **A. [3.0, 3.0]**，实际输出 `[3.0, 3.0]`。
+答案是 **A. [8.0]**，实际输出 `[8.0]`。
 
-loss = 3w 之和，每个 w 的梯度都是 3。乘法把标量梯度「广播」到每个元素。
+梯度默认累加不清零：第二次 backward 又加上 5，累计 3+5=8。PyTorch 不会自动清梯度，这是训练循环里必须 zero_grad 的原因。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1811
-title: NumPy 形状、广播与聚合 的 ACM 输入输出怎么写？
+title: autograd：梯度、累加与 no_grad 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,34 +23,35 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-import numpy as np
+import torch
 
-a = np.array([[1, 2], [3, 4]])
-b = np.array([1, 2, 3])
-c = np.array([[1, 2, 3], [4, 5, 6]])
+x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+z = x * 2
+loss = (z - 3).pow(2).sum()
+loss.backward()
+print("x.grad =", x.grad.tolist())
 
-print("shape", a.shape, "ndim", a.ndim, "size", a.size, "dtype", a.dtype)
-print("a[0,1]", a[0, 1], "| a[1]", a[1], "| a[:,0]", a[:, 0])
-print("T.shape", a.T.shape, "| reshape(4).shape", a.reshape(4).shape)
-print("sum", a.sum(), "| axis=0", a.sum(axis=0), "| axis=1", a.sum(axis=1))
-print("argmax", np.argmax([1, 9, 3]), "argmin", np.argmin([4, 2, 8]))
-print("广播 b+c 形状", (b + c).shape)
-print("逐元素乘 c*b", (c * b).tolist())
-print("round/clip", np.round(np.array([3.7, -2.2, 5.0]), 1).tolist(),
-      np.clip(np.array([3.7, -2.2, 5.0]), -2, 4).tolist())
+y = torch.tensor([2.0], requires_grad=True)
+(y * 3).sum().backward()
+(y * 5).sum().backward()
+print("两次 backward 后 y.grad =", y.grad.tolist(), "（梯度累加）")
+
+m = torch.tensor([1.0], requires_grad=True)
+with torch.no_grad():
+    n = m * 2
+print("no_grad 下 requires_grad =", n.requires_grad)
+
+t = torch.tensor([1.0, 2.0])
+print("item() =", t.sum().item(), "| 直接 print =", t.sum())
 ```
 
 输出样例：
 
 ```
-shape (2, 2) ndim 2 size 4 dtype int64
-a[0,1] 2 | a[1] [3 4] | a[:,0] [1 3]
-T.shape (2, 2) | reshape(4).shape (4,)
-sum 10 | axis=0 [4 6] | axis=1 [3 7]
-argmax 1 argmin 1
-广播 b+c 形状 (2, 3)
-逐元素乘 c*b [[1, 4, 9], [4, 10, 18]]
-round/clip [3.7, -2.2, 5.0] [3.7, -2.0, 4.0]
+x.grad = [-4.0, 4.0, 12.0]
+两次 backward 后 y.grad = [8.0] （梯度累加）
+no_grad 下 requires_grad = False
+item() = 3.0 | 直接 print = tensor(3.)
 ```
 
 ## 口述答案
@@ -75,4 +76,4 @@ round/clip [3.7, -2.2, 5.0] [3.7, -2.0, 4.0]
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 02 NumPy 与张量基础
+`教学文档/Python实验台/Python考点实验台.html` · 03 autograd 与计算图

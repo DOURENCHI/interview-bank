@@ -1,6 +1,6 @@
 ---
 id: Q-1774
-title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 80 题）
+title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 81 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -23,34 +23,25 @@ lab_src: quiz
 import torch
 from torch.utils.data import Dataset, DataLoader
 class DS(Dataset):
-    def __init__(self, n):
-        self.x = torch.arange(n, dtype=torch.float32).reshape(-1, 1)
+    def __init__(self):
+        self.x = torch.tensor([1.0, 2.0, 3.0])
     def __len__(self):
-        return len(self.x)
+        return 3
     def __getitem__(self, i):
-        return self.x[i]
-def order():
-    out = []
-    for xb in DataLoader(DS(5), batch_size=2, shuffle=True):
-        out.extend(xb.reshape(-1).tolist())
-    return out
-torch.manual_seed(0)
-a = order()
-torch.manual_seed(0)
-b = order()
-print(a, b, a == b, len(DataLoader(DS(5), batch_size=2, shuffle=True)))
+        return self.x[i] * 10, self.x[i]
+print([xb.tolist() for xb, _ in DataLoader(DS(), batch_size=3)])
 ```
 
-- **A.** [1.0, 4.0, 2.0, 3.0, 0.0] [1.0, 4.0, 2.0, 3.0, 0.0] True 3
-- **B.** ([1.0, 4.0, 2.0, 3.0, 0.0], [0.0, 1.0, 2.0, 3.0, 4.0], False, 3)
-- **C.** ([1.0, 4.0, 2.0, 3.0, 0.0], [1.0, 4.0, 2.0, 3.0, 0.0], True, 2)
-- **D.** ([0.0, 1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 2.0, 3.0, 4.0], True, 5)
+- **A.** [[10.0, 20.0, 30.0]]
+- **B.** [[1.0, 2.0, 3.0]]
+- **C.** [[10.0], [20.0], [30.0]]
+- **D.** [[30.0, 20.0, 10.0]]
 
 ## 口述答案
 
-答案是 **A. [1.0, 4.0, 2.0, 3.0, 0.0] [1.0, 4.0, 2.0, 3.0, 0.0] True 3**，实际输出 `[1.0, 4.0, 2.0, 3.0, 0.0] [1.0, 4.0, 2.0, 3.0, 0.0] True 3`。
+答案是 **A. [[10.0, 20.0, 30.0]]**，实际输出 `[[10.0, 20.0, 30.0]]`。
 
-固定 seed 后两次遍历顺序完全一致（True），这是实验可复现的前提；5 个样本 batch_size=2 出 3 批（最后一批只有 1 个）。
+__getitem__ 返回 (输入, 标签) 二元组时 DataLoader 才能默认成对堆叠；返回单值时 collate 会把单个元素当序列处理，形状会变成 (3,) 而不是 (1,3)。
 
 ## 讲深一层
 

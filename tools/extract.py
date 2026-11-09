@@ -54,6 +54,49 @@ ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
            "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
            "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600}
 
+# 子方向名：不直接用文档名，否则筛选栏里全是「C++面向对象高级特性」这种
+SUB_MAP = [
+    ("C++程序设计", "语言基础"),
+    ("C++工程化", "工程化与 SDK"),
+    ("C++面向对象高级", "对象模型"),
+    ("C++面向对象", "对象模型"),
+    ("C++_STL", "STL 容器"),
+    ("C++算法与时间", "时间与算法"),
+    ("Qt", "Qt 与 GUI"),
+    ("ROS2移动机器人", "仿真与建图"),
+    ("ROS2多传感器", "多传感器"),
+    ("ROS2理论与实践", "ROS2 基础"),
+    ("Linux", "Linux 系统"),
+    ("端侧AI", "端侧部署"),
+    ("YOLO", "YOLO 部署"),
+    ("FreeRTOS", "FreeRTOS"),
+    ("STM32", "STM32"),
+    ("单片机", "单片机"),
+    ("电子元器件", "模拟电路"),
+    ("通信总线", "总线协议"),
+    ("PCB", "PCB 设计"),
+    ("Python", "Python"),
+]
+
+
+def pick_sub(stem: str, fallback: str) -> str:
+    for kw, name in SUB_MAP:
+        if kw in stem:
+            return name
+    return fallback[:14]
+
+
+# 项目名：一个项目一个分类，不要混在一起
+PROJ_MAP = {
+    "YOLO": "YOLO 部署",
+    "二维云台": "二维云台",
+    "Linux日志": "Linux 日志分析",
+    "毕设": "本科毕设·4G 测温",
+    "跟骨": "跟骨分割（科研）",
+    "西门子": "西门子项目",
+    "ROS": "ROS 小车",
+}
+
 SKIP_DIRS = {"_figs", "_work", "_build", "__pycache__", "_archive", "deck"}
 
 # ---------------------------------------------------------------- 分级规则
@@ -174,16 +217,17 @@ def collect_sources():
                     break
             if mod:
                 docs.append({"file": f, "module": mod, "priority": pri,
-                             "sub": re.sub(r"_从.*|_全套.*|讲义|教程", "", f.stem)[:14]})
+                             "sub": pick_sub(f.stem, re.sub(r"_从.*|_全套.*|讲义|教程", "", f.stem))})
 
     proj = ENG / "方向与规划" / "项目"
     if proj.is_dir():
         for f in sorted(proj.glob("*/*.html")):
             if "_bak" in f.name or any(p in SKIP_DIRS for p in f.parts):
                 continue
-            sub = "YOLO部署" if "YOLO" in f.name or "YOLO" in f.parent.name else f.parent.name
+            tag = f.name + f.parent.name
+            sub = next((v for k, v in PROJ_MAP.items() if k in tag), f.parent.name[:14])
             docs.append({"file": f, "module": "01_project", "priority": "P0",
-                         "sub": sub[:14]})
+                         "sub": sub})
     return docs
 
 
@@ -204,6 +248,7 @@ source_ref: {src_rel}
 verified_at: 2026-11-09
 tags: []
 auto: true
+from_extract: true
 ---
 
 ## 口述答案
@@ -261,7 +306,7 @@ def main() -> int:
         removed = 0
         for f in CONTENT.rglob("Q-*.md"):
             try:
-                if re.search(r"^auto: true$", f.read_text(encoding="utf-8"), re.M):
+                if re.search(r"^from_extract: true$", f.read_text(encoding="utf-8"), re.M):
                     f.unlink()
                     removed += 1
             except OSError:

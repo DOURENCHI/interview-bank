@@ -1,6 +1,6 @@
 ---
 id: Q-1668
-title: 这段 C++ 代码输出什么？（35 chrono 与时间 · 第 55 题）
+title: 这段 C++ 代码输出什么？（35 chrono 与时间 · 第 56 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,21 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-auto d = chrono::milliseconds(1500);
-cout << chrono::duration_cast<chrono::seconds>(d).count()
-     << " " << d.count();
+cout << chrono::duration_cast<chrono::milliseconds>(
+       chrono::seconds(2)).count();
 ```
 
-- **A.** 1 1500
-- **B.** 1.5 1500
-- **C.** 2 1500
-- **D.** 1500 1
+- **A.** 2000
+- **B.** 2
+- **C.** 200
+- **D.** 20
 
 ## 口述答案
 
-答案是 **A. 1 1500**，实际输出 `1 1500`。
+答案是 **A. 2000**，实际输出 `2000`。
 
-duration_cast 从细粒度向粗粒度转换时向零截断，1500ms 变 1 秒；原 duration 的 count() 仍以毫秒为单位，是 1500。类型里带着单位，不会把秒和毫秒混用。
+秒转毫秒是放大，不丢精度，2s = 2000ms；反方向（毫秒转秒）才可能截断。ROS2 里 rclcpp::Duration 与 std::chrono 互转时也要先统一单位。
 
 ## 讲深一层
 

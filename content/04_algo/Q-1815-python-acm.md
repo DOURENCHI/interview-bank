@@ -1,6 +1,6 @@
 ---
 id: Q-1815
-title: nn.Module：参数量、冻结与 train/eval 的 ACM 输入输出怎么写？
+title: 自定义 Dataset 与 DataLoader 分批 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -24,40 +24,45 @@ lab_src: snip
 
 ```python
 import torch
-import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
 
-torch.manual_seed(3)
 
-m = nn.Linear(3, 2)
-print("weight", tuple(m.weight.shape), "bias", tuple(m.bias.shape))
-print("参数量", sum(p.numel() for p in m.parameters()))
+class ToyDataset(Dataset):
+    def __init__(self, n):
+        self.x = torch.arange(n, dtype=torch.float32).reshape(-1, 1)
+        self.y = self.x * 2
 
-seq = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 1))
-print("Sequential 参数量", sum(p.numel() for p in seq.parameters()))
-print("前向输出形状", tuple(seq(torch.randn(4, 4)).shape))
+    def __len__(self):
+        return len(self.x)
 
-for p in m.parameters():
-    p.requires_grad_(False)
-print("冻结后仍有可训练参数吗", any(p.requires_grad for p in m.parameters()))
+    def __getitem__(self, i):
+        return self.x[i], self.y[i]
 
-torch.manual_seed(5)
-dp = nn.Sequential(nn.Linear(4, 4), nn.Dropout(0.5))
-dp.train()
-a = float(dp(torch.ones(1, 4)).sum().detach())
-dp.eval()
-b = float(dp(torch.ones(1, 4)).sum().detach())
-print(f"train 模式输出和 {a:.4f} | eval 模式输出和 {b:.4f}")
+
+ds = ToyDataset(10)
+dl = DataLoader(ds, batch_size=4, shuffle=False)
+print("样本数", len(ds), "批数", len(dl))
+for xb, yb in dl:
+    print("x", xb.reshape(-1).tolist(), "y", yb.reshape(-1).tolist())
+
+print("drop_last=True 后批数", len(DataLoader(ds, batch_size=4, drop_last=True)))
+
+torch.manual_seed(0)
+seen = []
+for xb, _ in DataLoader(ds, batch_size=2, shuffle=True):
+    seen.extend(xb.reshape(-1).tolist())
+print("shuffle 后顺序", seen)
 ```
 
 输出样例：
 
 ```
-weight (2, 3) bias (2,)
-参数量 8
-Sequential 参数量 49
-前向输出形状 (4, 1)
-冻结后仍有可训练参数吗 False
-train 模式输出和 3.4002 | eval 模式输出和 1.4552
+样本数 10 批数 3
+x [0.0, 1.0, 2.0, 3.0] y [0.0, 2.0, 4.0, 6.0]
+x [4.0, 5.0, 6.0, 7.0] y [8.0, 10.0, 12.0, 14.0]
+x [8.0, 9.0] y [16.0, 18.0]
+drop_last=True 后批数 2
+shuffle 后顺序 [6.0, 7.0, 1.0, 4.0, 2.0, 0.0, 9.0, 8.0, 3.0, 5.0]
 ```
 
 ## 口述答案
@@ -82,4 +87,4 @@ train 模式输出和 3.4002 | eval 模式输出和 1.4552
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 05 nn.Module 与训练循环
+`教学文档/Python实验台/Python考点实验台.html` · 06 Dataset 与 DataLoader

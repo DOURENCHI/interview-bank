@@ -1,10 +1,10 @@
 ---
 id: Q-1913
-title: Python 读到文件结束怎么写？
+title: Python 多组测试用例怎么组织，才不会串数据？
 module: 04_algo
 sub: Python 读写
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -19,17 +19,20 @@ acm_seed: true
 
 ## 题目
 
-**输入**：多组数据，每组一行两个整数，直到文件结束。
-**输出**：每组输出 `a+b`。
+**输入**：第一行 `T` 组数。每组一行 `n`，下一行 `n` 个数。
+**输出**：每组输出这组数的和。
 
 ```
 输入样例
-1 2
-3 4
+2
+3
+1 2 3
+2
+10 20
 
 输出样例
-3
-7
+6
+30
 ```
 
 ## 口述答案
@@ -38,44 +41,43 @@ acm_seed: true
 import sys
 
 def main():
-    out = []
-    for line in sys.stdin:                 # 逐行迭代，读到 EOF 自然结束
-        line = line.strip()
-        if not line:
-            continue                        # 跳过空行
-        a, b = map(int, line.split())
-        out.append(str(a + b))
-    sys.stdout.write("\n".join(out))
+    data = sys.stdin.read().split()
+    idx = 0
+    T = int(data[idx]); idx += 1
+    res = []
+    for _ in range(T):
+        n = int(data[idx]); idx += 1
+        s = 0
+        for _ in range(n):
+            s += int(data[idx]); idx += 1
+        res.append(str(s))
+    print("\n".join(res))
 
 main()
 ```
 
 ## 讲深一层
 
-`for line in sys.stdin` 是最 Pythonic 的读法：它按行迭代，遇到 EOF 自动停，不抛异常。比 `while True: input()` 加 `try/except EOFError` 干净得多。
+多组用例最怕「上一组的数据留在变量里」。Python 比 C++ 好一点：函数内局部变量天然隔离，但两种情况仍会出事：
 
-几个常见变体：
+1. 可变默认参数：`def f(a=[])` —— 默认列表在多次调用间共享
+2. 循环外定义的列表没清空：`buf = []` 在 `for` 外面
 
-| 题面 | 写法 |
-|---|---|
-| 直到文件结束 | `for line in sys.stdin:` |
-| 第一行是组数 | `t = int(input()); for _ in range(t):` |
-| 以 `0 0` 结束 | 循环里判断 `if a == 0 and b == 0: break` |
-| 读到空行为止 | `while True: line = input(); if not line: break` |
+养成习惯：**每组需要的容器都在组内新建**。
 
-注意 `for line in sys.stdin` 读到空行时 `line` 是 `'\n'`，`strip()` 后变空串——**空行不是 EOF**，要自己判断。
+下标指针写法（`idx`）比 `iter/next` 更好调试——出错时能打印 `idx` 看读到哪了。数据量超大时 `next()` 略快，但差别很小。
 
 ## 高频追问
 
-1. **`sys.stdin` 能迭代几次？** —— 只能一次。它是流，读完就没了。要复用先 `readlines()`。
-2. **`input()` 版的 EOF 怎么处理？** —— `try: ... except EOFError: break`，比迭代版啰嗦。
-3. **输出为什么要先攒起来？** —— 每行 `print` 都是一次写操作，攒起来一次性 `write` 快很多。
+1. **`idx` 越界怎么办？** —— 说明题面格式理解错了。机考时加一句 `assert idx <= len(data)`，本地能立刻发现问题。
+2. **组间要输出空行怎么办？** —— `res.append(str(s)); if _ < T-1: res.append("")`，注意最后一组后面不加。
+3. **能不能用 `iter` + `next`？** —— 能，更简洁但不好查错。两者都可接受。
 
 ## 易错点
 
-- ❌ 用 `while True` 不加 break 条件 —— 死循环
-- ❌ 把空行当 EOF —— 提前退出
-- ❌ 每组都 `print` —— 数据量大时慢
+- ❌ 累积变量定义在循环外 —— 第二组接着第一组
+- ❌ 用可变对象当默认参数 —— 跨调用污染
+- ❌ 组间空行多输出一个 —— 格式错
 
 ## 关联项目
 
@@ -83,4 +85,4 @@ main()
 
 ## 来源
 
-文件对象迭代协议
+多组用例通用模式

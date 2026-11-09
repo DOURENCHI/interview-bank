@@ -1,6 +1,6 @@
 ---
 id: Q-1797
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 103 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 104 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,21 @@ lab_src: quiz
 
 ```python
 import torch
-emb = torch.nn.Embedding(100, 16)
-print(tuple(emb(torch.tensor([1, 2, 3])).shape), emb.weight.shape)
+m = torch.nn.Linear(2, 1)
+opt = torch.optim.SGD(m.parameters(), lr=0.1, momentum=0.9)
+print(opt.param_groups[0]["lr"], opt.param_groups[0]["momentum"])
 ```
 
-- **A.** (3, 16) torch.Size([100, 16])
-- **B.** ((100, 16), torch.Size([100, 16]))
-- **C.** ((3, 100), torch.Size([100, 16]))
-- **D.** ((16, 3), torch.Size([100, 16]))
+- **A.** 0.1 0.9
+- **B.** (0.01, 0.9)
+- **C.** (0.1, 0.0)
+- **D.** (0.9, 0.1)
 
 ## 口述答案
 
-答案是 **A. (3, 16) torch.Size([100, 16])**，实际输出 `(3, 16) torch.Size([100, 16])`。
+答案是 **A. 0.1 0.9**，实际输出 `0.1 0.9`。
 
-Embedding 把 3 个下标各查成 16 维向量，输出 (3,16)；权重表是 (词表100, 维度16)。
+SGD 的 lr 是学习率、momentum 是动量系数；param_groups[0] 里存着超参，可以随时改。
 
 ## 讲深一层
 
@@ -55,4 +56,4 @@ Embedding 把 3 个下标各查成 16 维向量，输出 (3,16)；权重表是 (
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 08 CNN 与 RNN
+`教学文档/Python实验台/Python考点实验台.html` · 09 优化、正则化与工程化

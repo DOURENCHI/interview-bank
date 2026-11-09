@@ -1,6 +1,6 @@
 ---
 id: Q-1766
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 72 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 73 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,32 +21,25 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(4)
-m = torch.nn.Linear(1, 1)
-opt = torch.optim.SGD(m.parameters(), lr=0.01)
-xs = torch.Tensor([[1.0], [2.0], [3.0]])
-ys = torch.Tensor([[2.0], [4.0], [6.0]])
-crit = torch.nn.MSELoss(reduction="sum")
-losses = []
-for _ in range(50):
-    loss = crit(m(xs), ys)
-    opt.zero_grad()
-    loss.backward()
-    opt.step()
-    losses.append(round(loss.item(), 4))
-print(losses[0], losses[-1], losses[-1] < losses[0])
+torch.manual_seed(5)
+m = torch.nn.Sequential(torch.nn.Linear(4, 4), torch.nn.Dropout(0.5))
+m.train()
+a = float(m(torch.ones(1, 4)).sum().detach())
+m.eval()
+b = float(m(torch.ones(1, 4)).sum().detach())
+print(round(a, 4), round(b, 4))
 ```
 
-- **A.** 46.8943 0.1329 True
-- **B.** (46.8943, 46.8943, False)
-- **C.** (0.1329, 46.8943, False)
-- **D.** (46.8943, 0.1329, False)
+- **A.** 3.4002 1.4552
+- **B.** (3.4002, 3.4002)
+- **C.** (1.4552, 3.4002)
+- **D.** (3.4002, 1.4552)
 
 ## 口述答案
 
-答案是 **A. 46.8943 0.1329 True**，实际输出 `46.8943 0.1329 True`。
+答案是 **A. 3.4002 1.4552**，实际输出 `3.4002 1.4552`。
 
-50 轮后损失从 46.89 降到 0.13，第三项 True 说明确实在下降。这是判断训练循环写对了的最直接证据。
+train() 下 Dropout 随机置零一半神经元，输出被放大（除以 1-p）；eval() 下关闭 Dropout，输出确定。同一份权重两种模式输出不同。
 
 ## 讲深一层
 

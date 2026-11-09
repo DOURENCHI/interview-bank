@@ -1,6 +1,6 @@
 ---
 id: Q-1806
-title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 112 题）
+title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 113 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,27 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```python
-import torch, tempfile, os
-torch.manual_seed(12)
-m = torch.nn.Linear(3, 2)
-path = os.path.join(tempfile.gettempdir(), "_lab_state.pt")
-torch.save(m.state_dict(), path)
-m2 = torch.nn.Linear(3, 2)
-m2.load_state_dict(torch.load(path, weights_only=True))
-os.remove(path)
-print(bool(torch.equal(m.weight, m2.weight)), tuple(m.weight.shape))
+import torch
+print(torch.device("cpu"), torch.zeros(2).device)
 ```
 
-- **A.** True (2, 3)
-- **B.** (False, (2, 3))
-- **C.** (True, (3, 2))
-- **D.** (True, (6,))
+- **A.** cpu cpu
+- **B.** cpu:0 cpu:0
+- **C.** cuda:0 cuda:0
+- **D.** None None
 
 ## 口述答案
 
-答案是 **A. True (2, 3)**，实际输出 `True (2, 3)`。
+答案是 **A. cpu cpu**，实际输出 `cpu cpu`。
 
-存的是 state_dict（不是整个模型），所以新模型结构必须一致才能 load；weight 形状 (out=2, in=3)。
+本机是 CPU 版 PyTorch，device 就是 cpu；装了 CUDA 版才会出现 cuda:0。
 
 ## 讲深一层
 

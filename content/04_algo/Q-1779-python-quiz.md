@@ -1,6 +1,6 @@
 ---
 id: Q-1779
-title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 85 题）
+title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 86 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,21 +21,23 @@ lab_src: quiz
 
 ```python
 import torch
-p = torch.tensor([0.8, 0.2])
+logits = torch.tensor([2.0, -2.0])
 y = torch.tensor([1.0, 0.0])
-print(round(float(torch.nn.BCELoss()(p, y)), 6))
+a = float(torch.nn.BCELoss()(torch.sigmoid(logits), y))
+b = float(torch.nn.BCEWithLogitsLoss()(logits, y))
+print([round(v, 6) for v in torch.sigmoid(logits).tolist()], round(a, 6), round(b, 6))
 ```
 
-- **A.** 0.223144
-- **B.** 0.5
-- **C.** 0.8
-- **D.** 0.0
+- **A.** [0.880797, 0.119203] 0.126928 0.126928
+- **B.** ([0.880797, 0.119203], 0.126928, 0.693147)
+- **C.** ([0.119203, 0.880797], 0.126928, 0.126928)
+- **D.** ([0.880797, 0.119203], 0.0, 0.693147)
 
 ## 口述答案
 
-答案是 **A. 0.223144**，实际输出 `0.223144`。
+答案是 **A. [0.880797, 0.119203] 0.126928 0.126928**，实际输出 `[0.880797, 0.119203] 0.126928 0.126928`。
 
-BCELoss = -[y·log(p) + (1-y)·log(1-p)]，代入得 -(1×log0.8 + log0.8) = -2×log0.8 = 0.223144。
+BCEWithLogitsLoss 把 sigmoid 和 BCELoss 融合成一个数值稳定的操作，结果与手动两步完全相同（0.126928）。数值大时别先 sigmoid。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1877
-title: 课程表 II：BFS 拓扑排序的输出顺序就是答案吗？
+title: 克隆图：DFS 里怎么避免重复克隆和死循环？
 module: 04_algo
 sub: DFS BFS
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [拓扑排序, BFS]
-hint: 是。出队顺序即一个合法拓扑序；有环时输出长度不足，返回空。
+tags: [DFS, 哈希, 图]
+hint: 用哈希存「原节点→克隆节点」，进入时若已存在直接返回。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：是。出队顺序即一个合法拓扑序；有环时输出长度不足，返回空。
+**套路**：用哈希存「原节点→克隆节点」，进入时若已存在直接返回。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

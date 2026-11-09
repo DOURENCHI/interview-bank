@@ -1,6 +1,6 @@
 ---
 id: Q-1905
-title: cin 读完后接 getline，为什么会读到空串？
+title: 输入是逗号分隔的一串数，C++ 怎么解析？
 module: 04_algo
 sub: C++ 读写
 priority: P0
@@ -19,18 +19,15 @@ acm_seed: true
 
 ## 题目
 
-**输入**：第一行一个整数 `n`；随后 `n` 行，每行一个可能含空格的字符串。
-**输出**：逐行原样输出，并在前面加行号。
+**输入**：一行逗号分隔的整数，如 `1,2,3,4`（可能带空格 `1, 2, 3`）。
+**输出**：升序排序后，用逗号连接输出。
 
 ```
 输入样例
-2
-hello world
-foo bar baz
+3,1,4,1,5
 
 输出样例
-1: hello world
-2: foo bar baz
+1,1,3,4,5
 ```
 
 ## 口述答案
@@ -43,49 +40,56 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n; cin >> n;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');   // ← 少这行就全错
+    string line;
+    getline(cin, line);
 
-    for (int i = 1; i <= n; ++i) {
-        string s;
-        getline(cin, s);
-        cout << i << ": " << s << '\n';
+    vector<int> a;
+    stringstream ss(line);
+    string tok;
+    while (getline(ss, tok, ',')) {        // 按逗号切
+        if (tok.empty()) continue;
+        // 去掉可能的前导空格
+        size_t b = tok.find_first_not_of(" \t");
+        if (b == string::npos) continue;
+        a.push_back(stoi(tok.substr(b)));
     }
+
+    sort(a.begin(), a.end());
+    for (size_t i = 0; i < a.size(); ++i) {
+        if (i) cout << ',';
+        cout << a[i];
+    }
+    cout << '\n';
     return 0;
 }
 ```
 
 ## 讲深一层
 
-这是 C++ 机考**第一大坑**，机制如下：
+`getline(ss, tok, ',')` 是带自定义分隔符的版本。注意它的行为和 `cin >>` 完全不同：**不跳过空白，也不把分隔符当多个连续分隔处理**。
 
-```
-输入缓冲区：  "2\nhello world\nfoo bar baz\n"
-cin >> n 后：  n = 2，缓冲区剩 "\nhello world\n..."
-getline   ：  遇到第一个字符就是 '\n' → 立即返回空串
-```
+所以 `1, 2` 切出来是 `"1"` 和 `" 2"`——第二个带前导空格。`stoi` 其实会跳过前导空格，所以这里能过；但如果要做严格字符串比较，就得自己 trim。
 
-所以第一行 `getline` 永远拿到 `""`，后面的内容整体错位一行。修法有三种，选第一种：
+输入形态对照：
 
-| 写法 | 说明 |
+| 分隔符 | 写法 |
 |---|---|
-| `cin.ignore(max, '\n')` | **推荐**。丢弃到行尾（含换行） |
-| `cin.get()` | 只吃一个字符，够用但表达不清 |
-| `getline` 前单独读一行 | 也有效，多一次无用调用 |
-
-反过来也成立：`getline` 之后接 `cin >>`，如果整行都被 `getline` 吃掉了，不会有残留问题。**只有 `>>` → `getline` 这个方向需要 ignore。**
+| 空格/Tab/换行 | `cin >>` 或 `ss >>` |
+| 逗号 | `getline(ss, tok, ',')` |
+| 混合（逗号后带空格） | 先按逗号切，再 trim |
+| 变长字段 | 手写双指针扫描，最可靠 |
 
 ## 高频追问
 
-1. **如果输入行尾是 `\r\n`（Windows 换行）呢？** —— `getline` 按 `\n` 切，`\r` 会留在串尾。要做字符串比较就 `if (!s.empty() && s.back() == '\r') s.pop_back();`
-2. **`ignore` 能不能不带参数？** —— `cin.ignore()` 只丢一个字符，不够。
-3. **能不能统一全用 `getline` 再解析？** —— 可以，而且更稳：所有行都 `getline`，数字用 `stoi` / `stringstream` 转。代价是慢一点。
+1. **`stoi` 遇到非法字符怎么办？** —— 抛 `invalid_argument`。机考里要么确保格式合法，要么用 `try/catch` 兜住。
+2. **最后一个 token 后面有逗号会怎样？** —— 会切出一个空串，`skip` 掉即可。
+3. **数据量很大时 `stringstream` 会不会太慢？** —— 会。几十万级建议手写指针扫描。
 
 ## 易错点
 
-- ❌ 不 ignore 直接 `getline` —— 第一行空串，全部错位
-- ❌ `cin.sync()` 当 ignore 用 —— 行为不确定
-- ❌ 每轮循环都 ignore —— 会把有效数据也吃掉
+- ❌ 以为 `getline` 会 trim —— 不会，空格原样保留
+- ❌ 用 `cin >>` 读逗号分隔 —— `>>` 不认逗号，会读失败
+- ❌ 输出时末尾多一个逗号 —— 格式错
 
 ## 关联项目
 
@@ -93,4 +97,4 @@ getline   ：  遇到第一个字符就是 '\n' → 立即返回空串
 
 ## 来源
 
-`istream` 缓冲语义；`getline` 遇 `\n` 立即返回
+`std::getline` 三分隔符版本语义

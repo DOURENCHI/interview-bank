@@ -1,6 +1,6 @@
 ---
 id: Q-1670
-title: 这段 C++ 代码输出什么？（36 智能指针与移动语义 · 第 57 题）
+title: 这段 C++ 代码输出什么？（36 智能指针与移动语义 · 第 58 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,21 +20,21 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-auto a = make_shared<int>(7);
-{ auto b = a; cout << a.use_count() << " "; }
-cout << a.use_count();
+string s = "hello";
+string t = std::move(s);
+cout << t.size() << " " << s.size();
 ```
 
-- **A.** 2 1
-- **B.** 1 1
-- **C.** 2 2
-- **D.** 1 0
+- **A.** 5 0
+- **B.** 5 5
+- **C.** 0 5
+- **D.** 编译错误
 
 ## 口述答案
 
-答案是 **A. 2 1**，实际输出 `2 1`。
+答案是 **A. 5 0**，实际输出 `5 0`。
 
-拷贝 shared_ptr 使引用计数从 1 增到 2；离开内层作用域析构 b 后减回 1。计数归零才真正 delete 对象；互持有 shared_ptr 会造成循环引用，需要 weak_ptr 打破。
+std::move 只做类型转换、不移动任何东西；移动构造把资源转给 t。被 move 后的 s 处于「有效但未指定」状态，本机 libstdc++ 实测 size() 为 0，其他实现可能不同——不要再读它的值，但可以重新赋值或析构。
 
 ## 讲深一层
 

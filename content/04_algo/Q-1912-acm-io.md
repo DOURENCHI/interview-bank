@@ -1,10 +1,10 @@
 ---
 id: Q-1912
-title: Python 一行给不定长整数，怎么读到行尾？
+title: Python 读到文件结束怎么写？
 module: 04_algo
 sub: Python 读写
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -19,16 +19,17 @@ acm_seed: true
 
 ## 题目
 
-**输入**：第一行 `n`；第二行 `n` 个整数（同一行）。
-**输出**：最大值。
+**输入**：多组数据，每组一行两个整数，直到文件结束。
+**输出**：每组输出 `a+b`。
 
 ```
 输入样例
-5
-3 1 4 1 5
+1 2
+3 4
 
 输出样例
-5
+3
+7
 ```
 
 ## 口述答案
@@ -37,40 +38,44 @@ acm_seed: true
 import sys
 
 def main():
-    input = sys.stdin.readline
-    n = int(input())
-    a = list(map(int, input().split()))
-    print(max(a[:n]))          # 只取前 n 个，防止行尾有脏数据
+    out = []
+    for line in sys.stdin:                 # 逐行迭代，读到 EOF 自然结束
+        line = line.strip()
+        if not line:
+            continue                        # 跳过空行
+        a, b = map(int, line.split())
+        out.append(str(a + b))
+    sys.stdout.write("\n".join(out))
 
 main()
 ```
 
 ## 讲深一层
 
-`line.split()` 按空白切分，返回字符串列表；`map(int, ...)` 批量转整数。这是 Python 处理「一行多个数」的标准写法。
+`for line in sys.stdin` 是最 Pythonic 的读法：它按行迭代，遇到 EOF 自动停，不抛异常。比 `while True: input()` 加 `try/except EOFError` 干净得多。
 
-需要注意的边界：
+几个常见变体：
 
-| 情况 | 处理 |
+| 题面 | 写法 |
 |---|---|
-| 行尾有空格 | `split()` 自动忽略，没问题 |
-| 这行只有一个数 | 也能正常工作，返回长度 1 的列表 |
-| 数跨了多行 | 这行读法就错了，要用 `sys.stdin.read().split()` |
-| 数字之间有逗号 | 先 `split(',')` 再 `int`，并且要 `strip()` 空格 |
+| 直到文件结束 | `for line in sys.stdin:` |
+| 第一行是组数 | `t = int(input()); for _ in range(t):` |
+| 以 `0 0` 结束 | 循环里判断 `if a == 0 and b == 0: break` |
+| 读到空行为止 | `while True: line = input(); if not line: break` |
 
-`sorted` 与内存：`list(map(...))` 会一次性建列表。如果只需要最大值，可以直接 `max(map(int, input().split()))`，省一个列表。
+注意 `for line in sys.stdin` 读到空行时 `line` 是 `'\n'`，`strip()` 后变空串——**空行不是 EOF**，要自己判断。
 
 ## 高频追问
 
-1. **`input()` 和 `sys.stdin.readline()` 差别？** —— `input()` 会去掉行尾 `\n`，`readline()` 保留，需要自己 `strip()`。前者还会尝试解析 exec 相关逻辑（Python 3 已简化），略慢。
-2. **`split()` 不带参数和带参数的区别？** —— 不带参数按任意空白切且忽略空串；带参数（如 `split(',')`）按字面切，**会保留空串**。
-3. **数据量很大时 `map` 和列表推导谁快？** —— `map(int, ...)` 通常快一点，且省内存（惰性）。
+1. **`sys.stdin` 能迭代几次？** —— 只能一次。它是流，读完就没了。要复用先 `readlines()`。
+2. **`input()` 版的 EOF 怎么处理？** —— `try: ... except EOFError: break`，比迭代版啰嗦。
+3. **输出为什么要先攒起来？** —— 每行 `print` 都是一次写操作，攒起来一次性 `write` 快很多。
 
 ## 易错点
 
-- ❌ `int(input())` 读一行多个数 —— 直接 ValueError
-- ❌ 忘了 `strip()` 就用 `readline()` —— 末尾 `\n` 进到数据里
-- ❌ `split(',')` 后不 trim —— `' 2'` 转 int 虽然能过，但字符串比较会错
+- ❌ 用 `while True` 不加 break 条件 —— 死循环
+- ❌ 把空行当 EOF —— 提前退出
+- ❌ 每组都 `print` —— 数据量大时慢
 
 ## 关联项目
 
@@ -78,4 +83,4 @@ main()
 
 ## 来源
 
-`str.split` / `map` 语义
+文件对象迭代协议

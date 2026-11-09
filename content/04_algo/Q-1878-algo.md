@@ -1,10 +1,10 @@
 ---
 id: Q-1878
-title: 克隆图：DFS 里怎么避免重复克隆和死循环？
+title: 单词搜索：回溯的剪枝和状态恢复怎么做？
 module: 04_algo
 sub: DFS BFS
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DFS, 哈希, 图]
-hint: 用哈希存「原节点→克隆节点」，进入时若已存在直接返回。
+tags: [回溯, DFS, 网格]
+hint: 越界或不匹配立即返回 false；匹配后临时标记已访问，四方向递归，返回前恢复。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：用哈希存「原节点→克隆节点」，进入时若已存在直接返回。
+**套路**：越界或不匹配立即返回 false；匹配后临时标记已访问，四方向递归，返回前恢复。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

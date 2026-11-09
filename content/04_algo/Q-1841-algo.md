@@ -1,10 +1,10 @@
 ---
 id: Q-1841
-title: 反转字符串中的单词：怎么处理多余空格？
+title: 有效的括号：为什么用栈而不是计数？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 2
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [字符串, 双指针]
-hint: 先整体反转再逐词反转；或用双指针从后往前扫，跳过连续空格。
+tags: [栈, 字符串]
+hint: 三种括号有嵌套顺序要求，计数判断不了「后开先闭」。栈顶必须与当前右括号配对。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：先整体反转再逐词反转；或用双指针从后往前扫，跳过连续空格。
+**套路**：三种括号有嵌套顺序要求，计数判断不了「后开先闭」。栈顶必须与当前右括号配对。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

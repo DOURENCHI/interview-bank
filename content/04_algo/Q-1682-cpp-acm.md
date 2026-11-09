@@ -1,6 +1,6 @@
 ---
 id: Q-1682
-title: unordered_map 单词计数 的 ACM 输入输出怎么写？
+title: sort + lambda 按成绩排序 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,23 +23,19 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-unordered_map<string, int> cnt;
-string w;
-while (cin >> w) cnt[w]++;
-for (string k : {"to", "be", "or", "not"})
-    cout << k << ':' << cnt[k] << ' ';
-```
-
-输入样例：
-
-```
-to be or not to be
+vector<pair<string, int>> st = {{"Tom", 80}, {"Amy", 95}, {"Bob", 88}};
+sort(st.begin(), st.end(), [](const auto &a, const auto &b) {
+    return a.second > b.second;
+});
+for (auto &[name, score] : st) cout << name << ' ' << score << '\n';
 ```
 
 输出样例：
 
 ```
-to:2 be:2 or:1 not:1
+Amy 95
+Bob 88
+Tom 80
 ```
 
 ## 口述答案
@@ -64,4 +60,4 @@ to:2 be:2 or:1 not:1
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 21
+`教学文档/C++实验台/C++考点实验台.html` · 22

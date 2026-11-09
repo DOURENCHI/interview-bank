@@ -1,6 +1,6 @@
 ---
 id: Q-1763
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 69 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 70 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,22 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(3)
-m = torch.nn.Linear(2, 1)
-out = m(torch.randn(4, 2))
-print(tuple(out.shape), out.requires_grad)
+m = torch.nn.Sequential(torch.nn.Linear(4, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1))
+print(sum(p.numel() for p in m.parameters()))
 ```
 
-- **A.** (4, 1) True
-- **B.** ((1, 4), True)
-- **C.** ((4, 2), True)
-- **D.** ((4, 1), False)
+- **A.** 49
+- **B.** 41
+- **C.** 37
+- **D.** 56
 
 ## 口述答案
 
-答案是 **A. (4, 1) True**，实际输出 `(4, 1) True`。
+答案是 **A. 49**，实际输出 `49`。
 
-批大小 4、每样本 2 维输入，输出形状 (4,1)；因为参数需要梯度，输出自动带上计算图，requires_grad 为 True。
+第一层 4×8+8 = 40，第二层 8×1+1 = 9，ReLU 无参数，合计 49。这是判断模型复杂度的第一个数字。
 
 ## 讲深一层
 

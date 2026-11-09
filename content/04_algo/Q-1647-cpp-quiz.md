@@ -1,6 +1,6 @@
 ---
 id: Q-1647
-title: 这段 C++ 代码输出什么？（28 迭代器与 string · 第 34 题）
+title: 这段 C++ 代码输出什么？（28 迭代器与 string · 第 35 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,20 +20,20 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-string s = "hello@sina.com";
-cout << s.substr(0, s.find('@'));
+string s = "abc";
+cout << (s.find('x') == string::npos) << " " << s.rfind('b');
 ```
 
-- **A.** hello
-- **B.** hello@
-- **C.** hello@sina.com
-- **D.** 编译错误
+- **A.** 1 1
+- **B.** 0 1
+- **C.** 1 0
+- **D.** 0 -1
 
 ## 口述答案
 
-答案是 **A. hello**，实际输出 `hello`。
+答案是 **A. 1 1**，实际输出 `1 1`。
 
-find 返回 '@' 的下标 5；substr(0, 5) 的第二个参数是长度、不是结束下标，所以取前 5 个字符。find 找不到时返回 string::npos，不能当下标用。
+find('x') 找不到返回 string::npos，与它比较得 true，输出 1；rfind('b') 从后往前找，返回的下标仍是 1。npos 不是 -1 的有效下标。
 
 ## 讲深一层
 

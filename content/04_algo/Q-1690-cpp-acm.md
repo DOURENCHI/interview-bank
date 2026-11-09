@@ -1,6 +1,6 @@
 ---
 id: Q-1690
-title: transform + accumulate 流水线 的 ACM 输入输出怎么写？
+title: shared_ptr / weak_ptr 引用计数 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,16 +23,19 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-vector<int> v{1,2,3,4};
-transform(v.begin(), v.end(), v.begin(),
-          [](int x){ return x * x; });
-cout << "sum=" << accumulate(v.begin(), v.end(), 0) << '\n';
+auto a = make_shared<int>(9);
+weak_ptr<int> w = a;
+cout << "use_count=" << a.use_count()
+     << " expired=" << w.expired() << '\n';
+a.reset();
+cout << "after reset expired=" << w.expired() << '\n';
 ```
 
 输出样例：
 
 ```
-sum=30
+use_count=1 expired=0
+after reset expired=1
 ```
 
 ## 口述答案
@@ -57,4 +60,4 @@ sum=30
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 31
+`教学文档/C++实验台/C++考点实验台.html` · 36

@@ -1,10 +1,10 @@
 ---
 id: Q-1868
-title: 回文链表：O(1) 空间怎么做？
+title: 有序数组的平方：为什么从两端取最大？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 3
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [快慢指针, 反转链表]
-hint: 快慢指针找中点，反转后半段，再逐个比较。注意奇偶长度的中点处理。
+tags: [双指针, 数组]
+hint: 负数平方后可能最大，最大值必在两端。双指针从两端取大者倒序填入。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：快慢指针找中点，反转后半段，再逐个比较。注意奇偶长度的中点处理。
+**套路**：负数平方后可能最大，最大值必在两端。双指针从两端取大者倒序填入。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

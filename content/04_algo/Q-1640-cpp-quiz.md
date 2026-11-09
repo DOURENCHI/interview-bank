@@ -1,6 +1,6 @@
 ---
 id: Q-1640
-title: 这段 C++ 代码输出什么？（20 模板 · 第 27 题）
+title: 这段 C++ 代码输出什么？（21 STL 容器 · 第 28 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,23 +20,22 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-template <typename T>
-T mx(T a, T b) { return a > b ? a : b; }
-int main() {
-    cout << mx(3, 5) << " " << mx<double>(3, 5.5);
-}
+vector<int> v = {3, 1, 4};
+v.pop_back();
+v.push_back(9);
+cout << v.size() << v[2];
 ```
 
-- **A.** 5 5.5
-- **B.** 5 5
-- **C.** 3 5.5
-- **D.** 编译错误
+- **A.** 39
+- **B.** 34
+- **C.** 49
+- **D.** 24
 
 ## 口述答案
 
-答案是 **A. 5 5.5**，实际输出 `5 5.5`。
+答案是 **A. 39**，实际输出 `39`。
 
-mx(3, 5) 推导出 T = int；显式写 mx<double> 后，3 被转换成 3.0。
+pop_back 删掉 4，push_back 在末尾加上 9：v = {3, 1, 9}。
 
 ## 讲深一层
 
@@ -57,4 +56,4 @@ mx(3, 5) 推导出 T = int；显式写 mx<double> 后，3 被转换成 3.0。
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 20 模板
+`教学文档/C++实验台/C++考点实验台.html` · 21 STL 容器

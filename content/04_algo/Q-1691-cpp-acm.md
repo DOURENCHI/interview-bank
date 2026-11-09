@@ -1,6 +1,6 @@
 ---
 id: Q-1691
-title: shared_ptr / weak_ptr 引用计数 的 ACM 输入输出怎么写？
+title: chrono 固定时长换算 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,19 +23,15 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-auto a = make_shared<int>(9);
-weak_ptr<int> w = a;
-cout << "use_count=" << a.use_count()
-     << " expired=" << w.expired() << '\n';
-a.reset();
-cout << "after reset expired=" << w.expired() << '\n';
+auto t = chrono::milliseconds(2500);
+cout << "ms=" << t.count()
+     << " s=" << chrono::duration_cast<chrono::seconds>(t).count() << '\n';
 ```
 
 输出样例：
 
 ```
-use_count=1 expired=0
-after reset expired=1
+ms=2500 s=2
 ```
 
 ## 口述答案
@@ -60,4 +56,4 @@ after reset expired=1
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 36
+`教学文档/C++实验台/C++考点实验台.html` · 35

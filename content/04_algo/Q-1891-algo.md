@@ -1,10 +1,10 @@
 ---
 id: Q-1891
-title: 分割等和子集：怎么转化成 0-1 背包？
+title: 编辑距离：三种操作对应 DP 表的哪三个方向？
 module: 04_algo
 sub: DP
 priority: P0
-difficulty: 2
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 背包]
-hint: 目标和 = sum/2，问能否凑出这个和。sum 为奇数直接 false。
+tags: [DP, 字符串]
+hint: 插入看左、删除看上、替换看左上；三者取最小再 +1，字符相等时取左上不 +1。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：目标和 = sum/2，问能否凑出这个和。sum 为奇数直接 false。
+**套路**：插入看左、删除看上、替换看左上；三者取最小再 +1，字符相等时取左上不 +1。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

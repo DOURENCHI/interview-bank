@@ -1,10 +1,10 @@
 ---
 id: Q-1865
-title: 接雨水：双指针法的正确性怎么证？
+title: 环形链表：快慢指针为什么一定相遇？
 module: 04_algo
 sub: 双指针滑窗
 priority: P0
-difficulty: 3
+difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [双指针, 单调栈]
-hint: 每格水量取决于左右最大值的较小者。移动较小一侧时那一侧的 max 已确定，可安全结算。
+tags: [快慢指针, 链表]
+hint: 进环后快指针每步追近 1，环长有限必然追上；不相遇只可能无环。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：每格水量取决于左右最大值的较小者。移动较小一侧时那一侧的 max 已确定，可安全结算。
+**套路**：进环后快指针每步追近 1，环长有限必然追上；不相遇只可能无环。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

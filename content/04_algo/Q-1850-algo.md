@@ -1,10 +1,10 @@
 ---
 id: Q-1850
-title: 有效的字母异位词：为什么计数数组比排序快？
+title: LRU 缓存：为什么哈希和双向链表缺一不可？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 1
+difficulty: 3
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 字符串]
-hint: 26 个字母 O(n+26) 就够，排序是 O(n log n)。
+tags: [哈希, 链表, 设计]
+hint: 哈希给 O(1) 定位，双向链表给 O(1) 挪到表头或删尾。单链表删节点还要找前驱，不满足 O(1)。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：26 个字母 O(n+26) 就够，排序是 O(n log n)。
+**套路**：哈希给 O(1) 定位，双向链表给 O(1) 挪到表头或删尾。单链表删节点还要找前驱，不满足 O(1)。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

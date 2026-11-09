@@ -39,8 +39,8 @@
 
 | 模块 | 目录 | 优先级 | 理由 |
 |---|---|---|---|
-| 项目深挖 | `content/01_project` | **P0** | 面试官最有兴趣、最容易追问、也最难造假 |
-| C++ | `content/02_cpp` | **P0** | 就业基础，与项目同步练，不单独刷教程 |
+| 项目深挖 | `content/01_project` | **P0** | 面试官最有兴趣、最容易追问、也最难造假。**按项目分子方向**：YOLO 部署 / 二维云台 / 西门子杯 / Linux 日志分析 / 跟骨分割 / 本科毕设 |
+| C++ | `content/02_cpp` | **P0** | 就业基础，与项目同步练。**子方向**：语言基础 / 对象模型 / STL 容器 / 时间与算法 / Qt / **工程化与 SDK**（动态库、ABI、接口设计，对应岗位偏好链第一位的 SDK 岗） |
 | Linux | `content/03_linux` | **P0** | 就业基础，系统编程 + 调试 + 性能分析 |
 | 算法与机考 | `content/04_algo` | **P0** | 校招笔试硬门槛。**ACM 模式读写在 2026 年内就要解决** |
 | 模型部署 | `content/05_deploy` | **P0** | 现有优势，要继续深化而不是重做入门项目 |
@@ -68,10 +68,12 @@ python tools/extract.py --scan
 # 2. 从两个考点实验台导入机考题（幂等，重跑自动去重）
 python tools/import_lab.py
 
-# 3. 给没有本地文档的模块补索引题（幂等）
-python tools/seed.py
-python tools/seed_algo.py      # 算法题（40/20/20/20 分布）
-python tools/seed_acm.py       # ACM 输入输出专项
+# 3. 给没有本地文档的模块补索引题（幂等，各管一摊，互不覆盖）
+python tools/seed.py            # 算法机考 / 医学影像 / 机器人学 / 深度学习
+python tools/seed_algo.py       # 算法题（40/20/20/20 分布）
+python tools/seed_acm.py        # ACM 输入输出专项
+python tools/seed_cpp_sdk.py    # C++ 工程化与 SDK 子方向
+python tools/seed_project.py    # 项目深挖（西门子杯 / Linux 日志 / 跟骨）
 
 # 4. 校验字段、号段、小节完整性
 python tools/validate.py
@@ -91,7 +93,9 @@ python tools/gh.py push                            # 推送
 
 令牌从系统凭据管理器（GCM）读取，**不落盘、不写进任何文件**。SSH 只负责推代码，创建仓库必须走 REST API，所以两者都需要。
 
-网页支持：全文搜索、多维筛选（模块 / 子方向 / 优先级 / 状态）、答案折叠、错题标记（存 localStorage）。
+网页支持：全文搜索、多维筛选（模块 / **子方向** / 优先级 / 状态）、答案折叠、错题标记（存 localStorage）。
+
+**按公司找题**：题目卡片上会出现红色标签，显示这道题**真实**出现在哪家公司哪个岗位（`appearances` 字段）。一个都没有就留空——不填预测，只填面经。填写规范见 `docs/schema.md`。
 
 ## 五、目录
 

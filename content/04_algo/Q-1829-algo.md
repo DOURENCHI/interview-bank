@@ -1,10 +1,10 @@
 ---
 id: Q-1829
-title: 买卖股票的最佳时机：一次遍历怎么同时维护最低价和利润？
+title: 合并区间：按什么排序，为什么是左端点？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [数组, 贪心]
-hint: 先更新历史最低买入价，再用当天价格减它更新利润。顺序不能反，否则会自己减自己。
+tags: [排序, 区间]
+hint: 按左端点排序后重叠区间一定相邻。只需比较当前区间左端与已合并区间的右端。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：先更新历史最低买入价，再用当天价格减它更新利润。顺序不能反，否则会自己减自己。
+**套路**：按左端点排序后重叠区间一定相邻。只需比较当前区间左端与已合并区间的右端。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

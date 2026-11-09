@@ -1,6 +1,6 @@
 ---
 id: Q-1853
-title: 随机链表的复制：哈希表里存的是什么映射？
+title: 外观数列：怎么从上一项推出下一项？
 module: 04_algo
 sub: 数组哈希
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 链表]
-hint: 原节点→新节点的映射。第一遍建节点存映射，第二遍连 next 和 random。
+tags: [字符串, 模拟]
+hint: 双指针数连续相同字符的个数，拼成「个数+数字」，迭代 n-1 次。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：原节点→新节点的映射。第一遍建节点存映射，第二遍连 next 和 random。
+**套路**：双指针数连续相同字符的个数，拼成「个数+数字」，迭代 n-1 次。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

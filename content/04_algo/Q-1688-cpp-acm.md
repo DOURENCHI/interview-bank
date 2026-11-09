@@ -1,6 +1,6 @@
 ---
 id: Q-1688
-title: push 10 次的扩容次数 的 ACM 输入输出怎么写？
+title: swap 收缩 vector 容量 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,19 +23,17 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-vector<int> v; int reallocs = 0, last = 0;
-for (int k = 0; k < 10; k++) {
-    v.push_back(k);
-    if ((int)v.capacity() != last) { reallocs++; last = v.capacity(); }
-}
-cout << "size=" << v.size() << " cap=" << v.capacity()
-     << " reallocs=" << reallocs << '\n';
+vector<int> v(5);
+v.reserve(100);
+cout << "before=" << v.capacity() << " ";
+vector<int>(v).swap(v);
+cout << "after=" << v.capacity() << '\n';
 ```
 
 输出样例：
 
 ```
-size=10 cap=16 reallocs=5
+before=100 after=5
 ```
 
 ## 口述答案

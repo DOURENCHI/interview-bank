@@ -1,10 +1,10 @@
 ---
 id: Q-1842
-title: 有效的括号：为什么用栈而不是计数？
+title: 最长回文子串：中心扩展为什么比 DP 好写？
 module: 04_algo
 sub: 数组哈希
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [栈, 字符串]
-hint: 三种括号有嵌套顺序要求，计数判断不了「后开先闭」。栈顶必须与当前右括号配对。
+tags: [字符串, 中心扩展]
+hint: 枚举 2n-1 个中心（单字符和双字符中心）向两边扩。O(n²) 但常数小，不用二维表。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：三种括号有嵌套顺序要求，计数判断不了「后开先闭」。栈顶必须与当前右括号配对。
+**套路**：枚举 2n-1 个中心（单字符和双字符中心）向两边扩。O(n²) 但常数小，不用二维表。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

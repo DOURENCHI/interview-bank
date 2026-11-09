@@ -1,6 +1,6 @@
 ---
 id: Q-1767
-title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 73 题）
+title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 74 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,25 +21,20 @@ lab_src: quiz
 
 ```python
 import torch
-torch.manual_seed(5)
-m = torch.nn.Sequential(torch.nn.Linear(4, 4), torch.nn.Dropout(0.5))
-m.train()
-a = float(m(torch.ones(1, 4)).sum().detach())
-m.eval()
-b = float(m(torch.ones(1, 4)).sum().detach())
-print(round(a, 4), round(b, 4))
+m = torch.nn.Linear(2, 2)
+print(all(p.requires_grad for p in m.parameters()))
 ```
 
-- **A.** 3.4002 1.4552
-- **B.** (3.4002, 3.4002)
-- **C.** (1.4552, 3.4002)
-- **D.** (3.4002, 1.4552)
+- **A.** True
+- **B.** False
+- **C.** None
+- **D.** 0
 
 ## 口述答案
 
-答案是 **A. 3.4002 1.4552**，实际输出 `3.4002 1.4552`。
+答案是 **A. True**，实际输出 `True`。
 
-train() 下 Dropout 随机置零一半神经元，输出被放大（除以 1-p）；eval() 下关闭 Dropout，输出确定。同一份权重两种模式输出不同。
+nn.Module 的参数默认 requires_grad=True，所以全部为真——这是梯度能自动回传的前提。
 
 ## 讲深一层
 

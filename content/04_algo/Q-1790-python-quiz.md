@@ -1,6 +1,6 @@
 ---
 id: Q-1790
-title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 96 题）
+title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 97 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -21,20 +21,21 @@ lab_src: quiz
 
 ```python
 import torch
-c = torch.nn.Conv2d(64, 32, 1)
-print(tuple(c(torch.randn(1, 64, 8, 8)).shape), c.weight.shape)
+rnn = torch.nn.RNN(4, 5, batch_first=True)
+out, h = rnn(torch.randn(2, 7, 4))
+print(tuple(out.shape), tuple(h.shape))
 ```
 
-- **A.** (1, 32, 8, 8) torch.Size([32, 64, 1, 1])
-- **B.** ((1, 64, 8, 8), torch.Size([32, 64, 1, 1]))
-- **C.** ((1, 32, 8, 8), torch.Size([64, 32, 1, 1]))
-- **D.** ((1, 32, 7, 7), torch.Size([32, 64, 1, 1]))
+- **A.** (2, 7, 5) (1, 2, 5)
+- **B.** ((2, 4, 7), (2, 5, 1))
+- **C.** ((2, 7, 5), (2, 5))
+- **D.** ((1, 2, 5), (2, 7, 5))
 
 ## 口述答案
 
-答案是 **A. (1, 32, 8, 8) torch.Size([32, 64, 1, 1])**，实际输出 `(1, 32, 8, 8) torch.Size([32, 64, 1, 1])`。
+答案是 **A. (2, 7, 5) (1, 2, 5)**，实际输出 `(2, 7, 5) (1, 2, 5)`。
 
-1×1 卷积只改通道数不改空间尺寸：64→32，8×8 不变；权重形状 (out=32, in=64, 1, 1)。
+batch_first=True 时输入 (批, 序列长, 特征)，输出 (2,7,5)；h 是最后隐状态 (层数1, 批2, 隐层5)。
 
 ## 讲深一层
 

@@ -1,6 +1,6 @@
 ---
-id: Q-1694
-title: thread + atomic 求和 的 ACM 输入输出怎么写？
+id: Q-1675
+title: 读入两个数求和 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,18 +23,21 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-atomic<int> s{0};
-vector<thread> ts;
-for (int k = 1; k <= 4; k++)
-    ts.emplace_back([&s, k]{ s += k; });
-for (auto& t : ts) { t.join(); }
-cout << "sum=" << s.load() << '\n';
+int a, b;
+cin >> a >> b;
+cout << "a+b=" << a + b << '\n';
+```
+
+输入样例：
+
+```
+3 4
 ```
 
 输出样例：
 
 ```
-sum=10
+a+b=7
 ```
 
 ## 口述答案
@@ -59,4 +62,4 @@ sum=10
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 38
+`教学文档/C++实验台/C++考点实验台.html` · 02

@@ -1,6 +1,6 @@
 ---
 id: Q-1886
-title: 爬楼梯：为什么它和斐波那契是同一道题？
+title: 打家劫舍：状态转移里「选或不选」怎么表达？
 module: 04_algo
 sub: DP
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [DP, 递推]
-hint: 到第 n 阶只能从 n-1 或 n-2 来，dp[n]=dp[n-1]+dp[n-2]。两个变量滚动，O(1) 空间。
+tags: [DP, 线性]
+hint: dp[i]=max(dp[i-1], dp[i-2]+nums[i])：不偷当前就继承前一个，偷当前就得跳过前一个。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：到第 n 阶只能从 n-1 或 n-2 来，dp[n]=dp[n-1]+dp[n-2]。两个变量滚动，O(1) 空间。
+**套路**：dp[i]=max(dp[i-1], dp[i-2]+nums[i])：不偷当前就继承前一个，偷当前就得跳过前一个。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

@@ -1,6 +1,6 @@
 ---
 id: Q-1812
-title: autograd：梯度、累加与 no_grad 的 ACM 输入输出怎么写？
+title: 手写梯度下降：w 一步步走向 2.0 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,35 +23,39 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-import torch
+xs = [1.0, 2.0, 3.0]
+ys = [2.0, 4.0, 6.0]
 
-x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
-z = x * 2
-loss = (z - 3).pow(2).sum()
-loss.backward()
-print("x.grad =", x.grad.tolist())
 
-y = torch.tensor([2.0], requires_grad=True)
-(y * 3).sum().backward()
-(y * 5).sum().backward()
-print("两次 backward 后 y.grad =", y.grad.tolist(), "（梯度累加）")
+def cost(w):
+    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
 
-m = torch.tensor([1.0], requires_grad=True)
-with torch.no_grad():
-    n = m * 2
-print("no_grad 下 requires_grad =", n.requires_grad)
 
-t = torch.tensor([1.0, 2.0])
-print("item() =", t.sum().item(), "| 直接 print =", t.sum())
+def grad(w):
+    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
+
+
+w = 1.0
+print(f"初始 w={w:.4f} cost={cost(w):.4f} grad={grad(w):.4f}")
+for step in range(100):
+    g = grad(w)
+    w -= 0.01 * g
+    if step < 3 or step % 25 == 0:
+        print(f"Epoch {step}: w={w:.4f} cost={cost(w):.4f}")
+print(f"最终 w={w:.4f}（真实值 2.0）")
 ```
 
 输出样例：
 
 ```
-x.grad = [-4.0, 4.0, 12.0]
-两次 backward 后 y.grad = [8.0] （梯度累加）
-no_grad 下 requires_grad = False
-item() = 3.0 | 直接 print = tensor(3.)
+初始 w=1.0000 cost=4.6667 grad=-9.3333
+Epoch 0: w=1.0933 cost=3.8362
+Epoch 1: w=1.1780 cost=3.1535
+Epoch 2: w=1.2547 cost=2.5923
+Epoch 25: w=1.9217 cost=0.0286
+Epoch 50: w=1.9932 cost=0.0002
+Epoch 75: w=1.9994 cost=0.0000
+最终 w=1.9999（真实值 2.0）
 ```
 
 ## 口述答案
@@ -76,4 +80,4 @@ item() = 3.0 | 直接 print = tensor(3.)
 
 ## 来源
 
-`教学文档/Python实验台/Python考点实验台.html` · 03 autograd 与计算图
+`教学文档/Python实验台/Python考点实验台.html` · 04 线性模型与梯度下降

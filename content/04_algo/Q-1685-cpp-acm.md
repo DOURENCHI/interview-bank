@@ -1,6 +1,6 @@
 ---
 id: Q-1685
-title: shared_ptr 引用计数 的 ACM 输入输出怎么写？
+title: 移动构造 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,28 +23,26 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-struct Obj { ~Obj() { cout << "delete\n"; } };
+class Buf {
+public:
+    int *data; size_t n;
+    Buf(size_t n) : data(new int[n]), n(n) { cout << "new "; }
+    Buf(const Buf &o) : data(new int[o.n]), n(o.n) { cout << "copy "; }
+    Buf(Buf &&o) noexcept : data(o.data), n(o.n) { o.data = nullptr; o.n = 0; cout << "move "; }
+    ~Buf() { delete[] data; }
+};
 int main() {
-    auto a = make_shared<Obj>();
-    cout << a.use_count() << '\n';
-    {
-        auto b = a;
-        cout << a.use_count() << '\n';
-    }
-    cout << a.use_count() << '\n';
-    a.reset();
-    cout << "end\n";
+    Buf a(1000);
+    Buf b = a;
+    Buf c = std::move(a);
+    cout << (a.data == nullptr) << ' ' << c.n;
 }
 ```
 
 输出样例：
 
 ```
-1
-2
-1
-delete
-end
+new copy move 1 1000
 ```
 
 ## 口述答案
@@ -69,4 +67,4 @@ end
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 25
+`教学文档/C++实验台/C++考点实验台.html` · 26

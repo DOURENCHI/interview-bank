@@ -1,6 +1,6 @@
 ---
 id: Q-1824
-title: 算法：插入排序与内置排序对比 的 ACM 输入输出怎么写？
+title: 端到端：训练 + 评估 + 存权重一条龙 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: Python ACM输入输出
 priority: P0
@@ -23,37 +23,63 @@ lab_src: snip
 下面这段 Python 程序对应的读入与输出写法是什么？
 
 ```python
-def insertion_sort(a):
-    a = list(a)
-    for i in range(1, len(a)):
-        key = a[i]
-        j = i - 1
-        while j >= 0 and a[j] > key:
-            a[j + 1] = a[j]
-            j -= 1
-        a[j + 1] = key
-    return a
+import os
+import tempfile
+
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, Dataset
 
 
-data = [5, 2, 4, 6, 1, 3]
-print("原数组      ", data)
-print("插入排序后  ", insertion_sort(data))
-print("sorted() 后 ", sorted(data))
-print("原数组未被修改", data)
+class Toy(Dataset):
+    def __init__(self, n):
+        self.x = torch.arange(n, dtype=torch.float32).reshape(-1, 1) / n
+        self.y = self.x * 2
 
-print("sorted 关键字参数", sorted([3, 1, 2], key=lambda x: -x))
-print("sorted 带下标", sorted([(2, "b"), (1, "a")], key=lambda p: p[0]))
+    def __len__(self):
+        return len(self.x)
+
+    def __getitem__(self, i):
+        return self.x[i], self.y[i]
+
+
+torch.manual_seed(7)
+model = nn.Linear(1, 1)
+opt = torch.optim.Adam(model.parameters(), lr=0.05)
+crit = nn.MSELoss()
+dl = DataLoader(Toy(64), batch_size=16, shuffle=True)
+
+model.train()
+for epoch in range(30):
+    total = 0.0
+    for xb, yb in dl:
+        opt.zero_grad()
+        loss = crit(model(xb), yb)
+        loss.backward()
+        opt.step()
+        total += loss.item()
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch}: 平均损失 {total / len(dl):.5f}")
+
+model.eval()
+with torch.inference_mode():
+    preds = model(torch.tensor([[0.5]]))
+print("eval 预测 x=0.5 ->", round(float(preds), 4), "（真实值 1.0）")
+
+path = os.path.join(tempfile.gettempdir(), "_py_lab_e2e.pt")
+torch.save(model.state_dict(), path)
+print("权重已保存，字节数", os.path.getsize(path))
+os.remove(path)
 ```
 
 输出样例：
 
 ```
-原数组       [5, 2, 4, 6, 1, 3]
-插入排序后   [1, 2, 3, 4, 5, 6]
-sorted() 后  [1, 2, 3, 4, 5, 6]
-原数组未被修改 [5, 2, 4, 6, 1, 3]
-sorted 关键字参数 [3, 2, 1]
-sorted 带下标 [(1, 'a'), (2, 'b')]
+Epoch 0: 平均损失 2.37330
+Epoch 10: 平均损失 0.08115
+Epoch 20: 平均损失 0.02413
+eval 预测 x=0.5 -> 1.0126 （真实值 1.0）
+权重已保存，字节数 1925
 ```
 
 ## 口述答案

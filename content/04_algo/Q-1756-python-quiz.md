@@ -1,6 +1,6 @@
 ---
 id: Q-1756
-title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 62 题）
+title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 63 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -23,21 +23,25 @@ lab_src: quiz
 xs = [1.0, 2.0, 3.0]
 ys = [2.0, 4.0, 6.0]
 w = 1.0
-cost = sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
-grad = sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
-print(round(cost, 4), round(grad, 4))
+def grad(w):
+    return sum(2 * x * (x * w - y) for x, y in zip(xs, ys)) / len(xs)
+for _ in range(3):
+    w -= 0.01 * grad(w)
+def cost(w):
+    return sum((x * w - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
+print(round(w, 4), round(cost(w), 4))
 ```
 
-- **A.** 4.6667 -9.3333
-- **B.** 4.6667 9.3333
-- **C.** 14.0 -28.0
-- **D.** 0.0 0.0
+- **A.** 1.2547 2.5923
+- **B.** 1.0933 3.8362
+- **C.** 1.1800 3.1535
+- **D.** 0.7 0.49
 
 ## 口述答案
 
-答案是 **A. 4.6667 -9.3333**，实际输出 `4.6667 -9.3333`。
+答案是 **A. 1.2547 2.5923**，实际输出 `1.2547 2.5923`。
 
-w=1 时预测为 1/2/3，误差 -1/-2/-3，平方和 1+4+9=14 除以 3 得 4.6667；梯度是 loss 对 w 的导数，为负说明增大 w 能减小损失。
+每步 w -= 0.01 × 梯度：梯度为负所以 w 增大。三步后 w≈1.2547，代价从 4.6667 降到 2.5923。
 
 ## 讲深一层
 

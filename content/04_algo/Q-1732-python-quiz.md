@@ -1,6 +1,6 @@
 ---
 id: Q-1732
-title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 38 题）
+title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 39 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -22,19 +22,19 @@ lab_src: quiz
 ```python
 import numpy as np
 a = np.array([[1, 2], [3, 4]])
-print(a.sum(), a.sum(axis=0).tolist(), a.sum(axis=1).tolist())
+print(a.mean(), a.max(), a.min())
 ```
 
-- **A.** 10 [4, 6] [3, 7]
-- **B.** 10 [3 7] [4 6]
-- **C.** 10 [4 6] [4 6]
-- **D.** 10 4 6
+- **A.** 2.5 4 1
+- **B.** 2.5 1 4
+- **C.** 10 4 1
+- **D.** 2 4 1
 
 ## 口述答案
 
-答案是 **A. 10 [4, 6] [3, 7]**，实际输出 `10 [4, 6] [3, 7]`。
+答案是 **A. 2.5 4 1**，实际输出 `2.5 4 1`。
 
-axis=0 沿行方向求和（每列求和）得 [4,6]；axis=1 沿列方向（每行求和）得 [3,7]——axis 指的是「被消掉的维度」。
+mean 是所有元素均值 (1+2+3+4)/4 = 2.5，输出是 float；max/min 返回元素本身不是下标。
 
 ## 讲深一层
 

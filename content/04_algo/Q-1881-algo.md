@@ -1,10 +1,10 @@
 ---
 id: Q-1881
-title: 二叉树的层序遍历：为什么必须用队列？
+title: 验证二叉搜索树：为什么只比较父子不够？
 module: 04_algo
 sub: DFS BFS
 priority: P0
-difficulty: 1
+difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [BFS, 队列, 二叉树]
-hint: 队列先进先出保证按层顺序，用栈会变成深度优先。每轮先记下当前层节点数再处理。
+tags: [DFS, BST, 中序]
+hint: 要保证整个左子树都小于根，得传上下界，或用中序遍历检查严格递增。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：队列先进先出保证按层顺序，用栈会变成深度优先。每轮先记下当前层节点数再处理。
+**套路**：要保证整个左子树都小于根，得传上下界，或用中序遍历检查严格递增。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

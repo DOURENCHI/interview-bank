@@ -1,6 +1,6 @@
 ---
 id: Q-1852
-title: 两个数组的交集：哈希和排序双指针怎么选？
+title: 随机链表的复制：哈希表里存的是什么映射？
 module: 04_algo
 sub: 数组哈希
 priority: P0
@@ -12,15 +12,15 @@ status: indexed
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
-tags: [哈希, 双指针]
-hint: 量大要 O(n) 用哈希；已排序或要省内存用双指针。要求结果去重时两者都得额外处理。
+tags: [哈希, 链表]
+hint: 原节点→新节点的映射。第一遍建节点存映射，第二遍连 next 和 random。
 auto: true
 algo_seed: true
 ---
 
 ## 口述答案
 
-**套路**：量大要 O(n) 用哈希；已排序或要省内存用双指针。要求结果去重时两者都得额外处理。
+**套路**：原节点→新节点的映射。第一遍建节点存映射，第二遍连 next 和 random。
 
 （口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
 

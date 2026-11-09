@@ -1,6 +1,6 @@
 ---
 id: Q-1713
-title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 19 题）
+title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 20 题）
 module: 04_algo
 sub: Python语言细节
 priority: P0
@@ -20,19 +20,19 @@ lab_src: quiz
 ## 题目
 
 ```python
-print([1, 2, 3].__class__.__name__, (1,).__class__.__name__, {1: 2}.__class__.__name__)
+print(10 // 3, 10.0 // 3, int(10 / 3))
 ```
 
-- **A.** list tuple dict
-- **B.** list int dict
-- **C.** list tuple set
-- **D.** List Tuple Dict
+- **A.** 3 3.0 3
+- **B.** 3 3.3 3
+- **C.** 4 3.0 3
+- **D.** 3 3.0 4
 
 ## 口述答案
 
-答案是 **A. list tuple dict**，实际输出 `list tuple dict`。
+答案是 **A. 3 3.0 3**，实际输出 `3 3.0 3`。
 
-三种括号对应 list / tuple / dict，类名首字母小写——这是 Python 官方风格，与 Java 的 List / Map 相反。
+10.0 // 3 的结果是 float 3.0（// 保留浮点类型）；int(10/3) 截断小数部分得 3。注意 10 / 3 = 3.333…，不是 3.33。
 
 ## 讲深一层
 

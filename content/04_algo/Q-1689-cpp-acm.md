@@ -1,6 +1,6 @@
 ---
 id: Q-1689
-title: swap 收缩 vector 容量 的 ACM 输入输出怎么写？
+title: transform + accumulate 流水线 的 ACM 输入输出怎么写？
 module: 04_algo
 sub: C++ ACM输入输出
 priority: P0
@@ -23,17 +23,16 @@ lab_src: snip
 下面这段 C++ 程序对应的读入与输出写法是什么？
 
 ```cpp
-vector<int> v(5);
-v.reserve(100);
-cout << "before=" << v.capacity() << " ";
-vector<int>(v).swap(v);
-cout << "after=" << v.capacity() << '\n';
+vector<int> v{1,2,3,4};
+transform(v.begin(), v.end(), v.begin(),
+          [](int x){ return x * x; });
+cout << "sum=" << accumulate(v.begin(), v.end(), 0) << '\n';
 ```
 
 输出样例：
 
 ```
-before=100 after=5
+sum=30
 ```
 
 ## 口述答案
@@ -58,4 +57,4 @@ before=100 after=5
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 29
+`教学文档/C++实验台/C++考点实验台.html` · 31

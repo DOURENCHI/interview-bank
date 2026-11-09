@@ -1,6 +1,6 @@
 ---
 id: Q-1637
-title: 这段 C++ 代码输出什么？（18 虚函数 · 第 24 题）
+title: 这段 C++ 代码输出什么？（18 虚函数 · 第 25 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,18 +20,13 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-struct A {
-    void f() { cout << "A"; }
-    virtual void g() { cout << "A"; }
-};
-struct B : A {
-    void f() { cout << "B"; }
-    void g() { cout << "B"; }
-};
+struct A { virtual void g() { cout << "A"; } };
+struct B : A { void g() { cout << "B"; } };
 int main() {
     B b;
-    A *p = &b;
-    p->f(); p->g();
+    A a = b;
+    A &r = b;
+    a.g(); r.g();
 }
 ```
 
@@ -44,7 +39,7 @@ int main() {
 
 答案是 **B. AB**，实际输出 `AB`。
 
-f 不是虚函数，按指针类型 A* 调用；g 是虚函数，按对象的真实类型 B 调用。
+A a = b 发生对象切片，a 就是一个 A；引用 r 绑定的仍是 B 对象，虚函数按真实类型调用。
 
 ## 讲深一层
 

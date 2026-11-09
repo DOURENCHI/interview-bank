@@ -1,6 +1,6 @@
 ---
 id: Q-1631
-title: 这段 C++ 代码输出什么？（11 类与对象 · 第 18 题）
+title: 这段 C++ 代码输出什么？（12 构造与析构 · 第 19 题）
 module: 04_algo
 sub: C++语言细节
 priority: P0
@@ -20,23 +20,28 @@ lab_src: quiz
 ## 题目
 
 ```cpp
-class A { int x; };
+struct T {
+    char c;
+    T(char c) : c(c) { cout << c; }
+    ~T() { cout << char(c - 32); }
+};
 int main() {
-    A a;
-    a.x = 1;
+    T a('a');
+    { T b('b'); }
+    T c('c');
 }
 ```
 
-- **A.** 编译错误
-- **B.** 什么都不输出
-- **C.** 1
-- **D.** 运行时崩溃
+- **A.** abBcCA
+- **B.** abcCBA
+- **C.** abBcAC
+- **D.** abcABC
 
 ## 口述答案
 
-答案是 **A. 编译错误**，实际输出 `编译错误`。
+答案是 **A. abBcCA**，实际输出 `abBcCA`。
 
-class 的成员默认是 private，类外不能访问；改成 struct 就可以。
+构造输出小写，析构输出大写。b 在花括号结束时析构；main 结束时，c 先于 a 析构（先构造的后析构）。
 
 ## 讲深一层
 
@@ -57,4 +62,4 @@ class 的成员默认是 private，类外不能访问；改成 struct 就可以�
 
 ## 来源
 
-`教学文档/C++实验台/C++考点实验台.html` · 11 类与对象
+`教学文档/C++实验台/C++考点实验台.html` · 12 构造与析构
