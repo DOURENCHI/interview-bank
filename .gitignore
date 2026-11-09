@@ -3,3 +3,4 @@ __pycache__/
 dist/_shot*.png
 .venv/
 *.tmp
+dist/_probe.html
