@@ -15,7 +15,7 @@
 | 项目深挖 | `content/01_project` | **P0** | 面试官最有兴趣、最容易追问、也最难造假的部分 |
 | C++ | `content/02_cpp` | **P0** | 与项目同步练，不单独刷教程 |
 | Linux | `content/03_linux` | **P0** | 同上 |
-| 算法与机考 | `content/04_algo` | **P0** | 华为机考是硬门槛。**ACM 模式输入输出第 1 周就要解决** |
+| 算法与机考 | `content/04_algo` | **P0** | 华为机考是硬门槛。**ACM 模式输入输出第 1 周就要解决**。含 212 道语言细节「读程序写结果」题，来自 `C++考点实验台` 与 `Python考点实验台` |
 | 模型部署 | `content/05_deploy` | **P0** | 原话：「全盘性价比最高的一步」，同时喂三条线 |
 | ROS2 | `content/06_ros2` | **P1** | 靠 ROS 小车项目产出（建图→导航→点云） |
 | 医学影像 | `content/07_imaging` | **P1** | UNet 基线是当前主线，也是佗道医疗的落点 |
@@ -30,12 +30,30 @@
 # 1. 从本地教学/项目文档批量抽取题目草稿（会跳过操作步骤类标题）
 python tools/extract.py --scan
 
-# 2. 生成单文件题库网页 dist/bank.html（双击即开，手机可用）
-python tools/build.py
+# 2. 从两个考点实验台导入机考题（幂等，重跑自动去重）
+python tools/import_lab.py
 
-# 3. 校验所有题卡字段与结构
+# 3. 给没有本地文档的模块补索引题（幂等）
+python tools/seed.py
+
+# 4. 校验字段、号段、小节完整性
 python tools/validate.py
+
+# 5. 生成单文件题库网页 dist/bank.html（双击即开，手机可用）
+python tools/build.py
 ```
+
+### GitHub 操作
+
+```bash
+python tools/gh.py whoami                          # 当前账号
+python tools/gh.py create interview-bank           # 建私有仓库（--public 改成公开）
+python tools/gh.py info DOURENCHI/interview-bank   # 查仓库状态
+python tools/gh.py push                            # 推送
+```
+
+令牌从系统凭据管理器（GCM）读取，**不落盘、不写进任何文件**。SSH 只负责推代码，
+创建仓库必须走 REST API，所以两者都需要。
 
 网页支持：全文搜索、四维筛选（模块 / 优先级 / 难度 / 岗位）、答案折叠、错题标记（存 localStorage）。
 

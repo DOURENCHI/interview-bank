@@ -84,6 +84,21 @@ tags: [YOLO, ONNX, ROS2, TensorRT, 部署]
 
 固定六节，顺序不变。空着的节保留标题并写 `待补充`，方便后续定位。
 
+**代码题（`qtype: coding`）在最前面多一节 `## 题目`**，放代码块和选项：
+
+```markdown
+## 题目
+
+```cpp
+cout << -7 / 2 << " " << -7 % 3;
+```
+
+- **A.** -3 -1
+- **B.** -4 2
+```
+
+其余六节照旧。`python tools/validate.py` 会对 coding 类型检查这一节是否存在。
+
 ```markdown
 ## 口述答案
 

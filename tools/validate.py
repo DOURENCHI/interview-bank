@@ -30,6 +30,8 @@ VALID_PRI = {"P0", "P1", "P2"}
 VALID_STATUS = {"indexed", "draft", "answered", "verified"}
 VALID_SRC = {"self_doc", "self_exp", "upstream", "official", "inferred"}
 SECTIONS = ["口述答案", "讲深一层", "高频追问", "易错点", "关联项目", "来源"]
+# 代码题型额外要求题面小节
+CODING_SECTIONS = ["题目"]
 
 
 def parse_fm(text: str) -> tuple[dict, str]:
@@ -93,19 +95,23 @@ def main() -> int:
             errors.append(f"{qid}: 文件在 {f.parent.name}/，但 module={mod}")
 
         # 正文小节
-        for s in SECTIONS:
+        need = list(SECTIONS)
+        if meta.get("qtype") == "coding":
+            need += CODING_SECTIONS
+        for s in need:
             if not re.search(rf"^##+\s*{s}", body, re.M):
                 errors.append(f"{qid}: 缺小节「{s}」")
 
-        # 已答不能是空壳
+        # 已答不能是空壳（只看「口述答案」本节，不跨到下一节）
         if meta.get("status") in ("answered", "verified"):
-            seg = body.split("## 口述答案")[-1][:400]
-            if "待补充" in seg:
-                errors.append(f"{qid}: status={meta.get('status')} 但口述答案仍是待补充")
+            m = re.search(r"^##\s*口述答案\s*$(.*?)(?=^##\s|\Z)", body, re.M | re.S)
+            seg = m.group(1) if m else ""
+            if "待补充" in seg or not seg.strip():
+                errors.append(f"{qid}: status={meta.get('status')} 但口述答案仍是空的")
 
-        # 标题问句化（祈使式提问算合规）
+        # 标题问句化（祈使式提问算合规；问号不必在末尾，括号补充说明也算）
         title = meta.get("title", "")
-        if not (title.rstrip().endswith(("？", "?"))
+        if not (("？" in title or "?" in title)
                 or re.match(r"^(介绍|讲讲|说说|描述|解释|谈谈|聊)", title)):
             warns.append(f"{qid}: 标题不是问句 → {title[:30]}")
 
