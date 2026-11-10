@@ -186,23 +186,24 @@ def main() -> int:
         heads = pg.eval_on_selector_all('#comp_jobs .rsec', 'els => els.map(e => e.innerText).join(" ")')
         ok.append(("按校招/实习分组", "校招" in heads and "实习" in heads))
         cs = pg.evaluate("RADAR.class_stats || {}")
-        pg.click('#comp_chips .chip[data-k="cls"][data-v="实习"]'); pg.wait_for_timeout(200)
+        pg.click('.chip[data-k="cls"][data-v="实习"]'); pg.wait_for_timeout(200)
         ok.append(("实习筛选数量", pg.evaluate(
             "document.querySelectorAll('#comp_jobs tbody tr').length") == cs.get("实习", 0)))
-        pg.click('#comp_chips .chip[data-k="cls"][data-v="校招"]'); pg.wait_for_timeout(200)
+        pg.click('.chip[data-k="cls"][data-v="校招"]'); pg.wait_for_timeout(200)
         ok.append(("校招筛选数量", pg.evaluate(
             "document.querySelectorAll('#comp_jobs tbody tr').length") == cs.get("校招", 0)))
         ok.append(("公司表不受分类筛选影响", pg.evaluate(
             "document.querySelectorAll('#comp_table tbody tr').length") == n_all_co))
-        pg.click('#comp_chips .chip[data-k="cls"][data-v="all"]'); pg.wait_for_timeout(200)
+        pg.click('.chip[data-k="cls"][data-v="all"]'); pg.wait_for_timeout(200)
         n_dis = pg.evaluate("[...loadDismiss()].length")
-        pg.click('#comp_chips .chip[data-k="st"][data-v="dismissed"]'); pg.wait_for_timeout(200)
+        pg.click('#comp_more summary'); pg.wait_for_timeout(150)   # 展开「更多筛选」
+        pg.click('.chip[data-k="st"][data-v="dismissed"]'); pg.wait_for_timeout(200)
         ok.append(("已忽略岗位仍可查", pg.evaluate(
             "document.querySelectorAll('#comp_jobs tbody tr').length") == n_dis and n_dis >= 1))
-        pg.click('#comp_chips .chip[data-k="st"][data-v="saved"]'); pg.wait_for_timeout(200)
+        pg.click('.chip[data-k="st"][data-v="saved"]'); pg.wait_for_timeout(200)
         ok.append(("已收藏岗位仍可查", pg.evaluate(
             "document.querySelectorAll('#comp_jobs tbody tr').length") >= 1))
-        pg.click('#comp_chips .chip[data-k="st"][data-v="all"]'); pg.wait_for_timeout(200)
+        pg.click('.chip[data-k="st"][data-v="all"]'); pg.wait_for_timeout(200)
         pg.fill('#comp_q', "Momenta"); pg.wait_for_timeout(350)
         n_hit = pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length")
         ok.append(("搜索联动公司/岗位", 0 < n_hit < n_all_co and pg.evaluate(
@@ -213,16 +214,33 @@ def main() -> int:
                    and pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length") < n_all_co))
         pg.fill('#comp_q', ""); pg.wait_for_timeout(350)
         city_sum = pg.evaluate("""() => [...document.querySelectorAll(
-            '#comp_chips .chip[data-k="city"] b')].reduce((a, b) => a + Number(b.textContent), 0)""")
+            '.chip[data-k="city"] b')].reduce((a, b) => a + Number(b.textContent), 0)""")
         expect = pg.evaluate("""() => (RADAR.jobs || []).reduce(
             (a, j) => a + citiesOf(j.city).length, 0)""")
         ok.append(("城市计数覆盖全量", city_sum == expect and expect >= n_all_job > 0))
-        pg.click('#comp_chips .chip[data-k="city"][data-v="苏州"]'); pg.wait_for_timeout(250)
+        pg.click('.chip[data-k="city"][data-v="苏州"]'); pg.wait_for_timeout(250)
         ok.append(("城市筛选联动两表", pg.evaluate(
             "document.querySelectorAll('#comp_table tbody tr').length") <= n_all_co))
-        pg.click('#comp_chips .chip[data-k="city"][data-v="all"]'); pg.wait_for_timeout(250)
+        pg.click('.chip[data-k="city"][data-v="all"]'); pg.wait_for_timeout(250)
         ok.append(("牛客面经列展示", pg.eval_on_selector(
             '#comp_table', "el => el.innerText.includes('牛客')")))
+        # V1.8.3：重置键 + 面经/真题卷面板
+        pg.click('.chip[data-k="cls"][data-v="实习"]'); pg.wait_for_timeout(200)
+        ok.append(("重置键显示计数", pg.eval_on_selector(
+            '#comp_reset', 'el => el.innerText.includes("重置(")')))
+        pg.click('#comp_reset'); pg.wait_for_timeout(250)
+        ok.append(("重置键清空筛选", pg.eval_on_selector('#comp_reset', "el => el.innerText.trim()") == '↩ 重置'
+                   and pg.evaluate("document.querySelectorAll('#comp_jobs tbody tr').length") == n_all_job
+                   and pg.eval_on_selector('#comp_q', 'el => el.value') == ''))
+        ok.append(("面经面板全量", pg.evaluate(
+            "document.querySelectorAll('#nc_exp tbody tr').length") == pg.evaluate("(NC.experiences||[]).length")))
+        ok.append(("真题卷面板全量", pg.evaluate(
+            "document.querySelectorAll('#nc_papers tbody tr').length") == pg.evaluate("(NC.papers||[]).length")))
+        pg.fill('#comp_q', '华为'); pg.wait_for_timeout(350)
+        ok.append(("面经/套卷随搜索联动", pg.evaluate(
+            "document.querySelectorAll('#nc_papers tbody tr').length") < pg.evaluate("(NC.papers||[]).length")
+            and pg.eval_on_selector('#nc_exp', 'el => el.innerText.includes("华为")')))
+        pg.fill('#comp_q', ''); pg.wait_for_timeout(350)
         tab("home"); pg.click('#h_allco'); pg.wait_for_timeout(200)
         ok.append(("首页入口跳公司总览", pg.eval_on_selector(
             '#view-comp', "el => el.classList.contains('on')")))

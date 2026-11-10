@@ -458,9 +458,14 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 /* ---- V1.8 公司 & 岗位总览（全部公司 / 校招·实习分类） ---- */
 .cstat{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
 .cstat .scard{flex:1 1 140px}
-.cfilter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.cfilter .chips{flex:1 1 100%}
-.cfilter input[type=search]{flex:1 1 280px}
+.cbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.cbar input[type=search]{flex:1 1 280px}
+.chip.rst{color:var(--red);border-color:#d9a89f}
+.chip.rst.act{background:var(--red);color:#fff;border-color:var(--red)}
+#comp_more summary{cursor:pointer;user-select:none;color:var(--muted);font-size:13px;padding:4px 0}
+#comp_more[open] summary{color:var(--accent)}
+.ctable tbody tr{vertical-align:top}
+.ncq{max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cfilter .flab{font-size:12px;color:var(--muted);white-space:nowrap}
 .cnote{font-size:12px;color:var(--muted);line-height:1.8;margin:6px 0 10px}
 .ctable{font-size:12.5px}
@@ -667,23 +672,28 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <h3>🏢 全部公司 & 全部岗位 · 招聘性质分类（校招 / 实习 / 社招 / 未标明）</h3>
     <div class="cnote" id="comp_note"></div>
     <div class="cstat" id="comp_stat"></div>
-    <div class="cfilter">
-      <input type="search" id="comp_q" placeholder="搜公司 / 岗位 / 城市 / 批次 / 岗位族">
-      <div class="chips" id="comp_chips">
-        <span class="flab">性质</span>
-        <button class="chip on" data-k="cls" data-v="all">全部</button>
-        <button class="chip" data-k="cls" data-v="校招">校招 <b>0</b></button>
-        <button class="chip" data-k="cls" data-v="实习">实习 <b>0</b></button>
-        <button class="chip" data-k="cls" data-v="社招">社招 <b>0</b></button>
-        <button class="chip" data-k="cls" data-v="未标明">未标明 <b>0</b></button>
-        <span class="csep"></span>
-        <span class="flab">公司</span>
-        <button class="chip on" data-k="src" data-v="all">全部公司</button>
-        <button class="chip" data-k="src" data-v="pool">雷达池</button>
-        <button class="chip" data-k="src" data-v="enabled">已接入</button>
-        <button class="chip" data-k="src" data-v="unset">未接入</button>
-        <button class="chip" data-k="src" data-v="targets">仅目标池</button>
-        <span class="csep"></span>
+    <div class="cbar">
+      <input type="search" id="comp_q" placeholder="搜公司 / 岗位 / 城市 / 批次 / 岗位族（同时过滤面经与真题卷）">
+      <button class="chip rst" id="comp_reset" title="清空全部筛选条件">↩ 重置</button>
+    </div>
+    <div class="chips" id="comp_chips_main">
+      <span class="flab">性质</span>
+      <button class="chip on" data-k="cls" data-v="all">全部</button>
+      <button class="chip" data-k="cls" data-v="校招">校招 <b>0</b></button>
+      <button class="chip" data-k="cls" data-v="实习">实习 <b>0</b></button>
+      <button class="chip" data-k="cls" data-v="社招">社招 <b>0</b></button>
+      <button class="chip" data-k="cls" data-v="未标明">未标明 <b>0</b></button>
+      <span class="csep"></span>
+      <span class="flab">公司</span>
+      <button class="chip on" data-k="src" data-v="all">全部公司</button>
+      <button class="chip" data-k="src" data-v="pool">雷达池</button>
+      <button class="chip" data-k="src" data-v="enabled">已接入</button>
+      <button class="chip" data-k="src" data-v="unset">未接入</button>
+      <button class="chip" data-k="src" data-v="targets">仅目标池</button>
+    </div>
+    <details class="moref" id="comp_more">
+      <summary>⚙ 更多筛选（岗位状态 / 城市）<span class="fc" id="comp_more_n" hidden>0</span></summary>
+      <div class="chips" id="comp_chips_more" style="padding:8px 0 2px">
         <span class="flab">岗位状态</span>
         <button class="chip on" data-k="st" data-v="all">全部</button>
         <button class="chip" data-k="st" data-v="open">在招</button>
@@ -696,11 +706,18 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
         <button class="chip on" data-k="city" data-v="all">全部</button>
         <span id="city_chips" style="display:contents"></span>
       </div>
-    </div>
+    </details>
     <div class="rsec">全部公司（公司池 + 目标公司池，同名合并；只看「公司来源 / 搜索」两类筛选）</div>
     <div id="comp_table"></div>
     <div class="rsec">全部岗位（含已收藏 / 已忽略；按性质、岗位状态与搜索筛选）</div>
     <div id="comp_jobs"></div>
+    <details class="panel" id="ncbox" open style="margin-top:14px">
+      <summary style="cursor:pointer;font-weight:700">📰 真实面经（牛客，每周自动同步）<span class="rnum" id="nc_meta"></span></summary>
+      <div class="cnote">面经帖来自牛客公开版块，只保留「公司 × 岗位 × 轮次 × 题目摘要 × 原帖链接」，不含发帖人信息；点「原帖」看完整正文。当前搜索词同时过滤下表。</div>
+      <div id="nc_exp"></div>
+      <div class="rsec">📄 公司真题卷（牛客企业真题，仅登记元数据；题干有平台版权限制，点链接去牛客在线作答）</div>
+      <div id="nc_papers"></div>
+    </details>
   </div>
 </section>
 
@@ -1888,7 +1905,7 @@ function renderCompanies(){
   const have = new Set(loadJobs().map(j => j.key).filter(Boolean));
   const cs = {};
   all.forEach(j => cs[j.job_class] = (cs[j.job_class] || 0) + 1);
-  document.querySelectorAll('#comp_chips .chip[data-k="cls"]').forEach(ch => {
+  document.querySelectorAll('.chip[data-k="cls"]').forEach(ch => {
     const b = ch.querySelector('b');
     if (b) b.textContent = cs[ch.dataset.v] || 0;
   });
@@ -2022,7 +2039,7 @@ function renderCompanies(){
       return `<tr class="cjobrow ${h[1]}">
         <td>${cbadge(g.c)}</td>
         <td><div class="jt">${esc(j.title)}</div><small>${esc(j.company)} · ${esc(j.city || '待核实')} · ${esc((j.families || []).join('/') || '其他')}</small></td>
-        <td>${esc(j.batch || j.label || '—')}<small>${gy} · ${eli}</small></td>
+        <td>${esc(j.batch || j.label || '—')}<small>${gy} · ${eli}${j.jd ? '' : ' · 该源列表无 JD 正文，点入口看原文'}</small></td>
         <td><span class="conf ${j.class_conf}">${esc(j.class_basis)}</span><small>${esc(j.class_evidence || '')}${j.grad_year_raw ? ' · 已清除入口批次届别' : ''}</small></td>
         <td>${j.status === 'suspect' ? '<span class="rscore lo">疑似下线</span>' : '<span class="rscore hi">在招</span>'}
             <small>${h[0]} · 发现 ${esc(j.first_seen || '—')}</small></td>
@@ -2046,17 +2063,45 @@ function renderCompanies(){
   ].map(x => `<div class="scard"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
   const poolNames = new Set((POOL || []).map(c => coKey(c.company_name)));
   $('comp_note').innerHTML =
-    `这里能看到<b>全部 ${cos.length} 家公司与全部 ${all.length} 个岗位</b>，不再被岗位雷达折叠区「只列 40 条待处理」挡住：` +
-    `公司表当前 ${shownCo.length} 行、岗位表当前 ${jobs.length} 行（其中已收藏 ${savedN} · 已忽略 ${disN}，仍会完整列出并标注）。<br>` +
-    `公司口径：公司池 ${poolEntries} 条 / ${poolNames.size} 家 + 目标公司池 ${((TARGETS && TARGETS.companies) || []).length} 家，同名合并后 ${cos.length} 家；` +
-    `「未接入」指公司池里有招聘入口但还没写采集适配器，「仅目标池」指题库有公司索引但尚未登记招聘入口。` +
-    `点公司表任意一行可只看该公司的岗位（写入搜索框），清空搜索即恢复全部。` +
-    `「城市」chips 同步过滤公司与岗位两表（按已采集岗位的工作地；公司列显示主要城市）。<br>` +
-    `牛客同步：面经索引与公司真题卷每周自动增量采集；按你的合规边界，真题卷只登记「公司 × 卷名 × 题量 × 链接」元数据，<br>` +
-    `题目内容一律从公开面经帖提取（原帖链接保留、不含发帖人信息）。<br>` +
-    `分类依据优先级：<b>岗位标题明确 &gt; 来源批次标签 &gt; 校园招聘入口推定</b>；` +
-    `「入口推定」只说明岗位挂在校园招聘入口下，<b>不等于官方写明校招批次</b>，投递前点 JD 原文核实。` +
-    `实习岗不套用入口批次的届别（原 2027 届推定已清除）；校招 2027 届对 ${USER_GRAD} 届仅作 JD 参考。`;
+    `全部 <b>${cos.length} 家公司 / ${all.length} 个岗位</b>都在这里（含已收藏、已忽略，标注处理状态），` +
+    `不再被岗位雷达折叠区「只列 40 条待处理」挡住：公司表 ${shownCo.length} 行 · 岗位表 ${jobs.length} 行（已收藏 ${savedN} · 已忽略 ${disN}）。` +
+    `真实面经与公司真题卷在下方「📰 真实面经」面板，随搜索词联动。<br>` +
+    `筛选时点 <b>↩ 重置</b> 一键清空全部条件；岗位状态与城市筛选收在「⚙ 更多筛选」里，点公司行可只看该公司岗位。<br>` +
+    `分类依据：<b>岗位标题明确 &gt; 来源批次标签 &gt; 校园招聘入口推定</b>；「入口推定」不等于官方写明校招批次，` +
+    `投递前点 JD 原文核实。实习岗不套用入口批次的届别；校招 2027 届对 ${USER_GRAD} 届仅作 JD 参考。`;
+  renderNC(compFilter.q);
+  updateReset();
+}
+
+// 真实面经 + 公司真题卷面板（牛客同步数据，随搜索词联动）
+function renderNC(q){
+  const exps = (NC.experiences || []).filter(x => !q ||
+    (x.company + ' ' + (x.role || '') + ' ' + x.title + ' ' + (x.round || '')).toLowerCase().indexOf(q) >= 0);
+  const papers = (NC.papers || []).filter(p => !q ||
+    (p.company + ' ' + p.paperName).toLowerCase().indexOf(q) >= 0);
+  const last = (NC.experiences || []).reduce((a, x) => (x.collected_at || '') > a ? x.collected_at : a, '');
+  $('nc_meta').textContent = `命中面经 ${exps.length} / ${(NC.experiences || []).length} 篇 · 真题卷 ${papers.length} / ${(NC.papers || []).length} 套 · 最近同步 ${(last || '—').slice(0, 10)}`;
+  $('nc_exp').innerHTML = exps.length ? `<table class="rtable ctable"><thead><tr>
+      <th>公司</th><th>面经标题 / 岗位方向</th><th>轮次</th><th>题目</th><th>日期</th><th>原帖</th>
+    </tr></thead><tbody>${exps.map(x => `<tr>
+      <td><b>${esc(x.company)}</b></td>
+      <td><div class="jt" title="${esc(x.title)}">${esc(x.title)}</div><small>${esc(x.role || '—')}</small></td>
+      <td>${esc(x.round || '—')}</td>
+      <td class="rnum">${x.n_questions || 0} 题${x.n_reverses ? ' · 反问 ' + x.n_reverses : ''}</td>
+      <td class="rnum">${esc((x.date_raw || x.collected_at || '').slice(0, 10))}</td>
+      <td><a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖 ↗</a></td>
+    </tr>`).join('')}</tbody></table>`
+    : '<div class="cempty">暂无命中的面经（每周一自动增量采集，命中目标公司的帖子会入库）。</div>';
+  $('nc_papers').innerHTML = papers.length ? `<table class="rtable ctable"><thead><tr>
+      <th>公司</th><th>卷名</th><th>题量</th><th>练习人数</th><th>在线作答</th>
+    </tr></thead><tbody>${papers.map(p => `<tr>
+      <td><b>${esc(p.company || '通用')}</b></td>
+      <td>${esc(p.paperName)}</td>
+      <td class="rnum">${esc(p.questionCount || '—')}</td>
+      <td class="rnum">${esc(p.practiceCnt || '—')}</td>
+      <td><a class="tag jlink" href="${esc(p.summaryUrl)}" target="_blank" rel="noopener">牛客 ↗</a></td>
+    </tr>`).join('')}</tbody></table>`
+    : '<div class="cempty">暂无命中的真题卷。</div>';
 }
 $('comp_table').addEventListener('click', e => {
   if (e.target.closest('a')) return;
@@ -2066,12 +2111,32 @@ $('comp_table').addEventListener('click', e => {
   renderCompanies();
   $('comp_jobs').scrollIntoView({behavior: 'smooth', block: 'start'});
 });
-$('comp_chips').addEventListener('click', e => {
-  const ch = e.target.closest('.chip'); if (!ch) return;
+document.addEventListener('click', e => {
+  const ch = e.target.closest('.chip[data-k]');
+  if (!ch || !ch.closest('#view-comp')) return;
   compFilter[ch.dataset.k] = ch.dataset.v;
-  document.querySelectorAll(`#comp_chips .chip[data-k="${ch.dataset.k}"]`)
+  document.querySelectorAll(`.chip[data-k="${ch.dataset.k}"]`)
     .forEach(x => x.classList.toggle('on', x === ch));
   renderCompanies();
+});
+function updateReset(){
+  const n = ['cls', 'src', 'st', 'city'].filter(k => compFilter[k] !== 'all').length
+            + (compFilter.q ? 1 : 0);
+  const btn = $('comp_reset');
+  btn.classList.toggle('act', n > 0);
+  btn.textContent = n > 0 ? `↩ 重置(${n})` : '↩ 重置';
+  const more = $('comp_more_n');
+  const mn = (compFilter.st !== 'all' ? 1 : 0) + (compFilter.city !== 'all' ? 1 : 0);
+  more.hidden = mn === 0;
+  more.textContent = String(mn);
+}
+$('comp_reset').addEventListener('click', () => {
+  compFilter = {cls: 'all', src: 'all', st: 'all', city: 'all', q: ''};
+  $('comp_q').value = '';
+  document.querySelectorAll('#view-comp .chip[data-k]').forEach(x =>
+    x.classList.toggle('on', x.dataset.v === 'all'));
+  renderCompanies();
+  window.scrollTo(0, 0);
 });
 let compQT;
 $('comp_q').addEventListener('input', e => {

@@ -39,7 +39,17 @@
     "type_label": "校招"
    },
    "enabled": true,
-   "note": "已核验（官网简章）：50 个方向"
+   "note": "已核验（官网简章）：50 个方向",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://agirobot.jobs.feishu.cn/s/Ahz3KUEtJ4o",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   },
   {
    "company_id": "优必选",
@@ -271,7 +281,17 @@
     "type_label": "校招"
    },
    "enabled": true,
-   "note": "已验证：Mstar 10 岗"
+   "note": "已验证：Mstar 10 岗",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://momenta.jobs.feishu.cn/s/yRixGuzh874",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   },
   {
    "company_id": "地平线",
@@ -365,7 +385,17 @@
     "type_label": "校招"
    },
    "enabled": true,
-   "note": "已核验（智能表）：Moka 校招入口"
+   "note": "已核验（智能表）：Moka 校招入口",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://app.mokahr.com/campus_apply/jingchi/2137#/jobs?commitment=%E5%AE%9E%E4%B9%A0",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   },
   {
    "company_id": "轻舟智航",
@@ -712,7 +742,17 @@
     "type_label": "校招"
    },
    "enabled": true,
-   "note": "已核验（校招简章）：探索者计划"
+   "note": "已核验（校招简章）：探索者计划",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://xiaopeng.jobs.feishu.cn/s/rStfS1RkIa0",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   },
   {
    "company_id": "追觅",
@@ -755,7 +795,17 @@
     "type_label": "校招"
    },
    "enabled": true,
-   "note": "已核验：标准 campus 列表页（/s/ 分享页仅 10 条）；27届校招，上海/合肥/北京/深圳"
+   "note": "已核验：标准 campus 列表页（/s/ 分享页仅 10 条）；27届校招，上海/合肥/北京/深圳",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://nio.jobs.feishu.cn/s/bHQPe0lbQxw",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   },
   {
    "company_id": "小鹏",
@@ -857,7 +907,49 @@
     "category": "2"
    },
    "enabled": true,
-   "note": "新增（智能表核验）：商用配送机器人，深圳/成都"
+   "note": "新增（智能表核验）：商用配送机器人，深圳/成都",
+   "extra_sources": [
+    {
+     "source": {
+      "base": "https://pudutech.zhiye.com",
+      "url": "https://pudutech.zhiye.com/intern/jobs?shareId=202ff78a-e2e0-4914-a932-2ecbadda13c6&shareSource=2",
+      "label": "27届暑期实习",
+      "type_label": "实习",
+      "category": "3"
+     },
+     "note": "智能表核验 2026-11-10；category=3 实习门户（实测 10 岗）"
+    }
+   ]
+  },
+  {
+   "company_id": "理想汽车",
+   "company_name": "理想汽车",
+   "category": "自动驾驶/智能驾驶",
+   "directions": [
+    "C++ SDK",
+    "嵌入式",
+    "系统集成"
+   ],
+   "tier": "B",
+   "ats_type": "feishu",
+   "career_url": "https://li.jobs.feishu.cn/s/tJF4dkXEZkI",
+   "source": {
+    "url": "https://li.jobs.feishu.cn/s/tJF4dkXEZkI",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "新增（智能表核验）：27届秋招分享页 + 暑期实习分享页；/campus 营销页超时弃用",
+   "extra_sources": [
+    {
+     "source": {
+      "url": "https://li.jobs.feishu.cn/s/hH1Nv347wak",
+      "label": "27届暑期实习",
+      "type_label": "实习"
+     },
+     "note": "智能表核验 2026-11-10"
+    }
+   ]
   }
  ],
  "_sources": [

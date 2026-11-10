@@ -273,24 +273,32 @@ def reconcile(old_jobs: list, scans: dict, today: str) -> tuple[list, dict]:
 
 # ================================================================ 适配器
 
-def zhiye_portal_id(base: str, portal_id: str, category: str, s) -> str:
-    """portal_id 留空时：从 /campus HTML 提取候选，逐个试到 Count>0。"""
+def zhiye_portal_id(base: str, portal_id: str, category: str, s, pages=None) -> str:
+    """portal_id 留空时：从门户页 HTML 提取候选，逐个试到 Count>0。
+    pages 可传入口 URL 列表（/campus、/intern/jobs…）；category 依次试给定值与 2/3/1。"""
     if portal_id:
         return portal_id
-    h = s.get(base + "/campus", timeout=25).text
-    cands = list(dict.fromkeys(re.findall(
-        r'"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"', h)))
-    for pid in cands:
+    pages = pages or [base + "/campus"]
+    cands = []
+    for pg_url in pages:
         try:
-            r = s.post(base + "/api/Jobad/GetJobAdPageList", json={
-                "Category": [category], "PageIndex": 0, "PageSize": 1,
-                "KeyWords": "", "SpecialType": 0, "PortalId": pid,
-                "DisplayFields": []}, timeout=20)
-            if r.status_code == 200 and r.json().get("Count", 0) > 0:
-                print(f"  [zhiye] 动态 portalId={pid} 命中 {r.json()['Count']} 岗")
-                return pid
+            h = s.get(pg_url, timeout=25).text
         except Exception:
             continue
+        cands += re.findall(r'"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"', h)
+    cands = list(dict.fromkeys(cands))[:8]
+    for pid in cands:
+        for cat in dict.fromkeys([category, "2", "3", "1"]):
+            try:
+                r = s.post(base + "/api/Jobad/GetJobAdPageList", json={
+                    "Category": [cat], "PageIndex": 0, "PageSize": 1,
+                    "KeyWords": "", "SpecialType": 0, "PortalId": pid,
+                    "DisplayFields": []}, timeout=20)
+                if r.status_code == 200 and r.json().get("Count", 0) > 0:
+                    print(f"  [zhiye] 动态 portalId={pid[:8]}… category={cat} 命中 {r.json()['Count']} 岗")
+                    return pid
+            except Exception:
+                continue
     raise RuntimeError("未能确定 portalId")
 
 
@@ -318,7 +326,8 @@ def scan_zhiye(site: dict) -> list:
     s = requests.Session()
     s.headers.update({"User-Agent": UA, "Content-Type": "application/json",
                       "Origin": base, "Referer": base + "/campus"})
-    pid = zhiye_portal_id(base, site.get("portal_id", ""), site.get("category", "2"), s)
+    pid = zhiye_portal_id(base, site.get("portal_id", ""), site.get("category", "2"), s,
+                          pages=[site.get("url") or base + "/campus", base + "/campus"])
     out, page = [], 0
     while page < 5:                      # 上限 5 页 × 50，防失控
         r = s.post(base + "/api/Jobad/GetJobAdPageList", json={
@@ -338,7 +347,7 @@ def scan_zhiye(site: dict) -> list:
                 "company": site["name"],
                 "title": (it.get("JobAdName") or "").strip(),
                 "city": city,
-                "type": it.get("Category") or ("校招" if site.get("category") == "2" else "社招"),
+                "type": site.get("type_label") or it.get("Category") or ("校招" if site.get("category") == "2" else "社招"),
                 "batch": batch,
                 "grad_year": extract_grad(it.get("JobAdName", "")) or extract_grad(batch),
                 "duty": duty, "require": require,
@@ -484,6 +493,8 @@ def scan_moka(site: dict) -> list:
     """
     from playwright.sync_api import sync_playwright
     base_url = site["url"].split("#")[0]
+    # hash 里带过滤参数（如 #/jobs?commitment=实习）时保留原 hash，否则用默认职位列表
+    hash_part = "#" + site["url"].split("#", 1)[1] if "#" in site["url"] else "#/jobs"
     out: dict = {}
     with sync_playwright() as p:
         try:
@@ -491,7 +502,7 @@ def scan_moka(site: dict) -> list:
         except Exception:
             browser = p.chromium.launch(channel="msedge")
         pg = browser.new_page(user_agent=UA)
-        pg.goto(base_url + "#/jobs", timeout=60000, wait_until="domcontentloaded")
+        pg.goto(base_url + hash_part, timeout=60000, wait_until="domcontentloaded")
         pg.wait_for_timeout(5000)
         for _ in range(6):                 # 滚动触发懒加载
             pg.mouse.wheel(0, 4000)
@@ -549,37 +560,44 @@ def scan_all() -> int:
     scans: dict = {}
     skipped = 0
     for comp in pool:
-        if not comp.get("enabled") or not comp.get("source"):
+        if not comp.get("enabled"):
             continue
-        site = {"name": comp["company_name"], "tier": comp.get("tier"),
-                **comp["source"]}
-        site.setdefault("label", "")
-        sid = f"{comp['company_name']}·{site.get('label', '')}"
-        try:
-            jobs = None
-            for attempt in (1, 2):          # 渲染类源偶发超时（csrf 流程/慢页面），重试一次
-                try:
-                    jobs = ADAPTERS[comp["ats_type"]](site)
-                    break
-                except Exception as e:
-                    if attempt == 1:
-                        print(f"  [retry] {site['name']}: {type(e).__name__}，重试一次")
-                        import time as _t2
-                        _t2.sleep(3)
-                    else:
-                        raise
-            kept = []
-            for j in jobs:
-                if EXCLUDE_PAT.search(j.get("title") or ""):
-                    skipped += 1
-                    continue
-                j["source_id"] = sid
-                j["families"] = families_of(j.get("title"), j.get("jd"))
-                kept.append(classify_job(j, site))   # V1.8 新扫岗位先打招聘性质
-            scans[sid] = {"status": "success", "jobs": kept, "error": None}
-        except Exception as e:
-            scans[sid] = {"status": "failed", "jobs": [], "error": f"{type(e).__name__} {str(e)[:100]}"}
-            print(f"  [FAIL] {site['name']}: {e}")
+        # 主入口 + extra_sources（同公司多个招聘入口：校招/实习/专项计划分开扫）
+        srcs = ([comp["source"]] if comp.get("source") else []) + \
+               [x.get("source") for x in comp.get("extra_sources", []) if x.get("source")]
+        for src in srcs:
+            site = {"name": comp["company_name"], "tier": comp.get("tier"),
+                    "ats_type": comp.get("ats_type"), **src}
+            site.setdefault("label", "")
+            ats = site.get("ats_type") or comp.get("ats_type")
+            if not ats or ats not in ADAPTERS:
+                continue
+            sid = f"{site['name']}·{site.get('label', '')}"
+            try:
+                jobs = None
+                for attempt in (1, 2):          # 渲染类源偶发超时（csrf 流程/慢页面），重试一次
+                    try:
+                        jobs = ADAPTERS[ats](site)
+                        break
+                    except Exception as e:
+                        if attempt == 1:
+                            print(f"  [retry] {site['name']}: {type(e).__name__}，重试一次")
+                            import time as _t2
+                            _t2.sleep(3)
+                        else:
+                            raise
+                kept = []
+                for j in jobs:
+                    if EXCLUDE_PAT.search(j.get("title") or ""):
+                        skipped += 1
+                        continue
+                    j["source_id"] = sid
+                    j["families"] = families_of(j.get("title"), j.get("jd"))
+                    kept.append(classify_job(j, site))   # V1.8 新扫岗位先打招聘性质
+                scans[sid] = {"status": "success", "jobs": kept, "error": None}
+            except Exception as e:
+                scans[sid] = {"status": "failed", "jobs": [], "error": f"{type(e).__name__} {str(e)[:100]}"}
+                print(f"  [FAIL] {site['name']}: {e}")
 
     old = json.loads(RADAR.read_text(encoding="utf-8")) if RADAR.exists() else {"jobs": []}
     merged, src_states = reconcile(old.get("jobs", []), scans, today)
