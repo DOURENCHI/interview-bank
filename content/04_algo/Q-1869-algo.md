@@ -8,7 +8,7 @@ difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
-status: indexed
+status: answered
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
@@ -18,23 +18,47 @@ auto: true
 algo_seed: true
 ---
 
+## 题目
+
+**输入**：`s = "A man, a plan, a canal: Panama"`
+**输出**：`true`（忽略大小写和非字母数字）
+
+**问**：怎么跳过非字母数字字符？
+
 ## 口述答案
 
-**套路**：双指针向中间靠，遇到非字母数字就跳过，比较时统一大小写。
-
-（口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
+> 双指针从两端往中间走，遇到非字母数字就跳过，比较时统一转小写。
+> 关键是**两个指针都要跳过**，且跳过之后要重新检查边界，别越界。
 
 ## 讲深一层
 
-待补充。补三件事：为什么这个套路成立、复杂度怎么算、和哪道题是同一模板。
+```cpp
+bool isPalindrome(string s) {
+    int i = 0, j = s.size() - 1;
+    while (i < j) {
+        while (i < j && !isalnum(s[i])) ++i;
+        while (i < j && !isalnum(s[j])) --j;
+        if (tolower(s[i]) != tolower(s[j])) return false;
+        ++i; --j;
+    }
+    return true;
+}
+```
+
+`isalnum` 对负 char 是未定义行为，严格要 `isalnum((unsigned char)c)`。
 
 ## 高频追问
 
-待补充。常见追问方向：换数据规模怎么办、能不能做到 O(1) 空间、有负数还成立吗。
+1. **中文怎么办？** —— `isalnum` 只处理 ASCII，Unicode 要自己判。
+2. **能先把过滤后的串提出来吗？** —— 能，但 O(n) 额外空间。
+3. **只考虑字母数字的另一种理解？** —— 有些题只要求字母，看清题面。
 
 ## 易错点
 
-待补充。
+- ❌ 内层 while 不带 `i < j` —— 越界
+- ❌ 用 `char` 直接传 `isalnum` —— 负数未定义
+- ✅ 记住「双指针 + 跳过 + 统一大小写」
+
 
 ## 关联项目
 
@@ -42,4 +66,4 @@ algo_seed: true
 
 ## 来源
 
-按华为机考题型分布推导（数组/字符串/哈希 40%、双指针滑窗 20%、DFS/BFS 20%、DP 20%）
+算法题通用解法整理（预测题，非真实面经）
