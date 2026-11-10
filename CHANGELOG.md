@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.4.0 — 2026-11-10
+
+牛客面经采集器落地（`tools/nc_collect.py`），首轮 13 帖 → **97 道真题摘要**入库。
+
+### 产出
+
+| 文件 | 内容 |
+|---|---|
+| `sources/nowcoder_experiences.jsonl` | 12 篇面经索引（链接/公司/岗位/轮次/题数），不含正文与作者信息 |
+| `sources/nowcoder_questions.csv` | 97 道题面摘要（面试真题 56 + 笔试题面 41），带出处与库内相似度 |
+| `sources/nowcoder_papers.csv` | 124 套真题卷元数据（题量/公司/练习人数/summary 链接） |
+
+### 实测修正（详见 `docs/nowcoder_feasibility.md` §八）
+
+- 详情 URL 实为 `nowcoder.com/discuss/{contentId}`，`/feed/main/detail/` 渲染不出正文
+- 列表接口的 company/keyword/careerJobId 过滤参数**全部无效**，公司筛选只能本地做
+- 面经流约 78% 是空壳推广位，有效帖命中率 6%，需按周增量积累
+
+### 真题样例（这批的价值所在）
+
+- 地平线嵌入式：U-Boot 在启动流程里负责什么 / Tasklet 里怎么保护临界区 / 单核抢占
+- 华为推理：Attention 的 QKV 投影合并成一次大矩阵为什么要做 / 反量化算子融合 / KV Cache 带宽瓶颈
+- 小鹏深度学习平台：K8s 怎么管虚拟机实现强隔离
+- 华为 Linux 二面：select/poll/epoll 区别，epoll 底层数据结构
+
 ## v1.3.0 — 2026-11-10
 
 新增牛客网接入可行性评估：`docs/nowcoder_feasibility.md`。

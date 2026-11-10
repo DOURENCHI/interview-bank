@@ -6,3 +6,4 @@ dist/_shot*.png
 dist/_probe.html
 dist/_*.html
 dist/_*.png
+_cache/
