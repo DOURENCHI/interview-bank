@@ -253,8 +253,18 @@ def scan_feishu(site: dict) -> list:
                 except Exception:
                     pass
         pg.on("response", on_resp)
-        pg.goto(site["url"], timeout=45000, wait_until="networkidle")
-        pg.wait_for_timeout(2000)
+        # networkidle 在慢门户上易超时；部分门户首个请求 405 后重试（csrf 流程）：
+        # domcontentloaded + 显式等到 200 的岗位响应（最长 25s）+ 兜底等待
+        with pg.expect_response(
+                lambda r: "search/job/posts" in r.url and r.status == 200,
+                timeout=25000) as ri:
+            pg.goto(site["url"], timeout=60000, wait_until="domcontentloaded")
+            pg.wait_for_timeout(3000)
+            try:                      # 营销落地页需点「职位」进入列表路由才发岗位 XHR
+                pg.locator("text=职位").first.click(timeout=4000)
+            except Exception:
+                pass
+        pg.wait_for_timeout(2500)
         for _ in range(8):               # 尝试「加载更多」类按钮
             btn = pg.locator("text=/加载更多|查看更多|更多岗位|load more/i").first
             if btn.count() == 0:

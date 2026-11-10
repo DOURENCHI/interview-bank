@@ -22,7 +22,7 @@
    "note": "已验证：36 岗，JD 全文"
   },
   {
-   "company_id": "智元机器人",
+   "company_id": "智元机器人_2027届校招",
    "company_name": "智元机器人",
    "category": "具身智能/人形机器人",
    "directions": [
@@ -31,11 +31,15 @@
     "系统集成"
    ],
    "tier": "A",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口待核验"
+   "career_url": "https://agirobot.jobs.feishu.cn/campusrecruitment",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://agirobot.jobs.feishu.cn/campusrecruitment",
+    "label": "2027届校招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（官网简章）：50 个方向"
   },
   {
    "company_id": "优必选",
@@ -45,12 +49,16 @@
     "机器人软件",
     "运动控制"
    ],
-   "tier": "B",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口待核验"
+   "tier": "A",
+   "career_url": "https://ubtrobot.zhiye.com/campus",
+   "ats_type": "zhiye",
+   "source": {
+    "base": "https://ubtrobot.zhiye.com",
+    "portal_id": "",
+    "category": "2"
+   },
+   "enabled": true,
+   "note": "已核验（校招简章）：算法/软件/嵌入式全链条"
   },
   {
    "company_id": "傅利叶智能",
@@ -110,6 +118,25 @@
    "source": null,
    "enabled": false,
    "note": "入口待核验"
+  },
+  {
+   "company_id": "启元机器人_2027届校招",
+   "company_name": "启元机器人",
+   "category": "具身智能/人形机器人",
+   "directions": [
+    "机器人软件",
+    "算法"
+   ],
+   "tier": "B",
+   "career_url": "https://primebot.jobs.feishu.cn/campusrecruitment",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://primebot.jobs.feishu.cn/campusrecruitment",
+    "label": "2027届校招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（校招快讯）：算法/软件/硬件"
   },
   {
    "company_id": "灵心巧手",
@@ -252,11 +279,11 @@
     "异构计算"
    ],
    "tier": "A",
-   "career_url": "",
-   "ats_type": "unknown",
+   "career_url": "https://horizon-campus.hotjob.cn/",
+   "ats_type": "hotjob",
    "source": null,
    "enabled": false,
-   "note": "core 池；入口待核验"
+   "note": "入口已核验（hotjob 大易系），适配器待写"
   },
   {
    "company_id": "毫末智行",
@@ -282,11 +309,11 @@
     "C++SDK"
    ],
    "tier": "B",
-   "career_url": "",
+   "career_url": "https://campus.deeproute.cn",
    "ats_type": "unknown",
    "source": null,
    "enabled": false,
-   "note": "入口待核验"
+   "note": "入口已核验，自建站接口待适配"
   },
   {
    "company_id": "小马智行",
@@ -454,11 +481,11 @@
     "嵌入式"
    ],
    "tier": "B",
-   "career_url": "",
+   "career_url": "https://recruit.inovance.com/#/campus/jobs",
    "ats_type": "unknown",
    "source": null,
    "enabled": false,
-   "note": "入口待核验"
+   "note": "入口已核验，自建站接口待适配"
   },
   {
    "company_id": "节卡机器人",
@@ -545,11 +572,15 @@
     "软件工程"
    ],
    "tier": "A",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "core 池；入口待核验"
+   "career_url": "https://united-imaging.zhiye.com/campus",
+   "ats_type": "zhiye",
+   "source": {
+    "base": "https://united-imaging.zhiye.com",
+    "portal_id": "",
+    "category": "2"
+   },
+   "enabled": true,
+   "note": "已核验（校招简章）：算法/软件/硬件/芯片"
   },
   {
    "company_id": "迈瑞医疗",
@@ -561,11 +592,11 @@
     "软件工程"
    ],
    "tier": "A",
-   "career_url": "",
-   "ats_type": "unknown",
+   "career_url": "https://www.mindray.com",
+   "ats_type": "self-built",
    "source": null,
    "enabled": false,
-   "note": "core 池；入口待核验"
+   "note": "入口已核验（官网投递），无标准 ATS"
   },
   {
    "company_id": "东软医疗",
@@ -626,6 +657,25 @@
    "source": null,
    "enabled": false,
    "note": "入口已确认，接口待核验"
+  },
+  {
+   "company_id": "小鹏集团_2027届探索者计划",
+   "company_name": "小鹏集团",
+   "category": "自动驾驶/智能驾驶",
+   "directions": [
+    "C++SDK",
+    "智驾系统"
+   ],
+   "tier": "A",
+   "career_url": "https://xiaopeng.jobs.feishu.cn/campus",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://xiaopeng.jobs.feishu.cn/campus",
+    "label": "2027届探索者计划",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（校招简章）：探索者计划"
   },
   {
    "company_id": "追觅",
