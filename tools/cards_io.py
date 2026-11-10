@@ -37,8 +37,23 @@ KEYS = {
     "STEM": "stem", "ANSWER": "answer", "DEEP": "deep",
     "FOLLOW": "follow", "TRAPS": "traps",
     "RELATED": "related", "SOURCE": "source",
+    "APPEAR": "appearances",
 }
 _LIST_KEYS = {"follow", "traps", "related"}
+
+
+def _appearance_rows(body: str) -> list[dict]:
+    """APPEAR 节：每行 `日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度`。"""
+    rows = []
+    for ln in body.splitlines():
+        ln = ln.strip().lstrip("-").strip()
+        if not ln:
+            continue
+        parts = [x.strip() for x in ln.split("|")]
+        while len(parts) < 6:
+            parts.append("")
+        rows.append(dict(zip(("日期", "公司", "岗位", "轮次", "来源", "可信度"), parts)))
+    return rows
 
 
 def parse(text: str) -> list[dict]:
@@ -53,7 +68,9 @@ def parse(text: str) -> list[dict]:
             buf = []
             return
         body = "\n".join(buf).strip("\n")
-        if key in _LIST_KEYS:
+        if key == "appearances":
+            cur[key] = _appearance_rows(body)
+        elif key in _LIST_KEYS:
             items = []
             for ln in body.splitlines():
                 ln = ln.strip()

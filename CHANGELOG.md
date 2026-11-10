@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.5.0 — 2026-11-10
+
+牛客面经真题落成正式题卡 **55 道**，题库 893 → **948**（全部有答案）。新增每周自动增量采集。
+
+### 入库清单（全部口述稿体 + 出现记录表）
+
+| 来源 | 题数 | 覆盖 |
+|---|---|---|
+| 华为 Linux 一/二面 | 17 | epoll、futex、TIME_WAIT×2、死锁、读写锁、TCP 拥塞、volatile/原子/屏障、COW、手撕回文 |
+| 地平线嵌入式/CAN | 13 | U-Boot、SocketCAN、DMA+Cache 一致性、CMA、Bus-Off、probe、Tasklet、中断上下半部、单核抢占 |
+| 华为 AI 笔试概念 | 13 | Sigmoid、残差、KV Cache 显存、QKV 合并、量化配合、ReAct、Agent 工具、过拟合对策、误差限 |
+| 小鹏深度学习平台 | 7 | H100/B200 与 Prefill/Decode、DDP/Ring All-Reduce、DDP vs DP、KubeVirt、Pod 链路、异构算力、推理接口 |
+| 华为机考编程题 | 3 | KV 调度模拟（150 分题，题面全文重建+完整解法）、大数加法、纸张打印贪心 |
+| 小鹏云原生 | 2 | KubeVirt/Kata、Pod 创建链路（并入 deploy） |
+
+### 机制
+
+- 新增 `source_type: nowcoder`，`nc_url` 字段；`fill.py` 支持 `@APPEAR` 节 → 正文「出现记录」表 + 前端 `appearances`
+- 号段：nowcoder 来源 = 各模块 base+201 起（04_algo 用 1921+，避开 ACM 读写段）
+- 骨架 `tools/seed_nc.py`（幂等）+ 正文 `tools/cards/nc_*.cards`（5 个卡文件）
+- **每周一 9:00 自动化**：`--feed 40 → --fetch 30 → --build → validate → commit/push`，合规红线写进任务提示词
+- `validate.py`：`source_type` 允许 `nowcoder`
+
+### 真题亮点
+
+- KV 缓存批处理调度（华为 150 分题）：题面从面经帖全文重建，含完整模拟代码与自构样例
+- 小鹏 DDP 题：面试官强调的 DDP vs DP 区别、no_sync 梯度累积、Ring All-Reduce 均摊公式
+- 华为量化题：INT4 先救显存、Decode 带宽敏感才受益于 KV 低比特——四个选项逐一纠错
+
 ## v1.4.0 — 2026-11-10
 
 牛客面经采集器落地（`tools/nc_collect.py`），首轮 13 帖 → **97 道真题摘要**入库。

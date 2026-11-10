@@ -1,0 +1,290 @@
+@@ Q-1201
+@STEM
+**背景**：单机要同时盯着上万个连接，早期用 `select`/`poll`，连接数一上来 CPU 全耗在轮询上。
+**问**：select、poll、epoll 有什么区别？epoll 为什么高效？
+@ANSWER
+三者都是 IO 多路复用。`select` 用 fd 位图，上限 1024，每次调用都要全量拷贝进内核并线性扫一遍；`poll` 用数组去掉了上限，但仍然是全量拷贝加 O(n) 扫描。epoll 把"管 fd"和"等事件"拆开：`epoll_ctl` 把 fd 挂进内核红黑树（只注册一次），事件到达时内核回调把就绪 fd 挂到就绪链表，`epoll_wait` 只返回就绪的那几个。所以注册是 O(1) 一次性的，等待返回 O(就绪数) 而不是 O(总连接数)，连接多但活跃少时优势最大。
+@DEEP
+| 维度 | select | poll | epoll |
+|---|---|---|---|
+| fd 上限 | 1024 | 数组，无硬上限 | 无硬上限 |
+| 每次调用 | 全量拷贝+全量扫描 | 全量拷贝+全量扫描 | 只返回就绪链表 |
+| 内核数据结构 | 位图 | 数组 | 红黑树 + 就绪链表 |
+| 复杂度 | O(n) | O(n) | O(1) 注册 + O(就绪) 等待 |
+
+工作模式：LT（水平触发，没读完会一直提醒，默认）与 ET（边缘触发，只提醒一次，必须配非阻塞 fd 一次读完）。
+@FOLLOW
+1. ET 和 LT 的区别？ET 为什么必须配非阻塞 fd？——ET 只通知一次，阻塞 fd 读不完会卡死在这次读上
+2. epoll_wait 返回的 events 里怎么知道哪个 fd 出了什么事？
+3. nginx/redis 用的是 LT 还是 ET？——nginx ET，redis LT
+@TRAPS
+- 说 epoll"比 select 快"却说不出原因；关键是回调 + 就绪链表，把扫描从 O(n) 降到 O(就绪)
+- 忘了 epoll 只在 Linux 有，跨平台要 poll/kqueue/IOCP
+@RELATED
+- `Linux操作系统速通教程` §网络编程；`华为机考` 无关
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1202
+@STEM
+**背景**：`p = malloc(64)` 用完后 `free(p)`，有人发现 free 之后 `p[0]` 还能读出旧值，得出"free 不清内存"的结论。
+**问**：free 之后的内存还能继续访问吗？会发生什么？
+@ANSWER
+能访问到，但这是未定义行为。free 之后这块内存的所有权交还给分配器，glibc 会把它串进空闲链表（bin），并在块头部写管理信息，所以原来的一部分数据会被覆写。程序可能看起来正常——旧值还在，也可能随机崩溃——尤其后面又有 malloc 复用这块内存时。这就是 use-after-free：能不能复现完全看分配器的状态，最危险的是"测试时没事，上线就炸"。正确做法是 free 后立刻置 `p = NULL`，或直接用智能指针。
+@DEEP
+- glibc free 做的事：合并相邻空闲块、按大小入 bin（tcache/fastbin/unsorted）、在块内写 fd/bk 等管理字段
+- "free 不清零"是性能取舍：清零要多一遍内存写，大块内存代价明显
+- double free 会破坏 bin 链表，glibc 有 tcache double-free 检测，但绕过手段也存在
+@FOLLOW
+1. 为什么 free 不顺手清零内存？——性能；清零是 calloc 的职责
+2. 怎么在工程上防 use-after-free？——置空、智能指针、ASan
+3. 野指针和悬垂指针的区别？
+@TRAPS
+- 说"free 之后内存被回收所以读不到"——读得到，只是不该读
+- 把 UB 说成"一定会段错误"
+@RELATED
+- `C++面向对象_从零手写教程` §智能指针
+@SOURCE
+牛客面经 华为·Linux 软件开发·一面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 一面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1203
+@STEM
+**背景**：面试官在纸上写了 `struct { char a; int b; char c; }`，让你算 sizeof，再问能不能改成员顺序让它更小。
+**问**：结构体大小怎么算？怎么调整成员排布更省内存？
+@ANSWER
+两条对齐规则：每个成员的偏移量必须是"自身对齐数"（默认为自身大小，可被 pack 修改）的整数倍；整个结构体大小必须是最大成员对齐数的整数倍。上面那个结构体：a 占 0，b 要对齐到 4，跳 3 字节占 4–7，c 占 8，再补齐到 4 的倍数 → 12 字节。省内存的办法是按对齐数从大到小排成员：`int b; char a; char c;` 变成 8 字节。本质是让填充洞集中在尾部而不是散在中间。
+@DEEP
+```c
+struct A { char a; int b; char c; };  // 1+3(洞)+4+1+3(尾) = 12
+struct B { int b; char a; char c; };  // 4+1+1+2(尾)    = 8
+```
+- `#pragma pack(1)` 可以关对齐，但成员可能跨缓存行/总线，ARM 上非对齐访问可能直接异常，网络协议解析除外一般别用
+- 缓存行（64B）视角：热成员放前 64 字节，读写频繁的成员分开放避免伪共享
+@FOLLOW
+1. 为什么需要内存对齐？——CPU 按字长访问，非对齐要么多次访问要么硬件不支持
+2. `sizeof(struct)` 和各成员 sizeof 之和为什么不相等？
+@TRAPS
+- 只背"4 的倍数"不区分成员各自的对齐数；long 在 64 位 Linux 是 8 字节
+- 忘了整体也要对齐到最大成员的倍数
+@RELATED
+- `C++程序设计速通` §内存对齐
+@SOURCE
+牛客面经 华为·Linux 软件开发·一面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 一面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1204
+@STEM
+**背景**：两个线程各跑一百万次 `counter++`，结果经常不到两百万。
+**问**：为什么多线程需要锁？不加锁在 CPU 层面具体会出什么问题？
+@ANSWER
+`counter++` 不是一条指令，是"读内存→寄存器加一→写回"三步。两个核可以同时读到同一个旧值，各自加一后写回，两次自增只生效一次——丢失更新。根源是"读改写"不是原子的，而 CPU 的缓存一致性（MESI）只保证单个 store 的可见顺序，不保证三步之间不被插入。锁的本质是把这段"读改写"序列变成临界区：拿不到锁的线程等在门口，保证同一时刻只有一个线程执行完整序列。要么用锁，要么把三步压成一条原子指令（`lock inc`/CAS）。
+@DEEP
+- 三步在 x86 上对应 load、add、store；`lock add` 用缓存锁（现代 CPU 不再锁总线）保证读改写原子
+- 即使加 volatile 也救不了：它只管编译器优化，不管三步之间被插入
+- 数据竞争在 C/C++ 里是 UB，不是"结果错一点"
+@FOLLOW
+1. `i++` 改成 `++i` 有用吗？——没有，还是三步
+2. 原子变量和锁怎么选？——单变量用 atomic，复合逻辑用锁
+@TRAPS
+- 把问题归咎于"缓存不一致"——MESI 恰恰保证一致，问题是操作序列不是原子的
+- 认为单核就不会出问题——线程切换同样可以插在三步中间
+@RELATED
+- `C++高级特性教程` §多线程
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1205
+@STEM
+**背景**：一台短连接压测网关，netstat 里几万个 TIME_WAIT，新连接偶尔报 `Cannot assign requested address`。
+**问**：大量 TIME_WAIT 是什么原因？怎么处理？
+@ANSWER
+TIME_WAIT 出现在**主动关闭**的一方，等 2MSL 后才消失。大量出现说明本机在高频主动断连接——典型是短连接：每次 HTTP 请求建一条 TCP、用完就关。危害是占端口和内存，客户端侧还会耗尽临时端口。处理顺序：先治本——改长连接（连接池/keep-alive），这是唯一正解；治标——服务端 `SO_REUSEADDR` 让绑定不等 TIME_WAIT，客户端开 `tcp_tw_reuse` 复用出方向连接、扩大 `ip_local_port_range`。`tcp_tw_recycle` 别提，NAT 下会出事，内核 4.12 已移除。
+@DEEP
+| 手段 | 作用 | 注意 |
+|---|---|---|
+| 长连接/连接池 | 治本，减少主动关闭 | 首选 |
+| SO_REUSEADDR | 服务端重启立即绑端口 | 只影响 listen 绑定 |
+| tcp_tw_reuse | 客户端复用出站 TIME_WAIT | 要开时间戳 |
+| ip_local_port_range | 扩大临时端口 | 缓解不是解决 |
+@FOLLOW
+1. 为什么 TIME_WAIT 在主动关闭方而不是被动方？
+2. 服务端大量 CLOSE_WAIT 说明什么？——自己忘了 close，代码 bug
+@TRAPS
+- 把 TIME_WAIT 归罪于服务端——主动关闭方才进 TIME_WAIT
+- 建议开 tcp_tw_recycle——NAT 环境丢连接，已从内核移除
+@RELATED
+- `Linux操作系统速通教程` §网络
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1206
+@STEM
+**背景**：接着 TIME_WAIT 问下去：为什么主动关闭方要停这么久？为什么恰好是 2MSL？
+**问**：TIME_WAIT 为什么要存在？为什么等 2MSL？
+@ANSWER
+两个目的，各占一个 MSL。第一，保证最后一个 ACK 可靠送达：主动关闭方发完最后 ACK 就走的话，如果这个 ACK 丢了，对端会重传 FIN，没人应答它就只能 RST 收场，正常关闭流程走不完——留在 TIME_WAIT 就能重发 ACK。第二，让本连接的旧报文在网络里自然消亡：MSL 是报文的最大存活时间，等 2MSL 后旧连接的延迟报文必定已死，不会串进复用同四元组的新连接。所以时长 = "一来一回最多 2MSL"。
+@DEEP
+- MSL 典型 30 秒（Linux `TCP_LINGER2`/`ip_frag` 相关，RFC 建议 2 分钟）
+- 想缩短：`SO_LINGER` 强制 RST 关闭（不推荐，丢数据风险）
+- 四元组复用其实有 tcp_tw_reuse + 时间戳这条正路
+@FOLLOW
+1. 如果最后一个 ACK 确认丢了，被动方会怎样？——重传 FIN，最多重试几次后放弃
+2. 为什么不用"等对端 ACK 我的 ACK"？——ACK 本身不会被 ACK，会无限递归
+@TRAPS
+- 只答"防止旧报文"漏了可靠关闭那一半
+- 把 MSL 说成 TTL——TTL 是跳数，MSL 是时间
+@RELATED
+- `Linux操作系统速通教程` §网络
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1207
+@STEM
+**背景**：线上服务跑了三天 RSS 从 200MB 涨到 2GB，还没 OOM，要求说一套完整的排查流程。
+**问**：进程内存一直涨，怎么定位是哪里泄漏？
+@ANSWER
+先确认是不是真泄漏：看 `/proc/<pid>/status` 的 RSS 和 `pmap -x` 按段分类——堆涨是 malloc 类泄漏，匿名 mmap 涨可能是 glibc arena 或大块 mmap 没释放，差距大说明另有原因。然后选工具：能重新编译就用 AddressSanitizer，开发环境最准；不能重编译就用 valgrind memcheck 跑核心场景（慢十倍但能报出泄漏点的分配栈）；线上常驻服务用 jemalloc/tcmalloc 的 heap profile，定期 diff 两张快照找"只增不减"的调用栈。最后修复并复跑同样负载确认曲线走平。我自己的 Linux 日志工具就遇到过一次 buffer 忘 free，是靠 valgrind 的 definitely lost 报告定位的。
+@DEEP
+| 工具 | 场景 | 代价 |
+|---|---|---|
+| ASan | 可重编译，开发期 | 慢 ~2x，内存 ~3x |
+| valgrind | 不能重编译、离线复现 | 慢 10-20x |
+| jemalloc prof | 线上常驻、低开销 | 需链接替换分配器 |
+| pmap / smaps | 先分清堆/mmap/栈 | 零成本 |
+@FOLLOW
+1. valgrind 的原理？——替换 malloc/free 并记账，退出时扫"无主"块
+2. glibc 的 free 内存为什么 RSS 不下降？—— ptmalloc 保内存池，brk 收缩有阈值
+@TRAPS
+- 上来就说 valgrind，不先分清 RSS 里涨的是堆还是 mmap
+- 忽略"内存池不还"与真泄漏的区别
+@RELATED
+- `方向与规划/项目/Linux日志分析工具`（自己项目里真实修过一次泄漏）
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1208
+@STEM
+**背景**：代码里有多把锁，偶发卡死，面试官让你从条件讲到工程手段。
+**问**：死锁的四个必要条件是什么？项目里怎么避免、怎么检测？
+@ANSWER
+四个必要条件：互斥、持有并等待、不可剥夺、循环等待——破坏任意一个就不会死锁。工程上最常用的是破坏循环等待：全项目规定锁的全局顺序，大家都按同一顺序加锁；其次用 trylock 拿不到就释放已有锁重试。检测方面，开发期开 lockdep（内核）或 ThreadSanitizer（用户态），它们按"锁获取历史"建图找环；线上可以用 pstack/gdb 连续抓几秒栈，看两个线程是否各自持着对方要的锁不动。我项目里多个传感器线程共享一个数据缓冲，就是规定"先拿设备锁再拿缓冲锁"避免的。
+@DEEP
+- 检测-恢复型数据库用等待图（wait-for graph），发现环就牺牲一个事务
+- trylock+回退会引入活锁，要加随机退避
+@FOLLOW
+1. 活锁和死锁的区别？
+2. 两个锁的顺序在两个函数里相反，怎么系统性发现？——锁序检查工具/代码评审约定
+@TRAPS
+- 四个条件漏"不可剥夺"
+- 只会说"避免死锁"，说不出检测手段
+@RELATED
+- `C++高级特性教程` §多线程
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1209
+@STEM
+**背景**：面试官往深处追：pthread_mutex_lock 无竞争时也要进内核吗？睡着的线程记在哪？
+**问**：互斥锁在内核里怎么实现？加锁失败的线程去哪了？
+@ANSWER
+Linux 的 mutex 底层是 futex（fast userspace mutex）。无竞争时根本不进内核：用户态一条 CAS 把锁从 0 改成 1 就返回，这是快路径。CAS 失败说明有人抢，线程才调 `futex_wait` 陷入内核，被挂到与这个锁地址关联的内核等待队列上睡觉；解锁方发现还有 waiter，调 `futex_wake` 醒一个。所以"加锁失败的线程"睡在内核等待队列里，让出 CPU，醒来后还要再抢一次（可能被插队）。设计要点就是把"大概率无竞争"留在用户态，系统调用只在真正竞争时发生。
+@DEEP
+- 锁字面上有三个状态位：无主 / 有主无 waiter / 有主有 waiter，决定解锁时要不要 syscall
+- 自旋等待一小段再 futex_wait 是常见优化（自适应 mutex）
+@FOLLOW
+1. 为什么快路径要避免系统调用？——syscall+上下文切换是微秒级，CAS 是纳秒级
+2. futex 怎么把"用户态地址"映射到内核等待队列？——按物理页+offset 哈希
+@TRAPS
+- 说 mutex 一定走内核——无竞争时只有用户态原子操作
+- 说失败的线程"忙等"——那是自旋锁
+@RELATED
+- `Linux操作系统速通教程` §线程
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1210
+@STEM
+**背景**：一个配置表 99% 是读、1% 是写，用 mutex 后读并发上不去。
+**问**：读写锁和互斥锁有什么区别？什么场景读写锁反而更慢？
+@ANSWER
+mutex 是"独占"：读写都互斥。读写锁分两半：读锁共享（多个读者并行）、写锁独占，适合读多写少。但三类场景读写锁反而更慢：一是临界区极短——锁本身的开销（原子操作、可能的内核等待）比保护的那几行代码还贵，不如直接 mutex 甚至无锁；二是写不稀疏——写者一来全体读者散场，频繁写等于频繁清场；三是读者集中在同一个 readerCount 变量上原子加，核多时这条缓存行被打爆（伪共享式竞争）。另外朴素实现写者可能饿死，要选写优先或公平的实现。临界区真的很短时，RCU 或 seqlock 是更彻底的答案。
+@DEEP
+- pthread_rwlock 默认实现弱写优先；C++17 `shared_mutex` 同理
+- 判断标准：读锁临界区 < 一次原子操作的两倍开销时，读写锁是负收益
+@FOLLOW
+1. RCU 为什么读端零开销？——读者不改共享数据，写者复制后原子换指针
+2. 读写锁的写者饥饿怎么解决？
+@TRAPS
+- 认为"读写锁一定比 mutex 快"——锁开销占比才是决定因素
+- 忽略 readerCount 这条缓存行的竞争
+@RELATED
+- `C++高级特性教程` §多线程
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1211
+@STEM
+**背景**：面试官把两个机制放一起问：滑动窗口管流量，拥塞控制也控制发送速率，它们怎么共存？
+**问**：TCP 滑动窗口和拥塞控制是怎么配合工作的？
+@ANSWER
+两个窗口各管一件事：接收窗口 rwnd 是对端的胃口——接收缓冲区剩余多少，防的是把对方撑死；拥塞窗口 cwnd 是网络的胃口——本端探测出来的网络容量，防的是把路挤死。真正能发多少取**两者较小值**：发送窗口 = min(rwnd, cwnd)。数据流是这样配合的：每收到一个 ACK，滑动窗口右移一格（新数据确认，可发新数据），同时拥塞控制按当前阶段调整 cwnd（慢启动翻倍、拥塞避免加一、丢包减半）；rwnd 则随对端应用取走数据的快慢实时变化，会出现在每个 ACK 里反向通告。
+@DEEP
+- 发送方维护：已发送未确认（in-flight）≤ min(rwnd, cwnd)
+- 双方都可能成为瓶颈：对端应用读得慢 → rwnd 收缩；网络丢包 → cwnd 收缩
+@FOLLOW
+1. 零窗口怎么办？——坚持定时器周期性发窗口探测
+2. cwnd 是共享的还是每连接的？——每连接；rdma/QUIC 各有自己的实现
+@TRAPS
+- 把两个窗口说成一个东西
+- 忘了"取 min"
+@RELATED
+- `Linux操作系统速通教程` §网络
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验
+
+@@ Q-1212
+@STEM
+**背景**：接着拥塞控制问：既然丢包才减窗口，为什么一开始不直接把窗口开满？
+**问**：拥塞控制的几个阶段分别在干什么？为什么要有慢启动？
+@ANSWER
+四个阶段：慢启动——cwnd 从很小值起步，每 RTT 翻倍，指数探测；到 ssthresh 后进拥塞避免——每个 RTT 只加 1，线性试探；发生超时丢包——ssthresh 砍到当前 cwnd 一半，cwnd 重回 1，重新慢启动；收到 3 个重复 ACK——快重传立即重发丢失段，随后快恢复：ssthresh 减半、cwnd 从减半值继续拥塞避免（不回到 1）。慢启动存在的原因是发送方**没有先验信息**：网络可用带宽无法直接询问，只能探测；指数增长是"尽快逼近容量又不过冲太多"的折中。一句话：慢启动不慢，它慢在起点、快在斜率。
+@DEEP
+| 阶段 | cwnd 变化 | 触发 |
+|---|---|---|
+| 慢启动 | 每 RTT ×2 | cwnd < ssthresh |
+| 拥塞避免 | 每 RTT +1 | cwnd ≥ ssthresh |
+| 快重传/快恢复 | 减半后线性 | 3 个重复 ACK |
+| 超时 | 重回 1 | RTO 到期 |
+@FOLLOW
+1. BBR 和这套路数有什么本质区别？——BBR 测带宽与 RTT 建模，不依赖丢包信号
+2. 高带宽长延迟网络为什么慢启动吃亏？——一个 RTT 才翻一次，起步浪费大
+@TRAPS
+- 说慢启动"很慢"——它是指数增长，名字指的是起点低
+- 混淆快重传（3 dup ACK）与超时重传的后续处理
+@RELATED
+- `Linux操作系统速通教程` §网络
+@SOURCE
+牛客面经 华为·Linux 软件开发·二面：https://www.nowcoder.com/discuss/947059125291118592
+@APPEAR
+2026-11-10 抓取 | 华为 | Linux 软件开发 | 二面 | https://www.nowcoder.com/discuss/947059125291118592 | 社区经验

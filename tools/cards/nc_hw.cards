@@ -1,0 +1,183 @@
+@@ Q-4301
+@STEM
+**背景**：拿到一块新板子，上电到 Linux 起来中间那几秒是黑盒，面试官让你把这段讲透。
+**问**：U-Boot 在 Linux 启动过程中负责哪些工作？典型启动流程是什么？
+@ANSWER
+整条链路是：芯片内 ROM → SPL（二级程序加载器）→ U-Boot proper → 内核。ROM 只认片内 SRAM，所以 SPL 的任务是最小化初始化——配时钟、初始化 DDR——然后把真正的 U-Boot 搬进内存跑。U-Boot proper 接管后做四件事：一是把硬件配齐（DDR、时钟、串口、存储控制器、网口）；二是从 eMMC/NAND/SPI/网络里把内核镜像 zImage 和设备树 DTB 加载到内存指定地址；三是准备启动参数，主要是 bootargs（console、root 位置、rootfs 类型）写进寄存器或 DTB 的 chosen 节点；四是跳转到内核入口，把机器 ID 或 DTB 地址按启动协议传过去。之后内核自解压、初始化、挂 rootfs、起 init，控制权交给用户态。
+@DEEP
+| 阶段 | 运行位置 | 职责 |
+|---|---|---|
+| Boot ROM | 片内 ROM | 读 SPL，验签 |
+| SPL | 片内 SRAM | 最小初始化 + 加载 U-Boot |
+| U-Boot proper | DDR | 完整驱动、加载内核/DTB |
+| Linux | DDR | 自解压、挂根文件系统 |
+
+- `bootz ${kernel_addr} - ${fdt_addr}`：中间的 `-` 是占位，表示不传 initrd
+- 安全启动：ROM/SPL/每级验签下一级，U-Boot 可关闭 JTAG、锁 OTP
+@FOLLOW
+1. DTB 是干嘛的？——描述硬件的树，内核不再硬编码板级信息
+2. bootargs 里 root= 起什么作用？——告诉内核根文件系统在哪
+@TRAPS
+- 只答"引导内核"——要能拆出 SPL 这一阶段
+- 忽略 U-Boot 还负责传 bootargs
+@RELATED
+- `单片机原理图与PCB` §启动；`嵌入式通信总线协议教程`
+@SOURCE
+牛客面经 地平线·嵌入式软件·一面：https://www.nowcoder.com/discuss/945100596145553408
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 一面 | https://www.nowcoder.com/discuss/945100596145553408 | 社区经验
+
+@@ Q-4302
+@STEM
+**背景**：Linux 上调试 CAN，面试官问用户空间那一层怎么写。
+**问**：SocketCAN 在用户空间怎么收发 CAN 报文？过滤器怎么设？
+@ANSWER
+SocketCAN 把 CAN 接口包装成网络套接字。收发的套路是：`socket(AF_CAN, SOCK_RAW, CAN_RAW)` 创建原始套接字，`ioctl(SIOCGIFINDEX)` 拿到 can0 的接口索引，`bind` 绑上去；之后每帧就是 `struct can_frame`——11 位（或 29 位扩展）的 can_id、8 字节以内的 DLC 和 data，`read/write` 直接收发，像操作 UDP 一样。过滤器有两种设置方式：运行时 `setsockopt(CAN_RAW_FILTER)` 传一个 `can_filter` 数组，每项是 can_id + can_mask，内核按"收到的 id & mask == filter.id & mask"逐条匹配，命中才投递；也可以用 setsockopt 关过滤收全量。过滤器在内核态生效，用户态 read 之前就被筛掉了，这是它比"收全量再软件筛"高效的原因。
+@DEEP
+```c
+struct can_filter rfilter[1];
+rfilter[0].can_id   = 0x123;
+rfilter[0].can_mask = CAN_EFF_FLAG | CAN_RTR_FLAG | 0x7FF;
+setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+```
+- can_mask 里被置 1 的位才参与比较；把 RTR/EFF 标志位也算进 mask
+- 发送：`write(s, &frame, sizeof(frame))`；帧结构 8 字节上限是 CAN 经典帧的硬约束
+@FOLLOW
+1. CAN FD 的帧结构差在哪？——DLC 最大 64 字节，用 canfd_frame
+2. 多个进程同时 bind can0 会互相抢帧吗？——各套接字独立收一份，类似组播
+@TRAPS
+- 用 `read` 收全量再在应用层过滤——内核过滤器白给的性能不要
+- mask 忘了含 EFF/RTR 标志位，扩展帧被莫名丢弃
+@RELATED
+- `嵌入式通信总线协议教程` §CAN
+@SOURCE
+牛客面经 地平线·嵌入式软件·一面：https://www.nowcoder.com/discuss/945100596145553408
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 一面 | https://www.nowcoder.com/discuss/945100596145553408 | 社区经验
+
+@@ Q-4303
+@STEM
+**背景**：CAN 驱动用 DMA 从控制器搬报文，偶尔收到旧数据或脏数据。
+**问**：CAN 驱动用 DMA 要注意什么？Cache 一致性怎么处理？
+@ANSWER
+核心问题是 CPU 的 Cache 和 DMA 控制器互相看不见：DMA 直接读写内存，绕过 Cache。两种翻车方式——CPU 刚把接收缓冲写过一遍还在 Cache 里没落盘，DMA 读到的是内存里的旧值；反过来 DMA 写完新报文，CPU 读时命中 Cache 里的旧值。处理分两条路。一致性映射：用 `dma_alloc_coherent` 分配的缓冲本身是 uncached/同步属性，两边看到的一直是同一份，适合长期复用的环形缓冲区。流式映射：普通内存用 `dma_map_single` 交给 DMA，方向是"设备读"就在启动前 `dma_sync_single_for_device` 让 Cache 失效落盘，方向是"设备写"就在读之前 `dma_sync_single_for_cpu` 让 CPU 的旧 Cache 行作废——每轮都要同步，方向不能搞反。
+@DEEP
+| 方案 | API | 适用 |
+|---|---|---|
+| 一致性映射 | dma_alloc_coherent | 长期复用缓冲（描述符环） |
+| 流式映射 | dma_map_single + sync_* | 单次收发缓冲 |
+
+- 第三条路是硬件 IOMMU/IO-coherent 互联，SoC 一致则软件零成本，先查 datasheet
+- 缓冲区要按 cache line 对齐，避免相邻数据被误伤
+@FOLLOW
+1. coherent 内存为什么慢？——通常映射成非缓存，CPU 访问不走 Cache
+2. 什么叫"方向搞反会怎样"？——该 invalidate 的做了 clean，旧值反而被写回
+@TRAPS
+- 忘了每轮 sync，只在分配时映射一次
+- 用 vmalloc 内存做 DMA——物理不连续
+@RELATED
+- `嵌入式通信总线协议教程` §CAN/DMA
+@SOURCE
+牛客面经 地平线·嵌入式软件·二面：https://www.nowcoder.com/discuss/945100814861815808
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 二面 | https://www.nowcoder.com/discuss/945100814861815808 | 社区经验
+
+@@ Q-4304
+@STEM
+**背景**：现场设备 CAN 驱动偶发 Kernel Panic，重启后日志没了，无法稳定复现。
+**问**：CAN 驱动突然 Kernel Panic，你怎么定位？
+@ANSWER
+分三步。第一步是**留住现场**：内核 panic 后默认不落盘，要提前配 pstore/ramoops，把 oops 写进保留内存，重启后从 `/sys/fs/pstore` 拿回完整寄存器与调用栈；没有 pstore 就串口抓 console。第二步是**解符号**：拿 PC 地址和栈回溯里的地址，用 `addr2line -e vmlinux` 或 `objdump -d` 定位到函数和行号，前提是内核编译时带 KALLSYMS 和调试信息，版本必须与现场一致。第三步是**收敛根因**：CAN 驱动常见嫌疑是中断处理里访问已释放的缓冲、DMA 映射没同步就读、错误计数路径的空指针；按嫌疑点加日志、开 KASAN/lockdep 在复现环境压测。我自己的经验是把"随机 Panic"变成"必现"才是突破口——用故障注入（断线、高负载、错误帧风暴）逼近现场条件。
+@DEEP
+- pstore/ramoops 原理：DT 里预留一段 RAM，panic 时内核把 console/oops 写进去，复位不擦除
+- `CONFIG_KASAN` 找越界/UAF，`CONFIG_LOCKDEP` 找锁序问题；两者开销大只上复现机
+@FOLLOW
+1. 拿到的只有地址没有 vmlinux 怎么办？——用同版本内核 + KALLSYMS 的 System.map 粗定位
+2. panic 和 oops 的区别？——oops 之后进程被杀系统还能跑，panic 直接停机
+@TRAPS
+- 现场重启用 printk 复现——日志早丢了，先配 pstore
+- 用了和现场不同配置的 vmlinux 解符号，行号全错
+@RELATED
+- `Linux操作系统速通教程` §调试
+@SOURCE
+牛客面经 地平线·嵌入式软件·二面：https://www.nowcoder.com/discuss/945100814861815808
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 二面 | https://www.nowcoder.com/discuss/945100814861815808 | 社区经验
+
+@@ Q-4305
+@STEM
+**背景**：CAN 环形缓冲区想要 4MB 物理连续内存，kmalloc 申请失败，面试官问还有什么办法。
+**问**：给 DMA 申请大块连续内存有哪些方式？CMA 是什么？
+@ANSWER
+先说为什么难：系统跑久了物理内存被打碎，kmalloc 走伙伴系统要**物理连续**，大块很难凑出来。常规选项：kmalloc 适合小块；`__get_free_pages` 最高也就按 2^MAX_ORDER（一般 4MB）碰运气；vmalloc 是**虚拟连续、物理不连续**，CPU 访问没问题但普通 DMA 不能直接用。正解是 CMA——连续内存分配器：启动时从内存里划出一大块预留区，平时它允许被可移动页借用来当普通内存，等驱动要大块物理连续内存时，把借用的页迁走、腾出整块交给 DMA。驱动侧 `dma_alloc_coherent` 的底层就接在 CMA 上。设备树里用 reserved-memory 节点配置大小，内核参数 `cma=64M` 也能指定。代价是启动参数要规划好，划多了浪费内存、划少了照样分配失败。
+@DEEP
+- CMA 关键字：MIGRATE_CMA 页迁移类型；"平时可借、用时搬走"
+- IOMMU 存在时，物理不连续也能 DMA——映射 IOMMU 页表即可，很多现代 SoC 走这条路
+@FOLLOW
+1. CMA 的内存能被普通应用用到吗？——能， movable 页优先落在 CMA 区
+2. dma_alloc_coherent 和 CMA 什么关系？——大体量分配走 CMA，小量走池
+@TRAPS
+- 说 vmalloc 也能给 DMA 用——物理不连续，除非有 IOMMU
+- 忘了 CMA 是"预留但可借"，说成"完全浪费一段内存"
+@RELATED
+- `嵌入式通信总线协议教程` §DMA
+@SOURCE
+牛客面经 地平线·嵌入式软件·二面：https://www.nowcoder.com/discuss/945100814861815808
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 二面 | https://www.nowcoder.com/discuss/945100814861815808 | 社区经验
+
+@@ Q-4306
+@STEM
+**背景**：总线上有节点掉线又自己恢复，面试官从错误帧一路问到 Bus-Off。
+**问**：CAN 总线的错误处理有哪些？Bus-Off 是什么？怎么恢复？
+@ANSWER
+CAN 的可靠性靠错误计数器驱动三个状态。每个节点有发送错误计数 TEC 和接收错误计数 REC：正常态（error active）可以主动发错误帧；错误计满 128 进入 error passive，只能发隐性错误帧、不得主动打扰总线；再涨到 256 就进 Bus-Off——控制器与总线逻辑断开，节点既不发也不收，防止一个坏节点拖垮全网。恢复机制是硬件定义的：Bus-Off 后控制器监测总线，连续检测到 128 次 11 位隐性位（约等于 128 帧空闲）后错误计数清零、允许重新加入；软件层面驱动可以设 `restart-ms` 让内核定时器自动重启控制器，或应用层显式 `ip link set can0 type can restart`，重启时要重新初始化波特率和过滤器。工程上还要记日志——频繁 Bus-Off 说明有节点在发坏帧或波特率不匹配。
+@DEEP
+| 状态 | TEC/REC | 行为 |
+|---|---|---|
+| error active | <128 | 正常，可发主动错误帧 |
+| error passive | 128–255 | 只发被动错误帧 |
+| bus off | ≥256 | 离线，等恢复条件 |
+
+- 错误帧由硬件自动发送，软件只读计数（`ip -details -s link show can0`）
+@FOLLOW
+1. 怎么区分是硬件问题还是软件问题？——看错误计数走势与是否固定某节点
+2. MRP/Master 对 Bus-Off 的兜底？——上层超时 + 周期重发（结合西门子杯项目讲）
+@TRAPS
+- 说 Bus-Off 后节点"立即自动恢复"——要等 128×11 隐性位，或软件干预
+- 只答协议计数，没提驱动层的 restart 流程
+@RELATED
+- `方向与规划/项目/西门子杯`（PROFINET/MRP 环网容错实践）
+@SOURCE
+牛客面经 地平线·嵌入式软件·二面：https://www.nowcoder.com/discuss/945100814861815808
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 二面 | https://www.nowcoder.com/discuss/945100814861815808 | 社区经验
+
+@@ Q-4307
+@STEM
+**背景**：写平台驱动时总要实现一个 probe 函数，面试官问它是被谁、什么时候调的。
+**问**：驱动里的 probe 函数负责什么？设备和驱动怎么匹配？
+@ANSWER
+probe 是"设备与驱动配对成功后"驱动的入口，负责把这个设备真正带起来：从设备树/ACPI 读硬件资源（寄存器地址 reg、中断号 interrupts、时钟 clocks），`platform_get_resource`/`devm_platform_ioremap_resource` 映射寄存器，申请中断并挂处理函数，使能时钟，初始化硬件，最后注册到子系统（字符设备、net_device、can_netdev 等），并把私有数据 `platform_set_drvdata` 存好供其他回调取用。匹配机制在总线层：`driver_register` 把驱动挂到总线的驱动链表，每来一个设备（`device_register`，通常由设备树解析产生）就调用总线的 match 函数——平台总线最常见的是拿设备的 compatible 字符串去对驱动的 of_match_table，对上就调 probe；匹配失败就等下一个驱动。probe 里几乎都要用 devm_ 系列接口，绑定设备生命周期，remove 时自动释放。
+@DEEP
+```
+DT: compatible = "vendor,can"
+  → of_match_table 命中 → probe()
+      ioremap 寄存器 / request_irq / clk_prepare_enable
+      注册 can_netdev → 用户态 ifconfig can0 出现
+remove(): 反向释放
+```
+- 匹配优先级：of_match_table > id_table > driver.name
+- 推迟探测：依赖的时钟/供电没就绪返回 -EPROBE_DEFER，核心稍后重试
+@FOLLOW
+1. -EPROBE_DEFER 是什么场景？——依赖的 provider 还没注册
+2. probe 和 init 函数的区别？——init 注册驱动，probe 每个设备各调一次
+@TRAPS
+- compatible 写错一个字符，设备树不匹配 probe 永远不执行
+- 用非 devm 接口在 probe 里出错路径漏释放
+@RELATED
+- `Linux操作系统速通教程` §驱动
+@SOURCE
+牛客面经 地平线·嵌入式软件·二面：https://www.nowcoder.com/discuss/945100814861815808
+@APPEAR
+2026-11-10 抓取 | 地平线 | 嵌入式软件 | 二面 | https://www.nowcoder.com/discuss/945100814861815808 | 社区经验

@@ -1,0 +1,225 @@
+@@ Q-2301
+@STEM
+**背景**：深度学习平台有时要跑特定的老旧框架，需要强隔离环境——面试官问：怎么让 K8s 管理**虚拟机**？
+**问**：K8s、KVM 和 KubeVirt 是什么关系？还有别的强隔离方案吗？
+@ANSWER
+K8s 原生只会调度容器，不会管虚拟机；KubeVirt 是补上这块的扩展层。核心逻辑一句话：**VM inside Pod**——KubeVirt 通过 CRD 扩展 K8s 的 API（新增 VirtualMachine 等资源类型），把一台 KVM 虚拟机包装在一个 Pod 里运行：Pod 里有个 virt-launcher 容器，里面跑 QEMU/KVM 进程，虚拟机的生命周期就变成了 Pod 的生命周期，于是调度、网络、存储、配额这些 K8s 能力全部原样复用。要强隔离还有第二条路：Kata Containers——反过来做，让**容器**变得像虚拟机：容器接口不变，但每个 Pod 实际跑在独立的轻量虚拟机沙箱里，内核隔离。选型看需求：要跑完整客户机操作系统、老旧 CUDA/框架环境，用 KubeVirt；只是要更强的进程隔离，用 Kata 或 gVisor。
+@DEEP
+| 方案 | 形态 | 隔离强度 | 典型用途 |
+|---|---|---|---|
+| 普通容器 | 共享内核 | 弱 | 一般训练/推理 |
+| Kata | 容器接口 + VM 沙箱 | 强（内核级） | 多租户安全 |
+| KubeVirt | Pod 里跑 KVM 虚机 | 强（完整客户机） | 老旧框架、VM 遗产 |
+- 关键组件：virt-api（CRD 入口）、virt-controller（管 VMI→Pod）、virt-handler（节点侧守护）
+@FOLLOW
+1. KubeVirt 的虚拟机镜像怎么管？——PVC 挂磁盘镜像，容器只是启动器
+2. 性能损耗在哪？——虚拟化层 + 网络多一层封装，GPU 直通（VFIO）则接近裸机
+@TRAPS
+- 说 K8s 直接调度 KVM——中间必须有 KubeVirt 这层 CRD 扩展
+- 把 KubeVirt 和 Kata 混为一谈——一个是"Pod 里跑 VM"，一个是"VM 里跑容器"
+@RELATED
+- `05_deploy` Q-2302
+@SOURCE
+牛客面经 小鹏·深度学习平台研发·校招面试：https://www.nowcoder.com/discuss/945709685955395584
+@APPEAR
+2026-11-10 抓取 | 小鹏 | 深度学习平台研发 | 校招面试 | https://www.nowcoder.com/discuss/945709685955395584 | 社区经验
+
+@@ Q-2302
+@STEM
+**背景**：平台岗基础题：kubectl 提交一个 YAML 之后，到容器真正跑起来，中间发生了什么？
+**问**：请描述 Pod 的创建与调度链路，以及 Pause 容器的作用。
+@ANSWER
+链路五步：① `kubectl` 把 YAML 发给 API Server，经过认证、鉴权、准入控制后，把 Pod 对象写入 **etcd**——此时它只是个期望状态；② **Scheduler** 监听到未绑定的 Pod，按两阶段选节点：先过滤（资源够不够、亲和性、污点容忍），再打分（负载均衡、亲和权重），选出节点并绑定；③ 对应节点的 **kubelet** 监听到"这个 Pod 归我管"，调用容器运行时接口 **CRI**（containerd）拉镜像、创建容器；④ 网络由 **CNI** 插件分配 Pod IP；⑤ 容器起来后 kubelet 持续做探针和状态上报。Pause 容器是 Pod 里第一个被创建的特殊容器，它**持有网络命名空间**（还有 IPC 等），业务容器全部加入它的命名空间——这就是同一个 Pod 里容器能 localhost 互访的原因；Pause 还承担回收孤儿进程的 init 职责，它挂了整个 Pod 重建。
+@DEEP
+```
+kubectl → API Server(认证/鉴权/准入) → etcd
+        → Scheduler(过滤+打分) → 绑定节点
+        → kubelet → CRI(containerd) → CNI → 容器运行
+```
+- 控制循环思想：声明式期望状态 + 各组件 watch-and-reconcile
+@FOLLOW
+1. Scheduler 打分看什么？——资源均衡、镜像本地性、亲和权重
+2. 探针失败会怎样？——liveness 重启容器，readiness 摘出 Service 端点
+@TRAPS
+- 说 kubelet 直接调 Docker——中间是 CRI 抽象，运行时可换
+- 不知道 Pause 容器，答不出 Pod 内 localhost 互通的原理
+@RELATED
+- `05_deploy` Q-2301/Q-2303
+@SOURCE
+牛客面经 小鹏·深度学习平台研发·校招面试：https://www.nowcoder.com/discuss/945709685955395584
+@APPEAR
+2026-11-10 抓取 | 小鹏 | 深度学习平台研发 | 校招面试 | https://www.nowcoder.com/discuss/945709685955395584 | 社区经验
+
+@@ Q-2303
+@STEM
+**背景**：集群里同时有 A100、H100、4090，还有不同显存大小的卡。
+**问**：深度学习平台怎么管理异构算力？
+@ANSWER
+分层来管。**注册层**：每台节点跑 device plugin（NVIDIA 的 k8s-device-plugin），把 GPU 按型号、数量、显存上报成 K8s 的扩展资源（`nvidia.com/gpu`），节点再打上型号标签。**调度层**：靠节点标签 + 亲和性/污点把任务路由到对的卡——训练任务按需求选 H100，推理小任务落到 4090；不同代次卡不混部时用 taint/toleration 隔离。**切分层**：大卡切小用 MIG（A100/H100 硬件级切分，隔离最干净）或时间片 vGPU。**队列层**：平台自己的调度器（Volcano 之类）按队列优先级和资源类型排队，配合配额。核心思想是：把"卡的差异"变成"可调度的标签与资源"，让算法同学只声明需求，不关心落在哪张卡。
+@DEEP
+| 层 | 机制 | 解决 |
+|---|---|---|
+| 上报 | device plugin + 节点标签 | 卡在哪、是什么 |
+| 路由 | 亲和性/taint | 谁能用哪张卡 |
+| 切分 | MIG / vGPU | 大卡化小 |
+| 排队 | Volcano 队列 + 配额 | 公平与优先级 |
+@FOLLOW
+1. MIG 和 vGPU 的区别？——MIG 硬件隔离粒度固定，vGPU 驱动层时分
+2. 任务声明 `gpu: 1` 怎么保证落在想要的卡？——nodeSelector/affinity 配合型号标签
+@TRAPS
+- 只答"打标签"，说不出 device plugin 这层资源上报机制
+@RELATED
+- `05_deploy` Q-2302
+@SOURCE
+牛客面经 小鹏·深度学习平台研发·校招面试：https://www.nowcoder.com/discuss/945709685955395584
+@APPEAR
+2026-11-10 抓取 | 小鹏 | 深度学习平台研发 | 校招面试 | https://www.nowcoder.com/discuss/945709685955395584 | 社区经验
+
+@@ Q-2304
+@STEM
+**背景**：平台把训好的大模型包装成对外服务，面试官问接口怎么设计。
+**问**：推理服务的对外接口应该怎么设计？要考虑哪些点？
+@ANSWER
+按"协议—语义—工程"三层说。**协议**：内部同步链路用 gRPC（低延迟、强 schema），对外 REST 更通用；LLM 类生成接口必须支持**流式输出**（SSE/WebSocket），用户要的是逐 token 吐出而不是等 30 秒一次返回。**语义**：请求带模型版本号（灰度和回滚的基础）、温度等采样参数显式声明默认值；响应带 request_id 方便追踪。**工程**：长请求做**异步化**——提交任务返回 task_id，客户端轮询或回调，避免 HTTP 超时；接口幂等（同 request_id 重复提交不重复计费）；限流按租户配额；错误用结构化错误码而不是裸 500。最后一条平台视角的要点：**批处理是服务端内部的事**，对客户端暴露的应该是"一次请求一个结果"的简单语义，动态 batch 在服务内部攒，客户端无感。
+@DEEP
+```
+POST /v1/completions      → 同步，SSE 流式
+POST /v1/tasks            → 异步提交 → task_id
+GET  /v1/tasks/{id}       → 状态/结果
+错误体: {"code": "...", "message": "...", "request_id": "..."}
+```
+- 版本放 URL 还是 header？——大版本 URL 便于网关路由，小版本 header
+- 幂等键：客户端生成 request_id，服务端去重窗口内复用结果
+@FOLLOW
+1. 流式输出断线怎么办？——续传靠 task_id 拉取已生成部分
+2. 灰度怎么做？——按流量比例路由到不同版本实例
+@TRAPS
+- 只答"REST + JSON"，流式和异步两个必考点都漏
+- 把动态 batch 说成客户端行为
+@RELATED
+- `05_deploy` Q-2303；`大模型与推理` Q-4716
+@SOURCE
+牛客面经 小鹏·深度学习平台研发·校招面试：https://www.nowcoder.com/discuss/945709685955395584
+@APPEAR
+2026-11-10 抓取 | 小鹏 | 深度学习平台研发 | 校招面试 | https://www.nowcoder.com/discuss/945709685955395584 | 社区经验
+
+@@ Q-1921
+@STEM
+**题目**（华为机考 AI 方向，150 分大模拟）：LLM 推理系统按 KV Cache 容量调度请求。N 个请求，第 i 个请求三个属性：到达时刻 arrive_i（时间步从 0 编号）、还需生成的 Token 数 tokens_i、处理期间占用的显存 mem_i（不随进度变化）。系统显存总容量 M。规则：
+1. **并行**：每个时间步，把显存分给若干「已到达且未完成」的请求，各生成 1 个 Token；同请求同时间步最多 1 个 Token。
+2. **释放**：请求累计处理满 tokens_i 步即完成，立刻释放显存，但**释放的显存下一个时间步才能分给其他请求**。
+3. **接纳**：每个时间步，在「已到达、未完成、尚未占住显存」的请求中，按 mem_i 从小到大（相同则到达早者优先）依次尝试：已占用显存 + mem_i ≤ M 就接纳，装不下继续等；已接纳的请求一直处理到完成。
+4. **清空**：允许主动清空某未完成请求的缓存（保留已生成数、释放显存、回到等待），但它重新开始要重占显存且已花掉的计算时间作废。题面明示：最优做法是**不清空任何请求**。
+输出：全部请求处理完毕时的总时间步数。
+**问**：给出求解算法与代码。
+@ANSWER
+直接按题面**逐时间步模拟**，因为规则就是确定性的贪心。每个时间步做三件事：① 接纳——从"已到达、未完成、未占用"的请求里按 (mem 升序，arrive 升序) 排序，依次尝试装入：当前已占用显存之和 + mem_i ≤ M 就接纳；② 生成——所有已占用的请求（含本步刚接纳的）各生成 1 个 Token，生成满 tokens_i 的请求在本步末移出占用（天然实现"释放的显存下一步才可用"，因为接纳发生在每步开头）；③ 计数——时间步加一。终止条件是全部完成。第 4 条清空规则按题面结论直接忽略——模拟器里根本不实现清空逻辑，这就是答案的一部分。复杂度：每步 O(K log K)（K 为候选数，排序），总步数 T 有限，整体 O(T·K log K)，N 和 tokens 不大时轻松通过。
+@DEEP
+```cpp
+struct Req { long long arrive, tokens, mem, done = 0; bool occ = false; };
+int main() {
+    long long n, M; cin >> n >> M;
+    vector<Req> rs(n);
+    for (auto &r : rs) cin >> r.arrive >> r.tokens >> r.mem;
+    long long t = 0, finished = 0, used = 0;
+    while (finished < n) {
+        // ① 接纳：候选 = 到达且未完成且未占用，按 (mem, arrive) 排序
+        vector<Req*> cand;
+        for (auto &r : rs)
+            if (r.arrive <= t && r.done < r.tokens && !r.occ) cand.push_back(&r);
+        sort(cand.begin(), cand.end(), [](auto a, auto b){
+            return a->mem != b->mem ? a->mem < b->mem : a->arrive < b->arrive; });
+        for (auto r : cand)
+            if (used + r->mem <= M) { r->occ = true; used += r->mem; }
+        // ② 生成：已占用的各推进 1 个 Token，满则本步末释放
+        for (auto &r : rs)
+            if (r.occ && ++r.done == r.tokens) { r.occ = false; used -= r.mem; ++finished; }
+        ++t;   // ③ 计数
+    }
+    cout << t << endl;
+}
+```
+自构小例（演示规则，数值以原题为准）：M=6；请求 A(arrive 0, tokens 2, mem 4)、B(arrive 0, tokens 2, mem 2)。t=0：mem 升序先接纳 B（2≤6），再接纳 A（2+4=6≤6），两者并行生成；t=1：都完成 → 输出 2。若再有一个 C(arrive 0, tokens 1, mem 1)：t=0 时 6+1>6 等待，t=1 时 A、B 已完成释放，C 接纳并完成 → 输出 2。
+@FOLLOW
+1. 为什么"清空缓存"永远不优？——清空只作废已付出的计算时间，显存占用规则不变，纯亏
+2. 如果 N 很大怎么优化？——每步的候选集用堆（mem, arrive）维护，免去重复排序
+3. 完成释放"下步才可用"怎么保证？——接纳在步首、释放在步尾，顺序天然隔离
+@TRAPS
+- 接纳时用"剩余显存"和"总显存"算错——判断条件是已占用和 + mem ≤ M
+- 新接纳的请求本步就要生成 Token（原帖样例明确如此），漏掉整体时间少 1
+- 实现"清空"逻辑——题面已说最优不清空，写了反而引入 bug
+@RELATED
+- `04_algo` 模拟类；`大模型与推理` Q-4710（KV Cache 显存计算）
+@SOURCE
+牛客面经 华为·AI 软件·笔试（11 月 6 日）：https://www.nowcoder.com/discuss/948632550891593728
+@APPEAR
+2026-11-10 抓取 | 华为 | AI 软件 | 笔试 | https://www.nowcoder.com/discuss/948632550891593728 | 社区经验
+
+@@ Q-1922
+@STEM
+**题目**（华为机考）：给定两个位数可能极长的非负整数（字符串形式），求它们相加的结果。
+**问**：怎么实现？注意什么？
+@ANSWER
+不能用整数类型——位数可能几百上千位，long long 早溢出了。标准做法是**按位模拟竖式加法**：把两个字符串从最低位对齐，用双指针从末尾往前走，每位相加再加进位，结果位 = (位和 + 进位) % 10，新进位 = (位和 + 进位) / 10；两边走完后如果进位还剩 1，再补一位。时间 O(max(n, m))，空间同数量级。实现要点三个：结果要**反转**（从低位算起，输出前 reverse）；两指针各自判空（短的先走完就补 0）；最后检查进位。用 C++ 就直接 string 拼；用 Python 虽然原生 int 不限位数可以 int(a)+int(b)，但机考这么写会显得没理解考点，建议还是手写位运算过程。
+@DEEP
+```cpp
+string add(string a, string b) {
+    string res;
+    int i = a.size() - 1, j = b.size() - 1, carry = 0;
+    while (i >= 0 || j >= 0 || carry) {
+        int s = carry;
+        if (i >= 0) s += a[i--] - '0';
+        if (j >= 0) s += b[j--] - '0';
+        res += char('0' + s % 10);
+        carry = s / 10;
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+```
+- 同族题：大数减法（先比大小定符号）、大数乘法（每位乘完统一处理进位，O(n·m)）
+@FOLLOW
+1. 大数乘法怎么做？——逐位乘累加到结果数组，再统一处理进位；更快用 FFT/Karatsuba
+2. 输入可能带前导零怎么办？——结果输出前去掉前导零（保留一个 0）
+@TRAPS
+- 直接 `stoll` 转数——超长输入直接溢出
+- 忘了最后的进位（两个同位数相加最高位进 1）
+@RELATED
+- `04_algo` 数组哈希/字符串
+@SOURCE
+牛客面经 华为·AI 软件·笔试（10 月 28 日）：https://www.nowcoder.com/discuss/945497946403971072
+@APPEAR
+2026-11-10 抓取 | 华为 | AI 软件 | 笔试 | https://www.nowcoder.com/discuss/945497946403971072 | 社区经验
+
+@@ Q-1923
+@STEM
+**题目**（华为机考）：纸张一行能放下的**字符数**有上限 W。一篇文章由若干短语组成，短语之间用空格分隔；同一行的短语之间也用恰好一个空格连接。要求不能把一个短语拆到两行（假设任何短语长度 ≤ W），求把所有短语印完最少需要多少行。
+**问**：给出算法与代码。
+@ANSWER
+贪心，一遍线性扫。规则：维护当前行的已用长度 cur，对每个短语按顺序尝试——如果这行还是空的，直接放（cur = 长度）；否则需要"一个空格 + 短语长度"的额外空间，cur + 1 + len ≤ W 就放下（cur += 1 + len），放不下就换行（行数 +1，cur = len）。正确性很直觉：每个短语独立不可拆，能塞进当前行就一定不亏——留给后面短语的行宽不会更差；这就是典型的交换论证，任何最优解都能调整成贪心的样子。复杂度 O(总字符数)。两个边界要想清楚：短语长度恰好等于 W 时自己独占一行；实现时如果题目允许用空格补齐右端（两端对齐），那是另一道题（LeetCode 68 文本左右对齐），先看清题意。
+@DEEP
+```cpp
+int min_lines(const vector<string>& ws, int W) {
+    int lines = 1, cur = 0;
+    for (auto &w : ws) {
+        if (cur == 0)            cur = w.size();          // 行首
+        else if (cur + 1 + (int)w.size() <= W)
+                                 cur += 1 + w.size();     // 接着放
+        else { ++lines;          cur = w.size(); }        // 换行
+    }
+    return lines;
+}
+```
+- 若题目输入是整段文本：先 `istringstream` 按空格切词，其余不变
+@FOLLOW
+1. 如果允许拆分短语呢？——就不是逐词贪心，变成连续字符每 W 个切一刀
+2. 两端对齐版怎么做？——每行额外空格按词间均匀分配，余数从左往右分（LeetCode 68）
+@TRAPS
+- 漏掉"词间空格占 1 个字符"的宽度
+- 单词长度超过 W 未做防御——按题意假设 ≤W，但面试时主动提出来是加分项
+@RELATED
+- `04_algo` 模拟/贪心
+@SOURCE
+牛客面经 华为·AI 软件·笔试（11 月 6 日）：https://www.nowcoder.com/discuss/948632550891593728
+@APPEAR
+2026-11-10 抓取 | 华为 | AI 软件 | 笔试 | https://www.nowcoder.com/discuss/948632550891593728 | 社区经验

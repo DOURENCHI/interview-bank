@@ -39,6 +39,17 @@ def oral(text: str) -> str:
     return "\n".join("> " + ln for ln in lines)
 
 
+def _appearance_table(rows: list[dict]) -> str:
+    """出现记录表：只在有真实面经时由调用方传入。"""
+    head = "| 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |"
+    sep = "|---|---|---|---|---|---|"
+    body = "\n".join(
+        f"| {r.get('日期','')} | {r.get('公司','')} | {r.get('岗位','')} | "
+        f"{r.get('轮次','')} | {r.get('来源','')} | {r.get('可信度','社区经验')} |"
+        for r in rows)
+    return "\n".join([head, sep, body])
+
+
 def write(
     qid: str,
     *,
@@ -51,6 +62,7 @@ def write(
     source: str = "",
     difficulty: int | None = None,
     priority: str | None = None,
+    appearances: list[dict] | None = None,
 ) -> bool:
     """写一张已答题卡。stem 是「题目」节正文（背景 / 场景 / 问）。"""
     path = _find(qid)
@@ -76,6 +88,8 @@ def write(
     parts += ["", "## 高频追问", "",
               _numbered(follow) if follow else "1. 待补充"]
     parts += ["", "## 易错点", "", _bullets(traps) if traps else "- 待补充"]
+    if appearances:
+        parts += ["", "## 出现记录", "", _appearance_table(appearances)]
     parts += ["", "## 关联项目", "",
               _bullets(related) if related else "- 无（通用八股，不绑定具体项目）"]
     if qtype != "project":
