@@ -121,7 +121,34 @@ def main() -> int:
         ok.append(("分析卡跳题库", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")
                    and pg.eval_on_selector("#rev", "el => el.value") == "due"))
 
-        # 11. hash 记忆：刷新后仍在当前 tab
+        # 11. 岗位视图：8 个种子岗位 + JD 分析 + 训练跳转 + 添加岗位
+        tab("jobs")
+        n_jobs = pg.evaluate("document.querySelectorAll('#joblist .jcard').length")
+        ok.append(("岗位卡片=种子8", n_jobs == 8))
+        pg.click('#joblist .jcard .qh')  # 展开第一张（桥介数物 C++ SDK）
+        pg.wait_for_timeout(150)
+        hit_rows = pg.evaluate("document.querySelectorAll('#joblist .jcard .rtable tbody tr').length")
+        ok.append(("JD 技能分析行", hit_rows >= 3))
+        grade_badge = pg.evaluate("!!document.querySelector('#joblist .jcard .tstat')")
+        ok.append(("缺口判断徽标", grade_badge))
+        # 训练该技能 → 切题库并按模块筛选
+        pg.click('#joblist [data-jtrain]'); pg.wait_for_timeout(250)
+        ok.append(("技能训练跳题库", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")
+                   and pg.eval_on_selector("#mod", "el => el.value") != ""))
+        # 添加岗位（本地）
+        tab("jobs")
+        pg.click("#jobform summary"); pg.wait_for_timeout(100)
+        pg.fill("#j_co", "宇树科技"); pg.fill("#j_ti", "具身智能软件工程师")
+        pg.fill("#j_city", "杭州"); pg.fill("#j_jd", "熟悉 ROS2 与运动学控制，C++ 扎实，了解深度学习部署")
+        pg.click("#j_save"); pg.wait_for_timeout(200)
+        ok.append(("添加本地岗位", pg.evaluate("document.querySelectorAll('#joblist .jcard').length") == 9))
+        ok.append(("本地岗位匹配分析", pg.evaluate("[...document.querySelectorAll('#joblist .jcard')].some(c => c.querySelector('.qh .qt').textContent.includes('具身智能') && c.querySelector('.rscore'))")))
+        # 删除本地岗位
+        pg.once("dialog", lambda d: d.accept())
+        pg.click('#joblist [data-jdel]'); pg.wait_for_timeout(200)
+        ok.append(("删除本地岗位", pg.evaluate("document.querySelectorAll('#joblist .jcard').length") == 8))
+
+        # 12. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
         ok.append(("刷新保持视图", pg.eval_on_selector("#view-train", "el => el.classList.contains('on')")))

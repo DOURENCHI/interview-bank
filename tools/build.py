@@ -436,6 +436,19 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 /* 分析视图：rpanel 由浮层改为平铺容器 */
 #view-rep .rpanel{width:auto;max-height:none;background:transparent;
   border:0;padding:0;box-shadow:none;overflow:visible}
+/* ---- 岗位视图 ---- */
+.jrow{display:flex;gap:8px;flex-wrap:wrap}
+.jrow input,.jrow select{flex:1 1 140px;font:14px/1.6 inherit;color:var(--tx);
+  background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  padding:7px 10px;outline:none}
+.jrow input:focus{border-color:var(--blue)}
+.jcard{margin:0}
+#joblist{display:flex;flex-direction:column;gap:10px}
+.jcard .qh{padding:13px 14px}
+.jcard .rscore{font-size:14px;margin-top:3px}
+.jbody{padding:4px 16px 14px;border-top:1px dashed var(--line)}
+.jlink{color:var(--blue)!important;text-decoration:none;cursor:pointer}
+.jlink:hover{border-color:var(--blue)}
 /* ---- 学习分析（平铺视图） ---- */
 .rpanel{width:min(900px,94vw);max-height:88vh;overflow:auto;background:var(--bg);
   border:1px solid var(--line);border-radius:12px;padding:22px 26px;
@@ -493,6 +506,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <button class="tab" data-v="home">🏠 首页</button>
     <button class="tab" data-v="bank">📚 题库</button>
     <button class="tab" data-v="train">🎯 训练</button>
+    <button class="tab" data-v="jobs">💼 岗位</button>
     <button class="tab" data-v="rep">📈 分析</button>
   </nav>
 </header>
@@ -586,6 +600,28 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   </div>
 </section>
 
+<section id="view-jobs" class="view">
+  <div class="panel" style="margin-bottom:14px">
+    <h3>💼 岗位收藏 · 点卡片看「JD → 题库」技能匹配分析</h3>
+    <details id="jobform">
+      <summary>➕ 添加岗位（人工登记，存本机浏览器，随备份导出）</summary>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:8px 0">
+        <div class="jrow">
+          <input id="j_co" placeholder="公司 *">
+          <input id="j_ti" placeholder="岗位名称 *">
+          <input id="j_city" placeholder="城市">
+          <select id="j_ty"><option>校招</option><option>实习</option><option>社招</option></select>
+          <input id="j_url" placeholder="JD 链接（官网/招聘页）">
+        </div>
+        <textarea id="j_jd" placeholder="粘贴 JD 原文，用于技能匹配分析（命中 C++/Linux/部署/ROS2/感知等技能表，对照你的题库自评数据给出缺口判断）" style="min-height:110px;font:14px/1.7 inherit;color:var(--tx);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;outline:none;resize:vertical"></textarea>
+        <div class="mrow"><button id="j_save" style="padding:7px 18px">保存岗位</button>
+          <span class="rnum">自动采集后续接入（官方招聘页低频增量监控），先人工登记最高优先级的</span></div>
+      </div>
+    </details>
+  </div>
+  <div class="trgrid" id="joblist"></div>
+</section>
+
 <section id="view-rep" class="view">
   <div class="rpanel">
     <div class="rhead"><b>📈 学习分析</b>
@@ -648,6 +684,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 const DATA = __DATA__;
 const TARGETS = __TARGETS__;
 const PROFILES = __PROFILES__;
+const JOBS_SEED = __JOBS__;
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -1012,7 +1049,8 @@ document.addEventListener('keydown', e => {
 
 // 复习数据备份：导出/导入 JSON（跨设备迁移用）
 $('exp').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify({ wrong: [...wrong], review }, null, 1)],
+  const blob = new Blob([JSON.stringify({ wrong: [...wrong], review,
+    jobs: JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]') }, null, 1)],
     { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1029,6 +1067,7 @@ $('imp').addEventListener('change', e => {
       const d = JSON.parse(rd.result);
       if (d.wrong) wrong = new Set(d.wrong);
       if (d.review) review = d.review;
+      if (d.jobs) localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(d.jobs));
       localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
       localStorage.setItem(REV_KEY, JSON.stringify(review));
       render();
@@ -1331,6 +1370,7 @@ function showView(v){
     t.classList.toggle('on', t.dataset.v === v));
   if (v === 'home') renderHome();
   if (v === 'train') renderTrain();
+  if (v === 'jobs') renderJobs();
   if (v === 'rep') renderRep();
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
@@ -1458,9 +1498,140 @@ $('tr_wrong').addEventListener('click', () => {
   $('wrong').checked = true; showView('bank'); render();
 });
 
+// ---- 岗位视图：收藏 + JD 技能匹配分析（规则版，JD → 题库缺口联动） ----
+const LOCAL_JOBS_KEY = 'ib_jobs_v1';
+function loadJobs(){
+  let local = [];
+  try { local = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]'); } catch {}
+  return JOBS_SEED.concat(local);
+}
+// 技能规则表：JD 关键词 → 题库模块。匹配分析的核心映射，随题库方向扩展
+const SKILLS = [
+  {name: 'C++', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['02_cpp']},
+  {name: 'Linux', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['03_linux']},
+  {name: '算法机考', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['04_algo']},
+  {name: '模型部署', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['05_deploy']},
+  {name: 'ROS2/中间件', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['06_ros2']},
+  {name: '深度学习/感知', kws: ['pytorch', '目标检测', '分割', 'yolo', 'opencv', '感知', '融合', '深度学习', '视觉'], mods: ['10_cv_pytorch', '07_imaging']},
+  {name: 'Python', kws: ['python'], mods: ['11_python']},
+  {name: '硬件/嵌入式', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['09_hardware']},
+  {name: '机器人学', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['08_robot']},
+];
+
+function jobScore(job){
+  // JD 原文 + 关键词 → 命中技能 → 关联模块的自评掌握度 → 缺口判断
+  const text = ((job.jd || '') + ' ' + (job.skills || []).join(' ')).toLowerCase();
+  const hits = [];
+  SKILLS.forEach(s => {
+    const kws = s.kws.filter(k => text.includes(k));
+    if (!kws.length) return;
+    const pool = [];
+    s.mods.forEach(m => (MODQ[m] || []).forEach(q => pool.push(q)));
+    const done = pool.filter(q => review[q.id]);
+    const avg = done.length ? done.reduce((a, q) => a + review[q.id].g, 0) / done.length : null;
+    const cov = pool.length ? Math.round(done.length / pool.length * 100) : 0;
+    let grade, score;
+    if (avg == null) { grade = '待评估'; score = 50; }
+    else {
+      score = Math.round(avg / 4 * 100);
+      grade = avg >= 3.3 ? '较强' : avg >= 2.5 ? '一般' : '待加强';
+    }
+    hits.push({name: s.name, kws, pool: pool.length, done: done.length,
+               cov, avg, grade, score, mods: s.mods});
+  });
+  hits.sort((a, b) => a.score - b.score);   // 最弱的排最前
+  const total = hits.length
+    ? Math.round(hits.reduce((a, h) => a + h.score, 0) / hits.length) : 50;
+  return {total, hits};
+}
+
+function renderJobs(){
+  const jobs = loadJobs();
+  $('joblist').innerHTML = jobs.map((job, idx) => {
+    const sc = jobScore(job);
+    const gcls = sc.total >= 80 ? 'hi' : sc.total >= 60 ? 'mid' : 'lo';
+    const isLocal = job.src === 'local';
+    const rows = sc.hits.map((h, hi) => `<tr>
+      <td><b>${esc(h.name)}</b></td>
+      <td class="rnum">${esc(h.kws.slice(0, 4).join('、'))}</td>
+      <td class="rnum">${h.done} / ${h.pool}（覆盖 ${h.cov}%）</td>
+      <td><span class="rscore ${h.avg == null ? '' : h.avg >= 3.3 ? 'hi' : h.avg >= 2.5 ? 'mid' : 'lo'}">${h.avg == null ? '未自测' : h.avg.toFixed(1)}</span></td>
+      <td><span class="tstat ${h.grade === '较强' ? 'done' : h.grade === '一般' ? 'doing' : 'todo'}">${h.grade}</span></td>
+      <td><button class="mini" data-jtrain="${hi}">训练该技能</button></td>
+    </tr>`).join('');
+    return `<article class="q jcard" data-ji="${idx}">
+      <div class="qh">
+        <span class="pid">${esc(job.company)}</span>
+        <span class="rscore ${gcls}" title="技能匹配分：命中技能的自评掌握度均值（规则估算，非 AI 评分）">${sc.total}%</span>
+        <div class="qt">${esc(job.title)}</div>
+        <span class="tag">${esc(job.city || '待核实')}</span>
+        <span class="tag">${esc(job.type || '')}</span>
+        <span class="tag" title="招聘状态（采集/核实后更新）">${esc(job.status || '待核实')}</span>
+        ${(job.links || []).length ? `<a class="tag jlink" href="${esc(job.links[0])}" target="_blank" rel="noopener">JD 原文 ↗</a>` : ''}
+        ${isLocal ? `<button class="wrongmark" data-jdel="${esc(job.id)}" title="删除本地岗位">删除</button>` : ''}
+      </div>
+      <div class="jbody" style="display:none">
+        ${sc.hits.length
+          ? `<table class="rtable"><thead><tr>
+              <th>技能要求</th><th>JD 依据</th><th>题库储备</th><th>自测掌握</th><th>判断</th><th></th>
+            </tr></thead><tbody>${rows}</tbody></table>`
+          : `<div class="hempty" style="padding:6px 0 2px">JD 未命中内置技能表（C++/Linux/部署/ROS2/感知/嵌入式/机器人学…），先人工判断；粘贴完整 JD 原文能提高命中率。</div>`}
+        ${job.jd ? `<div class="qmeta"><span title="${esc(job.jd)}">JD 摘要：${esc(job.jd.slice(0, 130))}${job.jd.length > 130 ? '…' : ''}</span></div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+$('joblist').addEventListener('click', e => {
+  if (e.target.closest('a')) return;               // 链接不触发展开
+  const del = e.target.closest('[data-jdel]');
+  if (del) {
+    if (!confirm('删除这个本地岗位？')) return;
+    const local = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]')
+      .filter(j => j.id !== del.dataset.jdel);
+    localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(local));
+    renderJobs(); return;
+  }
+  const tr = e.target.closest('[data-jtrain]');
+  if (tr) {
+    const job = loadJobs()[+tr.closest('.jcard').dataset.ji];
+    const h = jobScore(job).hits[+tr.dataset.jtrain];
+    if (h && h.mods) {
+      $('mod').value = h.mods[0]; refreshSubs();
+      showView('bank'); window.scrollTo(0, 0); render();
+    }
+    return;
+  }
+  const head = e.target.closest('.qh');
+  if (head) {
+    const jb = head.parentElement.querySelector('.jbody');
+    jb.style.display = jb.style.display === 'none' ? 'block' : 'none';
+  }
+});
+
+$('j_save').addEventListener('click', () => {
+  const co = $('j_co').value.trim(), ti = $('j_ti').value.trim();
+  if (!co || !ti) { alert('公司与岗位名称必填'); return; }
+  const local = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]');
+  local.push({
+    id: 'local_' + Date.now(),
+    company: co, title: ti,
+    city: $('j_city').value.trim() || '待核实',
+    type: $('j_ty').value, status: '待核实',
+    jd: $('j_jd').value.trim(),
+    links: $('j_url').value.trim() ? [$('j_url').value.trim()] : [],
+    skills: [], src: 'local',
+    found: new Date().toISOString().slice(0, 10),
+  });
+  localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(local));
+  ['j_co', 'j_ti', 'j_city', 'j_url', 'j_jd'].forEach(id => $(id).value = '');
+  $('jobform').open = false;
+  renderJobs();
+});
+
 refreshSubs();
 render();
-showView(['home', 'bank', 'train', 'rep'].includes(location.hash.slice(1))
+showView(['home', 'bank', 'train', 'jobs', 'rep'].includes(location.hash.slice(1))
   ? location.hash.slice(1) : 'home');
 </script>
 </body>
@@ -1496,12 +1667,18 @@ def main() -> int:
     profopts = "\n".join(f'<option value="{html.escape(p["id"], quote=True)}">'
                          f'{html.escape(p["name"])}</option>' for p in profiles)
 
+    # 岗位收藏种子（gen_jobs.py 由 job_profiles 生成；网页上人工添加的存 localStorage）
+    jo = ROOT / "companies" / "jobs.json"
+    jobs = json.loads(jo.read_text(encoding="utf-8")).get("jobs", []) if jo.exists() else []
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
                                                  separators=(",", ":")))
                .replace("__PROFILES__", json.dumps(profiles, ensure_ascii=False,
                                                   separators=(",", ":")))
+               .replace("__JOBS__", json.dumps(jobs, ensure_ascii=False,
+                                               separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)
