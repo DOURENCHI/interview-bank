@@ -202,6 +202,13 @@ def load_questions() -> list[dict]:
             "tags": meta.get("tags", []),
             "appearances": meta.get("appearances", []),
             "sourceRef": meta.get("source_ref", ""),
+            "sourceType": meta.get("source_type", "inferred"),
+            # 证据等级（外部评审建议的 S1~S4，由 source_type 派生）
+            "evidence": {
+                "official": "S1", "upstream": "S1",
+                "self_doc": "S2", "self_exp": "S2",
+                "nowcoder": "S3", "video": "S3",
+            }.get(meta.get("source_type", "inferred"), "S4"),
             "html": render_md(body),
             # 搜索用纯文本
             "plain": re.sub(r"<[^>]+>", " ", body),
@@ -279,6 +286,24 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   border-radius:5px;padding:2px 7px;margin-top:4px;cursor:pointer;background:transparent}
 .wrongmark.on{background:var(--red);color:#fff}
 .empty{text-align:center;color:var(--muted);padding:60px 0}
+.ev{font-size:10px;font-weight:700;border-radius:5px;padding:2px 5px;margin-top:5px;
+  white-space:nowrap;border:1px solid transparent}
+.evS1{color:#1a7f37;border-color:#1a7f37;background:#eaf5ec}
+.evS2{color:#0550ae;border-color:#0550ae;background:#eaf1fb}
+.evS3{color:#9a6700;border-color:#9a6700;background:#fdf6e0}
+.evS4{color:#665c49;border-color:#c9bda0;background:#f3ecda}
+.grade{display:flex;align-items:center;gap:6px;margin-top:14px;padding-top:10px;
+  border-top:1px dashed var(--line)}
+.grade .gl{font-size:11px;color:var(--muted)}
+.gbtn{width:26px;height:22px;border:1px solid var(--line);background:var(--bg);
+  border-radius:5px;cursor:pointer;font-size:11px;color:var(--muted)}
+.gbtn:hover{border-color:var(--accent)}
+.gbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.gstat{font-size:11px;color:var(--muted)}
+.mini{font-size:11px;padding:4px 8px;border:1px solid var(--line);background:var(--bg);
+  border-radius:6px;cursor:pointer;color:var(--muted)}
+.mini:hover{color:var(--accent);border-color:var(--accent)}
+.selftest .body{border-left:3px solid var(--accent)}
 .hint{font-size:12.5px;color:var(--muted);padding:8px 0 0}
 .hint b{color:var(--blue)}
 .hint .warn{color:var(--red)}
@@ -306,6 +331,17 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   <select id="st"><option value="">全部状态</option>
     <option value="answered">已答</option><option value="indexed">待补充</option></select>
   <label class="chk"><input type="checkbox" id="wrong"> 只看错题</label>
+  <label class="chk"><input type="checkbox" id="hidepred" title="隐藏 S4 岗位推导预测题，只看真实面经与一手题"> 隐藏预测题</label>
+  <label class="chk"><input type="checkbox" id="selftest" title="自测模式：搜索不再自动展开答案，先自己答再看"> 自测模式</label>
+  <select id="rev" title="间隔复习：按自评分安排">
+    <option value="">全部复习状态</option>
+    <option value="due">今日该复习</option>
+    <option value="weak">薄弱（自评≤2）</option>
+    <option value="never">从未自测</option>
+  </select>
+  <button id="exp" class="mini" title="导出错题与自评记录（JSON）">备份↓</button>
+  <button id="impb" class="mini" title="从 JSON 恢复复习数据">恢复↑</button>
+  <input type="file" id="imp" accept=".json" hidden>
 </div>
 <div class="hint" id="hint"></div>
 
@@ -317,8 +353,20 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 const DATA = __DATA__;
 const TARGETS = __TARGETS__;
 const WRONG_KEY = 'ib_wrong_v1';
+const REV_KEY = 'ib_review_v1';
+// 间隔复习：自评分 1~4 → 下次复习间隔天数（SM-2 简化版）
+const REV_DAYS = {1: 1, 2: 3, 3: 7, 4: 21};
 const OPEN_ALL = location.hash === '#all';   // 调试用：全部展开
 let wrong = new Set(JSON.parse(localStorage.getItem(WRONG_KEY) || '[]'));
+let review = JSON.parse(localStorage.getItem(REV_KEY) || '{}');
+let SELFTEST = false;
+function revState(q){
+  const r = review[q.id];
+  if (!r) return 'never';
+  const due = (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
+  if (r.g <= 2) return 'weak';
+  return due ? 'due' : 'ok';
+}
 
 const ROLE_BY_KEY = {};
 TARGETS.roles.forEach(r => ROLE_BY_KEY[r.key] = r);
@@ -344,21 +392,31 @@ const list = $('list');
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
+function gradeBar(q){
+  const r = review[q.id];
+  const cls = v => r && r.g === v ? 'on' : '';
+  const when = r ? `上次自评 ${r.g} · ${new Date(r.ts).toLocaleDateString()}` : '未自测';
+  return `<div class="grade" data-q="${q.id}"><span class="gl">自评</span>
+    ${[1,2,3,4].map(v=>`<button class="gbtn ${cls(v)}" data-g="${q.id}" data-v="${v}"
+      title="${{1:'完全不会',2:'想不起来',3:'基本掌握',4:'可答追问'}[v]}">${v}</button>`).join('')}
+    <span class="gstat">${when}</span></div>`;
+}
 function card(q){
   const isW = wrong.has(q.id);
   const st = q.status === 'indexed' ? '<span class="tag">待补充</span>' : '';
   const ap = (q.appearances || []).map(a =>
       `<span class="tag appear" title="真实出现记录">${esc(a)}</span>`).join('');
+  const ev = `<span class="ev ev${q.evidence}" title="证据等级：${{S1:'官方文档/JD',S2:'本人一手',S3:'社区面经',S4:'岗位推导预测'}[q.evidence]}">${q.evidence}</span>`;
   return `<article class="q" data-id="${q.id}">
     <div class="qh">
       <span class="pid">${q.id}</span>
       <span class="pri ${q.priority}">${q.priority}</span>
       <div class="qt">${esc(q.title)}</div>
       <span class="tag">${esc(q.sub || q.moduleName)}</span>
-      ${st}${ap}
+      ${ev}${st}${ap}
       <button class="wrongmark ${isW?'on':''}" data-w="${q.id}">${isW?'已标错':'标错'}</button>
     </div>
-    <div class="body">${q.html}</div>
+    <div class="body">${q.html}${gradeBar(q)}</div>
   </article>`;
 }
 
@@ -397,6 +455,9 @@ function render(){
     if (pri && q.priority !== pri) return false;
     if (st && q.status !== st) return false;
     if (onlyW && !wrong.has(q.id)) return false;
+    if ($('hidepred').checked && q.evidence === 'S4') return false;
+    const rv = $('rev').value;
+    if (rv && revState(q) !== rv) return false;
     if (coDef && !coHit(q, coDef)) return false;
     if (rlDef && !roleHit(q, rlDef)) return false;
     if (!kw) return true;
@@ -411,13 +472,17 @@ function render(){
 
   list.innerHTML = hit.map(card).join('');
   $('empty').style.display = hit.length ? 'none' : 'block';
-  // 搜索/筛选时自动展开，省一次点击
-  if (kw || mod || pri || st || sub || onlyW || coDef || rlDef || OPEN_ALL) {
+  SELFTEST = $('selftest').checked;
+  // 搜索/筛选时自动展开，省一次点击；自测模式下不展开，先自己答
+  if (!SELFTEST && (kw || mod || pri || st || sub || onlyW || coDef || rlDef || OPEN_ALL)) {
     list.querySelectorAll('.q').forEach(el => el.classList.add('open'));
   }
+  if (SELFTEST) list.classList.add('selftest'); else list.classList.remove('selftest');
+  const dueCnt = DATA.filter(q => revState(q) === 'due').length;
   $('stat').textContent = `共 ${DATA.length} 题 ｜ 当前 ${hit.length} 题 ｜ `
     + `已答 ${DATA.filter(q=>q.status!=='indexed').length} ｜ 错题 ${wrong.size} ｜ `
-    + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length}`;
+    + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length} ｜ `
+    + `已自测 ${Object.keys(review).length} ｜ 今日该复习 ${dueCnt}`;
 
   // 口径说明：让人知道"为什么这些题被算进来"
   const tips = [];
@@ -444,8 +509,55 @@ list.addEventListener('click', e => {
     $('stat').textContent = $('stat').textContent.replace(/错题 \d+/, '错题 ' + wrong.size);
     return;
   }
+  // 自评分按钮：1 不会 / 2 想不起来 / 3 基本掌握 / 4 可答追问 → 安排间隔复习
+  const gbtn = e.target.closest('.gbtn');
+  if (gbtn) {
+    const qid = gbtn.dataset.g, v = +gbtn.dataset.v;
+    review[qid] = { g: v, ts: Date.now() };
+    localStorage.setItem(REV_KEY, JSON.stringify(review));
+    const bar = gbtn.closest('.grade');
+    bar.querySelectorAll('.gbtn').forEach(b =>
+      b.classList.toggle('on', +b.dataset.v === v));
+    const gs = bar.querySelector('.gstat');
+    if (gs) gs.textContent = `上次自评 ${v} · ${new Date().toLocaleDateString()}`
+      + (v <= 2 ? ' · 已标薄弱' : ` · ${REV_DAYS[v]} 天后复习`);
+    if (v <= 2 && !wrong.has(qid)) {          // 自评不会 → 自动进错题
+      wrong.add(qid);
+      localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+    }
+    render();
+    return;
+  }
   const head = e.target.closest('.qh');
   if (head) head.parentElement.classList.toggle('open');
+});
+
+// 复习数据备份：导出/导入 JSON（跨设备迁移用）
+$('exp').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({ wrong: [...wrong], review }, null, 1)],
+    { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'interview-bank-progress.json';
+  a.click();
+});
+$('impb').addEventListener('click', () => $('imp').click());
+$('imp').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const d = JSON.parse(rd.result);
+      if (d.wrong) wrong = new Set(d.wrong);
+      if (d.review) review = d.review;
+      localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+      localStorage.setItem(REV_KEY, JSON.stringify(review));
+      render();
+      alert(`已导入：错题 ${wrong.size}，自测记录 ${Object.keys(review).length}`);
+    } catch { alert('导入失败：不是有效的备份文件'); }
+  };
+  rd.readAsText(f);
 });
 
 // 支持 ?co=Momenta&rl=C&q=关键字，链接可直接分享
@@ -455,7 +567,7 @@ const _p = new URLSearchParams(location.search);
   if (v) $(id).value = v;
 });
 
-['q','mod','pri','st','sub','co','rl','wrong'].forEach(id => $(id).addEventListener('input', render));
+['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev'].forEach(id => $(id).addEventListener('input', render));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 refreshSubs();
 render();

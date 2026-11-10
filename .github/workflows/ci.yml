@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 题卡校验（字段/号段/小节/ID 唯一）
+        run: python tools/validate.py
+
+      - name: 网页构建
+        run: python tools/build.py
+
+      - name: 题库体检（重复/来源/证据等级审计）
+        run: python tools/audit.py
+
+      - name: 上传体检报告
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-report
+          path: sources/audit_report.md
