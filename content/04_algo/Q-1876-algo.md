@@ -8,7 +8,7 @@ difficulty: 2
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
-status: indexed
+status: answered
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
@@ -18,23 +18,54 @@ auto: true
 algo_seed: true
 ---
 
+## 题目
+
+**输入**：`numCourses = 2, prerequisites = [[1,0]]`（学 1 前要先学 0）
+**输出**：能否修完（即图中有无环）
+
+**问**：拓扑排序怎么判断有环？
+
 ## 口述答案
 
-**套路**：是。出队顺序即一个合法拓扑序；有环时输出长度不足，返回空。
-
-（口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
+> 统计每个节点的入度，入度为 0 的先入队；出队时把它指向的节点入度减一，减到 0 就入队。
+> 最后看**出队节点数是否等于总节点数**：少了就说明剩下的节点互相依赖，在环里。
+> 这就是 Kahn 算法。
 
 ## 讲深一层
 
-待补充。补三件事：为什么这个套路成立、复杂度怎么算、和哪道题是同一模板。
+```cpp
+bool canFinish(int n, vector<vector<int>>& pre) {
+    vector<vector<int>> g(n);
+    vector<int> indeg(n, 0);
+    for (auto& p : pre) { g[p[1]].push_back(p[0]); ++indeg[p[0]]; }
+    queue<int> q;
+    for (int i = 0; i < n; ++i) if (!indeg[i]) q.push(i);
+    int done = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop(); ++done;
+        for (int v : g[u]) if (--indeg[v] == 0) q.push(v);
+    }
+    return done == n;
+}
+```
+
+| 方法 | 判断环 |
+|---|---|
+| Kahn（BFS） | 完成数 < n 则有环 |
+| DFS 三色标记 | 遇到「正在访问」的节点则有环 |
 
 ## 高频追问
 
-待补充。常见追问方向：换数据规模怎么办、能不能做到 O(1) 空间、有负数还成立吗。
+1. **DFS 版怎么写？** —— 白/灰/黑三色，灰色表示在当前路径上，遇到灰色即有环。
+2. **为什么入度 0 可以安全移除？** —— 没有前驱依赖了。
+3. **有多个解怎么办？** —— 拓扑序不唯一，Kahn 出队顺序即一个合法解。
 
 ## 易错点
 
-待补充。
+- ❌ 忘了把 `prerequisites` 的方向建对（先学 → 后学）
+- ❌ 用「出队数 == n」判断写成 `<=`
+- ✅ 说清「完成数不足即环」
+
 
 ## 关联项目
 
@@ -42,4 +73,4 @@ algo_seed: true
 
 ## 来源
 
-按华为机考题型分布推导（数组/字符串/哈希 40%、双指针滑窗 20%、DFS/BFS 20%、DP 20%）
+算法题通用解法整理（预测题，非真实面经）

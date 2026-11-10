@@ -8,7 +8,7 @@ difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
-status: indexed
+status: answered
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
@@ -18,23 +18,58 @@ auto: true
 algo_seed: true
 ---
 
+## 题目
+
+**输入**：二叉树根节点，返回最大深度。
+
+**问**：递归和层序各自怎么算？
+
 ## 口述答案
 
-**套路**：递归 1+max(左,右)；层序数层数。前者更短，后者能顺带拿到宽度。
-
-（口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
+> 递归：`maxDepth(root) = 1 + max(左, 右)`，空节点返回 0。
+> 层序：用队列按层遍历，每处理完一层层数加一。
+> 前者代码最短；后者能顺带拿到宽度、某层节点等信息。
 
 ## 讲深一层
 
-待补充。补三件事：为什么这个套路成立、复杂度怎么算、和哪道题是同一模板。
+```cpp
+int maxDepth(TreeNode* r) {
+    if (!r) return 0;
+    return 1 + max(maxDepth(r->left), maxDepth(r->right));
+}
+```
+
+层序版：
+
+```cpp
+int maxDepth(TreeNode* r) {
+    if (!r) return 0;
+    queue<TreeNode*> q{{r}};
+    int d = 0;
+    while (!q.empty()) {
+        for (int i = q.size(); i > 0; --i) {
+            auto* n = q.front(); q.pop();
+            if (n->left) q.push(n->left);
+            if (n->right) q.push(n->right);
+        }
+        ++d;
+    }
+    return d;
+}
+```
 
 ## 高频追问
 
-待补充。常见追问方向：换数据规模怎么办、能不能做到 O(1) 空间、有负数还成立吗。
+1. **最小深度呢？** —— 注意只有单侧子树时不能直接取 min（那是 0）。
+2. **会爆栈吗？** —— 深度大时会，改迭代。
+3. **平衡二叉树判断？** —— 后序遍历，返回高度并检查左右差。
 
 ## 易错点
 
-待补充。
+- ❌ 空节点返回 1
+- ❌ 最小深度直接取 min 忽略单侧
+- ✅ 说清两种方法的取舍
+
 
 ## 关联项目
 
@@ -42,4 +77,4 @@ algo_seed: true
 
 ## 来源
 
-按华为机考题型分布推导（数组/字符串/哈希 40%、双指针滑窗 20%、DFS/BFS 20%、DP 20%）
+算法题通用解法整理（预测题，非真实面经）

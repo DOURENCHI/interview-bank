@@ -8,7 +8,7 @@ difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
-status: indexed
+status: answered
 source_type: inferred
 source_ref: 按华为机考题型分布推导，题名对照 LeetCode
 verified_at: 2026-11-09
@@ -18,23 +18,56 @@ auto: true
 algo_seed: true
 ---
 
+## 题目
+
+**输入**：二叉树根节点
+**输出**：`[[3],[9,20],[15,7]]`
+
+**问**：为什么必须用队列？
+
 ## 口述答案
 
-**套路**：队列先进先出保证按层顺序，用栈会变成深度优先。每轮先记下当前层节点数再处理。
-
-（口述版待补：先说思路和复杂度，再写代码，最后主动说边界。）
+> 队列先进先出，保证**同一层的节点按顺序被处理、下一层的节点排在后面**。
+> 用栈会变成深度优先，就不是按层了。
+> 实现上每轮先记下**当前层的节点数 `q.size()`**，只处理这么多个，
+> 就能自然分层。
 
 ## 讲深一层
 
-待补充。补三件事：为什么这个套路成立、复杂度怎么算、和哪道题是同一模板。
+```cpp
+vector<vector<int>> levelOrder(TreeNode* r) {
+    vector<vector<int>> res;
+    if (!r) return res;
+    queue<TreeNode*> q{{r}};
+    while (!q.empty()) {
+        int sz = q.size();
+        vector<int> lv;
+        for (int i = 0; i < sz; ++i) {
+            auto* n = q.front(); q.pop();
+            lv.push_back(n->val);
+            if (n->left) q.push(n->left);
+            if (n->right) q.push(n->right);
+        }
+        res.push_back(lv);
+    }
+    return res;
+}
+```
+
+`sz` 必须在循环**之前**取——循环中 size 会变。
 
 ## 高频追问
 
-待补充。常见追问方向：换数据规模怎么办、能不能做到 O(1) 空间、有负数还成立吗。
+1. **锯齿形层序？** —— 偶数层反转。
+2. **右视图？** —— 每层取最后一个。
+3. **不用 sz 行不行？** —— 用两个队列或加层标记。
 
 ## 易错点
 
-待补充。
+- ❌ 循环里用 `q.size()` 当条件 —— 会处理到新入队的
+- ❌ 忘了判空树
+- ✅ 记住「先取 size 再循环」
+
 
 ## 关联项目
 
@@ -42,4 +75,4 @@ algo_seed: true
 
 ## 来源
 
-按华为机考题型分布推导（数组/字符串/哈希 40%、双指针滑窗 20%、DFS/BFS 20%、DP 20%）
+算法题通用解法整理（预测题，非真实面经）
