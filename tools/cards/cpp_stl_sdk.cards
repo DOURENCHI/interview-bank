@@ -1,0 +1,1140 @@
+@@ Q-0601
+@STEM
+**场景**：面试官让你用一句话解释迭代器，然后追问"它和指针是什么关系"。
+
+**问**：迭代器到底是什么？为什么 STL 的算法能同时作用于 vector 和 list？
+@ANSWER
+迭代器是**对"遍历"这件事的抽象**，它把"访问容器元素"统一成一组操作：解引用取值、自增到下一个、比较是否到头。
+
+算法只依赖这组操作，不依赖容器的内存布局，所以 `std::find` 既能跑在 `vector` 上也能跑在 `list` 上。指针是迭代器的一种特例——连续内存容器的迭代器通常就是指针的包装。
+@DEEP
+五类迭代器，能力递增：
+
+| 类别 | 能力 | 典型容器 |
+|---|---|---|
+| 输入 / 输出 | 单向读 / 写一次 | `istream_iterator` |
+| 前向 | 单向多次遍历 | `forward_list`、`unordered_map` |
+| 双向 | 可前进可后退 | `list`、`map`、`set` |
+| 随机访问 | O(1) 跳转、支持 `+ - <` | `vector`、`deque`、数组 |
+| 连续 | 内存连续，可取地址 | `vector`、`array`（C++20） |
+
+算法的要求写在名字里：`std::sort` 要求随机访问，所以不能用在 `list` 上（`list` 有自己的 `sort` 成员）；`std::find` 只要求输入迭代器，谁都能用。
+
+**一句话总结**：迭代器是容器与算法之间的**契约**，不是"高级指针"。
+@FOLLOW
+1. **迭代器和指针的区别？** —— 指针满足随机访问迭代器的要求，但迭代器可以是类（如 `list` 的迭代器），能力可以更弱。
+2. **迭代器失效是什么？** —— 容器修改后原迭代器可能指向已释放内存，继续用是未定义行为。
+3. **为什么 `std::sort` 不能用于 `list`？** —— 它需要随机访问迭代器做快排的分治跳转，`list` 只能顺序走。
+@TRAPS
+- 把迭代器等同于指针，说不出五类能力差异
+- 说"迭代器就是指针的封装"，忽略它可以是任意类型
+- 不知道 `list` 有自己的 `sort`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+C++ STL 通用知识（预测题，非真实面经）
+
+@@ Q-0602
+@STEM
+**场景**：`for (auto it = v.begin(); it != v.end(); ++it)` 这行代码人人会写，但被问"为什么是左闭右开"时答不上来。
+
+**问**：`[begin, end)` 这个区间表示法解决了什么问题？如果改成闭区间会有什么麻烦？
+@ANSWER
+它让**空区间有统一表示**：`begin == end` 就是空，不需要额外的哨兵值或特判。
+
+同时长度计算变得统一：`end - begin` 直接就是元素个数（随机访问迭代器），不用 `+1`。改成闭区间的话，空容器就没法表示——`begin` 和 `end` 会指向一个不存在的元素。
+@DEEP
+```cpp
+std::vector<int> v;
+v.begin() == v.end();          // 空容器：成立
+std::distance(v.begin(), v.end());   // 长度，通用写法
+
+// 循环的三种等价写法
+for (auto it = v.begin(); it != v.end(); ++it) ...
+for (size_t i = 0; i < v.size(); ++i) ...
+for (int x : v) ...
+```
+
+| 表示法 | 空容器 | 长度 | 循环终止条件 |
+|---|---|---|---|
+| `[begin, end)` | `begin == end` | `end - begin` | `it != end` |
+| `[begin, end]` | 无法表示 | `end - begin + 1` | `it != end` 之后还要再处理一次 |
+| `(begin, end)` | `begin == end` 语义冲突 | 麻烦 | 容易漏首元素 |
+
+**一个实际后果**：`end()` 指向的位置**不能解引用**。`*v.end()` 是未定义行为，这也是新手最常见的崩溃原因之一——循环条件写成 `it <= v.end()` 就会踩到。
+@FOLLOW
+1. **`end()` 指向哪？** —— 最后一个元素的**下一个位置**，可能是合法地址（`vector`）也可能是哨兵（`list`），但都不可解引用。
+2. **为什么 `std::distance` 不直接用 `-`？** —— 只有随机访问迭代器支持减法，`distance` 对其他类别会退化成逐个走。
+3. **反向迭代器怎么对应？** —— `rbegin()` 对应 `end()-1`，`rend()` 对应 `begin()-1`；`rit.base()` 返回的是它右边那个位置。
+@TRAPS
+- 解引用 `end()`，崩溃或读到垃圾值
+- 循环条件写 `it <= v.end()`
+- 以为 `end()` 指向最后一个元素
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+C++ STL 通用知识（预测题，非真实面经）
+
+@@ Q-0603
+@STEM
+**追问**：既然 `end()` 不能解引用，为什么不让它直接指向最后一个元素？这样循环不是更自然吗？
+
+**问**：STL 为什么坚持"最后一个元素的后一个位置"这个反直觉的设计？
+@ANSWER
+因为这样能让"区间"和"空"统一表达。如果 `end()` 指向最后一个元素，那么空容器时 `begin()` 和 `end()` 就没有合法位置可指，只能引入"空哨兵"这种特殊情况。
+
+另外，`end()` 作为**边界而非元素**，恰好可以表示"迭代到哪为止"——循环条件 `it != end` 不需要处理"最后一个元素"的特例，插入操作也可以统一成"插在 `pos` 之前"（`pos == end` 就是尾部追加）。
+@DEEP
+这个设计带来三处统一：
+
+1. **空区间**：`begin == end`，无需特判；
+2. **插入语义**：`insert(pos, x)` 表示"插到 `pos` 之前"，`pos == end()` 就是尾插，不用单独的 `push_back` 分支；
+3. **算法边界**：`std::copy(first, last, out)` 里 `last` 是"不拷贝的第一个位置"，长度自然是 `last - first`。
+
+```cpp
+std::vector<int> v{1, 2, 3};
+auto it = std::find(v.begin(), v.end(), 3);
+if (it != v.end()) { /* 找到了 */ }        // end 表示"没找到"的哨兵
+
+v.insert(v.end(), 4);                      // 尾插，和 insert(v.begin()+1, 9) 同一套语义
+```
+
+**代价**：初学者容易解引用 `end()`。这是"表达统一"换来的学习成本，业界公认值得。
+@FOLLOW
+1. **其他语言也这样吗？** —— Python 的切片、Rust 的 `..` 区间都是左闭右开，同一个理由。
+2. **`end()` 一定指向有效内存吗？** —— 不一定。`vector` 的 `end()` 常指向缓冲区末尾的下一个字节（可能合法但不可写），`list` 的 `end()` 是哨兵节点。
+3. **为什么 `size()` 不缓存？** —— C++11 起 `vector::size()` 是 O(1)；老实现里 `list::size()` 曾是 O(n)，这也是左闭右开设计的一个历史包袱。
+@TRAPS
+- 认为"设计者没想到"，讲不出空区间统一表达这个理由
+- 解引用 `end()`
+- 把 `end()` 当成"最后一个元素"
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 设计约定（预测题，非真实面经）
+
+@@ Q-0604
+@STEM
+**场景**：同事把 `it != end` 改成了 `it < end`，在 `vector` 上跑得好好的，换到 `list` 上编译不过。
+
+**问**：为什么 `it < end` 不可移植？什么时候能用、什么时候不能用？
+@ANSWER
+因为 `<` 只有**随机访问迭代器**才提供。`vector`、`deque` 的迭代器支持 `<`，而 `list`、`map`、`set` 的迭代器是双向的，只能 `++`、`--`、`==`、`!=`，没有大小比较。
+
+所以统一写 `!=` 才是正确习惯：它对所有迭代器类别都成立。
+@DEEP
+| 迭代器类别 | `!=` | `<` | `+ n` |
+|---|---|---|---|
+| 输入 / 输出 | ✅ | ❌ | ❌ |
+| 前向 | ✅ | ❌ | ❌ |
+| 双向（list/map） | ✅ | ❌ | ❌ |
+| 随机访问（vector/deque） | ✅ | ✅ | ✅ |
+
+```cpp
+// ✅ 对所有容器都成立
+for (auto it = c.begin(); it != c.end(); ++it) ...
+
+// ❌ 只对 vector/deque 成立，list 编译不过
+for (auto it = c.begin(); it < c.end(); ++it) ...
+
+// 需要跳转时，用 std::advance / std::next，而不是 it + n
+auto it2 = std::next(c.begin(), 3);      // 对 list 是 O(n)，对 vector 是 O(1)
+```
+
+**一个容易被忽略的坑**：`vector` 上用 `<` 看似没问题，但一旦容器类型换个 `typedef` 变成 `list`，代码就编不过。**模板代码里更要坚持 `!=`**，因为你不知道实例化时传进来的是什么容器。
+@FOLLOW
+1. **`it < end` 在 `vector` 上一定安全吗？** —— 语法合法，但如果迭代器失效（如 `erase` 后），比较本身也是未定义行为。
+2. **怎么知道某个容器的迭代器类别？** —— 查 `iterator_category`，或者记常用：连续内存 → 随机访问，节点式 → 双向，哈希 → 前向。
+3. **`std::next` 和 `it + n` 有什么区别？** —— `std::next` 对所有迭代器可用（非随机访问时是 O(n)），`+` 只对随机访问可用。
+@TRAPS
+- 在模板里写 `<`，换容器就编不过
+- 以为"能编译就是对的"
+- 用 `it + n` 遍历 `list`，编译失败才发现问题
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+C++ 迭代器类别（预测题，非真实面经）
+
+@@ Q-0605
+@STEM
+**场景**：`std::vector<Foo*> v;` 里装了一堆 `new` 出来的对象，`v` 析构后内存没释放。
+
+**问**：容器析构时会 delete 里面的裸指针吗？为什么？正确做法是什么？
+@ANSWER
+**不会**。容器析构时对每个元素调用**元素的析构函数**，而裸指针的析构函数什么也不做（它是平凡类型），所以指针指向的对象不会被释放。
+
+正确做法是用智能指针：`std::vector<std::unique_ptr<Foo>>`，容器析构时 `unique_ptr` 的析构函数会 `delete`。
+@DEEP
+```cpp
+// ❌ 泄漏
+std::vector<Foo*> v;
+v.push_back(new Foo());
+// v 析构：只销毁指针本身，Foo 对象泄漏
+
+// ✅ 独占所有权
+std::vector<std::unique_ptr<Foo>> v2;
+v2.push_back(std::make_unique<Foo>());
+
+// ✅ 不拥有所有权时用裸指针，但要保证生命周期
+std::vector<Foo*> view;      // 只是"引用"，不负责释放
+```
+
+| 容器元素类型 | 析构时是否释放所指对象 |
+|---|---|
+| `Foo` | 会（调用 `~Foo`） |
+| `Foo*` | **不会** |
+| `unique_ptr<Foo>` | 会 |
+| `shared_ptr<Foo>` | 引用计数减一，为 0 时释放 |
+
+**为什么 STL 不自动 `delete` 指针**：容器无法知道这个指针是 `new` 出来的、`new[]` 出来的、还是指向栈/静态对象的。所有权语义必须由使用者明确表达——这就是 `unique_ptr` / `shared_ptr` 存在的意义。
+@FOLLOW
+1. **`vector<unique_ptr<T>>` 为什么不能 `push_back` 左值？** —— `unique_ptr` 不可拷贝，必须 `std::move` 或直接 `push_back(std::make_unique<T>())`。
+2. **`shared_ptr` 能解决循环引用吗？** —— 不能，环上互相持有会永远不释放，要用 `weak_ptr` 打断。
+3. **`vector<Foo>` 存对象本身行不行？** —— 行，只要 `Foo` 可拷贝或可移动；但会有拷贝开销，大对象优先存指针。
+@TRAPS
+- 以为容器会负责 `delete` 裸指针
+- 混用 `new[]` 和 `delete`（应该 `delete[]`）
+- 用裸指针表达所有权，析构时靠人肉 `for` 循环 delete
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 资源管理（预测题，非真实面经）
+
+@@ Q-0606
+@STEM
+**场景**：`vector<vector<int>> grid(3, vector<int>(4));`，有人以为它在内存里就是一块 3×4 的连续区域，于是用 `memcpy` 或 `&grid[0][0]` 加偏移访问。
+
+**问**：`vector<vector<int>>` 的真实内存布局是什么样的？能当二维数组用吗？
+@ANSWER
+**不能当连续二维数组用**。外层 `vector` 连续存放的是 3 个 `vector<int>` 对象（每个通常是 3 个指针），每个内层 `vector` 各自持有一块**独立的堆内存**，彼此不相邻。
+
+所以 `&grid[0][0] + i*4 + j` 这种算法完全错——它只在内层那块 4 个 int 里滑动，跨行就跑到别的内存了。
+@DEEP
+```
+grid (栈/堆上的对象)
+ ├─ [0] vector<int> ──→ 堆块 A: [1][2][3][4]
+ ├─ [1] vector<int> ──→ 堆块 B: [5][6][7][8]     ← 三块内存互不相邻
+ └─ [2] vector<int> ──→ 堆块 C: [9][0][1][2]
+```
+
+| 写法 | 内存 | 能否 `memcpy` 整体拷贝 | 行长度可变 |
+|---|---|---|---|
+| `int a[3][4]` | 连续 | 能 | 否 |
+| `vector<vector<int>>` | 分散 | 不能 | 能（锯齿数组） |
+| `vector<int> flat(12)` | 连续 | 能 | 否（自己算下标） |
+
+```cpp
+// ✅ 连续二维：一维数组 + 手动下标
+std::vector<int> flat(rows * cols);
+auto at = [&](int i, int j) -> int& { return flat[i * cols + j]; };
+
+// ✅ C++23 起可以用 mdspan 做视图，零拷贝
+```
+
+**什么时候该用哪种**：需要和 C 接口 / BLAS / 图像库交互，用连续布局；每行长度不一（如稀疏结构、变长序列），用 `vector<vector>`。
+@FOLLOW
+1. **`&grid[0][0]` 能不能当 `int*` 传给 C 函数？** —— 只能在单行内这么做，跨行不行；正确做法是先把数据压平。
+2. **`vector<vector<int>>` 有什么开销？** —— 每行一次独立分配、一次指针跳转，缓存局部性差；小矩阵建议压平。
+3. **怎么安全地展平？** —— 遍历每行 `insert` 到一个一维 `vector`，或用 `reserve` 预估总容量。
+@TRAPS
+- 用 `&grid[0][0] + i*cols + j` 跨行访问
+- 对 `vector<vector>` 整体 `memcpy`
+- 以为 `grid.size()*grid[0].size()` 一定等于总元素数（锯齿数组不一定）
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 容器内存布局（预测题，非真实面经）
+
+@@ Q-0607
+@STEM
+**场景**：老代码里到处是 `char buf[256]` 和 `strcpy`，改成 `std::string` 后有人担心"性能会不会变差"。
+
+**问**：为什么现代 C++ 优先用 `std::string`？它相对 `char*` 到底多了什么、代价是什么？
+@ANSWER
+多了三样关键能力：**自动管理内存**（RAII，不会忘 `free`）、**自带长度**（`size()` 是 O(1)，不用每次 `strlen`）、**值语义**（可以拷贝、比较、拼接，行为可预测）。
+
+代价是每个 `string` 对象有几个字节的额外开销（指针 + 长度 + 容量），短字符串还有 SSO（小字符串优化）的判断成本。但这些开销远小于手写 `char*` 带来的 bug 成本。
+@DEEP
+| 维度 | `char*` | `std::string` |
+|---|---|---|
+| 内存管理 | 手动 `malloc/free` | RAII 自动 |
+| 长度 | `strlen` 每次 O(n) | `size()` O(1) |
+| 越界 | 静默写坏内存 | `[]` 不检查，`at()` 抛异常 |
+| 二进制安全 | `\0` 截断 | 可存 `\0` |
+| 拷贝 | 浅拷贝，易双重释放 | 深拷贝，值语义 |
+| 短串 | 一次堆分配 | SSO 存在栈上，无分配 |
+
+```cpp
+std::string s = "hello";
+s += " world";                 // 自动扩容
+s.size();                      // O(1)
+s.c_str();                     // 传给 C 接口，只读
+s.data();                      // C++17 起可写
+```
+
+**SSO 是什么**：多数实现把 15–22 字节以内的字符串直接存在对象内部，不申请堆内存。这就是为什么 `string` 传参时"短串不慢"，也是为什么**跨编译器传 `std::string` 会破坏 ABI**（布局不同）。
+@FOLLOW
+1. **`c_str()` 和 `data()` 区别？** —— C++17 前 `data()` 不保证 `\0` 结尾；C++17 起两者等价。
+2. **`string` 和 `string_view` 区别？** —— `string_view` 不拥有内存、不保证 `\0` 结尾，适合只读传参，避免拷贝。
+3. **什么时候还该用 `char*`？** —— 与 C 库交互的边界、需要极致控制内存的嵌入式场景。
+@TRAPS
+- 认为 `string` 一定比 `char*` 慢（短串有 SSO）
+- 把 `s.c_str()` 的指针存起来，`s` 修改后失效
+- 用 `string` 传二进制数据却依赖 `\0` 结尾
+@RELATED
+- 教学文档/C++程序设计速通.html
+@SOURCE
+C++ 标准库（预测题，非真实面经）
+
+@@ Q-0608
+@STEM
+**场景**：`vector` 不断 `push_back`，观察 `capacity()` 的变化：1、2、4、8、16……不是 1、2、3、4。
+
+**问**：为什么容量是倍增而不是每次加一？为什么不同实现的倍数还不一样（1.5× 和 2×）？
+@ANSWER
+倍增是为了让**均摊插入成本是 O(1)**。每次扩容要搬移全部元素，如果每次只加一个，容量增长是线性的，总搬移量是 1+2+…+n = O(n²)。
+
+按倍数增长时，总搬移量是等比级数，收敛到 O(n)，均摊到每次插入就是 O(1)。
+
+倍数的差异是工程折中：**2× 保证均摊 O(1) 但浪费最多一倍内存，1.5× 内存更省且能复用已释放的块**（MSVC 用 1.5，libstdc++ 用 2）。
+@DEEP
+| 实现 | 增长因子 | 说明 |
+|---|---|---|
+| libstdc++（GCC） | 2× | 简单，浪费多 |
+| libc++（Clang） | 2× | 同上 |
+| MSVC | 1.5× | 内存友好，且 1.5 倍序列可以复用之前的块 |
+
+```cpp
+std::vector<int> v;
+for (int i = 0; i < 10; ++i) {
+    v.push_back(i);
+    std::cout << v.size() << "/" << v.capacity() << "\n";
+}
+// 1/1 2/2 3/4 4/4 5/8 6/8 7/8 8/8 9/16 10/16
+```
+
+**均摊分析的直觉**：n 次插入总搬移 ≈ n + n/2 + n/4 + … < 2n，所以每次插入平均搬移不到 2 个元素。
+
+**扩容的代价不只是搬移**：所有指向元素的指针、引用、迭代器**全部失效**。这是 `vector` 最容易踩的坑——保存了 `&v[0]` 然后又 `push_back`。
+@FOLLOW
+1. **扩容时旧内存怎么处理？** —— 分配新块 → 移动/拷贝元素 → 释放旧块。C++11 起元素可移动时用移动，否则拷贝。
+2. **为什么 `vector` 不能像 `deque` 那样分段？** —— 分段就失去了连续内存，无法 `data()` 和指针算术，与"连续容器"的定位冲突。
+3. **怎么完全避免扩容？** —— 已知规模就 `reserve`；或用 `std::array` / 固定容量容器。
+@TRAPS
+- 认为"每次加一更省内存"，忽略 O(n²) 搬移
+- 扩容后继续用旧指针/迭代器
+- 把 `capacity()` 当 `size()` 用
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 实现原理（预测题，非真实面经）
+
+@@ Q-0609
+@STEM
+**场景**：有人用 `v.reserve(1000)` 之后直接 `v[0] = 1`，程序行为异常。
+
+**问**：`reserve` 到底改变了什么、没改变什么？`reserve` 和 `resize` 该怎么选？
+@ANSWER
+`reserve` 只改**容量**（`capacity`），不改**大小**（`size`）。预留之后 `size()` 仍然是 0，`v[0]` 访问的是未构造的内存，是未定义行为。
+
+`resize` 才改 `size`，并且会真正构造（或析构）元素。
+
+选法很简单：**只是为了避免扩容用 `reserve`；需要真的有 N 个元素用 `resize`。**
+@DEEP
+```cpp
+std::vector<int> v;
+v.reserve(1000);
+v.size();        // 0
+v.capacity();    // >= 1000
+v[0] = 1;        // ❌ UB：元素不存在
+
+v.resize(1000);  // ✅ 现在有 1000 个值初始化的 int
+v[0] = 1;        // 合法
+```
+
+| 操作 | `size` | `capacity` | 构造元素 | 影响已有元素 |
+|---|---|---|---|---|
+| `reserve(n)` | 不变 | ≥ n | 否 | 可能搬移（使迭代器失效） |
+| `resize(n)` | 变 n | 可能增 | 是 | 缩小会析构尾部 |
+| `shrink_to_fit()` | 不变 | 降到 size | 否 | 可能搬移，非强制 |
+
+**一个反直觉的点**：`reserve` 也可能让迭代器失效——如果它触发了重新分配（`n` 大于当前 `capacity`）。所以"reserve 是安全的"这个说法不成立。
+
+**什么时候 `reserve` 收益最大**：已知元素个数时。比如从数组构造、或者循环里要 `push_back` 一万次，`reserve` 能省掉十几次扩容和几万次搬移。
+@FOLLOW
+1. **`reserve` 能减少内存占用吗？** —— 不能，它只会增加。减少要用 `shrink_to_fit` 或 `swap` 技巧。
+2. **`resize` 对 `vector<string>` 会怎样？** —— 新增的元素是默认构造的空串，不是"未初始化"。
+3. **`reserve` 对 `map` / `list` 有效吗？** —— 无效，它们没有 `reserve` 成员（节点式容器不需要连续空间）。
+@TRAPS
+- `reserve` 后直接用下标访问
+- 以为 `reserve` 一定不改动已有元素
+- 对 `list` / `map` 调 `reserve`（编译不过）
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 容器接口（预测题，非真实面经）
+
+@@ Q-0610
+@STEM
+**场景**：想在 `list` 上用 `it + 3` 跳到第 4 个元素，编译不过；同样的代码在 `vector` 上没问题。
+
+**问**：为什么 `list` 的迭代器不支持随机访问？这是实现偷懒还是必然？
+@ANSWER
+是**必然**。`list` 是节点式容器，每个节点在堆上独立分配，地址之间没有规律，想跳到第 n 个只能一个个走。既然做不到 O(1)，标准就不给它随机访问迭代器的接口。
+
+`vector` 内存连续，`it + 3` 就是指针加 3，O(1)，所以它满足随机访问。
+@DEEP
+| 容器 | 迭代器类别 | `it + n` | `it[n]` | `std::sort` |
+|---|---|---|---|---|
+| `vector` / `deque` | 随机访问 | ✅ O(1) | ✅ | ✅ |
+| `list` / `set` / `map` | 双向 | ❌ | ❌ | ❌（`list` 有成员 `sort`） |
+| `forward_list` | 前向 | ❌ | ❌ | ❌ |
+| `unordered_*` | 前向 | ❌ | ❌ | ❌ |
+
+```cpp
+std::list<int> l{1,2,3,4,5};
+// auto x = *(l.begin() + 2);          // ❌ 编译错误
+auto it = std::next(l.begin(), 2);     // ✅ O(n)，但通用
+```
+
+**这也是 `std::sort` 不能用于 `list` 的原因**：快排要靠随机访问做分治和交换，`list` 只能顺序走，复杂度会退化。所以 `list` 提供了成员 `sort()`，用归并实现。
+
+**选容器的判断**：需要随机访问 + 尾部增删 → `vector`；需要中间频繁插入删除且不关心随机访问 → `list`；实际项目里 `vector` 覆盖 90% 场景，因为缓存局部性带来的收益远大于链表插入的优势。
+@FOLLOW
+1. **`std::advance` 和 `std::next` 区别？** —— `advance` 原地修改迭代器，`next` 返回副本。
+2. **`list` 插入真的是 O(1) 吗？** —— 插入本身 O(1)，但**找到位置**是 O(n)；所以"在中间插入快"这个说法只在你已经持有迭代器时成立。
+3. **为什么 `vector` 中间插入慢？** —— 要搬移后面所有元素，O(n)。
+@TRAPS
+- 用 `it + n` 遍历链表
+- 认为 `list` 插入一定比 `vector` 快（忽略了查找成本）
+- 在 `list` 上调用 `std::sort`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 容器选择（预测题，非真实面经）
+
+@@ Q-0611
+@STEM
+**场景**：`std::map<MyKey, int> m;` 里放了自定义类型，编译报错一大串，核心是"no match for operator<"。
+
+**问**：为什么 `map` 的 key 必须可比较？自定义类型要做哪些事？有什么坑？
+@ANSWER
+因为 `map` 内部是**红黑树**，靠比较决定元素位置，所以 key 必须能排出严格弱序。自定义类型要么提供 `operator<`，要么给 `map` 传一个比较器。
+
+要注意两点：**比较必须是严格弱序**（不能出现 `a<b && b<a`），**浮点 key 要小心**（NaN 会破坏排序）。
+@DEEP
+```cpp
+struct Key { int id; std::string name; };
+
+// 方式一：成员 operator<
+bool operator<(const Key &a, const Key &b) {
+    if (a.id != b.id) return a.id < b.id;
+    return a.name < b.name;              // 所有字段都要参与，否则"相等"的元素会被当成同一个
+}
+
+// 方式二：外部比较器（推荐，不侵入类型）
+struct Cmp {
+    bool operator()(const Key &a, const Key &b) const { return a.id < b.id; }
+};
+std::map<Key, int, Cmp> m;
+```
+
+| 需求 | 容器 | key 要求 |
+|---|---|---|
+| 有序遍历 | `map` / `set` | 严格弱序（`operator<`） |
+| 只查不排序 | `unordered_map` | 可哈希 + 可判等 |
+| 范围查询 | `map` | 必须有序 |
+
+**最容易踩的坑**：`operator<` 只比较了部分字段。比如只比 `id` 不比 `name`，那么两个 `id` 相同但 `name` 不同的 key 会被 `map` 认为是**同一个 key**，后插入的覆盖前面的——静默丢数据。
+@FOLLOW
+1. **严格弱序是什么？** —— 不可自反（`a<a` 为假）、传递、且任意两个元素可比出先后；违反它会导致未定义行为。
+2. **能重载 `operator<` 但只想比一个字段吗？** —— 能，但要意识到"其余字段被忽略"，`map` 里会出现覆盖。
+3. **`unordered_map` 的自定义 key 怎么做？** —— 提供 `std::hash` 特化和 `operator==`。
+@TRAPS
+- 只比较部分字段，导致 key 冲突、数据被覆盖
+- 用浮点数当 key，NaN 破坏排序
+- `operator<` 写成非 const 成员函数，`map` 编不过
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 关联容器（预测题，非真实面经）
+
+@@ Q-0612
+@STEM
+**场景**：一段代码在遍历 `vector` 时 `erase` 元素，编译通过、样例也过，但在特定数据下崩溃或漏删。
+
+**问**：删除容器元素时，哪类错误编译器不报、结果却会错？
+@ANSWER
+**迭代器失效**。`erase` 之后，被删位置及其后的迭代器全部失效，但类型没变、编译照过，运行时就是未定义行为。
+
+`vector` 上正确写法是接住返回值：`it = v.erase(it)`；`list`/`map` 同理。范围 `erase-remove` 惯用法适用于"删除所有满足条件的元素"。
+@DEEP
+```cpp
+// ❌ 典型错误：erase 后继续 ++it
+for (auto it = v.begin(); it != v.end(); ++it)
+    if (*it % 2 == 0) v.erase(it);        // 迭代器失效
+
+// ✅ vector / list / map 通用
+for (auto it = v.begin(); it != v.end(); ) {
+    if (*it % 2 == 0) it = v.erase(it);   // erase 返回下一个有效位置
+    else ++it;
+}
+
+// ✅ 删除所有满足条件的元素（C++20 前）
+v.erase(std::remove_if(v.begin(), v.end(),
+                       [](int x){ return x % 2 == 0; }), v.end());
+// C++20
+std::erase_if(v, [](int x){ return x % 2 == 0; });
+```
+
+| 操作 | 失效范围 |
+|---|---|
+| `vector::push_back` 触发扩容 | **全部**指针/引用/迭代器 |
+| `vector::erase` | 被删位置及之后 |
+| `vector::insert` | 插入点及之后（可能全部） |
+| `list` / `map` / `set` 插入删除 | 只有被删元素 |
+
+**另一个静默错误**：范围 `for` 里 `erase`。`for (auto x : v) v.erase(...)` 的迭代器是隐藏的，你没法接住返回值，必崩。
+@FOLLOW
+1. **为什么 `list` 的 `erase` 只失效被删元素？** —— 节点独立分配，其他节点地址不变。
+2. **`remove_if` 之后为什么还要 `erase`？** —— `remove_if` 只把要保留的元素前移，返回新逻辑末尾，不改变 `size`。
+3. **`map` 能边遍历边删吗？** —— 能，用 `it = m.erase(it)`；C++11 起 `erase` 返回下一个迭代器。
+@TRAPS
+- `erase` 后继续 `++it`
+- 范围 `for` 里删除元素
+- 只调 `remove_if` 不调 `erase`，容器大小没变
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 迭代器失效规则（预测题，非真实面经）
+
+@@ Q-0613
+@STEM
+**场景**：同一个矩阵运算程序，Debug 构建跑 800 ms，Release 构建跑 45 ms。
+
+**问**：从 `-O0` 到 `-O2` 为什么能有这么大的差别？为什么用 Debug 版测性能没有意义？
+@ANSWER
+因为 `-O0` 关掉了所有优化：**内联没了、循环不展开、临时对象不消除、寄存器分配最差**。对 C++ 这种大量使用模板和 RAII 的语言，这意味着每个 `operator+`、每个 `shared_ptr` 拷贝、每个迭代器自增都变成真实函数调用。
+
+我们的项目里就踩过这个：`colcon build` 默认没指定构建类型，推理节点慢了一倍，模型和参数全查过才发现是构建配置。
+
+**Debug 版测性能没有意义**，因为它的性能特征和发布版完全不同，优化的方向可能都是错的。
+@DEEP
+| 优化级别 | 主要效果 | 典型差距 |
+|---|---|---|
+| `-O0` | 不优化，变量都在栈上 | 基准 |
+| `-O1` | 基本优化，编译快 | 2–5× |
+| `-O2` | 内联、循环优化、向量化（部分） | 5–20× |
+| `-O3` | 更激进的向量化和展开 | 比 O2 再快 10–30%，代码更大 |
+| `-Os` | 优化体积 | 接近 O2，略慢 |
+
+```bash
+# CMake 项目
+cmake -DCMAKE_BUILD_TYPE=Release ..
+# colcon
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+# 手写 g++
+g++ -O2 -DNDEBUG main.cpp
+```
+
+**`-DNDEBUG` 也很关键**：它关掉 `assert`。Debug 版里大量 `assert` 在热循环中会显著拖慢。
+
+**怎么验证**：`objdump -d` 看关键函数里有没有意外的 `call`；或者用 `perf stat` 对比指令数。
+@FOLLOW
+1. **为什么 `-O3` 不一定更快？** —— 可能因代码膨胀导致指令缓存命中率下降，必须实测。
+2. **`RelWithDebInfo` 能测性能吗？** —— 能，它和 `-O2` 等价，只是多带调试符号。
+3. **优化会让 bug 消失或出现吗？** —— 会。未定义行为（越界、数据竞争）在 `-O0` 下可能"看起来正常"，开优化后表现不同。
+@TRAPS
+- 用 Debug 版做性能测试并据此优化
+- 只改 `-O2` 忘了 `-DNDEBUG`
+- 认为 `-O3` 一定比 `-O2` 快
+@RELATED
+- 教学文档/C++工程化开发
+- YOLO_部署实施记录.html
+@SOURCE
+C++ 构建与优化（预测题，非真实面经）
+
+@@ Q-0614
+@STEM
+**场景**：一个小项目所有代码都写在 `main.cpp` 里，编译一次要 40 秒。改成多个文件后，每次只编改动的那个，2 秒完成。
+
+**问**：为什么 C++ 项目必须分头文件和源文件？只为了编译快吗？
+@ANSWER
+编译快只是收益之一。更根本的是三件事：**接口与实现分离**（头文件声明、源文件定义）、**支持增量编译**（一个编译单元改动不影响其他）、**避免重复定义**（多个 `.cpp` 包含同一个头文件时，函数定义在头文件里会违反 ODR）。
+
+另外它还让库可以只发布头文件 + 二进制，隐藏实现细节。
+@DEEP
+```
+include/math_utils.h     ← 声明：int add(int, int);
+src/math_utils.cpp       ← 定义：int add(int a, int b) { return a + b; }
+src/main.cpp             ← #include "math_utils.h"，只看到声明
+```
+
+| 放头文件 | 放源文件 |
+|---|---|
+| 函数声明、类定义 | 函数定义（除非 inline） |
+| 模板、inline 函数 | 静态局部变量 |
+| 常量表达式、`constexpr` | 内部实现细节 |
+| `extern` 变量声明 | 变量定义 |
+
+**编译模型**：每个 `.cpp` 是独立编译单元，`#include` 本质是文本粘贴，所以头文件里放定义会导致每个包含它的 `.cpp` 都生成一份定义 → 链接时"multiple definition"。
+
+**例外**：模板和 `inline` 函数必须放头文件，因为它们要在使用处实例化/内联。
+@FOLLOW
+1. **`#pragma once` 和 include guard 哪个好？** —— `#pragma once` 简洁且被主流编译器支持；include guard 是标准做法，两者可以同用。
+2. **为什么改一个头文件会导致全量重编？** —— 所有包含它的 `.cpp` 都要重编；这就是"编译防火墙"（pimpl、前置声明）要解决的问题。
+3. **`static` 函数放头文件里行不行？** —— 行，但每个编译单元会有一份副本，浪费空间且容易混淆。
+@TRAPS
+- 把函数定义放头文件，链接报 multiple definition
+- 头文件里定义全局变量（应该 `extern` 声明 + 源文件定义）
+- 以为分文件只是为了"看起来整洁"
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+C++ 编译模型（预测题，非真实面经）
+
+@@ Q-0615
+@STEM
+**场景**：线上程序崩溃，只有 core dump，没有 IDE、没有源码目录，甚至机器只能 SSH。
+
+**问**：有了 IDE 的图形调试，为什么还要会命令行 GDB？
+@ANSWER
+因为**出问题的环境往往没有 IDE**：生产服务器、嵌入式板子、Docker 容器、CI 环境。GDB 是唯一到处都在的工具，而且能处理 core dump——这是 IDE 做不到的（IDE 通常只能调活进程）。
+
+还有一点：GDB 可以脚本化，用命令文件批量跑断点和打印，适合复现和自动化。
+@DEEP
+```bash
+# 看 core dump
+gdb ./myapp core.12345
+(gdb) bt                 # 调用栈
+(gdb) frame 3            # 切到第 3 帧
+(gdb) info locals        # 局部变量
+(gdb) p *ptr             # 打印指针指向的内容
+(gdb) thread apply all bt  # 所有线程的栈
+
+# 附加到运行中的进程
+gdb -p $(pgrep myapp)
+
+# 远程调试（嵌入式）
+gdbserver :1234 ./myapp
+gdb ./myapp -ex "target remote 192.168.1.10:1234"
+```
+
+| 场景 | IDE | GDB |
+|---|---|---|
+| 本地开发 | 更方便 | 也能用 |
+| 生产 / SSH | 通常没有 | ✅ |
+| core dump 分析 | 支持有限 | ✅ 标准做法 |
+| 嵌入式远程 | 难 | ✅ gdbserver |
+| 脚本化批量 | 难 | ✅ `-ex` / `-x` |
+@FOLLOW
+1. **core dump 怎么开？** —— `ulimit -c unlimited`，并确认 `/proc/sys/kernel/core_pattern` 指向的位置。
+2. **没有调试符号怎么办？** —— 函数名和行号都没有，只能看汇编和栈回溯；所以发布版要保留符号文件（`RelWithDebInfo` 或单独 `.debug`）。
+3. **`bt` 显示 `??` 是什么原因？** —— 缺符号表，或栈已损坏。
+@TRAPS
+- 说"IDE 更方便"就否定 GDB
+- 不知道 core dump 需要 `ulimit -c unlimited`
+- 发布时把符号全 strip 掉，事故无法定位
+@RELATED
+- 教学文档/C++工程化开发
+- 教学文档/Linux速通/Linux操作系统速通教程.html
+@SOURCE
+C++ 调试与工程化（预测题，非真实面经）
+
+@@ Q-0616
+@STEM
+**场景**：调试一个边界条件，怀疑某个变量取某个值时会走错分支。想直接在调试器里改掉它，看后面会怎样。
+
+**问**：GDB 里怎么改变量值？这么做有什么风险？
+@ANSWER
+用 `set var 变量 = 值`（或 `set 变量 = 值`）。立即生效，后续执行就用新值。
+
+风险有三：**优化后变量可能不存在**（被优化进寄存器或直接常量折叠，GDB 显示 `<optimized out>`）；**改变量绕过了真实逻辑**，你验证的是"如果我这样写会怎样"，不是"程序为什么这样"；**可能掩盖内存越界**——改了值不崩了，但根因还在。
+@DEEP
+```gdb
+(gdb) p counter
+$1 = 3
+(gdb) set var counter = 10
+(gdb) p counter
+$2 = 10
+(gdb) next            # 继续执行，用的是 10
+
+# 改内存（危险）
+(gdb) set {int}0x7fffffffe00 = 42
+```
+
+| 现象 | 原因 |
+|---|---|
+| `<optimized out>` | 变量被优化掉，用 `-O0` 重编或看寄存器 |
+| 改了没生效 | 断点位置在赋值之后 |
+| 改了导致崩溃 | 破坏了不变量，后续逻辑假设不成立 |
+
+**正确的用法**：把改变量当成**假设验证工具**——"如果这个值正常，程序是否继续正常？"用来缩小问题范围，而不是当修复手段。
+@FOLLOW
+1. **优化版怎么改变量？** —— 改寄存器或内存地址：`set $eax = 10`、`set {int}&var = 10`，但要知道自己在做什么。
+2. **能改函数的返回值吗？** —— 能，在 `return` 处断点后 `set $rax = 0`（x86-64）。
+3. **怎么做条件断点？** —— `break file.cpp:42 if counter > 10`，比手动改值更贴近真实场景。
+@TRAPS
+- 在 `-O2` 版本上改变量，发现改不动
+- 改完不崩就认为问题解决了
+- 用改变量代替分析根因
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+GDB 调试技巧（预测题，非真实面经）
+
+@@ Q-0617
+@STEM
+**场景**：新建一个 C++ 项目，只写 `main.cpp`，要一个能编译出可执行文件的 `CMakeLists.txt`。
+
+**问**：最小可用的三条命令是哪三条？各自在做什么？
+@ANSWER
+三条：`cmake_minimum_required`、`project`、`add_executable`。
+
+第一条告诉 CMake 需要的最低版本（影响策略和行为），第二条声明项目名和语言，第三条把源文件编成可执行目标。有这三行就能 `cmake -B build && cmake --build build`。
+@DEEP
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(hello LANGUAGES CXX)
+add_executable(hello main.cpp)
+```
+
+| 命令 | 作用 | 不写会怎样 |
+|---|---|---|
+| `cmake_minimum_required` | 设最低版本和策略 | 警告，行为随版本变化 |
+| `project` | 设项目名、语言、版本 | 报错（必须有） |
+| `add_executable` | 定义可执行目标 | 没有构建目标 |
+
+逐步加料：
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(hello LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)          # 不用 gnu++17，用标准 c++17
+
+add_executable(hello main.cpp)
+target_compile_options(hello PRIVATE -Wall -Wextra)
+```
+
+**为什么用 `target_*` 而不是全局 `include_directories`**：`target_*` 的作用域是那个目标，不会污染其他目标；全局设置在一个大项目里是灾难。
+@FOLLOW
+1. **`cmake .` 和 `cmake -B build` 区别？** —— 前者在当前目录生成一堆文件（污染源码树），后者生成到 `build/`（推荐）。
+2. **`LANGUAGES` 一定要写吗？** —— 不写默认 C 和 CXX，写清楚能避免不必要的编译器检测。
+3. **怎么指定 C++ 标准更稳？** —— 优先 `set(CMAKE_CXX_STANDARD 17)`，比手写 `-std=c++17` 更可移植（MSVC 也能识别）。
+@TRAPS
+- 只写 `add_executable`，缺 `project`
+- 用 `cmake .` 污染源码目录
+- 全局 `include_directories` 而不是 `target_include_directories`
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+CMake 基础（预测题，非真实面经）
+
+@@ Q-0618
+@STEM
+**场景**：VS Code 里每次改完代码都要手动敲 `g++ main.cpp -o main && ./main`，想按 `Ctrl+Shift+B` 一键完成。
+
+**问**：`tasks.json` 怎么配一个「编译 + 运行」任务？
+@ANSWER
+配一个 `type: shell` 的任务，`command` 写编译命令，`args` 传参数；要"编译完自动运行"可以用 `&&` 把两条命令串在 `command` 里，或者配两个任务用 `dependsOn`。
+
+关键是设 `group.kind: build` 且 `isDefault: true`，这样 `Ctrl+Shift+B` 直接跑它。
+@DEEP
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build & run",
+      "type": "shell",
+      "command": "g++ -std=c++17 -O2 -g ${file} -o ${fileDirname}/a.out && ${fileDirname}/a.out",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    }
+  ]
+}
+```
+
+| 字段 | 作用 |
+|---|---|
+| `label` | 任务名，`dependsOn` 引用它 |
+| `command` + `args` | 实际执行什么；用 `args` 更安全（不用处理引号） |
+| `group` | `build` 组 + `isDefault` 才能被快捷键触发 |
+| `problemMatcher` | 把编译错误解析成可点击的列表 |
+| `${file}` | 当前文件；`${fileDirname}` 当前目录 |
+
+**用 `args` 而不是拼在 `command` 里**：路径含空格时，拼字符串会断，`args` 数组不会。
+@FOLLOW
+1. **`${file}` 和 `${workspaceFolder}` 区别？** —— 前者是当前打开的文件，后者是工作区根目录。
+2. **怎么调试而不是只运行？** —— 那是 `launch.json` 的事，`tasks.json` 只管构建和运行。
+3. **`problemMatcher` 有什么用？** —— 把 `error: ...` 解析成问题面板条目，双击跳转到出错行。
+@TRAPS
+- 路径含空格时把参数拼成一个字符串
+- 忘了 `group.isDefault`，快捷键找不到任务
+- 用 `cwd` 却没意识到相对路径基于它
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+VS Code 工程配置（预测题，非真实面经）
+
+@@ Q-0619
+@STEM
+**场景**：`g++ main.cpp -o main` 一条命令就出结果了，但面试官问"这条命令内部做了什么"。
+
+**问**：把「编译链接」拆开看，实质是哪几件事？每步的产物是什么？
+@ANSWER
+四步：**预处理**（展开宏和 `#include`，产物 `.i`）→ **编译**（转成汇编，产物 `.s`）→ **汇编**（转成机器码，产物 `.o`）→ **链接**（合并 `.o` 和库，产物可执行文件）。
+
+我们常说的"编译"其实涵盖了前三步，第四步是独立的"链接"。很多报错类型是能靠这一步区分出来的：`error:` 是编译期，`undefined reference` 是链接期。
+@DEEP
+```bash
+g++ -E main.cpp -o main.i      # 预处理：展开头文件和宏
+g++ -S main.i  -o main.s       # 编译：生成汇编
+g++ -c main.s  -o main.o       # 汇编：生成目标文件
+g++ main.o -o main             # 链接：合并符号
+# 等价于
+g++ main.cpp -o main
+```
+
+| 阶段 | 输入 | 输出 | 典型错误 |
+|---|---|---|---|
+| 预处理 | `.cpp` | `.i` | 找不到头文件 |
+| 编译 | `.i` | `.s` | 语法错误、类型错误 |
+| 汇编 | `.s` | `.o` | 汇编器错误（少见） |
+| 链接 | `.o` + 库 | 可执行文件 | `undefined reference`、`multiple definition` |
+
+**为什么这个区分有用**：看到 `undefined reference to 'foo'`，就知道语法和类型都没问题，问题在"符号没找到"——查库路径、库顺序、`extern "C"`，而不是去改代码逻辑。
+@FOLLOW
+1. **`-c` 是什么意思？** —— 只编译不链接，产出 `.o`。
+2. **头文件在哪个阶段处理？** —— 预处理，`#include` 就是文本插入。
+3. **链接顺序为什么重要？** —— 静态库按命令行顺序解析，被依赖的库要放在依赖它的后面。
+@TRAPS
+- 把 `undefined reference` 当成语法错误去改代码
+- 不知道 `-c` 只编译不链接
+- 头文件路径写错，报的是"找不到文件"而不是"函数未定义"
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+C++ 构建流程（预测题，非真实面经）
+
+@@ Q-0620
+@STEM
+**现象**：`apt list --installed | grep opencv` 显示装了，`ls /usr/include/opencv4` 也有头文件，但 `find_package(OpenCV REQUIRED)` 报 `Could not find a package configuration file`。
+
+**问**：CMake 找包靠什么？「装了但找不到」有哪几种原因？
+@ANSWER
+CMake 找包有两条路：**Config 模式**（找 `OpenCVConfig.cmake`）、**Find 模块模式**（用 `FindOpenCV.cmake`）。报 `Could not find a package configuration file` 说明它在找 Config 文件但没找到。
+
+常见原因：包装在非标准前缀（`/usr/local`、conda 环境、自编译目录）、没设 `CMAKE_PREFIX_PATH`、包只提供 `pkg-config` 文件而没有 Config、或者装的是运行时库没装开发包（`-dev`）。
+@DEEP
+```bash
+# 让 CMake 知道去哪找
+cmake -DCMAKE_PREFIX_PATH=/opt/opencv ..
+cmake -DOpenCV_DIR=/opt/opencv/lib/cmake/opencv4 ..
+
+# 看它找到的是哪个
+cmake -B build && grep -i opencv build/CMakeCache.txt
+```
+
+```cmake
+find_package(OpenCV REQUIRED)          # Config 或 Find 模块
+message(STATUS "OpenCV: ${OpenCV_DIR} ${OpenCV_VERSION}")
+
+# 找不到 Config 时，退回 pkg-config
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(OCV REQUIRED opencv4)
+target_include_directories(app PRIVATE ${OCV_INCLUDE_DIRS})
+target_link_libraries(app PRIVATE ${OCV_LIBRARIES})
+```
+
+| 现象 | 原因 | 处理 |
+|---|---|---|
+| 找不到 Config 文件 | 装在非标准路径 | 设 `CMAKE_PREFIX_PATH` / `xxx_DIR` |
+| 找到了但版本不符 | 系统里有旧版 | 用 `find_package(OpenCV 4.5 REQUIRED)` 指定 |
+| 编译过但链接失败 | 只有 `.so` 没有 `.so` 符号链接（缺 dev 包） | 装 `-dev` 包 |
+| 混用了两个版本 | 缓存里是旧路径 | 删 `build/CMakeCache.txt` 重新配 |
+
+**最容易被忽略的一条**：`CMakeCache.txt` 会记住上次找到的路径。改了环境变量但没删缓存，它不会重新找。
+@FOLLOW
+1. **`xxx_DIR` 和 `CMAKE_PREFIX_PATH` 什么区别？** —— 前者精确指定某个包的 Config 所在目录，后者是搜索根，CMake 会在其下按规则找。
+2. **怎么让 CMake 重新找？** —— 删掉 `build/CMakeCache.txt`，或 `cmake --fresh`（3.24+）。
+3. **`pkg-config` 和 CMake 谁优先？** —— 有 Config 就用 Config，没有才考虑 pkg-config。
+@TRAPS
+- 只装运行时库，没装 `-dev`，头文件缺失
+- 改了环境但没清缓存，始终用旧路径
+- 全局污染 `CMAKE_PREFIX_PATH`，导致找错版本
+@RELATED
+- 教学文档/C++工程化开发
+- YOLO_部署实施记录.html
+@SOURCE
+CMake 依赖查找（预测题，非真实面经）
+
+@@ Q-0621
+@STEM
+**场景**：接一个第三方库，`find_package` 成功，`target_link_libraries` 也写了，但编译报"找不到头文件"，或者链接报一堆 `undefined reference`。
+
+**问**：用 CMake 找第三方库，最常踩的三个坑是什么？
+@ANSWER
+三个：**只链了库没加头文件路径**、**库名写错**（`libxxx.so` 要写 `xxx`，`ImGui` 和 `imgui` 大小写也敏感）、**Debug/Release 混用**（MSVC 的调试版和发布版 CRT 不兼容，链到一起直接崩）。
+
+这三个的共同点是：错误信息都不指向真正的原因。
+@DEEP
+```cmake
+# ✅ 完整写法：用 target_* 把用法要求和库绑在一起
+find_package(OpenCV REQUIRED)
+add_executable(app main.cpp)
+target_include_directories(app PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(app PRIVATE ${OpenCV_LIBS})
+```
+
+| 坑 | 症状 | 修法 |
+|---|---|---|
+| 缺 include 路径 | `fatal error: xxx.h: No such file` | `target_include_directories` |
+| 库名错 | `cannot find -lxxx` | 去掉 `lib` 前缀和 `.so` 后缀 |
+| Debug/Release 混用 | MSVC 下 `_ITERATOR_DEBUG_LEVEL` 不匹配 | 统一构建类型，或用 `debug`/`optimized` 关键字 |
+| 静态库顺序错 | `undefined reference` | 被依赖的放后面 |
+| 缺间接依赖 | 链接时报第三方符号 | 用 `target_link_libraries` 的传递性，或显式补 |
+
+```cmake
+# 同时支持两种构建类型
+target_link_libraries(app PRIVATE
+    debug   mylibd
+    optimized mylib)
+```
+
+**一个判断技巧**：`undefined reference` 提到的是**你调用但没定义**的符号 → 查库路径；提到的是**第三方库内部**的符号 → 查它的依赖（比如 OpenCV 依赖的 `libjpeg`）。
+@FOLLOW
+1. **`find_package` 之后为什么要用变量而不是写死路径？** —— 变量由 CMake 根据实际安装位置生成，写死路径换机器就挂。
+2. **静态库顺序为什么反直觉？** —— 链接器从左到右扫描，遇到未解析符号才去后面的库里找，所以被依赖的要放后面。
+3. **`PUBLIC` / `PRIVATE` 在这里怎么用？** —— 头文件里出现的依赖用 `PUBLIC`，只在 `.cpp` 里用的用 `PRIVATE`。
+@TRAPS
+- 只加 `target_link_libraries` 不加 include 路径
+- 库名带 `lib` 前缀或 `.so` 后缀
+- 混用 Debug 和 Release 的预编译库
+@RELATED
+- 教学文档/C++工程化开发
+- YOLO_部署实施记录.html
+@SOURCE
+CMake 实践（预测题，非真实面经）
+
+@@ Q-0622
+@STEM
+**背景**：要把 ONNX Runtime 接进现有工程，有人建议先写完整推理代码再一起调。
+
+**问**：为什么应该先跑通「能链接、能加载库」，再写推理逻辑？这个顺序省了什么？
+@ANSWER
+因为它把**两类完全不同的故障隔离开了**：环境问题（找不到库、版本不匹配、符号缺失）和逻辑问题（预处理错、后处理错）。
+
+先跑通链接，只需要十几行代码：`#include` 头文件、创建一个 `Ort::Env`、打印版本号。这一步过了，说明编译器、头文件、库、运行时都能对上。后面再出问题，就只可能是逻辑问题。
+@DEEP
+```cpp
+// 最小验证：只证明"能链接、能加载"
+#include <onnxruntime_cxx_api.h>
+#include <iostream>
+
+int main() {
+    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "probe");
+    std::cout << "ORT version: " << Ort::GetVersionString() << "\n";
+    Ort::SessionOptions opts;
+    opts.SetIntraOpNumThreads(1);
+    std::cout << "ok\n";
+    return 0;
+}
+```
+
+```bash
+g++ probe.cpp -o probe \
+  -I/opt/ort/include \
+  -L/opt/ort/lib -lonnxruntime
+ldd ./probe | grep onnx        # 确认运行时能找到 .so
+./probe                        # 打印版本号就通过
+```
+
+| 阶段 | 验证什么 | 失败说明 |
+|---|---|---|
+| 编译 | 头文件路径、语法 | include 路径或版本不对 |
+| 链接 | 库路径、库名 | `-L` / `-l` 错，或 ABI 不匹配 |
+| 运行加载 | 动态库可被找到 | `LD_LIBRARY_PATH` 或 rpath 没设 |
+| 创建 Session | 模型文件、算子支持 | 模型路径或版本问题 |
+| 推理 | 预处理 / 后处理 | 逻辑问题 |
+
+**为什么值得多花这 10 分钟**：不做这一步，一旦推理结果不对，你要同时怀疑五层。做了之后，只剩最后一层。
+@FOLLOW
+1. **`ldd` 显示 `not found` 怎么办？** —— 设 `LD_LIBRARY_PATH`，或在 CMake 里设 `BUILD_RPATH` / `INSTALL_RPATH`。
+2. **为什么要打印版本号？** —— 现场经常出现"装了两个版本，加载的是旧的那个"，打印是最快的确认方式。
+3. **静态链接能避免这个问题吗？** —— 能避免运行时找不到 `.so`，但会带来许可证和体积问题。
+@RELATED
+- YOLO_部署实施记录.html §A3 踩过的坑一览
+- 教学文档/YOLO_ROS2部署教程.html §A2
+@SOURCE
+本项目部署实践（ONNX Runtime 接入）
+
+@@ Q-0623
+@STEM
+**场景**：ONNX Runtime 的 C++ 接口里，要先建 `Env`，再建 `SessionOptions`，再建 `Session`。有人把 `Session` 建在函数里、`Env` 建在函数外，程序偶尔崩。
+
+**问**：ORT 的初始化顺序是怎样的？为什么顺序不能乱？生命周期该怎么管？
+@ANSWER
+顺序是：**`Ort::Env` → `Ort::SessionOptions` → `Ort::Session` → 查输入输出 → `Run`**。
+
+不能乱是因为有依赖链：`Session` 构造时要读 `Env` 和 `Options`，`Run` 要用 `Session` 里已绑定的分配器。而**生命周期必须覆盖使用期**——`Env` 必须先于 `Session` 存活，`Session` 可以先于 `Options` 销毁但反过来不行。
+
+`Env` 全局**只应有一个**，它管理线程池和日志，多个会互相干扰。
+@DEEP
+```cpp
+Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "app");     // 进程级，只建一次
+
+Ort::SessionOptions opts;
+opts.SetIntraOpNumThreads(4);
+opts.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+
+Ort::Session session(env, model_path, opts);        // 依赖 env 和 opts
+
+// 输入输出名要在 Session 之后查
+Ort::AllocatorWithDefaultOptions alloc;
+auto in_name  = session.GetInputNameAllocated(0, alloc);
+auto out_name = session.GetOutputNameAllocated(0, alloc);
+```
+
+| 对象 | 生命周期 | 能否多份 | 说明 |
+|---|---|---|---|
+| `Ort::Env` | 进程级 | **不建议** | 管线程池、日志 |
+| `SessionOptions` | 可短于 Session | 可以 | 只在构造 Session 时用 |
+| `Session` | 长期 | 可以（多模型） | 线程安全，可多线程 Run |
+| `Value`（张量） | 单次推理 | 每次新建 | 或用 `IoBinding` 复用 |
+
+**线程安全**：`Session::Run` 是线程安全的，可以多个线程同时调；但 `SessionOptions` 的修改不是。
+@FOLLOW
+1. **`Session` 能跨线程共享吗？** —— 能，`Run` 是 const 且线程安全的；但每个线程要自己的输入输出 `Value`。
+2. **`Env` 建两个会怎样？** —— 线程池翻倍、日志重复，某些版本会报错；统一用一个。
+3. **模型换了怎么办？** —— 重新建 `Session`，不要试图改已有的。
+@TRAPS
+- 把 `Env` 建在会先销毁的作用域里
+- 每个请求都新建 `Session`（加载耗时几百毫秒到几秒）
+- 多线程共享同一个输入 `Value`
+@RELATED
+- YOLO_部署实施记录.html
+@SOURCE
+ONNX Runtime C++ 接口（预测题，非真实面经）
+
+@@ Q-0624
+@STEM
+**现象**：`g++` 编译通过、链接也通过，一运行就报：
+
+```
+error while loading shared libraries: libonnxruntime.so.1.16: cannot open shared object file
+```
+
+或者更隐蔽：程序启动正常，调用某个函数时抛异常说符号找不到。
+
+**问**：链接能过、运行时找不到符号，问题在哪几层？按什么顺序查？
+@ANSWER
+**链接过 ≠ 运行时能找到**。链接阶段找的是"有没有这个符号"，运行时找的是"能不能加载这个 `.so` 文件"。所以分两层查：**先查库文件能不能被找到**（`LD_LIBRARY_PATH`、rpath），**再查符号是否真的存在**（版本不对、被 `strip`、`-fvisibility=hidden` 藏了）。
+
+最常见的根因是**版本不匹配**：链接时用的是 1.16 的头文件，运行时加载的是 1.14 的库。
+@DEEP
+```bash
+# 1. 看它需要什么、现在找到的是什么
+ldd ./app | grep -i onnx
+#   libonnxruntime.so.1.16 => not found     ← 找不到
+
+# 2. 看文件系统里有哪些版本
+ls -l /usr/lib/x86_64-linux-gnu/libonnxruntime.so*
+readelf -d ./app | grep -E 'RPATH|RUNPATH'
+
+# 3. 看符号到底在不在（-D 看动态符号表）
+nm -D /opt/ort/lib/libonnxruntime.so | grep OrtCreateSession
+c++filt _ZN3Ort...                        # 还原 C++ 修饰名
+
+# 4. 临时指定路径
+LD_LIBRARY_PATH=/opt/ort/lib ./app
+```
+
+| 层级 | 命令 | 结论 |
+|---|---|---|
+| 依赖 | `ldd` | `not found` = 路径问题 |
+| 搜索路径 | `readelf -d` | 看 RPATH/RUNPATH |
+| 符号存在性 | `nm -D` | 没有 = 版本不符或被隐藏 |
+| 符号名 | `c++filt` | 区分 C++ 修饰名和 `extern "C"` |
+
+**两种隐性问题**：
+1. **`-fvisibility=hidden`**：符号存在于 `.so` 里但不导出，`nm -D` 看不到，链接时也会失败。
+2. **ABI 不匹配**：库和调用方对同一个类的内存布局理解不同，符号找得到但行为错乱——这在混用不同编译器（GCC vs MSVC）时必然发生。
+@FOLLOW
+1. **`LD_LIBRARY_PATH` 和 rpath 谁优先？** —— 一般 `LD_LIBRARY_PATH` 优先于 RUNPATH（但 DT_RPATH 更早）；生产环境更推荐写 rpath。
+2. **`undefined reference` 和 `cannot open shared object` 区别？** —— 前者是链接期（找不到符号），后者是运行期（找不到文件）。
+3. **为什么调试版能跑、发布版不能？** —— 可能链接了不同的库路径，或发布版 strip 掉了依赖信息。
+@TRAPS
+- 只查 `ldd` 不查 `nm -D`，路径对了但版本不对时卡住
+- 用 `LD_LIBRARY_PATH` 长期兜底，掩盖了打包问题
+- 混用 GCC 和 MSVC 编译的库
+@RELATED
+- YOLO_部署实施记录.html §A3 踩过的坑一览（第 4 条）
+@SOURCE
+本项目部署踩坑记录 + 动态库通用知识
+
+@@ Q-0625
+@STEM
+**场景**：每次新建项目都从别的项目拷 CMakeLists，改改名字。拷来的文件里有一堆用不上的配置，也不知道哪些是必需的。
+
+**问**：一个可复用的 CMakeLists 模板应该包含什么？哪些是必需的、哪些是可选加料的？
+@ANSWER
+必需四块：**版本声明、项目声明、可执行目标、编译选项**。可选加料按需：依赖查找、安装规则、测试、导出配置。
+
+我建议的骨架是"最小可用 + 按需追加"，而不是一上来堆全套——不知道在做什么的配置，出问题时最难排查。
+@DEEP
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(myapp VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
+endif()
+
+add_executable(myapp src/main.cpp src/util.cpp)
+target_include_directories(myapp PRIVATE include)
+target_compile_options(myapp PRIVATE -Wall -Wextra -Wpedantic)
+
+# 可选：依赖
+find_package(Threads REQUIRED)
+target_link_libraries(myapp PRIVATE Threads::Threads)
+
+# 可选：安装
+include(GNUInstallDirs)
+install(TARGETS myapp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# 可选：测试
+enable_testing()
+add_test(NAME smoke COMMAND myapp --version)
+```
+
+| 块 | 必需 | 说明 |
+|---|---|---|
+| `cmake_minimum_required` | ✅ | 版本策略 |
+| `project(... VERSION ...)` | ✅ | 版本号后面 install 要用 |
+| `CXX_STANDARD` | ✅ | 别依赖编译器默认值 |
+| `CMAKE_BUILD_TYPE` 默认值 | 建议 | 避免误用 Debug 测性能 |
+| `target_*` 而非全局命令 | ✅ | 避免污染 |
+| `install` / `export` | 做库时必需 | 让别人 `find_package` 到你 |
+| `enable_testing` | 建议 | 接 CI 的前提 |
+
+**两个原则**：能用 `target_*` 就不用全局命令；默认构建类型设为 Release，开发时显式指定 `RelWithDebInfo`。
+@FOLLOW
+1. **为什么要设默认 `CMAKE_BUILD_TYPE`？** —— 不设就是空（等价 `-O0`），性能测试会得到假数据。
+2. **`-Wall -Wextra` 会不会太吵？** —— 一开始会，但能挡住大量真实 bug；可以用 `-Wno-` 精确关掉个别。
+3. **库项目还要加什么？** —— `install(EXPORT ...)`、`xxx-config.cmake`、`soname` 版本管理。
+@TRAPS
+- 不设默认构建类型，性能测试全错
+- 用全局 `include_directories` 污染所有目标
+- 模板里塞一堆看不懂的配置，出问题无法定位
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+CMake 工程模板（预测题，非真实面经）

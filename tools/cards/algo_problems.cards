@@ -1,0 +1,834 @@
+@@ Q-1840
+@STEM
+**题目**：给定一个字符串，反转其中单词的顺序，单词之间用单个空格连接，首尾不能有空格。
+
+```
+输入：s = "  hello world  "
+输出："world hello"
+
+输入：s = "a good   example"
+输出："example good a"
+```
+
+**问**：多余的空格怎么处理？为什么不能直接 `reverse` 整个字符串了事？
+@ANSWER
+因为 `reverse` 会把单词内部的字符也翻转，得到 `"dlrow olleh"`，还得再逐个单词翻回来——能做，但要额外一轮处理。
+
+更直接的做法是**先切成单词，再倒序拼接**。切的时候要注意连续多个空格会产生空串，拼的时候手动控制空格，只有前面已经拼过东西才加空格。
+@DEEP
+```cpp
+string reverseWords(string s) {
+    vector<string> words;
+    istringstream iss(s);
+    string w;
+    while (iss >> w) words.push_back(w);   // >> 自动跳过任意空白
+    string res;
+    for (int i = words.size() - 1; i >= 0; --i) {
+        if (!res.empty()) res += ' ';
+        res += words[i];
+    }
+    return res;
+}
+```
+时间 O(n)，空间 O(n)。
+
+**原地版（O(1) 额外空间）**：整体翻转 → 再逐个单词翻转。这也是面试官常追问的"能不能不用额外空间"。
+
+```cpp
+// 整体反转后逐词反转，最后压缩多余空格
+reverse(s.begin(), s.end());
+int i = 0, n = s.size();
+while (i < n) {
+    int j = i;
+    while (j < n && s[j] != ' ') ++j;
+    reverse(s.begin() + i, s.begin() + j);
+    i = j + 1;
+}
+```
+@FOLLOW
+1. **`istringstream >>` 为什么能自动跳空格？** —— `operator>>` 对 `string` 的定义是先跳过前导空白再读到下一个空白，天然做了 trim。
+2. **原地版怎么处理连续空格？** —— 需要一次额外的"压缩空格"扫描，把结果写到慢指针处。
+3. **Python 怎么做？** —— `' '.join(s.split()[::-1])`，`split()` 无参时按任意空白切分并丢弃空串。
+@TRAPS
+- 用 `split(' ')` 而不是 `split()`，连续空格会产生空串
+- 拼接时最后多一个空格
+- 空串输入没处理，返回 `" "`
+@RELATED
+- 无（机考基本功）
+@SOURCE
+字符串处理题（LeetCode 151 类题，预测题）
+
+@@ Q-1841
+@STEM
+**题目**：给定只含 `()[]{}` 的字符串，判断括号是否有效（同类型闭合、顺序正确）。
+
+```
+输入："()[]{}"   输出：true
+输入："([)]"     输出：false
+输入："(]"       输出：false
+```
+
+**问**：为什么必须用栈，不能用计数器？
+@ANSWER
+因为计数器只能表达"数量"，表达不了"嵌套顺序"。`"([)]"` 里左右括号数量完全相等，但它无效——右括号 `)` 出现时，栈顶应该是 `(`，可实际是 `[`，类型不匹配。
+
+栈保存的是**未闭合括号的嵌套顺序**，这是计数做不到的信息。
+@DEEP
+```cpp
+bool isValid(string s) {
+    stack<char> st;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') { st.push(c); continue; }
+        if (st.empty()) return false;                 // 右括号多了
+        char t = st.top();
+        if ((c == ')' && t != '(') ||
+            (c == ']' && t != '[') ||
+            (c == '}' && t != '{')) return false;     // 类型不匹配
+        st.pop();
+    }
+    return st.empty();                                // 左括号多了
+}
+```
+时间 O(n)，空间 O(n)。
+
+**三条失败路径**，讲全了才完整：
+1. 右括号来时栈空 → 右括号多了；
+2. 栈顶类型不匹配 → 顺序错；
+3. 结束时栈非空 → 左括号多了。
+
+**一个能加分的说法**：如果用哈希表存 `)`→`(` 的映射，可以把三种判断压成一次比较：`if (st.empty() || st.top() != map[c]) return false;`。
+@FOLLOW
+1. **只有一种括号时能用计数器吗？** —— 可以，`(` 加一 `)` 减一，中途为负或结尾非零就失败。多种括号就不行。
+2. **最长有效括号怎么求？** —— 栈里存下标而不是字符，遇到不匹配时用下标差算长度。
+3. **能不用栈吗？** —— 可以用递归（本质还是栈），或原地把匹配的括号对标记删除，反复扫描。
+@TRAPS
+- 只检查数量相等，`"([)]"` 判成 true
+- 忘了结束时检查栈是否为空
+- 空串返回 false（应该是 true）
+@RELATED
+- 无（机考基本功）
+@SOURCE
+栈的经典应用（LeetCode 20 类题，预测题）
+
+@@ Q-1842
+@STEM
+**题目**：求字符串中最长的回文子串。
+
+```
+输入："babad"   输出："bab"（"aba" 也算对）
+输入："cbbd"    输出："bb"
+```
+
+**问**：中心扩展为什么比 DP 更好写？它的复杂度和边界处理难点在哪？
+@ANSWER
+因为回文的定义就是"从中心向两边对称"，中心扩展直接照着定义写：枚举每个中心，向两边扩到不相等为止。代码只有十行，不需要推状态转移。
+
+DP 要定义 `dp[i][j]` 表示 `s[i..j]` 是否回文，转移是 `dp[i][j] = (s[i]==s[j]) && dp[i+1][j-1]`，还要处理长度为 1 和 2 的边界，写起来啰嗦。两者都是 O(n²)，空间上扩展是 O(1)，DP 是 O(n²)。
+@DEEP
+```cpp
+string longestPalindrome(string s) {
+    if (s.empty()) return "";
+    int start = 0, maxLen = 1;
+    auto expand = [&](int l, int r) {
+        while (l >= 0 && r < (int)s.size() && s[l] == s[r]) { --l; ++r; }
+        int len = r - l - 1;                 // 注意：不相等之后才停
+        if (len > maxLen) { maxLen = len; start = l + 1; }
+    };
+    for (int i = 0; i < (int)s.size(); ++i) {
+        expand(i, i);        // 奇数长度，中心是一个字符
+        expand(i, i + 1);    // 偶数长度，中心是两个字符之间
+    }
+    return s.substr(start, maxLen);
+}
+```
+
+**两个必须讲清的点**：
+
+1. **要枚举 2n-1 个中心**：n 个字符中心加 n-1 个间隙中心，漏掉偶数长度会错（如 `"cbbd"`）。
+2. **长度是 `r - l - 1`**：循环退出时 `l` 和 `r` 已经越过边界一位，直接用 `r-l+1` 会多算 2。
+
+**为什么不用马拉车**：Manacher 是 O(n)，但实现复杂度高、易错，机考里 O(n²) 对 n=1000 完全够用。
+@FOLLOW
+1. **DP 版怎么写？** —— 按长度从小到大枚举，`dp[i][j]` 只依赖 `dp[i+1][j-1]`，所以循环顺序必须是长度递增。
+2. **怎么判断一个串是不是回文？** —— 双指针相向，或 `s == string(s.rbegin(), s.rend())`。
+3. **回文子串的个数怎么求？** —— 同样中心扩展，每个中心贡献 `(len+1)/2` 个。
+@TRAPS
+- 只枚举奇数中心，偶数长度回文全漏
+- 长度算成 `r-l+1`，多算两位
+- 空串没处理，`substr` 抛异常
+@RELATED
+- 无（机考基本功）
+@SOURCE
+字符串经典题（LeetCode 5 类题，预测题）
+
+@@ Q-1843
+@STEM
+**题目**：实现 `atoi`：把字符串转成 32 位整数。规则是跳过前导空格、可有正负号、遇到非数字停止、溢出要截断到 `INT_MIN` / `INT_MAX`。
+
+```
+输入："42"            输出：42
+输入："   -042"       输出：-42
+输入："4193 with words" 输出：4193
+输入："-91283472332"  输出：-2147483648
+输入："words and 987" 输出：0
+```
+
+**问**：这道题的坑点集中在哪里？为什么不能直接 `stoi`？
+@ANSWER
+坑全在边界：**溢出**、**只有符号没有数字**、**全是空格**、**非数字开头返回 0**。`stoi` 遇到溢出会抛 `out_of_range`，机考里直接崩，所以必须自己处理。
+
+正确做法是用 `long long` 累加，累加过程中判断是否越界，越界就返回对应的极值。
+@DEEP
+```cpp
+int myAtoi(string s) {
+    int i = 0, n = s.size();
+    while (i < n && s[i] == ' ') ++i;            // 1. 跳过前导空格
+    int sign = 1;
+    if (i < n && (s[i] == '+' || s[i] == '-')) {  // 2. 符号
+        sign = (s[i] == '-') ? -1 : 1;
+        ++i;
+    }
+    long long val = 0;
+    while (i < n && isdigit(s[i])) {             // 3. 数字
+        val = val * 10 + (s[i] - '0');
+        if (sign == 1 && val > INT_MAX) return INT_MAX;   // 4. 提前截断
+        if (sign == -1 && -val < INT_MIN) return INT_MIN;
+        ++i;
+    }
+    return (int)(sign * val);
+}
+```
+
+| 边界用例 | 期望输出 | 常见错误 |
+|---|---|---|
+| `""` | 0 | 越界访问 |
+| `"   "` | 0 | 返回 0 但没走完逻辑 |
+| `"+"` / `"-"` | 0 | 返回符号本身 |
+| `"-91283472332"` | -2147483648 | 返回 INT_MAX 或溢出成正数 |
+| `"00000000000000123"` | 123 | 长串溢出 |
+
+**为什么在累加过程中就判断，而不是最后判断**：`long long` 也可能被超长数字串撑爆（虽然 19 位以内安全），提前截断最稳。
+@FOLLOW
+1. **溢出判断为什么用 `long long` 而不是 `int`？** —— `int` 一溢出就是未定义行为，可能变成负数，判断失效。
+2. **`isdigit(s[i])` 有什么风险？** —— 参数是 `char` 时若为负值（非 ASCII）是未定义行为，应转 `unsigned char`。
+3. **能不能先找数字子串再转？** —— 能，但要注意子串本身也可能溢出。
+@TRAPS
+- 用 `stoi` 直接转，溢出抛异常
+- 溢出只在最后判断，中间已经溢出
+- `"-"` 单独一个符号返回 -1
+@RELATED
+- 无（机考基本功）
+@SOURCE
+字符串解析题（LeetCode 8 类题，预测题）
+
+@@ Q-1844
+@STEM
+**题目**：实现 `strStr(haystack, needle)`，返回 needle 在 haystack 中第一次出现的下标，不存在返回 -1。
+
+```
+输入：haystack = "sadbutsad", needle = "sad"   输出：0
+输入：haystack = "leetcode",  needle = "leeto" 输出：-1
+```
+
+**问**：KMP 的 `next` 数组到底在算什么？为什么它能把复杂度从 O(nm) 降到 O(n+m)？
+@ANSWER
+`next[i]` 算的是**子串 `p[0..i]` 的最长相等前后缀长度**。它的作用是：匹配失败时告诉你"模式串该退到哪一位继续比"，而不是从头再来。
+
+暴力法每次失配都让主串指针回退，做了大量重复比较；KMP 利用"已经匹配过的部分是已知的"这一点，只退模式串指针，主串指针永回退，所以是线性的。
+@DEEP
+```cpp
+vector<int> buildNext(const string &p) {
+    int m = p.size();
+    vector<int> nxt(m, 0);
+    for (int i = 1, k = 0; i < m; ++i) {
+        while (k > 0 && p[i] != p[k]) k = nxt[k - 1];   // 失配，退到上一个可行位置
+        if (p[i] == p[k]) ++k;
+        nxt[i] = k;
+    }
+    return nxt;
+}
+
+int strStr(string hay, string needle) {
+    if (needle.empty()) return 0;
+    auto nxt = buildNext(needle);
+    for (int i = 0, k = 0; i < (int)hay.size(); ++i) {
+        while (k > 0 && hay[i] != needle[k]) k = nxt[k - 1];
+        if (hay[i] == needle[k]) ++k;
+        if (k == (int)needle.size()) return i - k + 1;
+    }
+    return -1;
+}
+```
+
+举例 `p = "ababaca"`：
+
+| i | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|---|
+| p[i] | a | b | a | b | a | c | a |
+| next[i] | 0 | 0 | 1 | 2 | 3 | 0 | 1 |
+
+`next[4] = 3` 表示 `"ababa"` 的最长相等前后缀是 `"aba"`，长度 3。失配时直接退到下标 3 继续比，跳过前 3 个字符的重复比较。
+
+**复杂度为什么是线性的**：`k` 每次最多加 1，而 `while` 里每次至少减 1，所以 `k` 的总减少量不超过总增加量，均摊 O(1)。
+@FOLLOW
+1. **机考里该手写 KMP 吗？** —— 不必。`haystack.find(needle)` 通常就是优化过的实现，除非题目要求"不许用库函数"。
+2. **`next` 数组和 `nextval` 有什么区别？** —— `nextval` 在 `p[i] == p[next[i]]` 时继续往前退，减少无意义的比较。
+3. **还有别的线性算法吗？** —— Rabin-Karp（滚动哈希，平均 O(n+m)）、BM（实际最快，但实现复杂）。
+@TRAPS
+- `next` 数组从 0 开始还是从 -1 开始搞混
+- 失配时把主串指针也回退（退化成暴力）
+- needle 为空时没处理
+@RELATED
+- 无（机考基本功）
+@SOURCE
+字符串匹配（LeetCode 28 类题，预测题）
+
+@@ Q-1845
+@STEM
+**题目**：把字母异位词分到同一组。字母异位词指字母种类和数量相同、顺序不同。
+
+```
+输入：["eat","tea","tan","ate","nat","bat"]
+输出：[["bat"],["nat","tan"],["ate","eat","tea"]]
+```
+
+**问**：为什么"排序后的字符串"能当 key？还有更快的做法吗？
+@ANSWER
+因为异位词排序后**必然完全相同**——排序消除了顺序差异，只留下字母的多重集合。这是"把等价类映射到同一个代表元"的标准技巧。
+
+更快的做法是用**计数向量当 key**：26 个字母的出现次数拼成一个 26 长度的字符串（或直接用 `array<int,26>` 做哈希），复杂度从 O(k log k) 降到 O(k)。
+@DEEP
+```cpp
+vector<vector<string>> groupAnagrams(vector<string>& strs) {
+    unordered_map<string, vector<string>> mp;
+    for (auto &s : strs) {
+        string key(26, '0');
+        for (char c : s) ++key[c - 'a'];     // 计数当 key
+        mp[key].push_back(s);
+    }
+    vector<vector<string>> res;
+    for (auto &[k, v] : mp) res.push_back(v);
+    return res;
+}
+```
+
+| 方案 | 单串复杂度 | 优点 | 缺点 |
+|---|---|---|---|
+| 排序当 key | O(k log k) | 代码最短 | 长串时慢 |
+| 计数当 key | O(k) | 线性 | key 较长（26 字节） |
+| 质数乘积当 key | O(k) | key 短 | 长串会溢出 |
+
+**一个容易忽略的点**：`key(26, '0')` 里必须初始化为字符 `'0'` 而不是 `0`，否则 `++key[i]` 会得到不可见字符，虽然仍能当 key，但调试时看不见。
+@FOLLOW
+1. **质数乘积法为什么不可靠？** —— 乘积增长极快，长串必然溢出 `long long`，碰撞后就分组错误。
+2. **输出顺序有要求吗？** —— 一般没有，但如果要求稳定顺序，要用 `map` 而不是 `unordered_map`。
+3. **字符串含 Unicode 怎么办？** —— 计数数组要换成 `map<char32_t,int>` 或用 UTF-8 解码后再统计。
+@TRAPS
+- key 用 `0` 初始化，得到不可见字符，调试困难
+- 用质数乘积，长串溢出
+- 忘记处理空串（空串自成一组）
+@RELATED
+- 无（机考基本功）
+@SOURCE
+哈希分组（LeetCode 49 类题，预测题）
+
+@@ Q-1846
+@STEM
+**题目**：给定未排序数组，求最长连续序列的长度，要求 O(n)。
+
+```
+输入：[100,4,200,1,3,2]
+输出：4     （序列 1,2,3,4）
+```
+
+**问**：为什么只从「序列起点」开始扩展？怎么判断一个数是不是起点？
+@ANSWER
+因为如果对每个数都往两边扩，同一段连续序列会被重复遍历多次，复杂度退化到 O(n²)。
+
+判断起点很简单：**`x` 是起点，当且仅当 `x-1` 不在集合里**。只有起点才做扩展，每个元素最多被访问两次，整体 O(n)。
+@DEEP
+```cpp
+int longestConsecutive(vector<int>& nums) {
+    unordered_set<int> st(nums.begin(), nums.end());
+    int best = 0;
+    for (int x : st) {
+        if (st.count(x - 1)) continue;      // 不是起点，跳过
+        int y = x;
+        while (st.count(y + 1)) ++y;        // 从起点一路往上数
+        best = max(best, (int)(y - x + 1));
+    }
+    return best;
+}
+```
+
+**复杂度分析要讲清**：外层循环遍历 n 个元素，内层 `while` 只在起点执行，而每个元素最多成为某条序列的一部分一次，所以内层总执行次数 ≤ n，整体 O(n)。
+
+**为什么不能用排序**：排序是 O(n log n)，题目要求 O(n)，而且排序会改变"原始下标"信息（如果题目要返回下标就不能排）。
+@FOLLOW
+1. **`unordered_set` 会比 `set` 快多少？** —— 平均 O(1) vs O(log n)，这里查询次数多，差别明显。
+2. **要返回序列本身怎么办？** —— 记录起点和长度，最后重建；或者用 `map<int,int>` 记录每个端点的长度（并查集思想）。
+3. **有重复元素怎么办？** —— 用 `set` 天然去重，或用 `unordered_set` 初始化时自动去重。
+@TRAPS
+- 对每个元素都向两边扩，复杂度 O(n²)
+- 用排序，违反 O(n) 要求
+- 空数组没处理
+@RELATED
+- 无（机考基本功）
+@SOURCE
+哈希集合应用（LeetCode 128 类题，预测题）
+
+@@ Q-1847
+@STEM
+**题目**：统计和恰好为 `k` 的连续子数组个数。
+
+```
+输入：nums = [1,1,1], k = 2
+输出：2      （[1,1] 出现两次）
+```
+
+**问**：前缀和 + 哈希是怎么配合的？为什么要把 `{0: 1}` 提前放进去？
+@ANSWER
+设前缀和 `pre[i] = nums[0..i-1]` 之和，那么子数组 `[j, i)` 的和等于 `pre[i] - pre[j]`。要求它等于 `k`，就是找**有多少个 `j` 满足 `pre[j] = pre[i] - k`**。
+
+哈希表存"每个前缀和出现过几次"，遍历时查一次就能得到个数。`{0: 1}` 必须在开头放进去，代表"空前缀"，否则从下标 0 开始的子数组会被漏掉。
+@DEEP
+```cpp
+int subarraySum(vector<int>& nums, int k) {
+    unordered_map<int,int> cnt{{0, 1}};   // 空前缀
+    int sum = 0, res = 0;
+    for (int x : nums) {
+        sum += x;
+        auto it = cnt.find(sum - k);
+        if (it != cnt.end()) res += it->second;
+        ++cnt[sum];                        // 先查后加
+    }
+    return res;
+}
+```
+时间 O(n)，空间 O(n)。
+
+**为什么"先查后加"**：如果先加再查，当 `k == 0` 时会把当前元素自己算进去，多算。先查保证只统计"之前出现过的前缀和"。
+
+**为什么不能用滑动窗口**：数组可能有负数，窗口和不单调，左指针不知道该不该右移。
+@FOLLOW
+1. **如果数组全是正数呢？** —— 可以用滑动窗口 O(1) 空间，但要注意这题问的是"个数"，滑窗统计个数会更麻烦。
+2. **`sum` 会溢出吗？** —— 元素接近 `INT_MAX` 且 n 大时会，用 `long long`。
+3. **要返回具体子数组怎么办？** —— 哈希表里存"前缀和 → 下标列表"，查出后逐个还原。
+@TRAPS
+- 忘了 `{0: 1}`，从 0 开始的子数组全漏
+- 先加后查，`k=0` 时多算
+- 用滑动窗口，遇到负数就错
+@RELATED
+- 无（机考基本功）
+@SOURCE
+前缀和 + 哈希（LeetCode 560 类题，预测题）
+
+@@ Q-1848
+@STEM
+**题目**：找到字符串中第一个不重复的字符，返回它的下标，没有则返回 -1。
+
+```
+输入："loveleetcode"   输出：2（字符 'v'）
+输入："aabb"           输出：-1
+```
+
+**问**：为什么用计数数组而不是哈希表？两遍扫描各自在做什么？
+@ANSWER
+因为字符集是固定的（小写字母 26 个，或 ASCII 128 个），数组比哈希表更快——没有哈希计算、没有冲突、内存连续。
+
+两遍扫描分工明确：**第一遍统计次数，第二遍按原顺序找第一个次数为 1 的**。必须两遍，因为"第一个"依赖原始顺序，边统计边判断会漏掉后面才出现重复的情况。
+@DEEP
+```cpp
+int firstUniqChar(string s) {
+    int cnt[26] = {0};
+    for (char c : s) ++cnt[c - 'a'];
+    for (int i = 0; i < (int)s.size(); ++i)
+        if (cnt[s[i] - 'a'] == 1) return i;
+    return -1;
+}
+```
+时间 O(n)，空间 O(1)（26 个 int）。
+
+| 方案 | 时间 | 空间 | 适用 |
+|---|---|---|---|
+| 计数数组两遍 | O(n) | O(1) | 字符集固定 |
+| 哈希表两遍 | O(n) 平均 | O(k) | 字符集大或未知 |
+| 队列 + 计数 | O(n) | O(k) | **流式输入**，来一个处理一个 |
+
+**为什么不能用队列一次遍历**：题目要求返回下标而不是字符，队列适合"流式"场景（字符源源不断到来），一次性给完整字符串时没必要。
+@FOLLOW
+1. **如果要求返回字符而不是下标？** —— 同样两遍，第二遍返回 `s[i]`。
+2. **流式输入怎么做？** —— 队列存候选，计数数组记次数；每次取队头，若次数 > 1 就弹出。
+3. **大小写都要考虑？** —— 数组开到 128，直接用 `c` 当下标（注意 `char` 可能为负）。
+@TRAPS
+- 边统计边判断，第一遍统计不全
+- 数组只开 26 却输入含大写字母，越界
+- `char` 直接当下标，遇到负值越界
+@RELATED
+- 无（机考基本功）
+@SOURCE
+计数数组应用（LeetCode 387 类题，预测题）
+
+@@ Q-1849
+@STEM
+**题目**：判断两个字符串是否互为字母异位词。
+
+```
+输入：s = "anagram", t = "nagaram"   输出：true
+输入：s = "rat",     t = "car"       输出：false
+```
+
+**问**：计数数组为什么比排序快？如果字符集是全部 Unicode，这招还成立吗？
+@ANSWER
+排序要 O(n log n)，计数只要 O(n)——它把"比较两个多重集合"变成了"逐个累加再检查是否归零"。
+
+具体做法：遍历 `s` 时加一，遍历 `t` 时减一，最后所有计数为 0 就是异位词。连"长度是否相等"都能顺带检查。
+
+**Unicode 就不成立了**：字符种类可能上万，开数组不现实，要换 `unordered_map`，此时计数法的优势会缩小。
+@DEEP
+```cpp
+bool isAnagram(string s, string t) {
+    if (s.size() != t.size()) return false;
+    int cnt[26] = {0};
+    for (int i = 0; i < (int)s.size(); ++i) { ++cnt[s[i] - 'a']; --cnt[t[i] - 'a']; }
+    for (int v : cnt) if (v) return false;
+    return true;
+}
+```
+
+| 方案 | 时间 | 空间 | 备注 |
+|---|---|---|---|
+| 排序后比较 | O(n log n) | O(1)~O(n) | 代码最短 |
+| 计数数组 | O(n) | O(1) | 字符集固定时最优 |
+| 哈希表计数 | O(n) 平均 | O(k) | 字符集大时用 |
+
+**一个容易漏的优化**：长度不等直接返回 false，能挡掉大量用例；否则后面还要跑完整统计。
+
+**进阶追问**：如果输入是"字符流"、字符源源不断到来，排序完全不可用，必须用计数。
+@FOLLOW
+1. **能不能只用一次遍历？** —— 上面的写法就是一次遍历（同时处理两个串），但要求长度相等，否则越界。
+2. **含 Unicode 怎么写？** —— `unordered_map<char32_t,int>`，或用 UTF-8 解码后统计码点。
+3. **和"字母异位词分组"什么关系？** —— 分组是这题的推广：把互为异位词的串归到同一类。
+@TRAPS
+- 不先比较长度，越界或误判
+- 数组开到 26 但输入含大写/数字
+- 只统计 s 不比较 t 的计数
+@RELATED
+- 无（机考基本功）
+@SOURCE
+计数数组应用（LeetCode 242 类题，预测题）
+
+@@ Q-1850
+@STEM
+**题目**：实现 LRU 缓存，`get` 和 `put` 都要 O(1)，容量满时淘汰最久未使用的。
+
+```
+容量 2：
+put(1,1) put(2,2) get(1) → 1
+put(3,3)            → 淘汰 2
+get(2) → -1
+```
+
+**问**：为什么哈希和双向链表缺一不可？单用其中一个为什么做不到 O(1)？
+@ANSWER
+因为 LRU 需要同时做两件 O(1) 的事：**按 key 查到节点**、**把节点移到链表头**。
+
+哈希表给前者，但它不知道"谁最久没用"；链表给后者（头是最新、尾是最旧、移动只需改指针），但按 key 找节点要 O(n)。两者结合：哈希存 `key → 链表节点指针`，链表维护访问顺序。
+
+必须是**双向**链表：删除节点要改前驱的 `next`，单向链表拿不到前驱。
+@DEEP
+```cpp
+struct Node { int k, v; Node *prev = nullptr, *next = nullptr; };
+
+class LRUCache {
+    int cap;
+    unordered_map<int, Node*> mp;
+    Node *head, *tail;          // 哨兵：head.next 最新，tail.prev 最旧
+public:
+    LRUCache(int c) : cap(c) {
+        head = new Node(); tail = new Node();
+        head->next = tail; tail->prev = head;
+    }
+    void remove(Node *p) { p->prev->next = p->next; p->next->prev = p->prev; }
+    void pushFront(Node *p) {
+        p->next = head->next; p->prev = head;
+        head->next->prev = p; head->next = p;
+    }
+    int get(int key) {
+        auto it = mp.find(key);
+        if (it == mp.end()) return -1;
+        remove(it->second); pushFront(it->second);
+        return it->second->v;
+    }
+    void put(int key, int value) {
+        if (auto it = mp.find(key); it != mp.end()) {
+            it->second->v = value; remove(it->second); pushFront(it->second);
+            return;
+        }
+        if ((int)mp.size() == cap) {
+            Node *old = tail->prev; remove(old); mp.erase(old->k); delete old;
+        }
+        Node *p = new Node{key, value};
+        pushFront(p); mp[key] = p;
+    }
+};
+```
+
+| 结构 | 提供什么 | 缺什么 |
+|---|---|---|
+| 哈希表 | O(1) 按 key 定位 | 不知道访问顺序 |
+| 单向链表 | 顺序 | 删除需前驱，O(n) |
+| 双向链表 | O(1) 移动/删除 | 按 key 定位 O(n) |
+
+**哨兵节点的作用**：省掉"链表为空""操作头尾"的特殊判断，代码少一半 bug。
+@FOLLOW
+1. **`put` 已存在的 key 要注意什么？** —— 更新值之外还要把节点移到头部，否则淘汰顺序错。
+2. **为什么不用 `std::list`？** —— 可以，`list::splice` 能把节点移到头部且不失效迭代器，代码更短；手写双向链表更能展示基本功。
+3. **LFU 怎么做？** —— 需要"频率 → 双向链表"的桶，再加一个记录最小频率的变量。
+@TRAPS
+- 用单向链表，删除时拿不到前驱
+- `put` 更新已有 key 时忘了移到头部
+- 淘汰时删了链表节点却没从哈希表删 key
+@RELATED
+- 无（机考基本功）
+@SOURCE
+设计题（LeetCode 146 类题，预测题）
+
+@@ Q-1851
+@STEM
+**题目**：求两个数组的交集（每个元素只出现一次，顺序不限）。
+
+```
+输入：nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出：[9,4]（顺序不限）
+```
+
+**问**：哈希法和排序双指针法怎么选？如果 nums2 是"流式"的、且远大于 nums1，又该怎么改？
+@ANSWER
+**看数据规模和数据是否有序**。哈希法 O(n+m) 但要额外空间；排序双指针 O(n log n + m log m)，空间 O(1)（不计排序）。数据已经有序时双指针明显更优。
+
+如果 nums2 是流式且远大于 nums1，应该**把 nums1 放进哈希集合**，然后流式扫 nums2 逐个查——这样只存小集合，内存占用小。
+@DEEP
+```cpp
+// 哈希法
+vector<int> intersection(vector<int>& a, vector<int>& b) {
+    unordered_set<int> s(a.begin(), a.end());
+    vector<int> res;
+    for (int x : b) if (s.erase(x)) res.push_back(x);   // erase 返回删除个数
+    return res;
+}
+
+// 排序 + 双指针（空间 O(1)）
+vector<int> intersection2(vector<int>& a, vector<int>& b) {
+    sort(a.begin(), a.end()); sort(b.begin(), b.end());
+    vector<int> res;
+    int i = 0, j = 0;
+    while (i < (int)a.size() && j < (int)b.size()) {
+        if (a[i] < b[j]) ++i;
+        else if (a[i] > b[j]) ++j;
+        else { res.push_back(a[i]); while (i < (int)a.size() && a[i] == res.back()) ++i;
+                                     while (j < (int)b.size() && b[j] == res.back()) ++j; }
+    }
+    return res;
+}
+```
+
+`erase(x)` 返回删除的元素个数，用它判断"是否存在于 s 中"，同时保证结果不重复——比 `count` + `erase` 两步更简洁。
+@FOLLOW
+1. **如果要求保留重复（交集 II）？** —— 用 `unordered_map<int,int>` 计数，或者双指针时每次都前进而不是跳过重复。
+2. **数据有序但要求 O(1) 空间？** —— 双指针，正是它的强项。
+3. **超大数组放不进内存？** —— 用 Bloom filter 预筛，或外部排序后归并。
+@TRAPS
+- 哈希法不删元素，结果出现重复
+- 双指针跳重复时越界
+- 用 `vector` 做集合，查找退化成 O(n)
+@RELATED
+- 无（机考基本功）
+@SOURCE
+哈希与双指针（LeetCode 349 类题，预测题）
+
+@@ Q-1852
+@STEM
+**题目**：复制一个带随机指针的链表，新链表要完全独立（不能指向老节点）。
+
+```
+节点结构：{val, next, random}
+输入：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+```
+
+**问**：哈希表里存的是什么映射？为什么必须先建完映射再连边？
+@ANSWER
+存的是 **`老节点 → 新节点`** 的映射。
+
+必须先建完映射：因为 `random` 可能指向**还没创建的节点**（比如第一个节点的 random 指向最后一个）。如果边遍历边连边，遇到未创建的节点就没法设指针。所以采用两遍：第一遍只创建所有节点并建映射，第二遍按映射连 `next` 和 `random`。
+@DEEP
+```cpp
+Node* copyRandomList(Node* head) {
+    if (!head) return nullptr;
+    unordered_map<Node*, Node*> mp;
+    for (Node *p = head; p; p = p->next) mp[p] = new Node(p->val);   // 第一遍：建节点
+    for (Node *p = head; p; p = p->next) {                          // 第二遍：连边
+        mp[p]->next   = p->next   ? mp[p->next]   : nullptr;
+        mp[p]->random = p->random ? mp[p->random] : nullptr;
+    }
+    return mp[head];
+}
+```
+时间 O(n)，空间 O(n)。
+
+**O(1) 空间的技巧（常被追问）**：把新节点直接插到老节点后面，形成 `A → A' → B → B'`；然后 `A'.random = A.random->next`；最后拆成两条链。
+
+```cpp
+// 关键三步
+for (Node *p = head; p; ) { Node *n = p->next; p->next = new Node(p->val); p->next->next = n; p = n; }
+for (Node *p = head; p; p = p->next->next) if (p->random) p->next->random = p->random->next;
+```
+@FOLLOW
+1. **为什么第二遍能安全连边？** —— 第一遍已经把全部节点创建好了，映射齐全，任何 `random` 目标都查得到。
+2. **哈希表 key 为什么用指针？** —— 节点地址唯一；用 `val` 会在重复值上出错。
+3. **深拷贝浅拷贝的区别？** —— 浅拷贝共享节点，深拷贝每个节点都是新的；这题要求深拷贝。
+@TRAPS
+- 边遍历边连 `random`，遇到未创建节点
+- 用 `val` 当哈希 key，重复值出错
+- 忘了 `random` 可能为空
+@RELATED
+- 无（机考基本功）
+@SOURCE
+链表 + 哈希（LeetCode 138 类题，预测题）
+
+@@ Q-1853
+@STEM
+**题目**：外观数列。第 1 项是 `"1"`，之后每一项都是对前一项的"读数"：读成"几个几"。
+
+```
+1: 1
+2: 11        （1 个 1）
+3: 21        （2 个 1）
+4: 1211      （1 个 2，1 个 1）
+5: 111221    （1 个 1，1 个 2，2 个 1）
+```
+
+**问**：怎么从上一项推出下一项？边界怎么处理？
+@ANSWER
+对上一项做**游程编码**：从左往右扫，统计连续相同字符的个数，遇到变化就输出"个数 + 字符"，然后从新字符重新计数。
+
+边界是最后一个游程：循环里只在"字符变化时"才输出，所以末尾那段必须在循环外补一次输出，否则最后一个游程会丢。
+
+```cpp
+string countAndSay(int n) {
+    string s = "1";
+    for (int k = 2; k <= n; ++k) {
+        string t;
+        for (int i = 0; i < (int)s.size(); ) {
+            int j = i;
+            while (j < (int)s.size() && s[j] == s[i]) ++j;
+            t += to_string(j - i) + s[i];      // 个数 + 字符
+            i = j;
+        }
+        s = t;
+    }
+    return s;
+}
+```
+时间 O(n · L)，L 为第 n 项长度（增长约 1.3 倍/项）。空间 O(L)。
+
+**关键点**：数字要转成字符，`t += to_string(count)` 而不是 `t += count`（那会加 ASCII 码）。
+@DEEP
+```cpp
+string countAndSay(int n) {
+    string s = "1";
+    for (int k = 2; k <= n; ++k) {
+        string t;
+        for (int i = 0; i < (int)s.size(); ) {
+            int j = i;
+            while (j < (int)s.size() && s[j] == s[i]) ++j;   // 找到游程右端
+            t += to_string(j - i) + s[i];                    // 个数 + 字符
+            i = j;
+        }
+        s = t;
+    }
+    return s;
+}
+```
+
+| 项 | 长度 | 说明 |
+|---|---|---|
+| 1 | 1 | 1 |
+| 5 | 6 | 111221 |
+| 15 | 约 2.5 千 | 指数级增长 |
+| 30 | 约 5.8 万 | 拼接开销开始明显 |
+
+这题本质是**游程编码（RLE）反复迭代**。写的时候只要盯住一个不变量：**每段连续相同字符只被输出一次**，而循环里的"输出"发生在字符变化处，所以最后一段必须在循环外补。
+
+@FOLLOW
+1. **为什么长度增长这么快？** —— 每项平均膨胀约 1.3 倍，n=30 时长度已到几万，n 再大就要考虑字符串拼接开销。
+2. **能用递归吗？** —— 能，`countAndSay(n)` 依赖 `countAndSay(n-1)`，但迭代更省栈。
+3. **怎么优化拼接？** —— 用 `reserve` 预估容量，或先算长度再写。
+@TRAPS
+- 末尾游程漏输出
+- `t += count` 加了数字的 ASCII 码
+- `count` 超过 9 时忘记 `to_string` 会输出多字符
+@RELATED
+- 无（机考基本功）
+@SOURCE
+模拟题（LeetCode 38 类题，预测题）
+
+@@ Q-1854
+@STEM
+**题目**：解码字符串，规则是 `k[encoded]` 表示把括号内内容重复 k 次。可以嵌套。
+
+```
+输入："3[a]2[bc]"      输出："aaabcbc"
+输入："3[a2[c]]"       输出："accaccacc"
+输入："2[abc]3[cd]ef"  输出："abcabccdcdcdef"
+```
+
+**问**：嵌套括号怎么处理？为什么需要两个栈而不是一个？
+@ANSWER
+因为进入括号时**要同时保存两样东西**：当前的重复次数和括号外的已有字符串。只用一个栈存不了这两类信息，所以用两个栈（或一个栈存结构体）。
+
+遇到 `[`：把当前数字压入数字栈、当前字符串压入字符串栈、两者清零；
+遇到 `]`：弹出两者，把当前字符串重复 k 次后接回外层字符串。
+@DEEP
+```cpp
+string decodeString(string s) {
+    stack<int> nums;
+    stack<string> strs;
+    int num = 0;
+    string cur;
+    for (char c : s) {
+        if (isdigit(c)) num = num * 10 + (c - '0');      // 多位数
+        else if (c == '[') { nums.push(num); strs.push(cur); num = 0; cur.clear(); }
+        else if (c == ']') {
+            string tmp = cur;
+            cur = strs.top(); strs.pop();
+            int k = nums.top(); nums.pop();
+            while (k--) cur += tmp;                       // 重复并接回外层
+        } else cur += c;
+    }
+    return cur;
+}
+```
+
+| 步骤 | 数字栈 | 字符串栈 | 当前串 |
+|---|---|---|---|
+| `3[` | 3 | "" | "" |
+| `a2[c` | 3, 2 | "", "a" | "c" |
+| `]` | 3 | "" | "acc" |
+| `]` | — | — | "accaccacc" |
+
+**为什么 `num = num*10 + digit`**：数字可能多位（`"12[ab]"`），逐位累加才正确。
+
+替代写法：递归（遇到 `[` 就递归进去，遇到 `]` 返回），代码更短但需要注意下标传递。
+@FOLLOW
+1. **`while (k--)` 有性能问题吗？** —— 大 k 时反复 `+=` 会多次扩容，可以 `reserve` 或先算总长度。
+2. **递归版怎么写？** —— 用一个引用参数传下标，`[` 时递归，`]` 或越界时返回。
+3. **括号不匹配怎么办？** —— 题目保证合法；若要健壮，需在 `]` 时检查栈非空。
+@TRAPS
+- 数字用 `char` 存，遇到多位数就错
+- `]` 时忘了把外层字符串接回去
+- 嵌套时把 `cur` 当成了全局变量
+@RELATED
+- 无（机考基本功）
+@SOURCE
+栈 + 解析（LeetCode 394 类题，预测题）
