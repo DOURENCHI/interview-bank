@@ -63,6 +63,7 @@
 | V3 | C++ 大厂高频（Linux集结地，33P） | 33 | C++ / Linux / 算法设计 |
 
 - 完整清单 + 未收录的 60 条及原因：`sources/video_questions.md`
+- **牛客网接入评估**：`docs/nowcoder_feasibility.md`（面经可抓、题库正文不抓，含接口与合规边界）
 - 可再导入的表格：`sources/video_questions.csv`
 - **答案不是视频原话**：三个视频都拿不到字幕（V1/V2 无 AI 字幕，V3 有但需登录），
   题干来自分 P 标题，答案是按题目整理的通用答案。
@@ -131,7 +132,7 @@ python tools/gh.py push                            # 推送
 面试题库/
 ├── content/          一题一 md，唯一内容源（11 个技术模块）
 ├── companies/        公司 × 岗位索引：查"这家这个岗考什么"
-├── sources/          开源复用台账、候选池、抽取报告
+├── sources/          开源复用台账、候选池、抽取报告、视频与牛客来源记录
 ├── tools/            extract / import_lab / seed* / build / validate / gh
 ├── dist/             bank.html 单文件成品
 ├── docs/             schema.md 字段规范

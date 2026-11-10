@@ -1,0 +1,405 @@
+{
+  "_comment": "牛客题库分类与题量快照，2026-11-10 从 /exam/intelligent（软件开发标签页）渲染后提取。仅分类名与题数，不含任何题面内容。",
+  "source": "https://www.nowcoder.com/exam/intelligent",
+  "fetched_at": "2026-11-10",
+  "total": 29486,
+  "categories": [
+    {
+      "group": "研发基础",
+      "name": "数组",
+      "count": 190
+    },
+    {
+      "group": "研发基础",
+      "name": "字符串",
+      "count": 76
+    },
+    {
+      "group": "研发基础",
+      "name": "链表",
+      "count": 193
+    },
+    {
+      "group": "研发基础",
+      "name": "栈",
+      "count": 197
+    },
+    {
+      "group": "研发基础",
+      "name": "队列",
+      "count": 188
+    },
+    {
+      "group": "研发基础",
+      "name": "树",
+      "count": 441
+    },
+    {
+      "group": "研发基础",
+      "name": "图",
+      "count": 166
+    },
+    {
+      "group": "研发基础",
+      "name": "堆",
+      "count": 158
+    },
+    {
+      "group": "研发基础",
+      "name": "哈希",
+      "count": 75
+    },
+    {
+      "group": "研发基础",
+      "name": "查找",
+      "count": 127
+    },
+    {
+      "group": "研发基础",
+      "name": "排序",
+      "count": 313
+    },
+    {
+      "group": "研发基础",
+      "name": "递归",
+      "count": 87
+    },
+    {
+      "group": "研发基础",
+      "name": "复杂度",
+      "count": 175
+    },
+    {
+      "group": "测试/其他",
+      "name": "设计模式",
+      "count": 308
+    },
+    {
+      "group": "计算机基础",
+      "name": "网络基础",
+      "count": 1820
+    },
+    {
+      "group": "计算机基础",
+      "name": "数据库",
+      "count": 1159
+    },
+    {
+      "group": "计算机基础",
+      "name": "操作系统",
+      "count": 1617
+    },
+    {
+      "group": "计算机基础",
+      "name": "编译和体系结构",
+      "count": 1134
+    },
+    {
+      "group": "计算机基础",
+      "name": "SQL",
+      "count": 352
+    },
+    {
+      "group": "计算机基础",
+      "name": "软件工程",
+      "count": 511
+    },
+    {
+      "group": "计算机基础",
+      "name": "Linux",
+      "count": 638
+    },
+    {
+      "group": "语言",
+      "name": "Go",
+      "count": 312
+    },
+    {
+      "group": "语言",
+      "name": "C++",
+      "count": 1612
+    },
+    {
+      "group": "语言",
+      "name": "Java",
+      "count": 874
+    },
+    {
+      "group": "语言",
+      "name": "Javascript",
+      "count": 484
+    },
+    {
+      "group": "语言",
+      "name": "Python",
+      "count": 511
+    },
+    {
+      "group": "语言",
+      "name": "HTML",
+      "count": 338
+    },
+    {
+      "group": "语言",
+      "name": "CSS",
+      "count": 267
+    },
+    {
+      "group": "语言",
+      "name": "C语言",
+      "count": 1607
+    },
+    {
+      "group": "语言",
+      "name": "Kotlin",
+      "count": 180
+    },
+    {
+      "group": "语言",
+      "name": "Swift",
+      "count": 221
+    },
+    {
+      "group": "测试/其他",
+      "name": "加密和安全",
+      "count": 246
+    },
+    {
+      "group": "测试/其他",
+      "name": "软件测试",
+      "count": 516
+    },
+    {
+      "group": "行测",
+      "name": "常识判断",
+      "count": 1935
+    },
+    {
+      "group": "行测",
+      "name": "数学运算",
+      "count": 2422
+    },
+    {
+      "group": "行测",
+      "name": "判断推理",
+      "count": 1696
+    },
+    {
+      "group": "行测",
+      "name": "资料分析",
+      "count": 73
+    },
+    {
+      "group": "中间件",
+      "name": "Redis",
+      "count": 262
+    },
+    {
+      "group": "中间件",
+      "name": "Kafka",
+      "count": 265
+    },
+    {
+      "group": "中间件",
+      "name": "Hadoop",
+      "count": 314
+    },
+    {
+      "group": "中间件",
+      "name": "Hive",
+      "count": 266
+    },
+    {
+      "group": "中间件",
+      "name": "ZooKeeper",
+      "count": 154
+    },
+    {
+      "group": "AI/数据",
+      "name": "概率论与数理统计",
+      "count": 312
+    },
+    {
+      "group": "AI/数据",
+      "name": "数据挖掘",
+      "count": 269
+    },
+    {
+      "group": "AI/数据",
+      "name": "机器学习基础",
+      "count": 505
+    },
+    {
+      "group": "AI/数据",
+      "name": "深度学习基础",
+      "count": 410
+    },
+    {
+      "group": "AI/数据",
+      "name": "计算机视觉",
+      "count": 199
+    },
+    {
+      "group": "AI/数据",
+      "name": "RAG",
+      "count": 192
+    },
+    {
+      "group": "AI/数据",
+      "name": "提示词工程",
+      "count": 100
+    },
+    {
+      "group": "AI/数据",
+      "name": "推理优化",
+      "count": 190
+    },
+    {
+      "group": "AI/数据",
+      "name": "微调",
+      "count": 190
+    },
+    {
+      "group": "AI/数据",
+      "name": "Agent",
+      "count": 191
+    },
+    {
+      "group": "AI/数据",
+      "name": "大模型开发",
+      "count": 318
+    },
+    {
+      "group": "AI/数据",
+      "name": "大模型概念",
+      "count": 408
+    },
+    {
+      "group": "AI/数据",
+      "name": "线性代数",
+      "count": 232
+    },
+    {
+      "group": "测试/其他",
+      "name": "iOS",
+      "count": 312
+    },
+    {
+      "group": "测试/其他",
+      "name": "Android",
+      "count": 312
+    },
+    {
+      "group": "AI/数据",
+      "name": "Python分析库",
+      "count": 149
+    },
+    {
+      "group": "AI/数据",
+      "name": "数据思维",
+      "count": 36
+    },
+    {
+      "group": "语言",
+      "name": "React",
+      "count": 158
+    },
+    {
+      "group": "语言",
+      "name": "Spring",
+      "count": 241
+    },
+    {
+      "group": "语言",
+      "name": "Vue",
+      "count": 242
+    },
+    {
+      "group": "测试/其他",
+      "name": "gitlab",
+      "count": 40
+    }
+  ],
+  "group_totals": [
+    [
+      "计算机基础",
+      7231
+    ],
+    [
+      "语言",
+      7047
+    ],
+    [
+      "行测",
+      6126
+    ],
+    [
+      "AI/数据",
+      3701
+    ],
+    [
+      "研发基础",
+      2386
+    ],
+    [
+      "测试/其他",
+      1734
+    ],
+    [
+      "中间件",
+      1261
+    ]
+  ],
+  "own_gap": [
+    {
+      "group": "研发基础",
+      "topic": "算法与数据结构",
+      "own_count": 326
+    },
+    {
+      "group": "计算机基础",
+      "topic": "Linux",
+      "own_count": 36
+    },
+    {
+      "group": "AI/数据",
+      "topic": "深度学习+影像",
+      "own_count": 23
+    },
+    {
+      "group": "语言",
+      "topic": "C++",
+      "own_count": 203
+    },
+    {
+      "group": "语言",
+      "topic": "Python",
+      "own_count": 40
+    },
+    {
+      "group": "中间件",
+      "topic": "Redis/Kafka 等",
+      "own_count": 0
+    },
+    {
+      "group": "计算机基础",
+      "topic": "网络",
+      "own_count": 0
+    },
+    {
+      "group": "计算机基础",
+      "topic": "数据库",
+      "own_count": 0
+    },
+    {
+      "group": "计算机基础",
+      "topic": "操作系统（理论）",
+      "own_count": 0
+    },
+    {
+      "group": "AI/数据",
+      "topic": "大模型相关",
+      "own_count": 0
+    }
+  ]
+}

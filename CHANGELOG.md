@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.3.0 — 2026-11-10
+
+新增牛客网接入可行性评估：`docs/nowcoder_feasibility.md`。
+
+### 结论
+
+| 内容 | 可行性 | 处理 |
+|---|---|---|
+| 面经帖 | ✅ 高 | **P0 优先做**，无需登录、含完整题目原文 + 公司岗位轮次 |
+| 题卷元数据（124 套） | ✅ 高 | 一个接口拿全 |
+| 题库分类树（2–3 万道） | ✅ 高 | 用于校核模块覆盖度 |
+| OJ 编程题题干 | 🟡 中 | SSR 可直取，与已有算法题重叠 |
+| 选择题答案 / 解析 | ❌ 低 | 需登录 |
+| 企业试卷内题干 | ❌ 不做 | 页面明确禁止第三方使用 |
+
+### 实测要点
+
+- 接口网关 `gw-c.nowcoder.com/api/sparta/`，**无需 Cookie**：
+  `company-question/get-paper-list`（124 套）、`test/summary`、`job-experience/experience/job/list`、`question-tab/query-all-tab-list`
+- **`total` 字段是假的**（= `pageSize × 100`，最多 100 页），终止条件要用「连续 N 页无新 id」
+- `pageSize=50` 报错，上限约 30
+- 面经详情是 **CSR**：原始 HTML 仅 6.5 KB，需无头浏览器渲染（约 4 秒/篇）
+- 单题页 `/practice/` 与 `/questionTerminal/` 是 **SSR**，curl 直取
+- sitemap 公开 9 万条 URL（4.5 万题目页 + 4.5 万讨论页）
+
+### 合规
+
+沿用处理 `huihut/interview` 的同一策略：**只存题目摘要 + 来源链接，答案自己写**；不复制面经正文、不存作者个人信息、不绕登录、串行限速。
+
 ## v1.2.0 — 2026-11-10
 
 题库 779 → **893 道**，从三个 B 站面试合集提取 **114 道视频真题**。
