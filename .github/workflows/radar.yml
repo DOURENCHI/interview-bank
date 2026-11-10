@@ -1,0 +1,35 @@
+name: job-radar
+
+on:
+  schedule:
+    - cron: "30 1 * * *"   # 每日 09:30 北京时间
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 依赖（requests + playwright chromium）
+        run: |
+          pip install requests playwright
+          python -m playwright install chromium --with-deps
+
+      - name: 扫描官方招聘门户（低频只读）
+        run: python tools/job_radar.py --scan
+
+      - name: 有变化才提交
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add sources/jobs_radar.json sources/radar_report.md
+          git diff --cached --quiet || (git commit -m "radar: 岗位雷达每日快照 $(date -u +%F)" && git push)

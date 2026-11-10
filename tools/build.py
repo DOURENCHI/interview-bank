@@ -449,6 +449,11 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .jbody{padding:4px 16px 14px;border-top:1px dashed var(--line)}
 .jlink{color:var(--blue)!important;text-decoration:none;cursor:pointer}
 .jlink:hover{border-color:var(--blue)}
+.rgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.rcard2{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.rcard2 .rh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rcard2 .rt{font-size:14.5px;font-weight:600;margin:2px 0;line-height:1.5}
+.rcard2 small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:6px;line-height:1.6}
 /* ---- 学习分析（平铺视图） ---- */
 .rpanel{width:min(900px,94vw);max-height:88vh;overflow:auto;background:var(--bg);
   border:1px solid var(--line);border-radius:12px;padding:22px 26px;
@@ -619,6 +624,10 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
       </div>
     </details>
   </div>
+  <details id="radarbox" class="panel" style="margin-bottom:14px">
+    <summary>🛰 岗位雷达 <span class="rnum" id="radar_meta"></span> — 自动监控官方招聘门户（每日低频增量），收藏后进入下方列表</summary>
+    <div class="rgrid2" id="radarlist" style="margin-top:10px"></div>
+  </details>
   <div class="trgrid" id="joblist"></div>
 </section>
 
@@ -685,6 +694,7 @@ const DATA = __DATA__;
 const TARGETS = __TARGETS__;
 const PROFILES = __PROFILES__;
 const JOBS_SEED = __JOBS__;
+const RADAR = __RADAR__;
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -1370,7 +1380,7 @@ function showView(v){
     t.classList.toggle('on', t.dataset.v === v));
   if (v === 'home') renderHome();
   if (v === 'train') renderTrain();
-  if (v === 'jobs') renderJobs();
+  if (v === 'jobs') { renderJobs(); renderRadar(); }
   if (v === 'rep') renderRep();
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
@@ -1626,7 +1636,55 @@ $('j_save').addEventListener('click', () => {
   localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(local));
   ['j_co', 'j_ti', 'j_city', 'j_url', 'j_jd'].forEach(id => $(id).value = '');
   $('jobform').open = false;
-  renderJobs();
+  renderJobs(); renderRadar();
+});
+
+// ---- 岗位雷达：自动发现的新岗位 → 收藏转正 / 忽略 ----
+const DISMISS_KEY = 'ib_jobs_dismiss_v1';
+function loadDismiss(){
+  try { return new Set(JSON.parse(localStorage.getItem(DISMISS_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function renderRadar(){
+  const jobs = RADAR.jobs || [];
+  const dis = loadDismiss();
+  const have = new Set(loadJobs().map(j => j.key).filter(Boolean));
+  const show = jobs.filter(j => !dis.has(j.key) && !have.has(j.key)).slice(0, 40);
+  const hidden = jobs.length - show.length;
+  $('radar_meta').textContent = `${jobs.length} 岗在招 · 快照 ${(RADAR.updated || '').slice(0, 10)}`;
+  $('radarlist').innerHTML = show.length
+    ? show.map(j => {
+        const idx = jobs.indexOf(j);
+        const sc = jobScore(j);
+        const gcls = sc.total >= 80 ? 'hi' : sc.total >= 60 ? 'mid' : 'lo';
+        return `<div class="rcard2">
+          <div class="rh"><b>${esc(j.company)}</b>
+            <span class="rscore ${gcls}" title="技能匹配分（按你的自评数据估算）">${sc.total}%</span></div>
+          <div class="rt">${esc(j.title)}</div>
+          <small>${esc(j.city)} ｜ ${esc(j.label || j.type)} ｜ 发现 ${esc(j.found)} ｜ ${j.src === 'zhiye' ? '官方门户·智业云' : '官方门户·飞书招聘'}</small>
+          <div class="mrow">
+            <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
+            <button class="mini" data-rdismiss="${idx}">忽略</button>
+            ${(j.links || []).length ? `<a class="tag jlink" href="${esc(j.links[0])}" target="_blank" rel="noopener">投递入口 ↗</a>` : ''}
+          </div>
+        </div>`;
+      }).join('') +
+      (hidden > 0 ? `<div class="hempty" style="grid-column:1/-1">其余 ${hidden} 道已收藏/忽略，不重复显示。</div>` : '')
+    : '<div class="hempty">没有待处理的新发现（已收藏或已忽略的不再显示）。雷达由 GitHub Actions 每日 09:30 自动扫描。</div>';
+}
+$('radarlist').addEventListener('click', e => {
+  const c = e.target.closest('[data-rcollect], [data-rdismiss]'); if (!c) return;
+  const j = (RADAR.jobs || [])[+(c.dataset.rcollect ?? c.dataset.rdismiss)];
+  if (!j) return;
+  if (c.dataset.rcollect !== undefined) {
+    const local = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]');
+    local.push(Object.assign({}, j, { id: 'radar_' + j.key, src: 'local', status: '待核实' }));
+    localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(local));
+  } else {
+    const dis = loadDismiss(); dis.add(j.key);
+    localStorage.setItem(DISMISS_KEY, JSON.stringify([...dis]));
+  }
+  renderJobs(); renderRadar();
 });
 
 refreshSubs();
@@ -1671,6 +1729,10 @@ def main() -> int:
     jo = ROOT / "companies" / "jobs.json"
     jobs = json.loads(jo.read_text(encoding="utf-8")).get("jobs", []) if jo.exists() else []
 
+    # 岗位雷达快照（tools/job_radar.py 定时产出；缺失时降级为空）
+    rr = ROOT / "sources" / "jobs_radar.json"
+    radar = json.loads(rr.read_text(encoding="utf-8")) if rr.exists() else {"jobs": []}
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -1679,6 +1741,8 @@ def main() -> int:
                                                   separators=(",", ":")))
                .replace("__JOBS__", json.dumps(jobs, ensure_ascii=False,
                                                separators=(",", ":")))
+               .replace("__RADAR__", json.dumps(radar, ensure_ascii=False,
+                                                separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)

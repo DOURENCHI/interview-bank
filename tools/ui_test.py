@@ -148,6 +148,19 @@ def main() -> int:
         pg.click('#joblist [data-jdel]'); pg.wait_for_timeout(200)
         ok.append(("删除本地岗位", pg.evaluate("document.querySelectorAll('#joblist .jcard').length") == 8))
 
+        # 11.5 岗位雷达：快照注入 + 收藏转正/忽略闭环
+        n_radar = pg.evaluate("(RADAR.jobs || []).length")
+        ok.append(("雷达快照>50岗", n_radar > 50))
+        pg.click("#radarbox summary"); pg.wait_for_timeout(150)
+        n_cards = pg.evaluate("document.querySelectorAll('#radarlist .rcard2').length")
+        ok.append(("雷达卡渲染(≤40)", 0 < n_cards <= 40))
+        pg.click('#radarlist [data-rcollect]'); pg.wait_for_timeout(200)
+        ok.append(("收藏转正进正式列表", pg.evaluate(
+            "loadJobs().some(j => j.id && j.id.startsWith('radar_'))")))
+        pg.click('#radarlist [data-rdismiss]'); pg.wait_for_timeout(200)
+        ok.append(("忽略后不重复显示", pg.evaluate(
+            "loadDismiss().size >= 1")))
+
         # 12. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
