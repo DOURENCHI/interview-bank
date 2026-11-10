@@ -8,7 +8,7 @@ difficulty: 1
 roles: [AI算法, 端侧部署]
 companies: []
 qtype: coding
-status: draft
+status: indexed
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
 verified_at: 2026-11-09

@@ -329,7 +329,8 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   <select id="pri"><option value="">全部优先级</option>
     <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
   <select id="st"><option value="">全部状态</option>
-    <option value="answered">已答</option><option value="indexed">待补充</option></select>
+    <option value="answered">已答</option><option value="draft">草稿</option>
+    <option value="indexed">待补充</option></select>
   <label class="chk"><input type="checkbox" id="wrong"> 只看错题</label>
   <label class="chk"><input type="checkbox" id="hidepred" title="隐藏 S4 岗位推导预测题，只看真实面经与一手题"> 隐藏预测题</label>
   <label class="chk"><input type="checkbox" id="selftest" title="自测模式：搜索不再自动展开答案，先自己答再看"> 自测模式</label>
@@ -480,7 +481,7 @@ function render(){
   if (SELFTEST) list.classList.add('selftest'); else list.classList.remove('selftest');
   const dueCnt = DATA.filter(q => revState(q) === 'due').length;
   $('stat').textContent = `共 ${DATA.length} 题 ｜ 当前 ${hit.length} 题 ｜ `
-    + `已答 ${DATA.filter(q=>q.status!=='indexed').length} ｜ 错题 ${wrong.size} ｜ `
+    + `已答 ${DATA.filter(q=>q.status==='answered'||q.status==='verified').length} ｜ 草稿 ${DATA.filter(q=>q.status==='draft').length} ｜ 错题 ${wrong.size} ｜ `
     + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length} ｜ `
     + `已自测 ${Object.keys(review).length} ｜ 今日该复习 ${dueCnt}`;
 

@@ -113,7 +113,7 @@ def main() -> int:
                 errors.append(f"{qid}: 缺小节「{s}」")
 
         # 已答不能是空壳（只看「口述答案」本节，不跨到下一节）
-        if meta.get("status") in ("answered", "verified"):
+        if meta.get("status") in ("answered", "verified", "draft"):
             m = re.search(r"^##\s*口述答案\s*$(.*?)(?=^##\s|\Z)", body, re.M | re.S)
             seg = m.group(1) if m else ""
             if "待补充" in seg or not seg.strip():
