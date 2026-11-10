@@ -322,6 +322,62 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .hint{font-size:12.5px;color:var(--muted);padding:8px 0 0}
 .hint b{color:var(--blue)}
 .hint .warn{color:var(--red)}
+/* ---- 顶部学习数据 ---- */
+.scards{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 2px}
+.scard{flex:1 1 150px;background:var(--paper);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;cursor:pointer;transition:border-color .15s}
+.scard:hover{border-color:var(--accent)}
+.scard b{display:block;font-size:22px;line-height:1.3}
+.scard small{font-size:12px;color:var(--muted)}
+.scard.warn b{color:var(--red)}
+.scard.good b{color:var(--green)}
+/* ---- 快捷筛选 chips ---- */
+.brow{display:flex;gap:8px;flex-wrap:wrap;flex:1 1 100%}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font-size:13px;color:var(--muted);background:var(--paper);
+  border:1px solid var(--line);border-radius:999px;padding:5px 14px;cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chips .csep{width:1px;height:18px;background:var(--line);margin:0 2px}
+/* ---- 详细筛选折叠与条件 pills ---- */
+.moref{flex:1 1 100%}
+.moref summary{display:inline-flex;align-items:center;gap:6px;font-size:13px;
+  color:var(--muted);cursor:pointer;list-style:none;padding:4px 2px;user-select:none}
+.moref summary::-webkit-details-marker{display:none}
+.moref summary::before{content:'▸';transition:transform .15s}
+.moref[open] summary::before{transform:rotate(90deg)}
+.moref[open] summary{color:var(--accent)}
+.moref summary .fc{font-size:11px;background:var(--accent);color:#fff;
+  border-radius:999px;padding:1px 7px;font-weight:700}
+.fgrid{display:flex;gap:8px;flex-wrap:wrap;padding:8px 0 4px}
+.fpills{display:flex;gap:6px;flex-wrap:wrap}
+.fpill{font-size:12px;color:var(--blue);background:#eaf1fb;border:1px solid #b9cfe8;
+  border-radius:999px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px}
+.fpill b{font-weight:600}
+.fpill i{font-style:normal;cursor:pointer;color:#5f7ea6;font-size:14px;line-height:1}
+.fpill i:hover{color:var(--red)}
+/* ---- 题卡掌握状态 / 收起态追问提示 ---- */
+.qdot{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);
+  margin-top:6px;white-space:nowrap}
+.qdot i{width:8px;height:8px;border-radius:50%;background:#c9bda0;display:inline-block}
+.qdot.weak i{background:var(--red)} .qdot.due i{background:#c9930a}
+.qdot.ok i{background:var(--green)}
+.qf{font-size:12px;color:var(--muted);padding:0 14px 10px;display:flex;gap:6px;align-items:center}
+.qf .fi{background:var(--soft);border-radius:5px;padding:2px 8px}
+.qmeta{font-size:12px;color:var(--muted);margin-top:16px;padding-top:8px;
+  border-top:1px dashed var(--line);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.qmeta a{color:var(--blue);text-decoration:none}
+.qmeta a:hover{text-decoration:underline}
+/* ---- 模拟面试作答框 ---- */
+#m_note{width:100%;min-height:88px;font:14px/1.7 inherit;color:var(--tx);
+  background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  padding:10px 12px;outline:none;resize:vertical}
+#m_note:focus{border-color:var(--accent)}
+/* ---- 快捷键提示与焦点高亮 ---- */
+.keys{font-size:12px;color:var(--muted);text-align:center;padding:26px 0 6px}
+.keys kbd{background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;
+  border-radius:5px;padding:1px 6px;font:11px ui-monospace,Consolas,monospace}
+.q.foc{border-color:var(--accent);box-shadow:0 0 0 2px #1b5e8c26}
 /* ---- 学习报告 ---- */
 #repov{position:fixed;inset:0;background:rgba(45,42,33,.45);z-index:50;
   display:flex;align-items:center;justify-content:center}
@@ -377,39 +433,61 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <header>
   <h1>面试题库</h1>
   <div class="meta" id="stat"></div>
+  <div class="scards" id="scards"></div>
 </header>
 
 <div class="bar">
-  <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
-  <select id="co"><option value="">全部公司</option>__COOPTS__</select>
-  <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
-  <select id="prof" title="岗位模板：按真实 JD 归纳的模块权重过滤题目，并可作为模拟面试题源"><option value="">岗位模板…</option>__PROFOPTS__</select>
-  <button id="mock" class="mini" title="按当前筛选/岗位模板抽题，逐题计时作答，高频追问揭示">🎤 模拟面试</button>
-  <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
-  <select id="sub"><option value="">全部子方向</option></select>
-  <select id="pri"><option value="">全部优先级</option>
-    <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
-  <select id="st"><option value="">全部状态</option>
-    <option value="answered">已答</option><option value="draft">草稿</option>
-    <option value="indexed">待补充</option></select>
-  <label class="chk"><input type="checkbox" id="wrong"> 只看错题</label>
-  <label class="chk"><input type="checkbox" id="hidepred" title="隐藏 S4 岗位推导预测题，只看真实面经与一手题"> 隐藏预测题</label>
-  <label class="chk"><input type="checkbox" id="selftest" title="自测模式：搜索不再自动展开答案，先自己答再看"> 自测模式</label>
-  <select id="rev" title="间隔复习：按自评分安排">
-    <option value="">全部复习状态</option>
-    <option value="due">今日该复习</option>
-    <option value="weak">薄弱（自评≤2）</option>
-    <option value="never">从未自测</option>
-  </select>
-  <button id="exp" class="mini" title="导出错题与自评记录（JSON）">备份↓</button>
-  <button id="impb" class="mini" title="从 JSON 恢复复习数据">恢复↑</button>
-  <button id="rep" class="mini" title="自测覆盖、掌握度、复习节奏、错题本健康度">📊 学习报告</button>
-  <input type="file" id="imp" accept=".json" hidden>
+  <div class="brow">
+    <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
+    <button id="mock" class="mini" title="按当前筛选/岗位模板抽题，逐题作答，高频追问揭示">🎤 模拟面试</button>
+    <button id="rep" class="mini" title="自测覆盖、掌握度、复习节奏、错题本健康度">📊 学习报告</button>
+  </div>
+  <div class="chips" id="chips">
+    <button class="chip on" data-c="all" title="清除快捷筛选（详细筛选保留）">全部</button>
+    <button class="chip" data-c="p0">P0 必答</button>
+    <button class="chip" data-c="due" title="间隔复习到期，该过一遍了">今日复习</button>
+    <button class="chip" data-c="weak" title="自评≤2 的薄弱题">薄弱</button>
+    <button class="chip" data-c="wrong">错题</button>
+    <span class="csep"></span>
+    <button class="chip" data-c="real" title="只看真实面经与一手题，隐藏 S4 预测题">真实面经</button>
+    <button class="chip" data-c="selftest" title="搜索不再自动展开答案，先自己答">自测模式</button>
+  </div>
+  <details class="moref" id="moref">
+    <summary>更多筛选 <span class="fc" id="fcount" style="display:none">0</span></summary>
+    <div class="fgrid">
+      <select id="co"><option value="">全部公司</option>__COOPTS__</select>
+      <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
+      <select id="prof" title="岗位模板：按真实 JD 归纳的模块权重过滤题目，并可作为模拟面试题源"><option value="">岗位模板…</option>__PROFOPTS__</select>
+      <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
+      <select id="sub"><option value="">全部子方向</option></select>
+      <select id="pri"><option value="">全部优先级</option>
+        <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
+      <select id="dif" title="难度"><option value="">全部难度</option>
+        <option value="1">★ 简单</option><option value="2">★★ 中等</option><option value="3">★★★ 困难</option></select>
+      <select id="st"><option value="">全部状态</option>
+        <option value="answered">已答</option><option value="draft">草稿</option>
+        <option value="indexed">待补充</option></select>
+      <select id="rev" title="间隔复习：按自评分安排">
+        <option value="">全部复习状态</option>
+        <option value="due">今日该复习</option>
+        <option value="weak">薄弱（自评≤2）</option>
+        <option value="never">从未自测</option>
+      </select>
+      <button id="exp" class="mini" title="导出错题与自评记录（JSON）">备份↓</button>
+      <button id="impb" class="mini" title="从 JSON 恢复复习数据">恢复↑</button>
+      <input type="file" id="imp" accept=".json" hidden>
+    </div>
+  </details>
+  <div class="fpills" id="fpills"></div>
+  <label hidden><input type="checkbox" id="wrong"></label>
+  <label hidden><input type="checkbox" id="hidepred"></label>
+  <label hidden><input type="checkbox" id="selftest"></label>
 </div>
 <div class="hint" id="hint"></div>
 
 <div id="list"></div>
 <div class="empty" id="empty" style="display:none">没有匹配的题目</div>
+<div class="keys">快捷键：<kbd>/</kbd> 搜索 · <kbd>J</kbd>/<kbd>K</kbd> 上下题 · <kbd>空格</kbd> 展开收起 · <kbd>1</kbd>–<kbd>4</kbd> 自评 · <kbd>W</kbd> 标错 · <kbd>Esc</kbd> 关闭弹层</div>
 </div>
 
 <div id="mockov" style="display:none">
@@ -422,7 +500,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
       <div class="mrow">题数：
         <select id="m_n"><option>5</option><option selected>10</option><option>15</option></select>
         ／ 每题限时：
-        <select id="m_sec"><option value="180">3 分钟</option><option value="300" selected>5 分钟</option><option value="480">8 分钟</option></select>
+        <select id="m_sec"><option value="180">3 分钟</option><option value="300" selected>5 分钟</option><option value="480">8 分钟</option><option value="0">不限时（练习）</option></select>
         ／ <label class="chk"><input type="checkbox" id="m_follow" checked> 作答后揭示高频追问</label>
       </div>
       <div class="mrow"><button id="m_start" style="padding:8px 20px">开始面试</button></div>
@@ -432,6 +510,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
       <div class="mrow"><span id="m_pos"></span> ｜ 剩余 <b id="m_clock"></b>
         <button class="mini" id="m_skip">跳过本题</button></div>
       <div class="mqtitle" id="m_title"></div>
+      <textarea id="m_note" placeholder="作答要点草稿：口述前敲几个关键词提醒自己（仅本场保留，切题不丢）"></textarea>
       <div id="m_follows" style="display:none"><div class="gl">高频追问（自检）</div><ol id="m_flist"></ol></div>
       <div class="mrow"><button class="mini" id="m_reveal">揭示追问</button>
         <span class="gl">自评：</span>
@@ -524,22 +603,52 @@ function gradeBar(q){
       title="${{1:'完全不会',2:'想不起来',3:'基本掌握',4:'可答追问'}[v]}">${v}</button>`).join('')}
     <span class="gstat">${when}</span></div>`;
 }
+const ST_NAME = {official: '官方文档', upstream: '上游项目', self_doc: '本人项目文档',
+  self_exp: '本人实测', nowcoder: '牛客面经', video: '视频面经', inferred: '岗位推导'};
+
 function card(q){
   const isW = wrong.has(q.id);
   const st = q.status === 'indexed' ? '<span class="tag">待补充</span>' : '';
-  const ap = (q.appearances || []).map(a =>
-      `<span class="tag appear" title="真实出现记录">${esc(a)}</span>`).join('');
   const ev = `<span class="ev ev${q.evidence}" title="证据等级：${{S1:'官方文档/JD',S2:'本人一手',S3:'社区面经',S4:'岗位推导预测'}[q.evidence]}">${q.evidence}</span>`;
+  // 掌握状态点：自测模式下隐藏，避免提前泄露难度感
+  const rs = revState(q);
+  const dmap = {never: ['', '待学习'], weak: ['weak', '薄弱'],
+                due: ['due', '今日复习'], ok: ['ok', '已掌握']};
+  const dot = SELFTEST ? '' :
+    `<span class="qdot ${dmap[rs][0]}" title="掌握状态来自你的自评记录"><i></i>${dmap[rs][1]}</span>`;
+  // 收起态就能看到追问数量与第一条，不必展开全文
+  const fs = followOf(q);
+  const fq = (!SELFTEST && fs.length)
+    ? `<div class="qf"><span class="fi">追问 ${fs.length} 条</span>` +
+      `<span title="${esc(fs[0])}">${esc(fs[0].slice(0, 46))}${fs[0].length > 46 ? '…' : ''}</span></div>`
+    : '';
+  const aps = q.appearances || [];
+  const qmeta = (q.sourceRef || aps.length)
+    ? `<div class="qmeta">` +
+      (q.sourceRef
+        ? `<span>来源：<a href="${esc(q.sourceRef)}" target="_blank" rel="noopener">` +
+          `${esc(q.sourceRef.length > 64 ? q.sourceRef.slice(0, 64) + '…' : q.sourceRef)}</a>` +
+          `<span>（${ST_NAME[q.sourceType] || q.sourceType}）</span></span>`
+        : '') +
+      (aps.length
+        ? `<span>真实出现：${aps.map(a => `<span class="tag appear">${esc(a)}</span>`).join(' ')}</span>`
+        : '') +
+      `</div>`
+    : '';
+  const df = q.difficulty || 2;
+  const stars = '★'.repeat(df) + '☆'.repeat(Math.max(0, 3 - df));
   return `<article class="q" data-id="${q.id}">
     <div class="qh">
       <span class="pid">${q.id}</span>
       <span class="pri ${q.priority}">${q.priority}</span>
       <div class="qt">${esc(q.title)}</div>
       <span class="tag">${esc(q.sub || q.moduleName)}</span>
-      ${ev}${st}${ap}
+      <span class="tag" title="难度">${stars}</span>
+      ${ev}${st}${dot}
       <button class="wrongmark ${isW?'on':''}" data-w="${q.id}">${isW?'已标错':'标错'}</button>
     </div>
-    <div class="body">${q.html}${gradeBar(q)}</div>
+    ${fq}
+    <div class="body">${q.html}${qmeta}${gradeBar(q)}</div>
   </article>`;
 }
 
@@ -556,10 +665,11 @@ function refreshSubs(){
 function render(){
   const kw = $('q').value.trim().toLowerCase();
   const mod = $('mod').value, pri = $('pri').value, st = $('st').value;
-  const sub = $('sub').value;
+  const sub = $('sub').value, dif = $('dif').value;
   const onlyW = $('wrong').checked;
   const coDef = TARGETS.companies.find(c => c.name === $('co').value);
   const rlDef = ROLE_BY_KEY[$('rl').value];
+  SELFTEST = $('selftest').checked;
 
   // 关键词命中公司名/岗位名时，按那套口径过滤（这样直接搜 "Momenta" 也能用）
   let kwCo = null, kwRl = null, kwPlain = false;
@@ -576,6 +686,7 @@ function render(){
     if (mod && q.module !== mod) return false;
     if (sub && q.sub !== sub) return false;
     if (pri && q.priority !== pri) return false;
+    if (dif && q.difficulty !== +dif) return false;
     if (st && q.status !== st) return false;
     if (onlyW && !wrong.has(q.id)) return false;
     if ($('hidepred').checked && q.evidence === 'S4') return false;
@@ -596,11 +707,10 @@ function render(){
   });
 
   list.innerHTML = hit.map(card).join('');
-  LASTHIT = hit;
+  LASTHIT = hit; fcur = -1;
   $('empty').style.display = hit.length ? 'none' : 'block';
-  SELFTEST = $('selftest').checked;
   // 搜索/筛选时自动展开，省一次点击；自测模式下不展开，先自己答
-  if (!SELFTEST && (kw || mod || pri || st || sub || onlyW || coDef || rlDef || OPEN_ALL)) {
+  if (!SELFTEST && (kw || mod || pri || st || sub || dif || onlyW || coDef || rlDef || OPEN_ALL)) {
     list.querySelectorAll('.q').forEach(el => el.classList.add('open'));
   }
   if (SELFTEST) list.classList.add('selftest'); else list.classList.remove('selftest');
@@ -609,6 +719,7 @@ function render(){
     + `已答 ${DATA.filter(q=>q.status==='answered'||q.status==='verified').length} ｜ 草稿 ${DATA.filter(q=>q.status==='draft').length} ｜ 错题 ${wrong.size} ｜ `
     + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length} ｜ `
     + `已自测 ${Object.keys(review).length} ｜ 今日该复习 ${dueCnt}`;
+  syncChips(); syncPills(); renderScards();
 
   // 口径说明：让人知道"为什么这些题被算进来"
   const tips = [];
@@ -622,6 +733,16 @@ function render(){
     tips.push('口径按 JD 推导，<span class="warn">不是该公司真实考题</span>');
   }
   $('hint').innerHTML = tips.join('　·　');
+}
+
+// 自评 1~4 写入复习计划；不会/想不起自动进错题本（卡片按钮与快捷键共用）
+function setGrade(qid, v){
+  review[qid] = { g: v, ts: Date.now() };
+  localStorage.setItem(REV_KEY, JSON.stringify(review));
+  if (v <= 2 && !wrong.has(qid)) {
+    wrong.add(qid);
+    localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+  }
 }
 
 list.addEventListener('click', e => {
@@ -639,23 +760,151 @@ list.addEventListener('click', e => {
   const gbtn = e.target.closest('.gbtn');
   if (gbtn) {
     const qid = gbtn.dataset.g, v = +gbtn.dataset.v;
-    review[qid] = { g: v, ts: Date.now() };
-    localStorage.setItem(REV_KEY, JSON.stringify(review));
+    setGrade(qid, v);
     const bar = gbtn.closest('.grade');
     bar.querySelectorAll('.gbtn').forEach(b =>
       b.classList.toggle('on', +b.dataset.v === v));
     const gs = bar.querySelector('.gstat');
     if (gs) gs.textContent = `上次自评 ${v} · ${new Date().toLocaleDateString()}`
       + (v <= 2 ? ' · 已标薄弱' : ` · ${REV_DAYS[v]} 天后复习`);
-    if (v <= 2 && !wrong.has(qid)) {          // 自评不会 → 自动进错题
-      wrong.add(qid);
-      localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
-    }
     render();
     return;
   }
   const head = e.target.closest('.qh');
   if (head) head.parentElement.classList.toggle('open');
+});
+
+// ---- 顶部学习数据卡：点击跳对应筛选 ----
+function renderScards(){
+  const tested = Object.keys(review).filter(id => QBY[id]);
+  const dueN  = tested.filter(id => isDue(review[id])).length;
+  const weakN = tested.filter(id => review[id].g <= 2).length;
+  $('scards').innerHTML = `
+    <div class="scard" data-s="none"><b>${DATA.length}</b><small>总题目 · 已自测 ${tested.length}</small></div>
+    <div class="scard ${dueN ? 'warn' : ''}" data-s="due"><b>${dueN}</b><small>今日待复习</small></div>
+    <div class="scard ${weakN ? 'warn' : ''}" data-s="weak"><b>${weakN}</b><small>薄弱题目</small></div>
+    <div class="scard ${wrong.size ? 'warn' : ''}" data-s="wrong"><b>${wrong.size}</b><small>错题本</small></div>`;
+}
+$('scards').addEventListener('click', e => {
+  const c = e.target.closest('.scard'); if (!c) return;
+  const s = c.dataset.s;
+  if (s === 'due' || s === 'weak') $('rev').value = s;
+  else if (s === 'wrong') $('wrong').checked = true;
+  else return;
+  window.scrollTo(0, 0);
+  render();
+});
+
+// ---- 快捷筛选 chips：一级高频条件，与详细筛选控件双向同步 ----
+function syncChips(){
+  const on = {
+    p0: $('pri').value === 'P0',
+    due: $('rev').value === 'due', weak: $('rev').value === 'weak',
+    wrong: $('wrong').checked, real: $('hidepred').checked,
+    selftest: $('selftest').checked };
+  document.querySelectorAll('#chips .chip').forEach(ch => {
+    const c = ch.dataset.c;
+    ch.classList.toggle('on', c === 'all' ? !Object.values(on).some(Boolean) : !!on[c]);
+  });
+}
+$('chips').addEventListener('click', e => {
+  const ch = e.target.closest('.chip'); if (!ch) return;
+  const c = ch.dataset.c;
+  if (c === 'all') {
+    $('pri').value = ''; $('rev').value = '';
+    $('wrong').checked = $('hidepred').checked = $('selftest').checked = false;
+  } else if (c === 'p0') $('pri').value = $('pri').value === 'P0' ? '' : 'P0';
+  else if (c === 'due' || c === 'weak') $('rev').value = $('rev').value === c ? '' : c;
+  else if (c === 'wrong') $('wrong').checked = !$('wrong').checked;
+  else if (c === 'real') $('hidepred').checked = !$('hidepred').checked;
+  else if (c === 'selftest') $('selftest').checked = !$('selftest').checked;
+  render();
+});
+
+// ---- 详细筛选的条件 pills：可单独移除，不必整体重置 ----
+function syncPills(){
+  const defs = [
+    ['co', '公司', $('co').value],
+    ['rl', '岗位', $('rl').value && (ROLE_BY_KEY[$('rl').value] || {}).name],
+    ['prof', '模板', $('prof').value && (PROF_BY_ID[$('prof').value] || {}).name],
+    ['mod', '模块', $('mod').value && MODNAME[$('mod').value]],
+    ['sub', '子方向', $('sub').value],
+    ['pri', '优先级', $('pri').value],
+    ['dif', '难度', $('dif').value && '★'.repeat(+$('dif').value)],
+    ['st', '状态', $('st').value], ['rev', '复习', $('rev').value],
+  ];
+  const pills = defs.filter(d => d[2]).map(([id, label, val]) =>
+    `<span class="fpill"><b>${label}：${esc(val)}</b><i data-p="${id}" title="单独移除这个条件">×</i></span>`);
+  $('fpills').innerHTML = pills.join('');
+  $('fcount').textContent = pills.length;
+  $('fcount').style.display = pills.length ? 'inline-block' : 'none';
+}
+$('fpills').addEventListener('click', e => {
+  const i = e.target.closest('[data-p]'); if (!i) return;
+  $(i.dataset.p).value = '';
+  render();
+});
+
+// ---- 桌面快捷键：/ 搜索 · J/K 上下题 · 空格展开 · 1-4 自评 · W 标错 ----
+let fcur = -1;
+function moveFocus(d){
+  if (!LASTHIT.length) return;
+  fcur = Math.min(LASTHIT.length - 1, Math.max(0, fcur + d));
+  const el = list.children[fcur];
+  if (!el) return;
+  list.querySelectorAll('.q.foc').forEach(x => x.classList.remove('foc'));
+  el.classList.add('foc');
+  el.scrollIntoView({ block: 'center' });
+}
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+    if (e.key === 'Escape') e.target.blur();
+    return;
+  }
+  if (e.key === 'Escape') {
+    if ($('repov').style.display === 'flex') $('repov').style.display = 'none';
+    if ($('mockov').style.display === 'block') {
+      clearInterval(MOCK.timer); $('mockov').style.display = 'none';
+    }
+    return;
+  }
+  if ($('mockov').style.display === 'block' || $('repov').style.display === 'flex') return;
+  if (e.key === '/') { e.preventDefault(); $('q').focus(); $('q').select(); }
+  else if (e.key === 'j' || e.key === 'J') moveFocus(fcur < 0 ? 0 : 1);
+  else if (e.key === 'k' || e.key === 'K') moveFocus(-1);
+  else if (e.key === 'Enter' || e.key === ' ') {
+    const el = list.children[fcur];
+    if (el) { e.preventDefault(); el.classList.toggle('open'); }
+  }
+  else if (['1', '2', '3', '4'].includes(e.key)) {
+    const el = list.children[fcur];
+    if (el) {
+      setGrade(el.dataset.id, +e.key);
+      const v = +e.key, bar = el.querySelector('.grade');
+      if (bar) {
+        bar.querySelectorAll('.gbtn').forEach(b => b.classList.toggle('on', +b.dataset.v === v));
+        const gs = bar.querySelector('.gstat');
+        if (gs) gs.textContent = `上次自评 ${v} · ${new Date().toLocaleDateString()}`
+          + (v <= 2 ? ' · 已标薄弱' : ` · ${REV_DAYS[v]} 天后复习`);
+      }
+      render();
+      const el2 = list.children[fcur];
+      if (el2) el2.classList.add('foc');
+    }
+  }
+  else if (e.key === 'w' || e.key === 'W') {
+    const el = list.children[fcur];
+    if (el) {
+      const id = el.dataset.id;
+      wrong.has(id) ? wrong.delete(id) : wrong.add(id);
+      localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+      render();
+      const el2 = list.children[fcur];
+      if (el2) el2.classList.add('foc');
+    }
+  }
 });
 
 // 复习数据备份：导出/导入 JSON（跨设备迁移用）
@@ -693,7 +942,7 @@ const _p = new URLSearchParams(location.search);
   if (v) $(id).value = v;
 });
 
-['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof'].forEach(id => $(id).addEventListener('input', render));
+['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof','dif'].forEach(id => $(id).addEventListener('input', render));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 
 // ---- 模拟面试：抽题 → 逐题计时 → 揭示追问 → 自评 → 总结 ----
@@ -765,7 +1014,7 @@ $('m_start').addEventListener('click', () => {
   MOCK.secs = +$('m_sec').value;
   MOCK.list = weightedPick(MOCK.pool, prof, n);
   if (!MOCK.list.length) { alert('题池为空：先调整筛选或选择岗位模板'); return; }
-  MOCK.i = 0; MOCK.graded = [];
+  MOCK.i = 0; MOCK.graded = []; MOCK.notes = {};
   $('m_setup').style.display = 'none';
   $('m_run').style.display = 'block';
   showQ();
@@ -775,17 +1024,26 @@ function showQ(){
   const q = MOCK.list[MOCK.i];
   $('m_pos').textContent = `第 ${MOCK.i + 1} / ${MOCK.list.length} 题 ｜ ${q.id} ｜ ${MODNAME[q.module] || q.module}`;
   $('m_title').textContent = q.title;
+  $('m_note').value = MOCK.notes[q.id] || '';
   $('m_follows').style.display = 'none';
-  $('m_clock').textContent = `${MOCK.secs / 60}:00`;
   MOCK.left = MOCK.secs;
   clearInterval(MOCK.timer);
-  MOCK.timer = setInterval(() => {
-    MOCK.left--;
-    const m = Math.floor(MOCK.left / 60), s = MOCK.left % 60;
-    $('m_clock').textContent = `${m}:${String(s).padStart(2, '0')}`;
-    if (MOCK.left <= 0) { clearInterval(MOCK.timer); $('m_clock').textContent = '时间到'; }
-  }, 1000);
+  if (MOCK.secs > 0) {
+    $('m_clock').textContent = `${MOCK.secs / 60}:00`;
+    MOCK.timer = setInterval(() => {
+      MOCK.left--;
+      const m = Math.floor(MOCK.left / 60), s = MOCK.left % 60;
+      $('m_clock').textContent = `${m}:${String(s).padStart(2, '0')}`;
+      if (MOCK.left <= 0) { clearInterval(MOCK.timer); $('m_clock').textContent = '时间到'; }
+    }, 1000);
+  } else {
+    $('m_clock').textContent = '不限时';
+  }
 }
+$('m_note').addEventListener('input', () => {
+  const q = MOCK.list[MOCK.i];
+  if (q) MOCK.notes[q.id] = $('m_note').value;
+});
 
 $('m_reveal').addEventListener('click', () => {
   const q = MOCK.list[MOCK.i];
@@ -797,13 +1055,7 @@ $('m_reveal').addEventListener('click', () => {
 });
 
 function gradeMock(v){
-  const q = MOCK.list[MOCK.i];
-  review[q.id] = { g: v, ts: Date.now() };
-  localStorage.setItem(REV_KEY, JSON.stringify(review));
-  if (v <= 2 && !wrong.has(q.id)) {
-    wrong.add(q.id);
-    localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
-  }
+  setGrade(MOCK.list[MOCK.i].id, v);
   MOCK.graded.push(v);
   nextQ();
 }
