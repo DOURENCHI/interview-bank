@@ -225,7 +225,7 @@ PAGE = r"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>面试题库 · __COUNT__ 题</title>
+<title>CareerOS 求职功能台 · __COUNT__ 题</title>
 <style>
 :root{
   --bg:#faf3e2; --soft:#f3e9d2; --paper:#fffcf3; --line:#dbcba5;
@@ -505,7 +505,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <body>
 <div class="wrap">
 <header>
-  <h1>面试题库</h1>
+  <h1>CareerOS · 求职功能台</h1>
   <div class="meta" id="stat"></div>
   <nav class="tabs">
     <button class="tab" data-v="home">🏠 首页</button>
@@ -519,6 +519,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <section id="view-home" class="view">
   <div class="hdate" id="h_date"></div>
   <div class="scards" id="scards"></div>
+  <div class="hempty" id="h_radar" style="margin:8px 2px"></div>
   <div class="quick" id="h_quick"></div>
   <div class="hgrid">
     <div class="panel"><h3>今日训练任务</h3><div id="h_tasks"></div></div>
@@ -669,7 +670,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
         ／ <label class="chk"><input type="checkbox" id="m_follow" checked> 作答后揭示高频追问</label>
       </div>
       <div class="mrow"><button id="m_start" style="padding:8px 20px">开始面试</button></div>
-      <div class="mnote">作答方式：对着每道题**先口述完整回答**（自测纪律），再看「高频追问」自检有没有被问倒；每题自评 1~4 分，评分会计入间隔复习。抽题按当前筛选与岗位模板权重进行。</div>
+      <div class="mnote">作答方式：对着每道题**先口述完整回答**（自测纪律），再看「高频追问」自检有没有被问倒；每题自评 1~4 分——1 不知道答案 / 2 知道答案但讲不清 / 3 能独立解释 / 4 能应对追问与实现，评分会计入间隔复习。抽题按当前筛选与岗位模板权重进行。</div>
     </div>
     <div id="m_run" style="display:none">
       <div class="mrow"><span id="m_pos"></span> ｜ 剩余 <b id="m_clock"></b>
@@ -743,7 +744,7 @@ function gradeBar(q){
   const when = r ? `上次自评 ${r.g} · ${new Date(r.ts).toLocaleDateString()}` : '未自测';
   return `<div class="grade" data-q="${q.id}"><span class="gl">自评</span>
     ${[1,2,3,4].map(v=>`<button class="gbtn ${cls(v)}" data-g="${q.id}" data-v="${v}"
-      title="${{1:'完全不会',2:'想不起来',3:'基本掌握',4:'可答追问'}[v]}">${v}</button>`).join('')}
+      title="${{1:'不知道答案',2:'知道答案但讲不清',3:'能独立解释',4:'能应对追问与实现'}[v]}">${v}</button>`).join('')}
     <span class="gstat">${when}</span></div>`;
 }
 const ST_NAME = {official: '官方文档', upstream: '上游项目', self_doc: '本人项目文档',
@@ -1397,6 +1398,13 @@ function renderHome(){
   const d = new Date();
   const wk = '日一二三四五六'[d.getDay()];
   $('h_date').textContent = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()} · 周${wk} · 数据都在本机浏览器，换设备先备份`;
+  const srcs = RADAR.sources || [];
+  const okN = srcs.filter(x => x.status === 'success').length;
+  const openN = (RADAR.jobs || []).filter(x => x.status === 'open').length;
+  const suspectN = (RADAR.jobs || []).filter(x => x.status === 'suspect').length;
+  $('h_radar').innerHTML = srcs.length
+    ? `🛰 岗位雷达：<b>${srcs.length}</b> 个官方源（成功 ${okN}${srcs.length - okN ? `、失败 ${srcs.length - okN}` : ''}）· 最近实际扫描 <b>${esc((RADAR.updated || '—').replace('T', ' ').slice(0, 16))}</b> · 在招 <b>${openN}</b> 岗${suspectN ? ` · 疑似下线 ${suspectN} 待核实` : ''} · 目标届别 <b>${USER_GRAD} 届</b>`
+    : '🛰 岗位雷达尚未运行（GitHub Actions 每日 09:30 自动扫描官方招聘门户）';
   renderScards();
   $('h_quick').innerHTML = `
     <div class="qcard" data-a="due"><b>📋 今日复习</b><small>处理间隔复习到期的题目</small></div>
@@ -1555,24 +1563,57 @@ function jobScore(job){
   return {total, hits};
 }
 
+// 你的硕士毕业届别（换届别时改这里）：招聘资格判断的唯一依据
+const USER_GRAD = 2029;
+
+// V1.6 匹配三维度：覆盖（题库有没有）/ 掌握（自评数据，无则数据不足）/ 资格（届别硬性条件）
+// 三者独立展示、不互相抵消——届别不符时不给「推荐投递」类结论
+function jobMatch(job){
+  const hits = jobScore(job).hits;
+  const cover = hits.length
+    ? Math.round(hits.filter(h => h.pool > 0).length / hits.length * 100) : 0;
+  const tested = hits.filter(h => h.avg != null);
+  const mastery = tested.length
+    ? { pct: Math.round(tested.reduce((a, h) => a + h.avg, 0) / tested.length / 4 * 100),
+        txt: (tested.reduce((a, h) => a + h.avg, 0) / tested.length).toFixed(1) }
+    : { pct: null, txt: '数据不足' };
+  const gy = job.grad_year;
+  let eli;
+  if (!gy) eli = { cls: 'mid', txt: '届别未标注' };
+  else if (gy === USER_GRAD) eli = { cls: 'hi', txt: gy + '届匹配' };
+  else if ((job.type || '').indexOf('实习') >= 0) eli = { cls: 'mid', txt: '实习可关注' };
+  else eli = { cls: 'lo', txt: '面向' + gy + '届·仅作JD参考' };
+  hits.forEach(h => {                     // 证据四态：题库储备≠掌握
+    if (h.mods.indexOf('01_project') >= 0 && h.done > 0) h.state = ['已有项目证据', 'done'];
+    else if (h.done > 0) h.state = ['已有学习记录', 'doing'];
+    else if (h.pool > 0) h.state = ['仅有题库储备', 'todo'];
+    else h.state = ['尚无证据', 'todo'];
+  });
+  return {hits, cover, mastery, eli};
+}
+function masteryCls(m){ return m.pct == null ? 'mid' : m.pct >= 80 ? 'hi' : m.pct >= 60 ? 'mid' : 'lo'; }
+
 function renderJobs(){
   const jobs = loadJobs();
   $('joblist').innerHTML = jobs.map((job, idx) => {
-    const sc = jobScore(job);
-    const gcls = sc.total >= 80 ? 'hi' : sc.total >= 60 ? 'mid' : 'lo';
+    const m = jobMatch(job);
     const isLocal = job.src === 'local';
-    const rows = sc.hits.map((h, hi) => `<tr>
+    const concl = `${m.cover >= 60 ? '技术方向匹配' : '技术覆盖有限'} · ${m.mastery.pct == null ? '实际掌握数据不足，去题库自测' : '掌握均分 ' + m.mastery.txt + '/4'} · ${m.eli.txt}`;
+    const rows = m.hits.map((h, hi) => `<tr>
       <td><b>${esc(h.name)}</b></td>
       <td class="rnum">${esc(h.kws.slice(0, 4).join('、'))}</td>
-      <td class="rnum">${h.done} / ${h.pool}（覆盖 ${h.cov}%）</td>
+      <td><span class="tstat ${h.state[1]}">${h.state[0]}</span></td>
+      <td class="rnum">${h.done} / ${h.pool}</td>
       <td><span class="rscore ${h.avg == null ? '' : h.avg >= 3.3 ? 'hi' : h.avg >= 2.5 ? 'mid' : 'lo'}">${h.avg == null ? '未自测' : h.avg.toFixed(1)}</span></td>
       <td><span class="tstat ${h.grade === '较强' ? 'done' : h.grade === '一般' ? 'doing' : 'todo'}">${h.grade}</span></td>
-      <td><button class="mini" data-jtrain="${hi}">训练该技能</button></td>
+      <td><button class="mini" data-jtrain="${hi}">训练</button></td>
     </tr>`).join('');
     return `<article class="q jcard" data-ji="${idx}">
       <div class="qh">
         <span class="pid">${esc(job.company)}</span>
-        <span class="rscore ${gcls}" title="技能匹配分：命中技能的自评掌握度均值（规则估算，非 AI 评分）">${sc.total}%</span>
+        <span class="rscore ${m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo'}" title="技能覆盖度：题库有对应知识点的技能占比">覆盖 ${m.cover}%</span>
+        <span class="rscore ${masteryCls(m.mastery)}" title="能力掌握度：自评均值；没有自测数据时如实显示数据不足">掌握 ${m.mastery.txt}</span>
+        <span class="rscore ${m.eli.cls}" title="招聘资格：毕业届别与岗位类型硬性条件">${m.eli.txt}</span>
         <div class="qt">${esc(job.title)}</div>
         <span class="tag">${esc(job.city || '待核实')}</span>
         <span class="tag">${esc(job.type || '')}</span>
@@ -1581,10 +1622,11 @@ function renderJobs(){
         ${isLocal ? `<button class="wrongmark" data-jdel="${esc(job.id)}" title="删除本地岗位">删除</button>` : ''}
       </div>
       <div class="jbody" style="display:none">
-        ${sc.hits.length
+        ${m.hits.length
           ? `<table class="rtable"><thead><tr>
-              <th>技能要求</th><th>JD 依据</th><th>题库储备</th><th>自测掌握</th><th>判断</th><th></th>
-            </tr></thead><tbody>${rows}</tbody></table>`
+              <th>技能要求</th><th>JD 依据</th><th>证据状态</th><th>题库储备（自测/总数）</th><th>掌握</th><th>判断</th><th></th>
+            </tr></thead><tbody>${rows}</tbody></table>
+            <div class="qmeta"><span><b>结论：</b>${concl}</span></div>`
           : `<div class="hempty" style="padding:6px 0 2px">JD 未命中内置技能表（C++/Linux/部署/ROS2/感知/嵌入式/机器人学…），先人工判断；粘贴完整 JD 原文能提高命中率。</div>`}
         ${job.jd ? `<div class="qmeta"><span title="${esc(job.jd)}">JD 摘要：${esc(job.jd.slice(0, 130))}${job.jd.length > 130 ? '…' : ''}</span></div>` : ''}
       </div>
@@ -1655,13 +1697,13 @@ function renderRadar(){
   $('radarlist').innerHTML = show.length
     ? show.map(j => {
         const idx = jobs.indexOf(j);
-        const sc = jobScore(j);
-        const gcls = sc.total >= 80 ? 'hi' : sc.total >= 60 ? 'mid' : 'lo';
+        const m = jobMatch(j);
+        const gcls = m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo';
         return `<div class="rcard2">
           <div class="rh"><b>${esc(j.company)}</b>
-            <span class="rscore ${gcls}" title="技能匹配分（按你的自评数据估算）">${sc.total}%</span></div>
+            <span class="rscore ${gcls}" title="技能覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ ${m.eli.txt}">覆盖 ${m.cover}%</span></div>
           <div class="rt">${esc(j.title)}</div>
-          <small>${esc(j.city)} ｜ ${esc(j.label || j.type)} ｜ 发现 ${esc(j.found)} ｜ ${j.src === 'zhiye' ? '官方门户·智业云' : '官方门户·飞书招聘'}</small>
+          <small>${esc(j.city)} ｜ ${esc(j.label || j.type)} ｜ ${m.eli.txt} ｜ 发现 ${esc(j.found)} ｜ ${j.src === 'zhiye' ? '官方门户·智业云' : '官方门户·飞书招聘'}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
           <div class="mrow">
             <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
             <button class="mini" data-rdismiss="${idx}">忽略</button>

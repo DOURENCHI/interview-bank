@@ -131,6 +131,18 @@ def main() -> int:
         ok.append(("JD 技能分析行", hit_rows >= 3))
         grade_badge = pg.evaluate("!!document.querySelector('#joblist .jcard .tstat')")
         ok.append(("缺口判断徽标", grade_badge))
+        # V1.6：匹配三维度徽标（覆盖/掌握/资格）+ 技能四态 + 结论行
+        badges = pg.evaluate("[...document.querySelector('#joblist .jcard').querySelectorAll('.qh .rscore')].map(x => x.innerText)")
+        ok.append(("三维度徽标", any('覆盖' in t for t in badges) and any('掌握' in t for t in badges) and any('届' in t for t in badges)))
+        state_col = pg.evaluate("!!document.querySelector('#joblist .jcard .rtable th:nth-child(3)') && document.querySelector('#joblist .jcard .rtable th:nth-child(3)').innerText.includes('证据')")
+        ok.append(("技能四态列", state_col))
+        concl = pg.evaluate("[...document.querySelectorAll('#joblist .qmeta')].some(x => x.innerText.includes('结论'))")
+        ok.append(("结论行", concl))
+        # 首页雷达可信行（真实扫描时间）
+        tab("home")
+        ok.append(("首页雷达可信行", pg.eval_on_selector('#h_radar', "el => el.innerText.includes('岗位雷达') && el.innerText.includes('最近实际扫描')")))
+        tab("jobs")   # 回岗位视图，继续「训练该技能」跳转测试
+        pg.click('#joblist .jcard .qh'); pg.wait_for_timeout(150)  # 重渲染后重新展开
         # 训练该技能 → 切题库并按模块筛选
         pg.click('#joblist [data-jtrain]'); pg.wait_for_timeout(250)
         ok.append(("技能训练跳题库", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")

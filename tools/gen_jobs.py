@@ -38,6 +38,11 @@ def main() -> int:
             if usable_company(c):
                 company = c
                 break
+        ev_text = "；".join(evs)
+        grad = None
+        m = re.search(r"(20\d{2})\s*届", ev_text + " " + p["name"])
+        if m:
+            grad = int(m.group(1))
         jobs.append({
             "id": "job_" + p["id"],
             "company": company or "待核实",
@@ -45,7 +50,9 @@ def main() -> int:
             "city": "待核实",
             "type": "校招",
             "status": "待核实",
-            "jd": "；".join(evs),
+            "batch": f"{grad}届" if grad else "",
+            "grad_year": grad,
+            "jd": ev_text,
             "links": links,
             "skills": p.get("keywords", []),
             "prof": p["id"],

@@ -7,6 +7,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "桥介数物·机器人系统开发工程师(跨机型SDK)：对编译与链接机制有深入理解（静态/动态库、符号可见性、ABI 兼容、交叉编译）；熟悉 CMake；EtherCAT/CAN/串口加分；浙江杰峰物联·SDK开发工程师(2027届)：扎实 C++ 基础、多线程与内存管理、跨平台构建；西安交大就业网·C++开发工程师：机器人 C++/Python SDK 架构设计、API 文档与工具链",
    "links": [
     "https://hbrcsh.bysjy.com.cn/detail/job?id=3226320",
@@ -33,6 +35,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "",
+   "grad_year": null,
    "jd": "高校就业网·软件开发工程师-实时网络通信方向：优化通信架构降延迟；DDS/ROS2 QoS 配置（可靠性/延迟/带宽）；UDP/TCP、多线程、IPC",
    "links": [
     "https://career.cic.tsinghua.edu.cn/xsglxt/f/jyxt/anony/showZwxxForWx?zpxxid=509993089"
@@ -55,6 +59,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "浙江人形·2027届：SLAM 与路径规划、运动规划与操作控制、点云感知融合；ROS/ROS2 + RViz/MoveIt/Gazebo；推理部署框架了解",
    "links": [
     "https://career.hit.edu.cn/zhxy-xszyfzpt/zpxx/zpxxxq?id=NDQyYWQ4MWQ2MmRkNGY4NWEyMDhiMGNiYzgwNTM2MzU-"
@@ -76,6 +82,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "Dexmal·模型部署与推理优化工程师(2027届)：模型转换、推理加速、显存/内存与延迟优化；PyTorch/ONNX/TensorRT/OpenVINO 任一；量化/剪枝/蒸馏/CUDA 优先；常宝股份·AI部署工程师：ONNX/TensorRT 转换与量化剪枝；Docker 容器化 + FastAPI/Flask 服务化；CUDA/cuDNN 版本冲突排查",
    "links": [
     "https://www.thejobsmap.com/job/d1e2e39a-5742-4f6a-99c2-4b0a62503dbc",
@@ -99,6 +107,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "WeRide·AI Infra推理平台工程师(2027届)：TensorRT/SGLang/vLLM 优化；INT8/FP8 量化、算子融合、动态 Batch；KV Cache 管理（Mooncake/LMCache）；P/D 分离架构；CUDA 基础",
    "links": [
     "https://hiringcafe.com/job/ai-infra-2027-weride-beijing-beijing-1nplahldl0p9qk3b"
@@ -121,6 +131,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "",
+   "grad_year": null,
    "jd": "按 D 族常见校招要求归纳：检测/分割/融合 + 深度学习基础 + 机考算法；权重为初始配比，待收集到目标 JD 后按其修订",
    "links": [],
    "skills": [
@@ -140,6 +152,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "联友智连·嵌入式软件工程师(2027届)：BOOT/BSP 开发调试；Linux 驱动与系统裁剪；FreeRTOS 驱动框架；网络/串口/CAN 通讯；单片机原理 + ARM Cortex-M/R；Keil/IAR/GCC；金溢科技·软件工程师(2027届)：STM32/GD32 驱动与应用；Bootloader 定制移植、内核裁剪适配；I2C/SPI/UART/USB/CAN 总线；英杰电气·嵌入式软件工程师：基于 Linux、STM32/GD32 搭建系统；CAN/4G 协议；会看原理图、示波器",
    "links": [
     "https://www.liepin.com/job/1985161899.shtml",
@@ -164,6 +178,8 @@
    "city": "待核实",
    "type": "校招",
    "status": "待核实",
+   "batch": "2027届",
+   "grad_year": 2027,
    "jd": "灵心巧手·ros工程师(2027校招)：ROS/ROS2 架构、节点/话题/服务/TF/URDF；SLAM、感知、规划、控制模块的 ROS 封装与联调；Gazebo 仿真与真机部署；珠海一微·软件开发(OS/SDK方向)(2027届)：ROS2 功能包、传感器接入、里程计/TF、cmd_vel；SLAM/导航/避障集成；Yocto/Debian 裁剪、交叉编译",
    "links": [
     "https://career.hit.edu.cn/zhxy-xszyfzpt/zpxx/zczphxq?id=OWFkMWJjMTQzZGY5NGI4ZGJlY2ZmODY5ZjZhOTBhZTY=",
