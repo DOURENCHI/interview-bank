@@ -1,4 +1,8 @@
-# 面试题库 · Interview Bank
+# CareerOS · 求职功能台
+
+> 原名「面试题库 / Interview Bank」。已从静态题库升级为个人求职工作台：
+> `content/` 仍是唯一内容源，`dist/bank.html` 是编译产出的单文件离线页。
+> 网页顶部标题、六视图与数据口径见 `docs/architecture.md`。
 
 **定位：软硬件协同的 AI 系统工程师**
 
@@ -113,9 +117,26 @@ python tools/apply_cards.py tools/cards/py_a.cards
 # 5. 校验字段、号段、小节完整性
 python tools/validate.py
 
-# 5. 生成单文件题库网页 dist/bank.html（双击即开，手机可用）
+# 5. 生成单文件题库网页 dist/bank.html（双击即开）
 python tools/build.py
+
+# 6. 岗位雷达：离线重算招聘性质分类（不联网）/ 联网扫描由 Actions 每日 09:30 跑
+python tools/job_radar.py --reclassify   # 校招 / 实习 / 社招 / 未标明
+python tools/radar_test.py               # 状态机 + 分类逻辑回归
+python tools/ui_test.py                  # Edge/Playwright 全视图回归
 ```
+
+### 网页的六个视图
+
+`🏠 首页` / `📚 题库` / `🎯 训练` / `💼 岗位` / `🏢 公司` / `📈 分析`（hash 直达，如 `#comp`）。
+
+- **看全部公司、全部岗位**：点「🏢 公司」或首页「查看全部公司 / 全部岗位」。公司表列出
+  公司池 47 条（45 家）+ 目标公司池 128 家去重后的 **152 家**；岗位表列出雷达快照 **351 岗**
+  （含已收藏 / 已忽略，不再因为折叠区只显示 40 条待处理新发现而看不到）。
+- **校招还是实习**：岗位表按 `实习 / 校招 / 社招 / 未标明` 分组，每行标出判定依据
+  （岗位标题明确 > 来源批次标签 > 校园招聘入口推定）。当前 347 校招 / 4 实习；
+  「入口推定」不等于官方写明校招，投递前点 JD 原文核实。
+- 点公司表任意一行 → 只看该公司的岗位；清空搜索框恢复全部。
 
 ### GitHub 操作
 
@@ -140,12 +161,13 @@ python tools/gh.py push                            # 推送
 
 ```
 面试题库/
-├── content/          一题一 md，唯一内容源（11 个技术模块）
-├── companies/        公司 × 岗位索引：查"这家这个岗考什么"
-├── sources/          开源复用台账、候选池、抽取报告、视频与牛客来源记录
-├── tools/            extract / import_lab / seed* / build / validate / gh
-├── dist/             bank.html 单文件成品
-├── docs/             schema.md 字段规范
+├── content/          一题一 md，唯一内容源（11 个技术模块，913 题全答）
+├── companies/        目标公司池 / 雷达公司池 / 岗位模板 / 种子岗位 / 公司档案
+├── sources/          来源台账、牛客与视频真题、雷达快照 jobs_radar.json + 报告
+├── tools/            seed* / build / validate / audit / job_radar / *_test
+├── dist/             bank.html 单文件离线成品（CareerOS 求职功能台）
+├── docs/             architecture.md / workflow.md / code_notes.md / debug_log.md / schema.md
+├── .github/workflows/ ci.yml（校验·构建·审计·回归）、radar.yml（每日 09:30 扫描）
 └── CHANGELOG.md
 ```
 
@@ -157,6 +179,9 @@ python tools/gh.py push                            # 推送
 
 ## 七、建设状态
 
-见 `CHANGELOG.md`。当前是**目录 + 索引**阶段，答案按 P0 逐步补。
+见 `CHANGELOG.md`。题库内容侧已完成：**913 道题全部有答案**（P0 596 / P1 307 / P2 10）。
+功能台侧已到 **CareerOS V1.8**：六视图、模拟面试、间隔复习、JD 三维度匹配、
+岗位雷达（9 个官方源 / 351 岗）、有效性状态机、全部公司总览与校招 / 实习分类。
 
-已答的题集中在「项目深挖」（有真实项目文档兜底）和「算法机考 · 语言细节」（实验台自带答案与解析）；其余以索引为主。
+后续可选（不必现在堆功能）：hotjob 大易 / Moka / 自建站采集适配器、投递跟踪（2027 年 1-2 月前）、
+每周人工核验 2~3 家新入口。每次改动的验收清单见 `docs/workflow.md`。

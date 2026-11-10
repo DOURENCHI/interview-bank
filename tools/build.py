@@ -454,6 +454,33 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .rcard2 .rh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .rcard2 .rt{font-size:14.5px;font-weight:600;margin:2px 0;line-height:1.5}
 .rcard2 small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:6px;line-height:1.6}
+/* ---- V1.8 公司 & 岗位总览（全部公司 / 校招·实习分类） ---- */
+.cstat{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+.cstat .scard{flex:1 1 140px}
+.cfilter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.cfilter .chips{flex:1 1 100%}
+.cfilter input[type=search]{flex:1 1 280px}
+.cfilter .flab{font-size:12px;color:var(--muted);white-space:nowrap}
+.cnote{font-size:12px;color:var(--muted);line-height:1.8;margin:6px 0 10px}
+.ctable{font-size:12.5px}
+.ctable th,.ctable td{padding:7px 9px;vertical-align:top}
+.ctable th:last-child,.ctable td:last-child{min-width:118px}
+.ctable tbody tr[data-coname]{cursor:pointer}
+.ctable td small{display:block;color:var(--muted);font-size:11.5px;line-height:1.5}
+.ctable tbody tr{cursor:default}
+.ctable .jt{font-weight:600;font-size:13px;line-height:1.5}
+.cbadge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;
+  border-radius:999px;white-space:nowrap}
+.cbadge.campus{color:#1b5e8c;background:#eaf1fb;border:1px solid #b9cfe8}
+.cbadge.intern{color:#2e6b3e;background:#eaf5ec;border:1px solid #b6d8bd}
+.cbadge.social{color:#9a5a12;background:#fdf6e0;border:1px solid #e3c98a}
+.cbadge.unknown{color:var(--muted);background:var(--soft);border:1px solid var(--line)}
+.conf{font-size:10.5px;white-space:nowrap}
+.conf.high{color:var(--green)} .conf.medium{color:var(--orange)}
+.conf.low{color:var(--muted)} .conf.none{color:var(--red)}
+.cjobrow.hs-saved,.cjobrow.hs-dismissed{opacity:.68}
+.cjobrow.hs-dismissed .jt{text-decoration:line-through;text-decoration-color:#c9bda0}
+.cempty{font-size:12.5px;color:var(--muted);padding:10px 2px}
 /* ---- 学习分析（平铺视图） ---- */
 .rpanel{width:min(900px,94vw);max-height:88vh;overflow:auto;background:var(--bg);
   border:1px solid var(--line);border-radius:12px;padding:22px 26px;
@@ -512,6 +539,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <button class="tab" data-v="bank">📚 题库</button>
     <button class="tab" data-v="train">🎯 训练</button>
     <button class="tab" data-v="jobs">💼 岗位</button>
+    <button class="tab" data-v="comp">🏢 公司</button>
     <button class="tab" data-v="rep">📈 分析</button>
   </nav>
 </header>
@@ -608,7 +636,8 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 
 <section id="view-jobs" class="view">
   <div class="panel" style="margin-bottom:14px">
-    <h3>💼 岗位收藏 · 点卡片看「JD → 题库」技能匹配分析</h3>
+    <h3>💼 岗位收藏 · 点卡片看「JD → 题库」技能匹配分析
+      <button class="mini" data-goall="1" style="margin-left:8px">🏢 查看全部公司 / 全部岗位 →</button></h3>
     <details id="jobform">
       <summary>➕ 添加岗位（人工登记，存本机浏览器，随备份导出）</summary>
       <div style="display:flex;flex-direction:column;gap:8px;padding:8px 0">
@@ -630,6 +659,44 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <div class="rgrid2" id="radarlist" style="margin-top:10px"></div>
   </details>
   <div class="trgrid" id="joblist"></div>
+</section>
+
+<section id="view-comp" class="view">
+  <div class="panel">
+    <h3>🏢 全部公司 & 全部岗位 · 招聘性质分类（校招 / 实习 / 社招 / 未标明）</h3>
+    <div class="cnote" id="comp_note"></div>
+    <div class="cstat" id="comp_stat"></div>
+    <div class="cfilter">
+      <input type="search" id="comp_q" placeholder="搜公司 / 岗位 / 城市 / 批次 / 岗位族">
+      <div class="chips" id="comp_chips">
+        <span class="flab">性质</span>
+        <button class="chip on" data-k="cls" data-v="all">全部</button>
+        <button class="chip" data-k="cls" data-v="校招">校招 <b>0</b></button>
+        <button class="chip" data-k="cls" data-v="实习">实习 <b>0</b></button>
+        <button class="chip" data-k="cls" data-v="社招">社招 <b>0</b></button>
+        <button class="chip" data-k="cls" data-v="未标明">未标明 <b>0</b></button>
+        <span class="csep"></span>
+        <span class="flab">公司</span>
+        <button class="chip on" data-k="src" data-v="all">全部公司</button>
+        <button class="chip" data-k="src" data-v="pool">雷达池</button>
+        <button class="chip" data-k="src" data-v="enabled">已接入</button>
+        <button class="chip" data-k="src" data-v="unset">未接入</button>
+        <button class="chip" data-k="src" data-v="targets">仅目标池</button>
+        <span class="csep"></span>
+        <span class="flab">岗位状态</span>
+        <button class="chip on" data-k="st" data-v="all">全部</button>
+        <button class="chip" data-k="st" data-v="open">在招</button>
+        <button class="chip" data-k="st" data-v="suspect">疑似下线</button>
+        <button class="chip" data-k="st" data-v="todo">待处理</button>
+        <button class="chip" data-k="st" data-v="saved">已收藏</button>
+        <button class="chip" data-k="st" data-v="dismissed">已忽略</button>
+      </div>
+    </div>
+    <div class="rsec">全部公司（公司池 + 目标公司池，同名合并；只看「公司来源 / 搜索」两类筛选）</div>
+    <div id="comp_table"></div>
+    <div class="rsec">全部岗位（含已收藏 / 已忽略；按性质、岗位状态与搜索筛选）</div>
+    <div id="comp_jobs"></div>
+  </div>
 </section>
 
 <section id="view-rep" class="view">
@@ -696,6 +763,7 @@ const TARGETS = __TARGETS__;
 const PROFILES = __PROFILES__;
 const JOBS_SEED = __JOBS__;
 const RADAR = __RADAR__;
+const POOL = __POOL__;          // companies/radar_companies.json：全量公司池（含未接入源）
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -1382,6 +1450,7 @@ function showView(v){
   if (v === 'home') renderHome();
   if (v === 'train') renderTrain();
   if (v === 'jobs') { renderJobs(); renderRadar(); }
+  if (v === 'comp') renderCompanies();
   if (v === 'rep') renderRep();
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
@@ -1393,6 +1462,7 @@ function runAct(act){
   else if (act === 'weak') { $('rev').value = 'weak'; showView('bank'); render(); }
   else if (act === 'mock') { showView('bank'); openMock(); }
   else if (act === 'drill') showView('train');
+  else if (act === 'comp') { showView('comp'); window.scrollTo(0, 0); }
 }
 function renderHome(){
   const d = new Date();
@@ -1412,9 +1482,13 @@ function renderHome(){
   const ps = RADAR.pool_stats || {};
   const openN = all.filter(x => x.status === 'open').length;
   const targetN = all.filter(x => x.status === 'open' && (x.families || []).some(f => f !== '其他')).length;
+  const csx = RADAR.class_stats || {}, bsx = RADAR.class_basis_stats || {};
+  const clsLine = `招聘性质：<b>校招 ${csx['校招'] || 0}</b> · <b>实习 ${csx['实习'] || 0}</b> · 社招 ${csx['社招'] || 0} · 未标明 ${csx['未标明'] || 0} · 入口推定待核实 ${bsx['校园招聘入口推定'] || 0}<br>` +
+    `<button class="mini" id="h_allco">🏢 查看全部 ${allCompanies().length} 家公司 / 全部 ${all.length} 岗（按校招 · 实习分类）→</button>`;
   $('h_radar').innerHTML = srcs.length
     ? `🛰 岗位雷达：<b>${srcs.length}</b> 个官方源（成功 ${okN}）· 最近实际扫描 <b>${esc((RADAR.updated || '—').replace('T', ' ').slice(0, 16))}</b> · 官方在招 <b>${openN}</b>（可关注 ${canGo} · 技能参考 ${refN} · 待核实 ${suspectN}）· 目标方向命中 <b>${targetN}</b> · 目标届别 <b>${USER_GRAD} 届</b><br>` +
-      `公司池 <b>${ps.pool_total || '—'}</b> 家（启用 ${ps.enabled || 0} · 本次成功 ${ps.scanned_ok || 0} · ATS：${Object.entries(ps.ats_dist || {}).map(([k, v]) => k + ' ' + v).join('、') || '—'}）· 岗位族：${Object.entries(RADAR.family_stats || {}).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${v}`).join(' · ')}`
+      `公司池 <b>${ps.pool_total || '—'}</b> 家（启用 ${ps.enabled || 0} · 本次成功 ${ps.scanned_ok || 0} · ATS：${Object.entries(ps.ats_dist || {}).map(([k, v]) => k + ' ' + v).join('、') || '—'}）· 岗位族：${Object.entries(RADAR.family_stats || {}).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${v}`).join(' · ')}<br>` +
+      clsLine
     : '🛰 岗位雷达尚未运行（GitHub Actions 每日 09:30 自动扫描官方招聘门户）';
   renderScards();
   $('h_quick').innerHTML = `
@@ -1702,9 +1776,11 @@ function renderRadar(){
   const jobs = RADAR.jobs || [];
   const dis = loadDismiss();
   const have = new Set(loadJobs().map(j => j.key).filter(Boolean));
-  const show = jobs.filter(j => !dis.has(j.key) && !have.has(j.key)).slice(0, 40);
-  const hidden = jobs.length - show.length;
-  $('radar_meta').textContent = `${jobs.length} 岗在招 · 快照 ${(RADAR.updated || '').slice(0, 10)}`;
+  const pending = jobs.filter(j => !dis.has(j.key) && !have.has(j.key));
+  const show = pending.slice(0, 40);
+  const savedN = jobs.length - pending.length;
+  const restN = pending.length - show.length;
+  $('radar_meta').textContent = `全部 ${jobs.length} 岗 · 待处理 ${pending.length} · 快照 ${(RADAR.updated || '').slice(0, 10)}`;
   $('radarlist').innerHTML = show.length
     ? show.map(j => {
         const idx = jobs.indexOf(j);
@@ -1712,9 +1788,10 @@ function renderRadar(){
         const gcls = m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo';
         return `<div class="rcard2">
           <div class="rh"><b>${esc(j.company)}</b>
+            ${cbadge(jobClass(j))}
             <span class="rscore ${gcls}" title="技能覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ ${m.eli.txt}">覆盖 ${m.cover}%</span></div>
           <div class="rt">${esc(j.title)}</div>
-          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))} ｜ ${m.eli.txt} ｜ 发现 ${esc(j.found)}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
+          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))} ｜ ${m.eli.txt} ｜ ${esc(j.class_basis || '分类待重算')} ｜ 发现 ${esc(j.found || j.first_seen || '')}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
           <div class="mrow">
             <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
             <button class="mini" data-rdismiss="${idx}">忽略</button>
@@ -1722,8 +1799,10 @@ function renderRadar(){
           </div>
         </div>`;
       }).join('') +
-      (hidden > 0 ? `<div class="hempty" style="grid-column:1/-1">其余 ${hidden} 道已收藏/忽略，不重复显示。</div>` : '')
-    : '<div class="hempty">没有待处理的新发现（已收藏或已忽略的不再显示）。雷达由 GitHub Actions 每日 09:30 自动扫描。</div>';
+      (jobs.length > show.length
+        ? `<div class="hempty" style="grid-column:1/-1">本区只列<b>待处理的新发现</b>（显示 ${show.length} / ${pending.length} 条）：已收藏或已忽略 ${savedN} 条、未展开 ${restN} 条。<b>全部 ${jobs.length} 岗</b>（含已收藏 / 已忽略）都在「🏢 公司」视图按校招 / 实习 / 社招分类完整列出，不再重复显示在这里。
+           <button class="mini" data-rall="1" style="margin-left:8px">查看全部公司 / 岗位 →</button></div>` : '')
+    : '<div class="hempty">没有待处理的新发现（已收藏或已忽略的不再显示在这里）。全部公司、全部岗位（含已处理）请到「🏢 公司」视图查看；雷达由 GitHub Actions 每日 09:30 自动扫描。</div>';
 }
 $('radarlist').addEventListener('click', e => {
   const c = e.target.closest('[data-rcollect], [data-rdismiss]'); if (!c) return;
@@ -1740,9 +1819,209 @@ $('radarlist').addEventListener('click', e => {
   renderJobs(); renderRadar();
 });
 
+// ---- V1.8 全部公司 & 全部岗位总览：公司池全量 + 校招/实习/社招分类 ----
+const NAME_ALIAS = {'小鹏集团': '小鹏'};
+const CLS_CSS = {'校招': 'campus', '实习': 'intern', '社招': 'social', '未标明': 'unknown'};
+const CLASS_ORDER = ['实习', '校招', '社招', '未标明'];
+function coKey(n){ return NAME_ALIAS[n] || n; }
+function tierRank(t){ return t === 'A' ? 0 : t === 'B' ? 1 : t === 'C' ? 2 : 9; }
+function cbadge(c){ return `<span class="cbadge ${CLS_CSS[c] || 'unknown'}">${c}</span>`; }
+
+// 兼容尚未重分类的历史快照：前端兜底按标题 / 批次判一次，标成「历史快照未分类」
+function jobClass(j){
+  if (j.job_class) return j.job_class;
+  if (/实习|intern|见习|暑期/i.test(j.title || '')) return '实习';
+  if (/社招|社会招聘/i.test(j.title || '')) return '社招';
+  if (/校招|届/.test((j.title || '') + ' ' + (j.batch || '') + ' ' + (j.type || ''))) return '校招';
+  return '未标明';
+}
+function allRadarJobs(){
+  return (RADAR.jobs || []).map(j => Object.assign({}, j, {
+    job_class: jobClass(j),
+    class_basis: j.class_basis || '历史快照未分类',
+    class_conf: j.class_conf || 'none',
+    class_evidence: j.class_evidence || ''}));
+}
+function allCompanies(){
+  const map = new Map();
+  (POOL || []).forEach(c => {
+    const k = coKey(c.company_name);
+    let e = map.get(k);
+    if (!e) { e = {name: k, cat: c.category || '—', tier: c.tier || '—', pool: [], target: null}; map.set(k, e); }
+    e.pool.push(c);
+    if (tierRank(c.tier) < tierRank(e.tier)) e.tier = c.tier;
+  });
+  ((TARGETS && TARGETS.companies) || []).forEach(t => {
+    const k = coKey(t.name);
+    let e = map.get(k);
+    if (!e) { e = {name: k, cat: t.main || '目标公司池', tier: '—', pool: [], target: null}; map.set(k, e); }
+    e.target = t;
+  });
+  return [...map.values()].sort((a, b) => (tierRank(a.tier) - tierRank(b.tier)) || a.name.localeCompare(b.name, 'zh'));
+}
+function handleOf(j, dis, have){
+  // 第二项加 hs- 前缀：避免与题卡全局 .todo（红色斜体）等类名冲突
+  if (dis.has(j.key)) return ['已忽略', 'hs-dismissed'];
+  if (have.has(j.key)) return ['已收藏', 'hs-saved'];
+  return ['待处理', 'hs-todo'];
+}
+let compFilter = {cls: 'all', src: 'all', st: 'all', q: ''};
+
+function renderCompanies(){
+  const all = allRadarJobs(), dis = loadDismiss();
+  const have = new Set(loadJobs().map(j => j.key).filter(Boolean));
+  const cs = {};
+  all.forEach(j => cs[j.job_class] = (cs[j.job_class] || 0) + 1);
+  document.querySelectorAll('#comp_chips .chip[data-k="cls"]').forEach(ch => {
+    const b = ch.querySelector('b');
+    if (b) b.textContent = cs[ch.dataset.v] || 0;
+  });
+  const jobsByCo = {};
+  const byCo = {};
+  all.forEach(j => {
+    const k = coKey(j.company);
+    (jobsByCo[k] || (jobsByCo[k] = [])).push(j);
+    const c = byCo[k] || (byCo[k] = {'校招': 0, '实习': 0, '社招': 0, '未标明': 0});
+    c[j.job_class]++;
+  });
+  const cos = allCompanies();
+  const poolEntries = (POOL || []).length;
+  const enabledEntries = (POOL || []).filter(c => c.enabled && c.source).length;
+  const lowN = all.filter(j => j.class_conf === 'low').length;
+  const savedN = all.filter(j => have.has(j.key)).length;
+  const disN = all.filter(j => dis.has(j.key)).length;
+
+  // 公司表：只受「来源 / 搜索」影响，保证「全部公司」始终可见
+  const q = compFilter.q;
+  const shownCo = cos.filter(e => {
+    const enabled = e.pool.filter(c => c.enabled && c.source).length;
+    const hay = (e.name + ' ' + e.cat + ' ' + (e.target ? (e.target.main || '') : '') + ' '
+                 + e.pool.map(c => (c.ats_type || '') + ' ' + (c.directions || []).join(' ')).join(' ')).toLowerCase();
+    if (q && hay.indexOf(q) < 0) return false;
+    const s = compFilter.src;
+    if (s === 'pool') return e.pool.length > 0;
+    if (s === 'enabled') return enabled > 0;
+    if (s === 'unset') return e.pool.length > 0 && enabled === 0;
+    if (s === 'targets') return e.pool.length === 0 && !!e.target;
+    return true;
+  });
+  const coRows = shownCo.map(e => {
+    const c = byCo[e.name] || {'校招': 0, '实习': 0, '社招': 0, '未标明': 0};
+    const total = CLASS_ORDER.reduce((a, k) => a + (c[k] || 0), 0);
+    const enabled = e.pool.filter(x => x.enabled && x.source).length;
+    const ats = [...new Set(e.pool.map(x => x.ats_type || 'unknown'))].join(' / ') || '—';
+    const src = [e.pool.length ? '雷达池' : '', e.target ? '目标池' : ''].filter(Boolean).join(' + ');
+    const acc = enabled ? `<b>已接入 ${enabled} 源</b>`
+      : e.pool.length ? '未接入（入口待适配）' : '仅目标池（无入口）';
+    const labels = [...new Set(e.pool.map(x => (x.source || {}).label || (x.source || {}).type_label || ''))]
+      .filter(Boolean).join(' / ') || (e.pool.length ? '校园招聘入口' : '—');
+    const kinds = [...new Set((jobsByCo[e.name] || []).map(x => x.job_class))].join(' / ') || '—';
+    const link = e.pool.find(x => x.enabled && x.source) || e.pool[0] || {};
+    const url = link.career_url || (link.source || {}).url || (link.source || {}).base || '';
+    return `<tr data-coname="${esc(e.name)}" title="点这行只看该公司的岗位；清空搜索恢复全部">
+      <td><b>${esc(e.name)}</b><small>${esc(src)} · 档 ${esc(e.tier)}</small></td>
+      <td>${esc(e.cat)}<small>${esc((e.pool[0] && (e.pool[0].directions || []).join(' / ')) || (e.target ? (e.target.roles || []).join(' / ') : ''))}</small></td>
+      <td>${acc}<small>${esc(ats)} · 池内 ${e.pool.length} 条</small></td>
+      <td>${total ? CLASS_ORDER.filter(k => c[k]).map(k => `${k} <b>${c[k]}</b>`).join(' · ') : '—（尚未采集）'}
+          <small>入口性质：${esc(kinds)} · 批次 ${esc(labels)}</small></td>
+      <td>${url ? `<a class="tag jlink" href="${esc(url)}" target="_blank" rel="noopener">招聘入口 ↗</a>` : '—'}
+          ${e.target ? '<small>目标公司池有题目/面经索引</small>' : ''}</td>
+    </tr>`;
+  }).join('');
+  $('comp_table').innerHTML = `<table class="rtable ctable"><thead><tr>
+      <th>公司</th><th>方向 / 类别</th><th>接入情况</th><th>在招岗位（按性质）</th><th>入口</th>
+    </tr></thead><tbody>${coRows || '<tr><td colspan="5" class="cempty">没有匹配的公司</td></tr>'}</tbody></table>`;
+
+  // 岗位表：性质 / 状态 / 搜索；含已收藏、已忽略，按性质分组
+  const jobs = all.filter(j => {
+    if (compFilter.cls !== 'all' && j.job_class !== compFilter.cls) return false;
+    const h = handleOf(j, dis, have)[1];
+    const st = compFilter.st;
+    if (st === 'open' && j.status !== 'open') return false;
+    if (st === 'suspect' && j.status !== 'suspect') return false;
+    if (['todo', 'saved', 'dismissed'].indexOf(st) >= 0 && h !== 'hs-' + st) return false;
+    if (q) {
+      const hay = (j.company + ' ' + j.title + ' ' + (j.city || '') + ' ' + (j.batch || '') + ' '
+                   + (j.label || '') + ' ' + (j.families || []).join(' ') + ' '
+                   + j.class_basis + ' ' + (j.source_id || '')).toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  const groups = CLASS_ORDER.map(c => ({c: c, list: jobs.filter(j => j.job_class === c)}))
+    .filter(g => g.list.length);
+  $('comp_jobs').innerHTML = groups.length ? groups.map(g => {
+    const rows = g.list.map(j => {
+      const h = handleOf(j, dis, have);
+      const gy = j.grad_year ? j.grad_year + '届' : '届别未标注';
+      const eli = j.job_class === '实习' ? '实习可投 · 不限届别'
+        : j.grad_year && j.grad_year !== USER_GRAD ? '面向' + j.grad_year + '届 · 仅作 JD 参考'
+        : j.grad_year === USER_GRAD ? USER_GRAD + '届匹配' : '届别未标注 · 待核实';
+      return `<tr class="cjobrow ${h[1]}">
+        <td>${cbadge(g.c)}</td>
+        <td><div class="jt">${esc(j.title)}</div><small>${esc(j.company)} · ${esc(j.city || '待核实')} · ${esc((j.families || []).join('/') || '其他')}</small></td>
+        <td>${esc(j.batch || j.label || '—')}<small>${gy} · ${eli}</small></td>
+        <td><span class="conf ${j.class_conf}">${esc(j.class_basis)}</span><small>${esc(j.class_evidence || '')}${j.grad_year_raw ? ' · 已清除入口批次届别' : ''}</small></td>
+        <td>${j.status === 'suspect' ? '<span class="rscore lo">疑似下线</span>' : '<span class="rscore hi">在招</span>'}
+            <small>${h[0]} · 发现 ${esc(j.first_seen || '—')}</small></td>
+        <td>${(j.links || []).length ? `<a class="tag jlink" href="${esc(j.links[0])}" target="_blank" rel="noopener">JD ↗</a>` : '—'}</td>
+      </tr>`;
+    }).join('');
+    return `<div class="rsec">${cbadge(g.c)} ${g.list.length} 岗</div>
+      <table class="rtable ctable"><thead><tr>
+        <th>性质</th><th>公司 · 岗位</th><th>批次 / 届别</th><th>判定依据</th><th>状态 · 处理</th><th>入口</th>
+      </tr></thead><tbody>${rows}</tbody></table>`;
+  }).join('') : '<div class="cempty">当前筛选下没有岗位（试试切到「全部」或清空搜索）。</div>';
+
+  $('comp_stat').innerHTML = [
+    [cos.length, '公司合计（两池去重）'],
+    [poolEntries, '公司池条目 · 启用 ' + enabledEntries + ' 源'],
+    [all.length, '全部岗位（含已处理）'],
+    [cs['校招'] || 0, '校招'],
+    [cs['实习'] || 0, '实习'],
+    [lowN, '入口推定 · 待核实'],
+  ].map(x => `<div class="scard"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
+  const poolNames = new Set((POOL || []).map(c => coKey(c.company_name)));
+  $('comp_note').innerHTML =
+    `这里能看到<b>全部 ${cos.length} 家公司与全部 ${all.length} 个岗位</b>，不再被岗位雷达折叠区「只列 40 条待处理」挡住：` +
+    `公司表当前 ${shownCo.length} 行、岗位表当前 ${jobs.length} 行（其中已收藏 ${savedN} · 已忽略 ${disN}，仍会完整列出并标注）。<br>` +
+    `公司口径：公司池 ${poolEntries} 条 / ${poolNames.size} 家 + 目标公司池 ${((TARGETS && TARGETS.companies) || []).length} 家，同名合并后 ${cos.length} 家；` +
+    `「未接入」指公司池里有招聘入口但还没写采集适配器，「仅目标池」指题库有公司索引但尚未登记招聘入口。` +
+    `点公司表任意一行可只看该公司的岗位（写入搜索框），清空搜索即恢复全部。<br>` +
+    `分类依据优先级：<b>岗位标题明确 &gt; 来源批次标签 &gt; 校园招聘入口推定</b>；` +
+    `「入口推定」只说明岗位挂在校园招聘入口下，<b>不等于官方写明校招批次</b>，投递前点 JD 原文核实。` +
+    `实习岗不套用入口批次的届别（原 2027 届推定已清除）；校招 2027 届对 ${USER_GRAD} 届仅作 JD 参考。`;
+}
+$('comp_table').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const tr = e.target.closest('tr[data-coname]'); if (!tr) return;
+  compFilter.q = tr.dataset.coname.toLowerCase();
+  $('comp_q').value = tr.dataset.coname;
+  renderCompanies();
+  $('comp_jobs').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
+$('comp_chips').addEventListener('click', e => {
+  const ch = e.target.closest('.chip'); if (!ch) return;
+  compFilter[ch.dataset.k] = ch.dataset.v;
+  document.querySelectorAll(`#comp_chips .chip[data-k="${ch.dataset.k}"]`)
+    .forEach(x => x.classList.toggle('on', x === ch));
+  renderCompanies();
+});
+let compQT;
+$('comp_q').addEventListener('input', e => {
+  clearTimeout(compQT);
+  const v = e.target.value.trim().toLowerCase();
+  compQT = setTimeout(() => { compFilter.q = v; renderCompanies(); }, 120);
+});
+document.addEventListener('click', e => {
+  if (e.target.closest('#h_allco, [data-goall], [data-rall]')) {
+    showView('comp'); window.scrollTo(0, 0);
+  }
+});
+
 refreshSubs();
 render();
-showView(['home', 'bank', 'train', 'jobs', 'rep'].includes(location.hash.slice(1))
+showView(['home', 'bank', 'train', 'jobs', 'comp', 'rep'].includes(location.hash.slice(1))
   ? location.hash.slice(1) : 'home');
 </script>
 </body>
@@ -1786,6 +2065,10 @@ def main() -> int:
     rr = ROOT / "sources" / "jobs_radar.json"
     radar = json.loads(rr.read_text(encoding="utf-8")) if rr.exists() else {"jobs": []}
 
+    # V1.8 全量公司池（含未接入的源），供「🏢 公司」视图展示全部公司
+    cp = ROOT / "companies" / "radar_companies.json"
+    pool = json.loads(cp.read_text(encoding="utf-8")).get("companies", []) if cp.exists() else []
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -1796,6 +2079,8 @@ def main() -> int:
                                                separators=(",", ":")))
                .replace("__RADAR__", json.dumps(radar, ensure_ascii=False,
                                                 separators=(",", ":")))
+               .replace("__POOL__", json.dumps(pool, ensure_ascii=False,
+                                               separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)

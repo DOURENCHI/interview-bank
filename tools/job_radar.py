@@ -6,7 +6,14 @@ V1.7：公司池驱动——扫描对象来自 companies/radar_companies.json（
 快照附 pool_stats（公司覆盖率）与 families 统计。
 
 用法：
-  python tools/job_radar.py --scan      # 扫描全部监控源 → sources/jobs_radar.json + radar_report.md
+  python tools/job_radar.py --scan         # 扫描全部监控源 → sources/jobs_radar.json + radar_report.md
+  python tools/job_radar.py --reclassify   # 离线重算招聘性质分类（校招/实习/社招），不联网
+
+V1.8 招聘性质分类：
+  * 每条岗位带 job_class / class_basis / class_conf / class_evidence，区分「校招 / 实习 / 社招 / 未标明」
+  * 证据优先级：岗位标题明确 > 来源批次标签 > 校园招聘入口推定 > 来源未标注
+  * 实习岗同步修正 type，并清掉由入口批次误推的 grad_year（实习不限届别）
+  * 快照附 class_stats / class_basis_stats，页面按性质分类展示全部岗位
 
 V1.6 数据质量规则：
   * job_key = company : source_job_id : norm_city : batch —— 同岗多城市/多批次不误合并
@@ -44,6 +51,11 @@ CST = timezone(timedelta(hours=8))
 SUSPECT_AFTER = 2          # 连续 2 次成功扫描未见 → 疑似下线
 HISTORY_KEEP = 3           # 每岗位保留最近 3 条变更记录
 HARD_PAT = re.compile(r"届|毕业|学历|本科|硕士|博士")
+# V1.8 招聘性质：校招 / 实习 / 社招 / 未标明（岗位级证据优先于入口级推定）
+CLASS_NAMES = ["校招", "实习", "社招", "未标明"]
+INTERN_PAT = re.compile(r"实习|intern(ship)?|见习|暑期|日常实习", re.I)
+CAMPUS_PAT = re.compile(r"校招|校园招聘|应届|20\d{2}\s*届|顶才|探索者|管培", re.I)
+SOCIAL_PAT = re.compile(r"社招|社会招聘|experienced|资深工程师", re.I)
 
 # 四层岗位族关键词（V1.7）：很多公司不用新词，传统岗位名也要命中
 JOB_FAMILIES = [
@@ -87,6 +99,95 @@ def extract_grad(text: str) -> int | None:
 
 def make_key(company: str, source_id: str, city: str, batch: str) -> str:
     return f"{company}:{source_id}:{norm_city(city)}:{batch or '-'}"
+
+
+def classify_job(job: dict, site: dict | None = None) -> dict:
+    """招聘性质分类（V1.8）：返回浅拷贝，幂等，可反复对同一岗位重算。
+
+    证据优先级（越靠前越可信）：
+      1. 岗位标题含「实习/校招/社招/2027届」→ high，岗位自身明确标注
+      2. 来源批次标签（label/batch）含同类词     → medium，批次级标注
+      3. 入口为校园招聘（zhiye category=2 / URL 含 campus）→ low，仅入口推定
+      4. 都没有                                  → 「未标明」，none
+    实习岗另外修正：type 改为「实习」；若 grad_year 只是从入口批次推来的，置空并留痕，
+    避免把「2027届校招入口里的实习生」误判为「只面向 2027 届」。
+    """
+    site = site or {}
+    j = dict(job)
+    title = j.get("title") or ""
+    # 括号里的「portalId 运行时探测」是采集说明，不是官方批次，剔除后再匹配
+    tag = re.sub(r"[（(][^）)]*[）)]", "", " ".join(
+        x for x in [j.get("label"), j.get("batch"), site.get("label")] if x))
+    link = " ".join([str((j.get("links") or [""])[0]),
+                     str(site.get("url") or ""), str(site.get("base") or "")])
+    ats = j.get("src") or site.get("ats_type") or ""
+
+    def hit(pat, text):
+        m = pat.search(text or "")
+        return m.group(0) if m else ""
+
+    ev = hit(INTERN_PAT, title)
+    if ev:
+        cls, basis, conf = "实习", "岗位标题明确", "high"
+    elif (ev := hit(SOCIAL_PAT, title)):
+        cls, basis, conf = "社招", "岗位标题明确", "high"
+    elif (ev := hit(CAMPUS_PAT, title)):
+        cls, basis, conf = "校招", "岗位标题明确", "high"
+    elif (ev := hit(INTERN_PAT, tag)):
+        cls, basis, conf = "实习", "来源批次标签", "medium"
+    elif (ev := hit(SOCIAL_PAT, tag)):
+        cls, basis, conf = "社招", "来源批次标签", "medium"
+    elif (ev := hit(CAMPUS_PAT, tag)):
+        cls, basis, conf = "校招", "来源批次标签", "medium"
+    elif ((ats == "zhiye" and str(site.get("category", "2")) == "2")
+          or "campus" in link.lower()
+          or site.get("type_label") == "校招"):
+        cls, basis, conf, ev = "校招", "校园招聘入口推定", "low", "校园招聘入口"
+    else:
+        cls, basis, conf, ev = "未标明", "来源未标注", "none", ""
+
+    j.update({"job_class": cls, "class_basis": basis, "class_conf": conf,
+              "class_evidence": ev[:24]})
+    if cls == "实习":
+        j["type"] = "实习"
+        # 标题未写届别、却因批次标签被推成 2027 届 → 实习不限届别，清掉硬条件
+        if not extract_grad(title) and j.get("grad_year"):
+            j["grad_year_raw"] = j["grad_year"]
+            j["grad_year"] = None
+            j["grad_year_basis"] = "实习岗不限届别；原值来自入口批次推定"
+    return j
+
+
+def site_by_source(pool: list) -> dict:
+    """source_id（公司·label）→ 公司池配置，供离线重分类复用入口信息。"""
+    out = {}
+    for c in pool:
+        src = c.get("source") or {}
+        sid = f"{c['company_name']}·{src.get('label', '')}"
+        out[sid] = {"ats_type": c.get("ats_type"), **src}
+    return out
+
+
+def class_stats_of(jobs: list) -> dict:
+    from collections import Counter
+    return {
+        "class_stats": {k: v for k, v in Counter(j.get("job_class") or "未标明" for j in jobs).items()},
+        "class_basis_stats": dict(Counter(j.get("class_basis") or "来源未标注" for j in jobs)),
+    }
+
+
+def class_section(snap: dict) -> list[str]:
+    """报告中的招聘性质分类小节（在线扫描与离线重分类共用）。"""
+    cs = snap.get("class_stats") or {}
+    bs = snap.get("class_basis_stats") or {}
+    lines = ["\n## 招聘性质分类（校招 / 实习 / 社招 / 未标明）",
+             "| 性质 | 岗位数 |", "| --- | --- |"]
+    lines += [f"| {k} | {cs.get(k, 0)} |" for k in CLASS_NAMES if cs.get(k)]
+    lines.append("\n判定依据分布（标题明确 > 批次标签 > 入口推定）：" +
+                 " · ".join(f"{k} {v}" for k, v in bs.items()))
+    lines.append("\n> 说明：「校园招聘入口推定」只说明该岗位挂在校园招聘入口下，"
+                 "不等于官方明确写了校招批次；投递前请点开 JD 原文核实。实习岗不套用入口批次的届别限制。")
+    return lines
 
 
 def jd_hash(jd: str) -> str:
@@ -326,7 +427,7 @@ def scan_all() -> int:
                     continue
                 j["source_id"] = sid
                 j["families"] = families_of(j.get("title"), j.get("jd"))
-                kept.append(j)
+                kept.append(classify_job(j, site))   # V1.8 新扫岗位先打招聘性质
             scans[sid] = {"status": "success", "jobs": kept, "error": None}
         except Exception as e:
             scans[sid] = {"status": "failed", "jobs": [], "error": f"{type(e).__name__} {str(e)[:100]}"}
@@ -334,6 +435,9 @@ def scan_all() -> int:
 
     old = json.loads(RADAR.read_text(encoding="utf-8")) if RADAR.exists() else {"jobs": []}
     merged, src_states = reconcile(old.get("jobs", []), scans, today)
+    # 旧快照里保留下来的岗位（失败源/未扫到）也要有分类字段；classify_job 幂等
+    sites = site_by_source(pool)
+    merged = [classify_job(j, sites.get(j.get("source_id") or "")) for j in merged]
     merged.sort(key=lambda j: (j["company"], j.get("batch") or "", j["title"]))
 
     by_key = {j["key"]: j for j in merged}
@@ -364,6 +468,7 @@ def scan_all() -> int:
             "sources": [{"source_id": k, **v} for k, v in src_states.items()],
             "pool_stats": pool_stats,
             "family_stats": dict(fam_stat),
+            **class_stats_of(merged),
             "jobs": merged}
     RADAR.parent.mkdir(parents=True, exist_ok=True)
     RADAR.write_text(json.dumps(snap, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -383,6 +488,7 @@ def scan_all() -> int:
         lines.append(f"| {fam} | {fam_stat.get(fam, 0)} |")
     lines.append(f"| 其他 | {fam_stat.get('其他', 0)} |")
     lines.append(f"\n公司池 {pool_stats['pool_total']} 家：启用 {pool_stats['enabled']} · 本次成功 {pool_stats['scanned_ok']} · ATS 分布 {pool_stats['ats_dist']} · 排除无关岗 {skipped}")
+    lines += class_section(snap)
     if added:
         lines.append("\n## 新增岗位")
         lines += [f"- **{by_key[k]['company']} · {by_key[k]['title']}**（{by_key[k]['city']}｜{by_key[k].get('label') or by_key[k]['type']}）" for k in added]
@@ -407,12 +513,42 @@ def scan_all() -> int:
     return 0
 
 
+def reclassify() -> int:
+    """V1.8：离线重算全部岗位的招聘性质，不联网、不改动岗位内容与状态机。"""
+    if not RADAR.exists():
+        print("快照不存在，请先 --scan")
+        return 1
+    pool = json.loads(POOL.read_text(encoding="utf-8")).get("companies", [])
+    sites = site_by_source(pool)
+    snap = json.loads(RADAR.read_text(encoding="utf-8"))
+    snap["jobs"] = [classify_job(j, sites.get(j.get("source_id") or ""))
+                    for j in snap.get("jobs", [])]
+    snap.update(class_stats_of(snap["jobs"]))
+    RADAR.write_text(json.dumps(snap, ensure_ascii=False, indent=1), encoding="utf-8")
+    section = "\n".join(class_section(snap)) + "\n"
+    old = REPORT.read_text(encoding="utf-8") if REPORT.exists() else ""
+    head = old.split("\n## 招聘性质分类")[0].rstrip() + "\n"
+    REPORT.write_text(head + section, encoding="utf-8")
+    print("招聘性质分类：" + " · ".join(
+        f"{k} {v}" for k, v in snap["class_stats"].items()))
+    print("判定依据：" + " · ".join(
+        f"{k} {v}" for k, v in snap["class_basis_stats"].items()))
+    interns = [j for j in snap["jobs"] if j["job_class"] == "实习"]
+    print(f"实习岗 {len(interns)} 个：" + "；".join(
+        f"{j['company']}·{j['title']}" for j in interns[:8]))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scan", action="store_true", help="扫描全部监控源")
+    ap.add_argument("--reclassify", action="store_true",
+                    help="离线重算招聘性质分类（校招/实习/社招），不联网")
     args = ap.parse_args()
     if args.scan:
         return scan_all()
+    if args.reclassify:
+        return reclassify()
     ap.print_help()
     return 1
 

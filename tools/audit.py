@@ -145,7 +145,13 @@ def main() -> int:
                                        sorted(bydate.items(), reverse=True)[:5]))
 
     out = ROOT / "sources" / "audit_report.md"
-    out.write_text("\n".join(L) + "\n", encoding="utf-8")
+    # 人工复核附录不属于自动重算结果：旧报告里的「## 附：」段落原样带回，避免被覆盖丢失
+    appendix = ""
+    if out.exists():
+        prev = out.read_text(encoding="utf-8")
+        if "## 附：" in prev:
+            appendix = "\n" + prev[prev.index("## 附："):].rstrip() + "\n"
+    out.write_text("\n".join(L) + "\n" + appendix, encoding="utf-8")
     print(f"体检报告已生成：{out}")
     print(f"  题数 {len(qs)} | 可疑重复对 {len(pairs)} | 缺来源 {len(no_src)}")
     return 0

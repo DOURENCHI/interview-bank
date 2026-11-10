@@ -14,17 +14,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from job_radar import classify_change, extract_grad, make_key, reconcile, jd_hash  # noqa: E402
+from job_radar import (classify_change, extract_grad, make_key, reconcile, jd_hash,
+                       classify_job, class_stats_of, site_by_source)  # noqa: E402
 
 ok = []
 
 
 def J(key, title="C++ 工程师", city="杭州", duty="职责A", require="要求A",
-      company="宇树科技", source_id="宇树科技·2027届校招", batch="2027届校招"):
+      company="宇树科技", source_id="宇树科技·2027届校招", batch="2027届校招",
+      label=None, links=None, src="zhiye"):
     return {"key": key, "company": company, "title": title, "city": city,
             "type": "校招", "batch": batch, "grad_year": extract_grad(batch),
             "duty": duty, "require": require, "jd": duty + "\n" + require,
-            "links": ["https://x"], "src": "zhiye", "label": batch,
+            "links": ["https://x"] if links is None else links,
+            "src": src, "label": batch if label is None else label,
             "source_id": source_id,
             "first_seen": "d0", "last_seen": "d0", "status": "open",
             "consecutive_missing": 0, "jd_hash": jd_hash(duty + require),
@@ -96,8 +99,40 @@ for f in ["sources/jobs_watch.json", "sources/jobs_radar.json", "sources/jobs_ra
                 bad.append((f, kw))
 ok.append(("数据文件无凭证", not bad))
 
-# 8. jd_hash 稳定且随内容变化
+# 9. jd_hash 稳定且随内容变化
 ok.append(("jd_hash", jd_hash("a") == jd_hash("a") and jd_hash("a") != jd_hash("b")))
+
+# 10. V1.8 招聘性质分类：证据优先级 + 实习岗届别修正 + 幂等
+intern = J("k-intern", title="路径规划算法实习生", batch="2027届校招")
+ci = classify_job(intern)
+ok.append(("标题判定实习 high", ci["job_class"] == "实习"
+           and ci["class_basis"] == "岗位标题明确" and ci["class_conf"] == "high"))
+ok.append(("实习岗清除入口批次届别", ci["grad_year"] is None
+           and ci.get("grad_year_raw") == 2027 and ci["type"] == "实习"))
+ok.append(("分类幂等", classify_job(ci)["grad_year"] is None
+           and classify_job(ci).get("grad_year_raw") == 2027
+           and classify_job(ci)["job_class"] == "实习"))
+ct = classify_job(J("k-title", title="2027届-C++ 工程师"))
+ok.append(("标题判定校招 high", ct["job_class"] == "校招" and ct["class_conf"] == "high"
+           and ct["grad_year"] == 2027))
+cb = classify_job(J("k-batch", title="具身数据工程师", batch="2027届校招"))
+ok.append(("批次标签判定校招 medium", cb["job_class"] == "校招"
+           and cb["class_conf"] == "medium"))
+cl = classify_job(J("k-entry", title="具身数据工程师", batch="", label="",
+                    links=["https://x.zhiye.com/campus"], src="zhiye"),
+                  {"category": "2", "ats_type": "zhiye"})
+ok.append(("校园入口推定 low", cl["job_class"] == "校招" and cl["class_conf"] == "low"
+           and "入口推定" in cl["class_basis"]))
+cu = classify_job({"title": "软件工程师", "batch": "", "label": "",
+                   "links": ["https://example.com"], "src": "feishu", "grad_year": None})
+ok.append(("无线索→未标明", cu["job_class"] == "未标明" and cu["class_conf"] == "none"))
+cs = classify_job(J("k-social", title="社招-C++ 资深工程师"))
+ok.append(("社招标题判定", cs["job_class"] == "社招"))
+stats = class_stats_of([ci, ct, cb, cl, cu, cs])
+ok.append(("分类统计", stats["class_stats"] == {"校招": 3, "实习": 1, "社招": 1, "未标明": 1}))
+pool = [{"company_name": "宇树科技", "ats_type": "zhiye",
+         "source": {"base": "https://unitree.zhiye.com", "category": "2"}}]
+ok.append(("公司池→source_id 映射", "宇树科技·" in site_by_source(pool)))
 
 fails = [k for k, v in ok if not v]
 for k, v in ok:

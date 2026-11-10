@@ -24,6 +24,9 @@ jobs:
       - name: 题库体检（重复/来源/证据等级审计）
         run: python tools/audit.py
 
+      - name: 雷达逻辑回归（状态机 / 招聘性质分类）
+        run: python tools/radar_test.py
+
       - name: 上传体检报告
         uses: actions/upload-artifact@v4
         if: always()

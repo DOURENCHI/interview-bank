@@ -110,7 +110,11 @@
    "consecutive_missing": 0,
    "jd_hash": "eaa1c2d7e779",
    "prev_jd_hash": "eaa1c2d7e779",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7700924862860708123:北京、苏州、上海:2027届校招",
@@ -138,7 +142,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1e72d3891764",
    "prev_jd_hash": "1e72d3891764",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7665626835951159603:北京、苏州、上海:2027届校招",
@@ -166,7 +174,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c21ed5827fbb",
    "prev_jd_hash": "c21ed5827fbb",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7665627120211577114:北京、苏州、上海:2027届校招",
@@ -194,7 +206,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0666da7589b0",
    "prev_jd_hash": "0666da7589b0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7665627986519296266:北京、苏州、上海:2027届校招",
@@ -222,7 +238,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f6a7891479e6",
    "prev_jd_hash": "f6a7891479e6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7665626740535134483:北京、苏州、上海:2027届校招",
@@ -250,7 +270,11 @@
    "consecutive_missing": 0,
    "jd_hash": "03fc6e39b2dc",
    "prev_jd_hash": "03fc6e39b2dc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7665625764620126518:北京、苏州、上海:2027届校招",
@@ -280,7 +304,11 @@
    "consecutive_missing": 0,
    "jd_hash": "abce5ebe1d9c",
    "prev_jd_hash": "abce5ebe1d9c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7670832645048125738:北京:2027届校招",
@@ -308,7 +336,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2d30fc62d0a6",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7660044211818875179:北京、上海、苏州:2027届校招",
@@ -337,7 +369,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4a5ccc8eaeea",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7670832238527023370:北京:2027届校招",
@@ -365,7 +401,11 @@
    "consecutive_missing": 0,
    "jd_hash": "20c1ca857525",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7660044675341175059:北京、上海、苏州:2027届校招",
@@ -394,7 +434,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b6b834a82eb8",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7660043998321887524:北京、上海、苏州、深圳、广州:2027届校招",
@@ -423,7 +467,11 @@
    "consecutive_missing": 0,
    "jd_hash": "cb39207c59f5",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7698263702785526067:北京、上海、苏州:2027届校招",
@@ -451,7 +499,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c725fcc3ba40",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7660045500175632678:北京、上海、苏州:2027届校招",
@@ -480,7 +532,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0a3b175bd5fd",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7700924830161307967:北京、苏州、上海:Mstar 顶才计划",
@@ -508,7 +564,11 @@
    "consecutive_missing": 0,
    "jd_hash": "eaa1c2d7e779",
    "prev_jd_hash": "eaa1c2d7e779",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7700924862860708123:北京、苏州、上海:Mstar 顶才计划",
@@ -536,7 +596,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1e72d3891764",
    "prev_jd_hash": "1e72d3891764",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "2027届"
   },
   {
    "key": "Momenta:7670832645048125738:北京:Mstar 顶才计划",
@@ -564,7 +628,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2d30fc62d0a6",
    "prev_jd_hash": "2d30fc62d0a6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7660044211818875179:北京、上海、苏州:Mstar 顶才计划",
@@ -593,14 +661,18 @@
    "consecutive_missing": 0,
    "jd_hash": "4a5ccc8eaeea",
    "prev_jd_hash": "4a5ccc8eaeea",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7696362876797258025:上海:Mstar 顶才计划",
    "company": "Momenta",
    "title": "国际商务实习生",
    "city": "上海",
-   "type": "校招",
+   "type": "实习",
    "batch": "Mstar 顶才计划",
    "grad_year": null,
    "duty": "1、支持BD业务Agent 开发和维护\n2. 协助国际商务团队日常工作，如准备商务材料，组织安排商务会议；\n3、协助上级完成重点客户的业务拓展的支持工作",
@@ -618,7 +690,11 @@
    "consecutive_missing": 6,
    "jd_hash": "352cd299baf4",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "实习",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "实习"
   },
   {
    "key": "Momenta:7670832238527023370:北京:Mstar 顶才计划",
@@ -646,7 +722,11 @@
    "consecutive_missing": 0,
    "jd_hash": "20c1ca857525",
    "prev_jd_hash": "20c1ca857525",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7660044675341175059:北京、上海、苏州:Mstar 顶才计划",
@@ -675,7 +755,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b6b834a82eb8",
    "prev_jd_hash": "b6b834a82eb8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7660043998321887524:北京、上海、苏州、深圳、广州:Mstar 顶才计划",
@@ -704,7 +788,11 @@
    "consecutive_missing": 0,
    "jd_hash": "cb39207c59f5",
    "prev_jd_hash": "cb39207c59f5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7698263702785526067:北京、上海、苏州:Mstar 顶才计划",
@@ -732,7 +820,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c725fcc3ba40",
    "prev_jd_hash": "c725fcc3ba40",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "Momenta:7660045500175632678:北京、上海、苏州:Mstar 顶才计划",
@@ -761,7 +853,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0a3b175bd5fd",
    "prev_jd_hash": "0a3b175bd5fd",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "顶才"
   },
   {
    "key": "优必选:511198796:-:-",
@@ -791,7 +887,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f472260960b6",
    "prev_jd_hash": "f472260960b6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198793:-:-",
@@ -820,7 +920,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e25103c7bd1f",
    "prev_jd_hash": "e25103c7bd1f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511201887:-:-",
@@ -849,7 +953,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5c2e55b94785",
    "prev_jd_hash": "5c2e55b94785",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198792:-:-",
@@ -877,7 +985,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d0989cdfb4ea",
    "prev_jd_hash": "d0989cdfb4ea",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198787:-:-",
@@ -905,7 +1017,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3d036ef599c1",
    "prev_jd_hash": "3d036ef599c1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198788:-:-",
@@ -933,7 +1049,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e4d60c36ba15",
    "prev_jd_hash": "e4d60c36ba15",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198810:-:-",
@@ -961,7 +1081,11 @@
    "consecutive_missing": 0,
    "jd_hash": "25456e25b5c8",
    "prev_jd_hash": "25456e25b5c8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198790:-:-",
@@ -990,7 +1114,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6272aa6557df",
    "prev_jd_hash": "6272aa6557df",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198769:-:-",
@@ -1018,7 +1146,11 @@
    "consecutive_missing": 0,
    "jd_hash": "22109b9f5f70",
    "prev_jd_hash": "22109b9f5f70",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198828:-:-",
@@ -1046,7 +1178,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4b8263f8ebf2",
    "prev_jd_hash": "4b8263f8ebf2",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198836:-:-",
@@ -1074,7 +1210,11 @@
    "consecutive_missing": 0,
    "jd_hash": "cb1fded6e1b9",
    "prev_jd_hash": "cb1fded6e1b9",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198772:-:-",
@@ -1103,7 +1243,11 @@
    "consecutive_missing": 0,
    "jd_hash": "964b3accb867",
    "prev_jd_hash": "964b3accb867",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198830:-:-",
@@ -1131,7 +1275,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df9ee7198685",
    "prev_jd_hash": "df9ee7198685",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198774:-:-",
@@ -1161,7 +1309,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ec4775b0ddf4",
    "prev_jd_hash": "ec4775b0ddf4",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198832:-:-",
@@ -1190,7 +1342,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9800ac5dea41",
    "prev_jd_hash": "9800ac5dea41",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198765:-:-",
@@ -1220,7 +1376,11 @@
    "consecutive_missing": 0,
    "jd_hash": "86e9df141f18",
    "prev_jd_hash": "86e9df141f18",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198826:-:-",
@@ -1248,7 +1408,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4c77c26e2c61",
    "prev_jd_hash": "4c77c26e2c61",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198770:-:-",
@@ -1276,7 +1440,11 @@
    "consecutive_missing": 0,
    "jd_hash": "59862f8278ef",
    "prev_jd_hash": "59862f8278ef",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198771:-:-",
@@ -1306,7 +1474,11 @@
    "consecutive_missing": 0,
    "jd_hash": "731836c58c4c",
    "prev_jd_hash": "731836c58c4c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198768:-:-",
@@ -1335,7 +1507,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3bd59388ec63",
    "prev_jd_hash": "3bd59388ec63",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198767:-:-",
@@ -1364,7 +1540,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b423be41a398",
    "prev_jd_hash": "b423be41a398",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198783:-:-",
@@ -1392,7 +1572,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9d9f2a4e3996",
    "prev_jd_hash": "9d9f2a4e3996",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198798:-:-",
@@ -1420,7 +1604,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e7a49637bb00",
    "prev_jd_hash": "e7a49637bb00",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198764:-:-",
@@ -1448,7 +1636,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3fe7f577f4b5",
    "prev_jd_hash": "3fe7f577f4b5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198786:-:-",
@@ -1476,7 +1668,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ec1c186ba07a",
    "prev_jd_hash": "ec1c186ba07a",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198778:-:-",
@@ -1505,7 +1701,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f30457ec9205",
    "prev_jd_hash": "f30457ec9205",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198776:-:-",
@@ -1534,7 +1734,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d4f0c977529b",
    "prev_jd_hash": "d4f0c977529b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198827:-:-",
@@ -1562,7 +1766,11 @@
    "consecutive_missing": 0,
    "jd_hash": "61a8ee048c47",
    "prev_jd_hash": "61a8ee048c47",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198791:-:-",
@@ -1591,7 +1799,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c0b7addb84a2",
    "prev_jd_hash": "c0b7addb84a2",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198794:-:-",
@@ -1619,7 +1831,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d720ff786196",
    "prev_jd_hash": "d720ff786196",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198835:-:-",
@@ -1647,7 +1863,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9cb859675b24",
    "prev_jd_hash": "9cb859675b24",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198825:-:-",
@@ -1675,7 +1895,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ad9f14127d52",
    "prev_jd_hash": "ad9f14127d52",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198811:-:-",
@@ -1704,7 +1928,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2e14f1b19b1d",
    "prev_jd_hash": "2e14f1b19b1d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198807:-:-",
@@ -1732,7 +1960,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3e3d9df5317c",
    "prev_jd_hash": "3e3d9df5317c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198782:-:-",
@@ -1760,7 +1992,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fad1f4e0d8a5",
    "prev_jd_hash": "fad1f4e0d8a5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198829:-:-",
@@ -1788,7 +2024,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fa8500f60bf3",
    "prev_jd_hash": "fa8500f60bf3",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198805:-:-",
@@ -1816,7 +2056,11 @@
    "consecutive_missing": 0,
    "jd_hash": "86e25fadadf7",
    "prev_jd_hash": "86e25fadadf7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198795:-:-",
@@ -1845,7 +2089,11 @@
    "consecutive_missing": 0,
    "jd_hash": "210e69d490b4",
    "prev_jd_hash": "210e69d490b4",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198806:-:-",
@@ -1874,7 +2122,11 @@
    "consecutive_missing": 0,
    "jd_hash": "930a32397d9f",
    "prev_jd_hash": "930a32397d9f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198802:-:-",
@@ -1902,7 +2154,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bec768ab4e92",
    "prev_jd_hash": "bec768ab4e92",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198784:-:-",
@@ -1930,7 +2186,11 @@
    "consecutive_missing": 0,
    "jd_hash": "de189d7521f5",
    "prev_jd_hash": "de189d7521f5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198833:-:-",
@@ -1959,7 +2219,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e6ea60ce6614",
    "prev_jd_hash": "e6ea60ce6614",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198831:-:-",
@@ -1988,7 +2252,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e54587fc6af7",
    "prev_jd_hash": "e54587fc6af7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198763:-:-",
@@ -2017,7 +2285,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bc866193723b",
    "prev_jd_hash": "bc866193723b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198834:-:-",
@@ -2045,7 +2317,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d13d3b31bde1",
    "prev_jd_hash": "d13d3b31bde1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198803:-:-",
@@ -2073,7 +2349,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0e098d5c59b7",
    "prev_jd_hash": "0e098d5c59b7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198804:-:-",
@@ -2101,7 +2381,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5e3eeabeee09",
    "prev_jd_hash": "5e3eeabeee09",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198801:-:-",
@@ -2129,7 +2413,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d5f5f84584d6",
    "prev_jd_hash": "d5f5f84584d6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198800:-:-",
@@ -2157,7 +2445,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3e717efc08dc",
    "prev_jd_hash": "3e717efc08dc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198766:-:-",
@@ -2187,7 +2479,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8d83f598f8ae",
    "prev_jd_hash": "8d83f598f8ae",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198813:-:-",
@@ -2215,7 +2511,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6291a4b5e381",
    "prev_jd_hash": "6291a4b5e381",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198837:-:-",
@@ -2243,7 +2543,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df7693ed8deb",
    "prev_jd_hash": "df7693ed8deb",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198839:-:-",
@@ -2271,7 +2575,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ef9b44160b0e",
    "prev_jd_hash": "ef9b44160b0e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198773:-:-",
@@ -2300,7 +2608,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b03e4a21a792",
    "prev_jd_hash": "b03e4a21a792",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198785:-:-",
@@ -2328,7 +2640,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e75581a75ec1",
    "prev_jd_hash": "e75581a75ec1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198780:-:-",
@@ -2356,7 +2672,11 @@
    "consecutive_missing": 0,
    "jd_hash": "36f0919be5df",
    "prev_jd_hash": "36f0919be5df",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198779:-:-",
@@ -2386,7 +2706,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0e15801dc0b5",
    "prev_jd_hash": "0e15801dc0b5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198775:-:-",
@@ -2415,7 +2739,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5853b1fff85b",
    "prev_jd_hash": "5853b1fff85b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198777:-:-",
@@ -2445,7 +2773,11 @@
    "consecutive_missing": 0,
    "jd_hash": "57ae4b985f4d",
    "prev_jd_hash": "57ae4b985f4d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198821:-:-",
@@ -2474,7 +2806,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ad98dad54257",
    "prev_jd_hash": "ad98dad54257",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198822:-:-",
@@ -2502,7 +2838,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0351f3a313c7",
    "prev_jd_hash": "0351f3a313c7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198824:-:-",
@@ -2531,7 +2871,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6f3bef92648c",
    "prev_jd_hash": "6f3bef92648c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198823:-:-",
@@ -2560,7 +2904,11 @@
    "consecutive_missing": 0,
    "jd_hash": "aecc6d202628",
    "prev_jd_hash": "aecc6d202628",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198789:-:-",
@@ -2588,7 +2936,11 @@
    "consecutive_missing": 0,
    "jd_hash": "10360c5b0dd7",
    "prev_jd_hash": "10360c5b0dd7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "优必选:511198817:-:-",
@@ -2616,7 +2968,11 @@
    "consecutive_missing": 0,
    "jd_hash": "17f7cc00108f",
    "prev_jd_hash": "17f7cc00108f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "启元机器人:7706365739247520043:上海:2027届校招",
@@ -2644,16 +3000,20 @@
    "consecutive_missing": 0,
    "jd_hash": "620bb39bd098",
    "prev_jd_hash": "620bb39bd098",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "启元机器人:7706439848165706038:上海:2027届校招",
    "company": "启元机器人",
    "title": "交互产品实习生",
    "city": "上海",
-   "type": "校招",
+   "type": "实习",
    "batch": "2027届校招",
-   "grad_year": 2027,
+   "grad_year": null,
    "duty": "负责家庭机器人的多模态交互设计，围绕主动服务、自然相处与长期陪伴的产品方向，定义自然拟人的交互逻辑与体验标准，打造差异化的家庭机器人交互体验。\n交互逻辑与场景设计： 负责语音交互、多模态交互（声音/表情/肢体动作/空间感知）、主动交互等模块的交互逻辑梳理与场景定义，输出交互流程、状态机和原型设计。\n产品需求定义与落地： 输出 PRD 文档，涵盖功能定义、边界条件、异常处理与验收标准；与算法、研发、测试团队高效协作，推动方案从设计到量产落地。\n体验测试与迭代优化： 主导交互体验的可用性测试，搭建体验评价指标体系，通过用户反馈和数据驱动持续优化交互细节，提升自然度与用户满意度。\n前沿技术探索： 跟踪端到端语音、VLM 等前沿 AI 技术的发展，探索新技术在家庭场景中的交互应用边界，定义技术到体验的转化路径。\n交互规范与体系搭建： 沉淀多模态交互设计规范与方法论，确保跨模块、跨版本的交互一致性，适配不同家庭成员的差异化需求。",
    "require": "",
    "jd": "负责家庭机器人的多模态交互设计，围绕主动服务、自然相处与长期陪伴的产品方向，定义自然拟人的交互逻辑与体验标准，打造差异化的家庭机器人交互体验。\n交互逻辑与场景设计： 负责语音交互、多模态交互（声音/表情/肢体动作/空间感知）、主动交互等模块的交互逻辑梳理与场景定义，输出交互流程、状态机和原型设计。\n产品需求定义与落地： 输出 PRD 文档，涵盖功能定义、边界条件、异常处理与验收标准；与算法、研发、测试团队高效协作，推动方案从设计到量产落地。\n体验测试与迭代优化： 主导交互体验的可用性测试，搭建体验评价指标体系，通过用户反馈和数据驱动持续优化交互细节，提升自然度与用户满意度。\n前沿技术探索： 跟踪端到端语音、VLM 等前沿 AI 技术的发展，探索新技术在家庭场景中的交互应用边界，定义技术到体验的转化路径。\n交互规范与体系搭建： 沉淀多模态交互设计规范与方法论，确保跨模块、跨版本的交互一致性，适配不同家庭成员的差异化需求。",
@@ -2673,7 +3033,13 @@
    "consecutive_missing": 0,
    "jd_hash": "bff4b86a42cb",
    "prev_jd_hash": "bff4b86a42cb",
-   "change_log": []
+   "change_log": [],
+   "job_class": "实习",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "实习",
+   "grad_year_raw": 2027,
+   "grad_year_basis": "实习岗不限届别；原值来自入口批次推定"
   },
   {
    "key": "启元机器人:7703929650683283722:上海:2027届校招",
@@ -2701,7 +3067,11 @@
    "consecutive_missing": 0,
    "jd_hash": "10087d7e6677",
    "prev_jd_hash": "10087d7e6677",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "启元机器人:7704584074996238634:北京:2027届校招",
@@ -2729,7 +3099,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3486f4b167aa",
    "prev_jd_hash": "3486f4b167aa",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "启元机器人:7703450858063579428:上海:2027届校招",
@@ -2757,16 +3131,20 @@
    "consecutive_missing": 0,
    "jd_hash": "7a1489030a74",
    "prev_jd_hash": "7a1489030a74",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "启元机器人:7703417550633388342:上海:2027届校招",
    "company": "启元机器人",
    "title": "机器人端侧 Agent 应用开发实习生",
    "city": "上海",
-   "type": "校招",
+   "type": "实习",
    "batch": "2027届校招",
-   "grad_year": 2027,
+   "grad_year": null,
    "duty": "-基于端侧 Agent 框架开发机器人应用、技能和任务流程\n-对接大模型工具调用、语音、动作、移动等机器人能力，调试交互链路\n-编写 Python/C++ 业务代码，完成功能联调、问题复现与修复\n-整理接口文档、测试用例，配合验证 Agent 任务执行效果",
    "require": "",
    "jd": "-基于端侧 Agent 框架开发机器人应用、技能和任务流程\n-对接大模型工具调用、语音、动作、移动等机器人能力，调试交互链路\n-编写 Python/C++ 业务代码，完成功能联调、问题复现与修复\n-整理接口文档、测试用例，配合验证 Agent 任务执行效果",
@@ -2785,7 +3163,13 @@
    "consecutive_missing": 0,
    "jd_hash": "d2d51cb31816",
    "prev_jd_hash": "d2d51cb31816",
-   "change_log": []
+   "change_log": [],
+   "job_class": "实习",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "实习",
+   "grad_year_raw": 2027,
+   "grad_year_basis": "实习岗不限届别；原值来自入口批次推定"
   },
   {
    "key": "启元机器人:7704558827291085097:上海:2027届校招",
@@ -2813,7 +3197,11 @@
    "consecutive_missing": 0,
    "jd_hash": "231435570807",
    "prev_jd_hash": "231435570807",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "埃斯顿自动化:351597618:-:-",
@@ -2841,7 +3229,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4b95463d173f",
    "prev_jd_hash": "4b95463d173f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597520:-:-",
@@ -2869,7 +3261,11 @@
    "consecutive_missing": 0,
    "jd_hash": "430dcebe24bd",
    "prev_jd_hash": "430dcebe24bd",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597635:-:-",
@@ -2899,7 +3295,11 @@
    "consecutive_missing": 0,
    "jd_hash": "33676453ec72",
    "prev_jd_hash": "33676453ec72",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596611:-:-",
@@ -2927,7 +3327,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5fb7788fc0bd",
    "prev_jd_hash": "5fb7788fc0bd",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596606:-:-",
@@ -2955,7 +3359,11 @@
    "consecutive_missing": 0,
    "jd_hash": "088fd1d6b488",
    "prev_jd_hash": "088fd1d6b488",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597518:-:-",
@@ -2983,7 +3391,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6db96100d3e8",
    "prev_jd_hash": "6db96100d3e8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597565:-:-",
@@ -3011,7 +3423,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e6b490485f7e",
    "prev_jd_hash": "e6b490485f7e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597521:-:-",
@@ -3039,7 +3455,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d7e591101c2d",
    "prev_jd_hash": "d7e591101c2d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597522:-:-",
@@ -3067,7 +3487,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b2dddfe71873",
    "prev_jd_hash": "b2dddfe71873",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597524:-:-",
@@ -3095,7 +3519,11 @@
    "consecutive_missing": 0,
    "jd_hash": "60dceb8fc33b",
    "prev_jd_hash": "60dceb8fc33b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596613:-:-",
@@ -3123,7 +3551,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6099239f9274",
    "prev_jd_hash": "6099239f9274",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597604:-:-",
@@ -3151,7 +3583,11 @@
    "consecutive_missing": 0,
    "jd_hash": "15466092ceea",
    "prev_jd_hash": "15466092ceea",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597592:-:-",
@@ -3180,7 +3616,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c2b61c035a12",
    "prev_jd_hash": "c2b61c035a12",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351613762:-:-",
@@ -3208,7 +3648,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c90f367d3764",
    "prev_jd_hash": "c90f367d3764",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597613:-:-",
@@ -3236,7 +3680,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1d9a37ef9d13",
    "prev_jd_hash": "1d9a37ef9d13",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597519:-:-",
@@ -3266,7 +3714,11 @@
    "consecutive_missing": 0,
    "jd_hash": "999ae3d35dc0",
    "prev_jd_hash": "999ae3d35dc0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596615:-:-",
@@ -3294,7 +3746,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8b971b8abd5e",
    "prev_jd_hash": "8b971b8abd5e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597597:-:-",
@@ -3322,7 +3778,11 @@
    "consecutive_missing": 0,
    "jd_hash": "578fd0ba21fa",
    "prev_jd_hash": "578fd0ba21fa",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597523:-:-",
@@ -3350,7 +3810,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e3a2a820e060",
    "prev_jd_hash": "e3a2a820e060",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351613749:-:-",
@@ -3378,7 +3842,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e45054c974e3",
    "prev_jd_hash": "e45054c974e3",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597618:-:校招（portalId 运行时探测）",
@@ -3403,7 +3871,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4b95463d173f",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597520:-:校招（portalId 运行时探测）",
@@ -3428,7 +3900,11 @@
    "consecutive_missing": 0,
    "jd_hash": "430dcebe24bd",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597635:-:校招（portalId 运行时探测）",
@@ -3453,7 +3929,11 @@
    "consecutive_missing": 0,
    "jd_hash": "33676453ec72",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596611:-:校招（portalId 运行时探测）",
@@ -3478,7 +3958,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5fb7788fc0bd",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596606:-:校招（portalId 运行时探测）",
@@ -3503,7 +3987,11 @@
    "consecutive_missing": 0,
    "jd_hash": "088fd1d6b488",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597518:-:校招（portalId 运行时探测）",
@@ -3528,7 +4016,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6db96100d3e8",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597565:-:校招（portalId 运行时探测）",
@@ -3553,7 +4045,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e6b490485f7e",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597521:-:校招（portalId 运行时探测）",
@@ -3578,7 +4074,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d7e591101c2d",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597522:-:校招（portalId 运行时探测）",
@@ -3603,7 +4103,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b2dddfe71873",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597524:-:校招（portalId 运行时探测）",
@@ -3628,7 +4132,11 @@
    "consecutive_missing": 0,
    "jd_hash": "60dceb8fc33b",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596613:-:校招（portalId 运行时探测）",
@@ -3653,7 +4161,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6099239f9274",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597604:-:校招（portalId 运行时探测）",
@@ -3678,7 +4190,11 @@
    "consecutive_missing": 0,
    "jd_hash": "15466092ceea",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597592:-:校招（portalId 运行时探测）",
@@ -3703,7 +4219,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c2b61c035a12",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351613762:-:校招（portalId 运行时探测）",
@@ -3728,7 +4248,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c90f367d3764",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597613:-:校招（portalId 运行时探测）",
@@ -3753,7 +4277,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1d9a37ef9d13",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597519:-:校招（portalId 运行时探测）",
@@ -3778,7 +4306,11 @@
    "consecutive_missing": 0,
    "jd_hash": "999ae3d35dc0",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596615:-:校招（portalId 运行时探测）",
@@ -3803,7 +4335,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8b971b8abd5e",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597597:-:校招（portalId 运行时探测）",
@@ -3828,7 +4364,11 @@
    "consecutive_missing": 0,
    "jd_hash": "578fd0ba21fa",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351597523:-:校招（portalId 运行时探测）",
@@ -3853,7 +4393,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e3a2a820e060",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351613749:-:校招（portalId 运行时探测）",
@@ -3878,7 +4422,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e45054c974e3",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "埃斯顿自动化:351596618:-:校招（portalId 运行时探测）",
@@ -3903,7 +4451,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5f5250c0d39a",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173680:-:-",
@@ -3932,7 +4484,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d579e67e82b5",
    "prev_jd_hash": "d579e67e82b5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173681:-:-",
@@ -3961,7 +4517,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": "7a8f4f362d3b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173677:-:-",
@@ -3990,7 +4550,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": "7a8f4f362d3b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068673:-:-",
@@ -4019,7 +4583,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": "7a8f4f362d3b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068678:-:-",
@@ -4048,7 +4616,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a6fed0651f46",
    "prev_jd_hash": "a6fed0651f46",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511141852:-:-",
@@ -4076,7 +4648,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b8cd03068359",
    "prev_jd_hash": "b8cd03068359",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173969:-:-",
@@ -4105,7 +4681,11 @@
    "consecutive_missing": 0,
    "jd_hash": "81e1b528bb58",
    "prev_jd_hash": "81e1b528bb58",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173678:-:-",
@@ -4136,7 +4716,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c65313687d67",
    "prev_jd_hash": "c65313687d67",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173690:-:-",
@@ -4164,7 +4748,11 @@
    "consecutive_missing": 0,
    "jd_hash": "054512dd6fa9",
    "prev_jd_hash": "054512dd6fa9",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511227270:-:-",
@@ -4192,7 +4780,11 @@
    "consecutive_missing": 0,
    "jd_hash": "430cdd7cda65",
    "prev_jd_hash": "430cdd7cda65",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511217241:-:-",
@@ -4221,7 +4813,11 @@
    "consecutive_missing": 0,
    "jd_hash": "00933e17f496",
    "prev_jd_hash": "00933e17f496",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068584:-:-",
@@ -4249,7 +4845,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6669075db9f6",
    "prev_jd_hash": "6669075db9f6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068669:-:-",
@@ -4277,7 +4877,11 @@
    "consecutive_missing": 0,
    "jd_hash": "02a35d9e9712",
    "prev_jd_hash": "02a35d9e9712",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173683:-:-",
@@ -4306,7 +4910,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": "8f0c509fda4c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173682:-:-",
@@ -4335,7 +4943,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": "8f0c509fda4c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511167486:-:-",
@@ -4364,7 +4976,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": "8f0c509fda4c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173676:-:-",
@@ -4392,7 +5008,11 @@
    "consecutive_missing": 0,
    "jd_hash": "51761462681f",
    "prev_jd_hash": "51761462681f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511068680:-:-",
@@ -4420,7 +5040,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ca53f6fe9737",
    "prev_jd_hash": "ca53f6fe9737",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173966:-:-",
@@ -4449,7 +5073,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fdc3ead1bf01",
    "prev_jd_hash": "fdc3ead1bf01",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511166953:-:-",
@@ -4477,7 +5105,11 @@
    "consecutive_missing": 0,
    "jd_hash": "502bfeeacd24",
    "prev_jd_hash": "502bfeeacd24",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511066590:-:-",
@@ -4505,7 +5137,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b3566aeefe22",
    "prev_jd_hash": "b3566aeefe22",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068674:-:-",
@@ -4536,7 +5172,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e99e88c15f2f",
    "prev_jd_hash": "e99e88c15f2f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511174092:-:-",
@@ -4568,7 +5208,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c837d508b46f",
    "prev_jd_hash": "c837d508b46f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511174032:-:-",
@@ -4597,7 +5241,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bb7d83d542ae",
    "prev_jd_hash": "bb7d83d542ae",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "宇树科技:511173687:-:-",
@@ -4626,7 +5274,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": "5d5dd97d6e1d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173686:-:-",
@@ -4655,7 +5307,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": "5d5dd97d6e1d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068672:-:-",
@@ -4684,7 +5340,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": "5d5dd97d6e1d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173680:-:2027届校招",
@@ -4709,7 +5369,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d579e67e82b5",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173681:-:2027届校招",
@@ -4734,7 +5398,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173677:-:2027届校招",
@@ -4759,7 +5427,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068673:-:2027届校招",
@@ -4784,7 +5456,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7a8f4f362d3b",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068678:-:2027届校招",
@@ -4809,7 +5485,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a6fed0651f46",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511141852:-:2027届校招",
@@ -4834,7 +5514,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b8cd03068359",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173969:-:2027届校招",
@@ -4859,7 +5543,11 @@
    "consecutive_missing": 0,
    "jd_hash": "81e1b528bb58",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173678:-:2027届校招",
@@ -4884,7 +5572,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c65313687d67",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173690:-:2027届校招",
@@ -4909,7 +5601,11 @@
    "consecutive_missing": 0,
    "jd_hash": "054512dd6fa9",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511227270:-:2027届校招",
@@ -4934,7 +5630,11 @@
    "consecutive_missing": 0,
    "jd_hash": "430cdd7cda65",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511217241:-:2027届校招",
@@ -4959,7 +5659,11 @@
    "consecutive_missing": 0,
    "jd_hash": "00933e17f496",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068584:-:2027届校招",
@@ -4984,7 +5688,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6669075db9f6",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068669:-:2027届校招",
@@ -5009,7 +5717,11 @@
    "consecutive_missing": 0,
    "jd_hash": "02a35d9e9712",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511137086:-:2027届校招",
@@ -5034,7 +5746,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2dfa4b0a3c62",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173688:-:2027届校招",
@@ -5059,7 +5775,11 @@
    "consecutive_missing": 0,
    "jd_hash": "44b9c1eb0c65",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511141851:-:2027届校招",
@@ -5084,7 +5804,11 @@
    "consecutive_missing": 0,
    "jd_hash": "44b9c1eb0c65",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173675:-:2027届校招",
@@ -5109,7 +5833,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f83993e693a8",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173689:-:2027届校招",
@@ -5134,7 +5862,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8def2b6f4585",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173683:-:2027届校招",
@@ -5159,7 +5891,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173682:-:2027届校招",
@@ -5184,7 +5920,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511167486:-:2027届校招",
@@ -5209,7 +5949,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8f0c509fda4c",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173676:-:2027届校招",
@@ -5234,7 +5978,11 @@
    "consecutive_missing": 0,
    "jd_hash": "51761462681f",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511068680:-:2027届校招",
@@ -5259,7 +6007,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ca53f6fe9737",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173966:-:2027届校招",
@@ -5284,7 +6036,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fdc3ead1bf01",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511166953:-:2027届校招",
@@ -5309,7 +6065,11 @@
    "consecutive_missing": 0,
    "jd_hash": "502bfeeacd24",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511066590:-:2027届校招",
@@ -5334,7 +6094,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b3566aeefe22",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511171450:-:2027届校招",
@@ -5359,7 +6123,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0e44f58e1c5a",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511068674:-:2027届校招",
@@ -5384,7 +6152,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e99e88c15f2f",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511174092:-:2027届校招",
@@ -5409,7 +6181,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c837d508b46f",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511174032:-:2027届校招",
@@ -5434,7 +6210,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bb7d83d542ae",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511171451:-:2027届校招",
@@ -5459,7 +6239,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4542c39a2119",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173687:-:2027届校招",
@@ -5484,7 +6268,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511173686:-:2027届校招",
@@ -5509,7 +6297,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511068672:-:2027届校招",
@@ -5534,7 +6326,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5dd97d6e1d",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "宇树科技:511070188:-:2027届校招",
@@ -5559,7 +6355,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9073d9185f2c",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "宇树科技:511173679:-:2027届校招",
@@ -5584,7 +6384,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f3a81f231aba",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "小鹏集团:7706066909662267691:广州:2027届探索者计划",
@@ -5612,7 +6416,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f442dcd53154",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706430140222540074:亚罗牙也:2027届探索者计划",
@@ -5640,7 +6448,11 @@
    "consecutive_missing": 0,
    "jd_hash": "203fda738c26",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706433630264920329:格拉茨:2027届探索者计划",
@@ -5668,7 +6480,11 @@
    "consecutive_missing": 0,
    "jd_hash": "24c3809f6d53",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706432735985010982:格拉茨:2027届探索者计划",
@@ -5696,7 +6512,11 @@
    "consecutive_missing": 0,
    "jd_hash": "53e27fb635d9",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706429134733658378:亚罗牙也:2027届探索者计划",
@@ -5724,7 +6544,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9b95975e0204",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706420762710411539:普哇加达县:2027届探索者计划",
@@ -5752,7 +6576,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9b95975e0204",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706042598200953124:广州:2027届探索者计划",
@@ -5780,7 +6608,11 @@
    "consecutive_missing": 0,
    "jd_hash": "eee18aa1c791",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "小鹏集团:7706054604396366106:广州:2027届探索者计划",
@@ -5808,7 +6640,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7792e057aac0",
    "prev_jd_hash": null,
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "校招"
   },
   {
    "key": "智元机器人:7701588845431539994:上海:2027届校招",
@@ -5836,7 +6672,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c07f17c073c1",
    "prev_jd_hash": "c07f17c073c1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7702070007064299802:上海:2027届校招",
@@ -5864,7 +6704,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8d95ca11899d",
    "prev_jd_hash": "8d95ca11899d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700956112383822099:上海:2027届校招",
@@ -5892,7 +6736,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4bb9517a1ef4",
    "prev_jd_hash": "4bb9517a1ef4",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700959107037628699:旧金山:2027届校招",
@@ -5920,7 +6768,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7ee7d96a9349",
    "prev_jd_hash": "7ee7d96a9349",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700957131827317035:旧金山:2027届校招",
@@ -5948,7 +6800,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f1e7e7b0507f",
    "prev_jd_hash": "f1e7e7b0507f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7704196748604229907:深圳:2027届校招",
@@ -5978,7 +6834,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f00130a82f4f",
    "prev_jd_hash": "f00130a82f4f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700863209935538473:上海:2027届校招",
@@ -6006,7 +6866,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7ede2f2af014",
    "prev_jd_hash": "7ede2f2af014",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7704240483808495910:上海:2027届校招",
@@ -6034,7 +6898,11 @@
    "consecutive_missing": 0,
    "jd_hash": "eb53121b6570",
    "prev_jd_hash": "eb53121b6570",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700959897799084315:札幌市:2027届校招",
@@ -6062,16 +6930,20 @@
    "consecutive_missing": 0,
    "jd_hash": "4da3da1b3c13",
    "prev_jd_hash": "4da3da1b3c13",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "来源批次标签",
+   "class_conf": "medium",
+   "class_evidence": "2027届"
   },
   {
    "key": "智元机器人:7700899204293871891:深圳:2027届校招",
    "company": "智元机器人",
    "title": "路径规划算法实习生",
    "city": "深圳",
-   "type": "校招",
+   "type": "实习",
    "batch": "2027届校招",
-   "grad_year": 2027,
+   "grad_year": null,
    "duty": "负责四足机器人多传感器（激光/视觉/IMU）融合感知、定位建图与全局/局部路径规划算法的开发与优化；\n开展复杂环境下的路径生成、动态避障、任务级路径调度等算法研发；\n完成从算法设计、仿真验证到真机部署的全流程工作，解决长距离导航、狭窄通道通行、坡道/台阶适应、多障碍物绕行等落地问题；\n构建和维护四足机器人导航与路径规划核心模块，提升系统在真实场景中的稳定性、实时性与可扩展性。",
    "require": "",
    "jd": "负责四足机器人多传感器（激光/视觉/IMU）融合感知、定位建图与全局/局部路径规划算法的开发与优化；\n开展复杂环境下的路径生成、动态避障、任务级路径调度等算法研发；\n完成从算法设计、仿真验证到真机部署的全流程工作，解决长距离导航、狭窄通道通行、坡道/台阶适应、多障碍物绕行等落地问题；\n构建和维护四足机器人导航与路径规划核心模块，提升系统在真实场景中的稳定性、实时性与可扩展性。",
@@ -6090,7 +6962,13 @@
    "consecutive_missing": 0,
    "jd_hash": "1754440b620d",
    "prev_jd_hash": "1754440b620d",
-   "change_log": []
+   "change_log": [],
+   "job_class": "实习",
+   "class_basis": "岗位标题明确",
+   "class_conf": "high",
+   "class_evidence": "实习",
+   "grad_year_raw": 2027,
+   "grad_year_basis": "实习岗不限届别；原值来自入口批次推定"
   },
   {
    "key": "联影医疗:230927885:-:-",
@@ -6118,7 +6996,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fe0ded75a15f",
    "prev_jd_hash": "fe0ded75a15f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927882:-:-",
@@ -6146,7 +7028,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b2c65639e1c3",
    "prev_jd_hash": "b2c65639e1c3",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927884:-:-",
@@ -6174,7 +7060,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9a51e2b9cac5",
    "prev_jd_hash": "9a51e2b9cac5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927883:-:-",
@@ -6202,7 +7092,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9a51e2b9cac5",
    "prev_jd_hash": "9a51e2b9cac5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927881:-:-",
@@ -6230,7 +7124,11 @@
    "consecutive_missing": 0,
    "jd_hash": "657da5c98ce1",
    "prev_jd_hash": "657da5c98ce1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927880:-:-",
@@ -6258,7 +7156,11 @@
    "consecutive_missing": 0,
    "jd_hash": "657da5c98ce1",
    "prev_jd_hash": "657da5c98ce1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927969:-:-",
@@ -6286,7 +7188,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bfd8f3db49e0",
    "prev_jd_hash": "bfd8f3db49e0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927970:-:-",
@@ -6314,7 +7220,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bfd8f3db49e0",
    "prev_jd_hash": "bfd8f3db49e0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927968:-:-",
@@ -6342,7 +7252,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bfd8f3db49e0",
    "prev_jd_hash": "bfd8f3db49e0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927971:-:-",
@@ -6370,7 +7284,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c0d832355601",
    "prev_jd_hash": "c0d832355601",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927972:-:-",
@@ -6398,7 +7316,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c0d832355601",
    "prev_jd_hash": "c0d832355601",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927974:-:-",
@@ -6426,7 +7348,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c0d832355601",
    "prev_jd_hash": "c0d832355601",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927973:-:-",
@@ -6454,7 +7380,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c0d832355601",
    "prev_jd_hash": "c0d832355601",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928019:-:-",
@@ -6482,7 +7412,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c7232a70bb38",
    "prev_jd_hash": "c7232a70bb38",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927962:-:-",
@@ -6510,7 +7444,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0b2be70de810",
    "prev_jd_hash": "0b2be70de810",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927961:-:-",
@@ -6538,7 +7476,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0b2be70de810",
    "prev_jd_hash": "0b2be70de810",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927960:-:-",
@@ -6566,7 +7508,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4343b0f43998",
    "prev_jd_hash": "4343b0f43998",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927959:-:-",
@@ -6594,7 +7540,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4343b0f43998",
    "prev_jd_hash": "4343b0f43998",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928016:-:-",
@@ -6622,7 +7572,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6536280b9f75",
    "prev_jd_hash": "6536280b9f75",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928015:-:-",
@@ -6650,7 +7604,11 @@
    "consecutive_missing": 0,
    "jd_hash": "8a16208bc4ab",
    "prev_jd_hash": "8a16208bc4ab",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928017:-:-",
@@ -6678,7 +7636,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3e49113ff9b8",
    "prev_jd_hash": "3e49113ff9b8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230944303:-:-",
@@ -6706,7 +7668,11 @@
    "consecutive_missing": 0,
    "jd_hash": "5d5a90e60b30",
    "prev_jd_hash": "5d5a90e60b30",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928012:-:-",
@@ -6734,7 +7700,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a330ceec1a40",
    "prev_jd_hash": "a330ceec1a40",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230948631:-:-",
@@ -6762,7 +7732,11 @@
    "consecutive_missing": 0,
    "jd_hash": "61c660bb8c17",
    "prev_jd_hash": "61c660bb8c17",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927899:-:-",
@@ -6790,7 +7764,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7af34848eb62",
    "prev_jd_hash": "7af34848eb62",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927963:-:-",
@@ -6818,7 +7796,11 @@
    "consecutive_missing": 0,
    "jd_hash": "998e946fdb75",
    "prev_jd_hash": "998e946fdb75",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928018:-:-",
@@ -6846,7 +7828,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3d28a0ecf490",
    "prev_jd_hash": "3d28a0ecf490",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230938742:-:-",
@@ -6874,7 +7860,11 @@
    "consecutive_missing": 0,
    "jd_hash": "c5d9f0847883",
    "prev_jd_hash": "c5d9f0847883",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230949428:-:-",
@@ -6902,7 +7892,11 @@
    "consecutive_missing": 0,
    "jd_hash": "53234674bc47",
    "prev_jd_hash": "53234674bc47",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927895:-:-",
@@ -6930,7 +7924,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f8850bd95074",
    "prev_jd_hash": "f8850bd95074",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230939314:-:-",
@@ -6959,7 +7957,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0b7544283645",
    "prev_jd_hash": "0b7544283645",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927979:-:-",
@@ -6987,7 +7989,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1c920db0692b",
    "prev_jd_hash": "1c920db0692b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927978:-:-",
@@ -7015,7 +8021,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1c920db0692b",
    "prev_jd_hash": "1c920db0692b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927920:-:-",
@@ -7043,7 +8053,11 @@
    "consecutive_missing": 0,
    "jd_hash": "bb2bb2471ee1",
    "prev_jd_hash": "bb2bb2471ee1",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927975:-:-",
@@ -7071,7 +8085,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f759bc7d3676",
    "prev_jd_hash": "f759bc7d3676",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927929:-:-",
@@ -7099,7 +8117,11 @@
    "consecutive_missing": 0,
    "jd_hash": "286671e62f2e",
    "prev_jd_hash": "286671e62f2e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927928:-:-",
@@ -7127,7 +8149,11 @@
    "consecutive_missing": 0,
    "jd_hash": "286671e62f2e",
    "prev_jd_hash": "286671e62f2e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927897:-:-",
@@ -7155,7 +8181,11 @@
    "consecutive_missing": 0,
    "jd_hash": "801f237793d0",
    "prev_jd_hash": "801f237793d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927898:-:-",
@@ -7183,7 +8213,11 @@
    "consecutive_missing": 0,
    "jd_hash": "801f237793d0",
    "prev_jd_hash": "801f237793d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927896:-:-",
@@ -7211,7 +8245,11 @@
    "consecutive_missing": 0,
    "jd_hash": "801f237793d0",
    "prev_jd_hash": "801f237793d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927986:-:-",
@@ -7239,7 +8277,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fb9241012ba4",
    "prev_jd_hash": "fb9241012ba4",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927985:-:-",
@@ -7267,7 +8309,11 @@
    "consecutive_missing": 0,
    "jd_hash": "fb9241012ba4",
    "prev_jd_hash": "fb9241012ba4",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230936461:-:-",
@@ -7295,7 +8341,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1814dc3ade49",
    "prev_jd_hash": "1814dc3ade49",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927912:-:-",
@@ -7323,7 +8373,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3c81ffea7f46",
    "prev_jd_hash": "3c81ffea7f46",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927913:-:-",
@@ -7351,7 +8405,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d0ad11dbe580",
    "prev_jd_hash": "d0ad11dbe580",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927997:-:-",
@@ -7379,7 +8437,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2cedb0a5930a",
    "prev_jd_hash": "2cedb0a5930a",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927915:-:-",
@@ -7407,7 +8469,11 @@
    "consecutive_missing": 0,
    "jd_hash": "487fdccbb06e",
    "prev_jd_hash": "487fdccbb06e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927914:-:-",
@@ -7435,7 +8501,11 @@
    "consecutive_missing": 0,
    "jd_hash": "742f42b62d16",
    "prev_jd_hash": "742f42b62d16",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927916:-:-",
@@ -7463,7 +8533,11 @@
    "consecutive_missing": 0,
    "jd_hash": "3f3d11d6fc9c",
    "prev_jd_hash": "3f3d11d6fc9c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927989:-:-",
@@ -7491,7 +8565,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a41cb265bf98",
    "prev_jd_hash": "a41cb265bf98",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927990:-:-",
@@ -7519,7 +8597,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a41cb265bf98",
    "prev_jd_hash": "a41cb265bf98",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927988:-:-",
@@ -7547,7 +8629,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a41cb265bf98",
    "prev_jd_hash": "a41cb265bf98",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230949521:-:-",
@@ -7575,7 +8661,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7259c5ab442b",
    "prev_jd_hash": "7259c5ab442b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230932634:-:-",
@@ -7603,7 +8693,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7259c5ab442b",
    "prev_jd_hash": "7259c5ab442b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230947470:-:-",
@@ -7631,7 +8725,11 @@
    "consecutive_missing": 0,
    "jd_hash": "99bfcf51a8ec",
    "prev_jd_hash": "99bfcf51a8ec",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928022:-:-",
@@ -7659,7 +8757,11 @@
    "consecutive_missing": 0,
    "jd_hash": "ce241816e3ea",
    "prev_jd_hash": "ce241816e3ea",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230953246:-:-",
@@ -7687,7 +8789,11 @@
    "consecutive_missing": 0,
    "jd_hash": "b08bc95b95b2",
    "prev_jd_hash": "b08bc95b95b2",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927967:-:-",
@@ -7715,7 +8821,11 @@
    "consecutive_missing": 0,
    "jd_hash": "4f894084658f",
    "prev_jd_hash": "4f894084658f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927966:-:-",
@@ -7743,7 +8853,11 @@
    "consecutive_missing": 0,
    "jd_hash": "2166682af7cb",
    "prev_jd_hash": "2166682af7cb",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927964:-:-",
@@ -7771,7 +8885,11 @@
    "consecutive_missing": 0,
    "jd_hash": "d2517f91247f",
    "prev_jd_hash": "d2517f91247f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927910:-:-",
@@ -7799,7 +8917,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df0a9fbbd617",
    "prev_jd_hash": "df0a9fbbd617",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927911:-:-",
@@ -7827,7 +8949,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df0a9fbbd617",
    "prev_jd_hash": "df0a9fbbd617",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927908:-:-",
@@ -7855,7 +8981,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df0a9fbbd617",
    "prev_jd_hash": "df0a9fbbd617",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927909:-:-",
@@ -7883,7 +9013,11 @@
    "consecutive_missing": 0,
    "jd_hash": "df0a9fbbd617",
    "prev_jd_hash": "df0a9fbbd617",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927906:-:-",
@@ -7914,7 +9048,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0edb0a20c41f",
    "prev_jd_hash": "0edb0a20c41f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927907:-:-",
@@ -7945,7 +9083,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0edb0a20c41f",
    "prev_jd_hash": "0edb0a20c41f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927925:-:-",
@@ -7973,7 +9115,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a3082026d7cc",
    "prev_jd_hash": "a3082026d7cc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927924:-:-",
@@ -8001,7 +9147,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a3082026d7cc",
    "prev_jd_hash": "a3082026d7cc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927923:-:-",
@@ -8029,7 +9179,11 @@
    "consecutive_missing": 0,
    "jd_hash": "01aa645f0f19",
    "prev_jd_hash": "01aa645f0f19",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927922:-:-",
@@ -8057,7 +9211,11 @@
    "consecutive_missing": 0,
    "jd_hash": "01aa645f0f19",
    "prev_jd_hash": "01aa645f0f19",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928006:-:-",
@@ -8085,7 +9243,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9cf23f50984f",
    "prev_jd_hash": "9cf23f50984f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928005:-:-",
@@ -8113,7 +9275,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9cf23f50984f",
    "prev_jd_hash": "9cf23f50984f",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928011:-:-",
@@ -8141,7 +9307,11 @@
    "consecutive_missing": 0,
    "jd_hash": "710c6dfa9a1c",
    "prev_jd_hash": "710c6dfa9a1c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928010:-:-",
@@ -8169,7 +9339,11 @@
    "consecutive_missing": 0,
    "jd_hash": "710c6dfa9a1c",
    "prev_jd_hash": "710c6dfa9a1c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928000:-:-",
@@ -8198,7 +9372,11 @@
    "consecutive_missing": 0,
    "jd_hash": "945dd90deab7",
    "prev_jd_hash": "945dd90deab7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927999:-:-",
@@ -8227,7 +9405,11 @@
    "consecutive_missing": 0,
    "jd_hash": "945dd90deab7",
    "prev_jd_hash": "945dd90deab7",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928003:-:-",
@@ -8255,7 +9437,11 @@
    "consecutive_missing": 0,
    "jd_hash": "326f4dc4933e",
    "prev_jd_hash": "326f4dc4933e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928004:-:-",
@@ -8283,7 +9469,11 @@
    "consecutive_missing": 0,
    "jd_hash": "326f4dc4933e",
    "prev_jd_hash": "326f4dc4933e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928002:-:-",
@@ -8311,7 +9501,11 @@
    "consecutive_missing": 0,
    "jd_hash": "326f4dc4933e",
    "prev_jd_hash": "326f4dc4933e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230949420:-:-",
@@ -8339,7 +9533,11 @@
    "consecutive_missing": 0,
    "jd_hash": "03070a6ffa2e",
    "prev_jd_hash": "03070a6ffa2e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928001:-:-",
@@ -8367,7 +9565,11 @@
    "consecutive_missing": 0,
    "jd_hash": "03070a6ffa2e",
    "prev_jd_hash": "03070a6ffa2e",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230947471:-:-",
@@ -8395,7 +9597,11 @@
    "consecutive_missing": 0,
    "jd_hash": "207860d8cad5",
    "prev_jd_hash": "207860d8cad5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927891:-:-",
@@ -8423,7 +9629,11 @@
    "consecutive_missing": 0,
    "jd_hash": "924cb5c68fcc",
    "prev_jd_hash": "924cb5c68fcc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927892:-:-",
@@ -8451,7 +9661,11 @@
    "consecutive_missing": 0,
    "jd_hash": "924cb5c68fcc",
    "prev_jd_hash": "924cb5c68fcc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928014:-:-",
@@ -8479,7 +9693,11 @@
    "consecutive_missing": 0,
    "jd_hash": "dcaab7a4b530",
    "prev_jd_hash": "dcaab7a4b530",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230928013:-:-",
@@ -8507,7 +9725,11 @@
    "consecutive_missing": 0,
    "jd_hash": "dcaab7a4b530",
    "prev_jd_hash": "dcaab7a4b530",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927982:-:-",
@@ -8536,7 +9758,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927984:-:-",
@@ -8565,7 +9791,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927980:-:-",
@@ -8594,7 +9824,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927981:-:-",
@@ -8623,7 +9857,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230942173:-:-",
@@ -8652,7 +9890,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927983:-:-",
@@ -8681,7 +9923,11 @@
    "consecutive_missing": 0,
    "jd_hash": "e51e3ff2be82",
    "prev_jd_hash": "e51e3ff2be82",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927903:-:-",
@@ -8709,7 +9955,11 @@
    "consecutive_missing": 0,
    "jd_hash": "88527413ce32",
    "prev_jd_hash": "88527413ce32",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230929830:-:-",
@@ -8737,7 +9987,11 @@
    "consecutive_missing": 0,
    "jd_hash": "96b8158b8745",
    "prev_jd_hash": "96b8158b8745",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927904:-:-",
@@ -8765,7 +10019,11 @@
    "consecutive_missing": 0,
    "jd_hash": "96b8158b8745",
    "prev_jd_hash": "96b8158b8745",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230932623:-:-",
@@ -8793,7 +10051,11 @@
    "consecutive_missing": 0,
    "jd_hash": "be57c611b087",
    "prev_jd_hash": "be57c611b087",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927887:-:-",
@@ -8821,7 +10083,11 @@
    "consecutive_missing": 0,
    "jd_hash": "067c48a882ad",
    "prev_jd_hash": "067c48a882ad",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927886:-:-",
@@ -8849,7 +10115,11 @@
    "consecutive_missing": 0,
    "jd_hash": "067c48a882ad",
    "prev_jd_hash": "067c48a882ad",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927900:-:-",
@@ -8877,7 +10147,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7e4c407a06ab",
    "prev_jd_hash": "7e4c407a06ab",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230932622:-:-",
@@ -8905,7 +10179,11 @@
    "consecutive_missing": 0,
    "jd_hash": "19bfbc8528ca",
    "prev_jd_hash": "19bfbc8528ca",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927894:-:-",
@@ -8933,7 +10211,11 @@
    "consecutive_missing": 0,
    "jd_hash": "58b2c8acadbe",
    "prev_jd_hash": "58b2c8acadbe",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927917:-:-",
@@ -8961,7 +10243,11 @@
    "consecutive_missing": 0,
    "jd_hash": "30c28fdba2f6",
    "prev_jd_hash": "30c28fdba2f6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927953:-:-",
@@ -8989,7 +10275,11 @@
    "consecutive_missing": 0,
    "jd_hash": "675891210178",
    "prev_jd_hash": "675891210178",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927952:-:-",
@@ -9017,7 +10307,11 @@
    "consecutive_missing": 0,
    "jd_hash": "675891210178",
    "prev_jd_hash": "675891210178",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927949:-:-",
@@ -9045,7 +10339,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0a8ef856ade8",
    "prev_jd_hash": "0a8ef856ade8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927948:-:-",
@@ -9073,7 +10371,11 @@
    "consecutive_missing": 0,
    "jd_hash": "0a8ef856ade8",
    "prev_jd_hash": "0a8ef856ade8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927947:-:-",
@@ -9103,7 +10405,11 @@
    "consecutive_missing": 0,
    "jd_hash": "28ba1b4f96f0",
    "prev_jd_hash": "28ba1b4f96f0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927946:-:-",
@@ -9133,7 +10439,11 @@
    "consecutive_missing": 0,
    "jd_hash": "28ba1b4f96f0",
    "prev_jd_hash": "28ba1b4f96f0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927951:-:-",
@@ -9162,7 +10472,11 @@
    "consecutive_missing": 0,
    "jd_hash": "92dfc64fa4b3",
    "prev_jd_hash": "92dfc64fa4b3",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927950:-:-",
@@ -9191,7 +10505,11 @@
    "consecutive_missing": 0,
    "jd_hash": "92dfc64fa4b3",
    "prev_jd_hash": "92dfc64fa4b3",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927958:-:-",
@@ -9220,7 +10538,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9f41226d1615",
    "prev_jd_hash": "9f41226d1615",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927957:-:-",
@@ -9249,7 +10571,11 @@
    "consecutive_missing": 0,
    "jd_hash": "9f41226d1615",
    "prev_jd_hash": "9f41226d1615",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927934:-:-",
@@ -9278,7 +10604,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a382d262cee6",
    "prev_jd_hash": "a382d262cee6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927933:-:-",
@@ -9307,7 +10637,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a382d262cee6",
    "prev_jd_hash": "a382d262cee6",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927937:-:-",
@@ -9335,7 +10669,11 @@
    "consecutive_missing": 0,
    "jd_hash": "84ceca1e7271",
    "prev_jd_hash": "84ceca1e7271",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927938:-:-",
@@ -9363,7 +10701,11 @@
    "consecutive_missing": 0,
    "jd_hash": "84ceca1e7271",
    "prev_jd_hash": "84ceca1e7271",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927935:-:-",
@@ -9391,7 +10733,11 @@
    "consecutive_missing": 0,
    "jd_hash": "84ceca1e7271",
    "prev_jd_hash": "84ceca1e7271",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927936:-:-",
@@ -9419,7 +10765,11 @@
    "consecutive_missing": 0,
    "jd_hash": "84ceca1e7271",
    "prev_jd_hash": "84ceca1e7271",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927939:-:-",
@@ -9447,7 +10797,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f62f2a5d506b",
    "prev_jd_hash": "f62f2a5d506b",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927942:-:-",
@@ -9475,7 +10829,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f108631cf1d0",
    "prev_jd_hash": "f108631cf1d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927943:-:-",
@@ -9503,7 +10861,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f108631cf1d0",
    "prev_jd_hash": "f108631cf1d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927940:-:-",
@@ -9531,7 +10893,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f108631cf1d0",
    "prev_jd_hash": "f108631cf1d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927941:-:-",
@@ -9559,7 +10925,11 @@
    "consecutive_missing": 0,
    "jd_hash": "f108631cf1d0",
    "prev_jd_hash": "f108631cf1d0",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927931:-:-",
@@ -9587,7 +10957,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6849e06e2544",
    "prev_jd_hash": "6849e06e2544",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927930:-:-",
@@ -9615,7 +10989,11 @@
    "consecutive_missing": 0,
    "jd_hash": "6849e06e2544",
    "prev_jd_hash": "6849e06e2544",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927932:-:-",
@@ -9644,7 +11022,11 @@
    "consecutive_missing": 0,
    "jd_hash": "db8be986abdc",
    "prev_jd_hash": "db8be986abdc",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230941110:-:-",
@@ -9672,7 +11054,11 @@
    "consecutive_missing": 0,
    "jd_hash": "7b9995a7afa5",
    "prev_jd_hash": "7b9995a7afa5",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927902:-:-",
@@ -9700,7 +11086,11 @@
    "consecutive_missing": 0,
    "jd_hash": "86ecadf8b88c",
    "prev_jd_hash": "86ecadf8b88c",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927996:-:-",
@@ -9728,7 +11118,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1c3ba8e3ded8",
    "prev_jd_hash": "1c3ba8e3ded8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927995:-:-",
@@ -9756,7 +11150,11 @@
    "consecutive_missing": 0,
    "jd_hash": "1c3ba8e3ded8",
    "prev_jd_hash": "1c3ba8e3ded8",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230931190:-:-",
@@ -9784,7 +11182,11 @@
    "consecutive_missing": 0,
    "jd_hash": "dcdb0680fb87",
    "prev_jd_hash": "dcdb0680fb87",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927992:-:-",
@@ -9812,7 +11214,11 @@
    "consecutive_missing": 0,
    "jd_hash": "a7cb8a6bdd18",
    "prev_jd_hash": "a7cb8a6bdd18",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   },
   {
    "key": "联影医疗:230927993:-:-",
@@ -9840,7 +11246,20 @@
    "consecutive_missing": 0,
    "jd_hash": "2e23d6281092",
    "prev_jd_hash": "2e23d6281092",
-   "change_log": []
+   "change_log": [],
+   "job_class": "校招",
+   "class_basis": "校园招聘入口推定",
+   "class_conf": "low",
+   "class_evidence": "校园招聘入口"
   }
- ]
+ ],
+ "class_stats": {
+  "校招": 347,
+  "实习": 4
+ },
+ "class_basis_stats": {
+  "岗位标题明确": 96,
+  "来源批次标签": 46,
+  "校园招聘入口推定": 209
+ }
 }

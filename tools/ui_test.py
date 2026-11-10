@@ -12,6 +12,8 @@ def main() -> int:
     with sync_playwright() as p:
         b = p.chromium.launch(channel="msedge")
         pg = b.new_page(viewport={"width": 1280, "height": 900})
+        js_errors = []
+        pg.on("pageerror", lambda e: js_errors.append(str(e)))
         pg.goto(PAGE.as_uri())
         pg.wait_for_timeout(300)
         ok = []
@@ -173,6 +175,47 @@ def main() -> int:
         ok.append(("忽略后不重复显示", pg.evaluate(
             "loadDismiss().size >= 1")))
 
+        # 11.8 V1.8：全部公司总览 + 校招/实习分类 + 已收藏/已忽略仍可查
+        tab("comp")
+        n_all_co = pg.evaluate("allCompanies().length")
+        n_all_job = pg.evaluate("(RADAR.jobs || []).length")
+        rows_co = pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length")
+        rows_job = pg.evaluate("document.querySelectorAll('#comp_jobs tbody tr').length")
+        ok.append(("公司总览全量可见", rows_co == n_all_co and rows_co > 100))
+        ok.append(("岗位总览含已处理", rows_job == n_all_job and n_all_job > 300))
+        heads = pg.eval_on_selector_all('#comp_jobs .rsec', 'els => els.map(e => e.innerText).join(" ")')
+        ok.append(("按校招/实习分组", "校招" in heads and "实习" in heads))
+        cs = pg.evaluate("RADAR.class_stats || {}")
+        pg.click('#comp_chips .chip[data-k="cls"][data-v="实习"]'); pg.wait_for_timeout(200)
+        ok.append(("实习筛选数量", pg.evaluate(
+            "document.querySelectorAll('#comp_jobs tbody tr').length") == cs.get("实习", 0)))
+        pg.click('#comp_chips .chip[data-k="cls"][data-v="校招"]'); pg.wait_for_timeout(200)
+        ok.append(("校招筛选数量", pg.evaluate(
+            "document.querySelectorAll('#comp_jobs tbody tr').length") == cs.get("校招", 0)))
+        ok.append(("公司表不受分类筛选影响", pg.evaluate(
+            "document.querySelectorAll('#comp_table tbody tr').length") == n_all_co))
+        pg.click('#comp_chips .chip[data-k="cls"][data-v="all"]'); pg.wait_for_timeout(200)
+        n_dis = pg.evaluate("[...loadDismiss()].length")
+        pg.click('#comp_chips .chip[data-k="st"][data-v="dismissed"]'); pg.wait_for_timeout(200)
+        ok.append(("已忽略岗位仍可查", pg.evaluate(
+            "document.querySelectorAll('#comp_jobs tbody tr').length") == n_dis and n_dis >= 1))
+        pg.click('#comp_chips .chip[data-k="st"][data-v="saved"]'); pg.wait_for_timeout(200)
+        ok.append(("已收藏岗位仍可查", pg.evaluate(
+            "document.querySelectorAll('#comp_jobs tbody tr').length") >= 1))
+        pg.click('#comp_chips .chip[data-k="st"][data-v="all"]'); pg.wait_for_timeout(200)
+        pg.fill('#comp_q', "Momenta"); pg.wait_for_timeout(350)
+        n_hit = pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length")
+        ok.append(("搜索联动公司/岗位", 0 < n_hit < n_all_co and pg.evaluate(
+            "document.querySelectorAll('#comp_jobs tbody tr').length") > 0))
+        pg.fill('#comp_q', ""); pg.wait_for_timeout(350)
+        pg.click('#comp_table tbody tr[data-coname] td:first-child'); pg.wait_for_timeout(350)
+        ok.append(("点公司行联动搜索", pg.eval_on_selector('#comp_q', 'el => el.value') != ""
+                   and pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length") < n_all_co))
+        pg.fill('#comp_q', ""); pg.wait_for_timeout(350)
+        tab("home"); pg.click('#h_allco'); pg.wait_for_timeout(200)
+        ok.append(("首页入口跳公司总览", pg.eval_on_selector(
+            '#view-comp', "el => el.classList.contains('on')")))
+
         # 12. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
@@ -181,6 +224,9 @@ def main() -> int:
         pg.screenshot(path=str(ROOT / "_cache" / "ui2_home.png"))
         b.close()
 
+    ok.append(("无 JS 运行时错误", not js_errors))
+    if js_errors:
+        print("JS 错误:", js_errors[:3])
     fails = [k for k, v in ok if not v]
     for k, v in ok:
         print(("✓" if v else "✗"), k)
