@@ -156,9 +156,65 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .keys kbd{background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;
   border-radius:5px;padding:1px 6px;font:11px ui-monospace,Consolas,monospace}
 .q.foc{border-color:var(--accent);box-shadow:0 0 0 2px #1b5e8c26}
-/* ---- 学习报告 ---- */
-#repov{position:fixed;inset:0;background:rgba(45,42,33,.45);z-index:50;
-  display:flex;align-items:center;justify-content:center}
+/* ---- 四视图导航 ---- */
+.tabs{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}
+.tab{font-size:14px;padding:8px 20px;border:1px solid var(--line);background:var(--paper);
+  border-radius:9px;cursor:pointer;color:var(--muted)}
+.tab:hover{border-color:var(--accent);color:var(--accent)}
+.tab.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.view{display:none}
+.view.on{display:block}
+/* ---- 首页 / 训练视图面板 ---- */
+.hdate{font-size:13px;color:var(--muted);margin:14px 0 8px}
+.quick{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+.qcard{flex:1 1 200px;background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.qcard:hover{border-color:var(--accent)}
+.qcard b{display:block;font-size:15px;margin-bottom:3px}
+.qcard small{font-size:12px;color:var(--muted);line-height:1.5;display:block}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:900px){.hgrid{grid-template-columns:1fr}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.panel h3{margin:0 0 8px;font-size:14px;color:var(--muted)}
+.titem{display:flex;align-items:center;gap:10px;padding:10px 2px;
+  border-bottom:1px dashed var(--line);cursor:pointer}
+.titem:last-child{border-bottom:0}
+.titem:hover b{color:var(--accent)}
+.titem b{font-size:14px;flex:0 0 88px}
+.tnote{font-size:12px;color:var(--muted);flex:1}
+.tstat{font-size:11px;padding:2px 9px;border-radius:5px;white-space:nowrap}
+.tstat.done{color:#1a7f37;background:#eaf5ec}
+.tstat.doing{color:#9a5a12;background:#fdf3e4}
+.tstat.todo{color:var(--muted);background:var(--soft)}
+.prow{padding:9px 2px;border-bottom:1px dashed var(--line);cursor:pointer}
+.prow:last-child{border-bottom:0}
+.prow:hover b{color:var(--accent)}
+.prow>b{display:block;font-size:14px;margin-bottom:4px}
+.pbarw{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;margin:3px 0}
+.pbar{display:inline-block;width:120px;height:9px;background:var(--soft);
+  border-radius:5px;overflow:hidden;vertical-align:middle}
+.pbar i{display:block;height:100%;background:var(--accent)}
+.pbar.mas i{background:var(--green)}
+.hitem{display:flex;align-items:center;gap:9px;padding:8px 2px;
+  border-bottom:1px dashed var(--line);font-size:13px}
+.hitem:last-child{border-bottom:0}
+.hitem .pid{margin-top:0}
+.hitem b{flex:1;font-weight:400;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rscore.m4{color:#1a7f37;background:#eaf5ec}
+.rscore.m3{color:#0550ae;background:#eaf1fb}
+.rscore.m12{color:#a63a2e;background:#fdf1ee}
+.hempty{font-size:12.5px;color:var(--muted);line-height:1.8}
+.trgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.trcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:13px 15px;cursor:pointer}
+.trcard:hover{border-color:var(--accent)}
+.trcard b{display:block;font-size:14.5px;margin-bottom:3px}
+.trcard small{font-size:12px;color:var(--muted)}
+.trcard .pbar{width:100%;margin-top:8px}
+/* 分析视图：rpanel 由浮层改为平铺容器 */
+#view-rep .rpanel{width:auto;max-height:none;background:transparent;
+  border:0;padding:0;box-shadow:none;overflow:visible}
+/* ---- 学习分析（平铺视图） ---- */
 .rpanel{width:min(900px,94vw);max-height:88vh;overflow:auto;background:var(--bg);
   border:1px solid var(--line);border-radius:12px;padding:22px 26px;
   box-shadow:0 12px 40px rgba(0,0,0,.25)}
@@ -211,9 +267,26 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <header>
   <h1>面试题库</h1>
   <div class="meta" id="stat"></div>
-  <div class="scards" id="scards"></div>
+  <nav class="tabs">
+    <button class="tab" data-v="home">🏠 首页</button>
+    <button class="tab" data-v="bank">📚 题库</button>
+    <button class="tab" data-v="train">🎯 训练</button>
+    <button class="tab" data-v="rep">📈 分析</button>
+  </nav>
 </header>
 
+<section id="view-home" class="view">
+  <div class="hdate" id="h_date"></div>
+  <div class="scards" id="scards"></div>
+  <div class="quick" id="h_quick"></div>
+  <div class="hgrid">
+    <div class="panel"><h3>今日训练任务</h3><div id="h_tasks"></div></div>
+    <div class="panel"><h3>岗位训练进度（按真实校招 JD 模板）</h3><div id="h_profs"></div></div>
+  </div>
+  <div class="panel"><h3>最近训练记录</h3><div id="h_hist"></div></div>
+</section>
+
+<section id="view-bank" class="view">
 <div class="bar">
   <div class="brow">
     <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
@@ -415,6 +488,53 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <div id="list"></div>
 <div class="empty" id="empty" style="display:none">没有匹配的题目</div>
 <div class="keys">快捷键：<kbd>/</kbd> 搜索 · <kbd>J</kbd>/<kbd>K</kbd> 上下题 · <kbd>空格</kbd> 展开收起 · <kbd>1</kbd>–<kbd>4</kbd> 自评 · <kbd>W</kbd> 标错 · <kbd>Esc</kbd> 关闭弹层</div>
+</section>
+
+<section id="view-train" class="view">
+  <div class="hgrid">
+    <div class="panel">
+      <h3>🎤 模拟面试</h3>
+      <div class="hempty">按当前筛选或岗位模板加权抽题，逐题作答 → 揭示高频追问 → 自评计入复习计划，结束生成掌握总结。可选不限时练习模式。</div>
+      <div class="mrow"><button id="tr_mock" style="padding:8px 22px">配置并开始</button></div>
+    </div>
+    <div class="panel">
+      <h3>🩹 复习中心</h3>
+      <div class="hempty">间隔复习按自评分安排：1~2 分次日/三日重来，3 分一周，4 分三周。自评不会的题自动进错题本。</div>
+      <div class="mrow">
+        <button class="mini" id="tr_due">📋 今日该复习</button>
+        <button class="mini" id="tr_weak">🩹 薄弱题清单</button>
+        <button class="mini" id="tr_wrong">❌ 错题本</button>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📚 项目连环问（顺序过题 · 不限时 · 面试官就是这个问法）</h3>
+    <div class="trgrid" id="tr_projects"></div>
+  </div>
+</section>
+
+<section id="view-rep" class="view">
+  <div class="rpanel">
+    <div class="rhead"><b>📈 学习分析</b>
+      <span id="r_gen" class="rnum"></span></div>
+    <div class="mnote">全部数据来自本机浏览器（自评记录 + 错题本），换设备请先用题库页「备份↓」导出。点数字卡或模块行可跳到对应筛选。</div>
+    <div class="rsec">总览</div>
+    <div class="rcards" id="r_cards"></div>
+    <div class="rsec">近 8 周自测节奏（每周自评次数）</div>
+    <div class="rchart" id="r_weeks"></div>
+    <div class="rsec">模块掌握度（按平均分升序，最弱的排最前）</div>
+    <table class="rtable"><thead><tr>
+      <th>模块</th><th>已自测 / 总数</th><th>覆盖</th><th>平均分</th><th>薄弱</th><th>到期</th>
+    </tr></thead><tbody id="r_mods"></tbody></table>
+    <div class="rsec">下一步建议</div>
+    <ul class="radv" id="r_adv"></ul>
+    <div class="rfoot">
+      <button class="mini" id="r_due">📋 今日该复习</button>
+      <button class="mini" id="r_weak">🩹 薄弱题清单</button>
+      <button class="mini" id="r_clean" title="把已自评 ≥3 且未到期的题移出错题本">🧹 清理错题本</button>
+    </div>
+  </div>
+</section>
 </div>
 
 <div id="mockov" style="display:none">
@@ -448,30 +568,6 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
         <button id="m_next" style="margin-left:auto">下一题 →</button></div>
     </div>
     <div id="m_end" style="display:none"></div>
-  </div>
-</div>
-
-<div id="repov" style="display:none">
-  <div class="rpanel">
-    <div class="rhead"><b>📊 学习报告</b>
-      <span id="r_gen" class="rnum"></span>
-      <button class="mini" id="r_close" style="margin-left:auto">关闭</button></div>
-    <div class="mnote">全部数据来自本机浏览器（自评记录 + 错题本），换设备请先用「备份↓」导出。点数字卡或模块行可跳到对应筛选。</div>
-    <div class="rsec">总览</div>
-    <div class="rcards" id="r_cards"></div>
-    <div class="rsec">近 8 周自测节奏（每周自评次数）</div>
-    <div class="rchart" id="r_weeks"></div>
-    <div class="rsec">模块掌握度（按平均分升序，最弱的排最前）</div>
-    <table class="rtable"><thead><tr>
-      <th>模块</th><th>已自测 / 总数</th><th>覆盖</th><th>平均分</th><th>薄弱</th><th>到期</th>
-    </tr></thead><tbody id="r_mods"></tbody></table>
-    <div class="rsec">下一步建议</div>
-    <ul class="radv" id="r_adv"></ul>
-    <div class="rfoot">
-      <button class="mini" id="r_due">📋 今日该复习</button>
-      <button class="mini" id="r_weak">🩹 薄弱题清单</button>
-      <button class="mini" id="r_clean" title="把已自评 ≥3 且未到期的题移出错题本">🧹 清理错题本</button>
-    </div>
   </div>
 </div>
 
@@ -663,9 +759,18 @@ function render(){
 }
 
 // 自评 1~4 写入复习计划；不会/想不起自动进错题本（卡片按钮与快捷键共用）
+// 每次自评同时追加训练历史（首页「最近训练记录」与「今日任务」的完成度来源）
+const HIST_KEY = 'ib_hist_v1';
+let hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
+function pushHist(qid, v){
+  hist.push({ i: qid, g: v, t: Date.now(), m: MOCK.live ? 1 : 0 });
+  if (hist.length > 600) hist = hist.slice(-500);
+  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+}
 function setGrade(qid, v){
   review[qid] = { g: v, ts: Date.now() };
   localStorage.setItem(REV_KEY, JSON.stringify(review));
+  pushHist(qid, v);
   if (v <= 2 && !wrong.has(qid)) {
     wrong.add(qid);
     localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
@@ -718,8 +823,7 @@ $('scards').addEventListener('click', e => {
   if (s === 'due' || s === 'weak') $('rev').value = s;
   else if (s === 'wrong') $('wrong').checked = true;
   else return;
-  window.scrollTo(0, 0);
-  render();
+  showView('bank'); window.scrollTo(0, 0); render();
 });
 
 // ---- 快捷筛选 chips：一级高频条件，与详细筛选控件双向同步 ----
@@ -791,13 +895,12 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Escape') {
-    if ($('repov').style.display === 'flex') $('repov').style.display = 'none';
     if ($('mockov').style.display === 'block') {
-      clearInterval(MOCK.timer); $('mockov').style.display = 'none';
+      clearInterval(MOCK.timer); MOCK.live = false; $('mockov').style.display = 'none';
     }
     return;
   }
-  if ($('mockov').style.display === 'block' || $('repov').style.display === 'flex') return;
+  if ($('mockov').style.display === 'block') return;
   if (e.key === '/') { e.preventDefault(); $('q').focus(); $('q').select(); }
   else if (e.key === 'j' || e.key === 'J') moveFocus(fcur < 0 ? 0 : 1);
   else if (e.key === 'k' || e.key === 'K') moveFocus(-1);
@@ -874,7 +977,7 @@ $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 
 // ---- 模拟面试：抽题 → 逐题计时 → 揭示追问 → 自评 → 总结 ----
 const MODNAME = {}; DATA.forEach(q => MODNAME[q.module] = q.moduleName);
-const MOCK = { list: [], i: 0, left: 0, timer: null, secs: 300 };
+const MOCK = { list: [], i: 0, left: 0, timer: null, secs: 300, live: false, notes: {} };
 
 $('prof').addEventListener('input', () => {
   // 岗位模板选中时，把权重写进提示行
@@ -903,7 +1006,28 @@ function openMock(){
   MOCK.pool = pool;
 }
 $('mock').addEventListener('click', openMock);
-$('m_close').addEventListener('click', () => { clearInterval(MOCK.timer); $('mockov').style.display = 'none'; });
+$('m_close').addEventListener('click', () => {
+  clearInterval(MOCK.timer); MOCK.live = false; $('mockov').style.display = 'none';
+});
+
+// ---- 项目连环问：按项目顺序过全部题，不限时（面试官就是这么连环问的） ----
+const PROJ = {};
+DATA.forEach(q => { if (q.module === '01_project' && q.sub)
+  (PROJ[q.sub] = PROJ[q.sub] || []).push(q); });
+
+function openDrill(sub){
+  const qs = (PROJ[sub] || []).slice().sort((a, b) => a.id < b.id ? -1 : 1);
+  if (!qs.length) return;
+  MOCK.list = qs; MOCK.i = 0; MOCK.graded = []; MOCK.notes = {};
+  MOCK.secs = 0; MOCK.live = true; MOCK.drill = sub;
+  $('m_src').textContent = `项目连环问 · ${sub} · 顺序 ${qs.length} 题 · 不限时`;
+  $('m_conf').textContent = '';
+  $('m_setup').style.display = 'none';
+  $('m_run').style.display = 'block';
+  $('m_end').style.display = 'none';
+  $('mockov').style.display = 'block';
+  showQ();
+}
 
 function shuffle(a){ for (let i = a.length - 1; i > 0; --i) {
   const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -941,7 +1065,7 @@ $('m_start').addEventListener('click', () => {
   MOCK.secs = +$('m_sec').value;
   MOCK.list = weightedPick(MOCK.pool, prof, n);
   if (!MOCK.list.length) { alert('题池为空：先调整筛选或选择岗位模板'); return; }
-  MOCK.i = 0; MOCK.graded = []; MOCK.notes = {};
+  MOCK.i = 0; MOCK.graded = []; MOCK.notes = {}; MOCK.live = true; MOCK.drill = null;
   $('m_setup').style.display = 'none';
   $('m_run').style.display = 'block';
   showQ();
@@ -995,6 +1119,7 @@ function nextQ(){
   clearInterval(MOCK.timer);
   MOCK.i++;
   if (MOCK.i < MOCK.list.length) { showQ(); return; }
+  MOCK.live = false;
   // 总结
   $('m_run').style.display = 'none';
   $('m_end').style.display = 'block';
@@ -1004,7 +1129,8 @@ function nextQ(){
     ${weak.length ? `<div class="mrow">薄弱题（已计入复习与错题本）：${weak.map(q => esc(q.id)).join('、')}</div>` : ''}
     <div class="mrow"><button class="mini" id="m_again">再来一场</button>
     <button class="mini" id="m_done">关闭</button></div>`;
-  $('m_again').addEventListener('click', openMock);
+  $('m_again').addEventListener('click', () =>
+    MOCK.drill ? openDrill(MOCK.drill) : openMock());
   $('m_done').addEventListener('click', () => { $('mockov').style.display = 'none'; render(); });
 }
 // ---- 学习报告：自测覆盖 / 节奏 / 模块掌握度 / 错题本健康度 ----
@@ -1017,7 +1143,7 @@ const MODQ = {}; DATA.forEach(q => (MODQ[q.module] = MODQ[q.module] || []).push(
 const QBY = {}; DATA.forEach(q => QBY[q.id] = q);
 const isDue = r => r && r.g > 2 && (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
 
-function openRep(){
+function renderRep(){
   const now = Date.now();
   const valid = new Set(DATA.map(q => q.id));
   const tested = Object.keys(review).filter(id => valid.has(id));
@@ -1091,29 +1217,27 @@ function openRep(){
   if (!adv.length)
     adv.push('状态良好：无到期、无薄弱。保持每天一场模拟面试的节奏即可。');
   $('r_adv').innerHTML = adv.map(x => `<li>${x}</li>`).join('');
-  $('repov').style.display = 'flex';
 }
 
-$('rep').addEventListener('click', openRep);
-$('r_close').addEventListener('click', () => $('repov').style.display = 'none');
+$('rep').addEventListener('click', () => showView('rep'));
 $('r_cards').addEventListener('click', e => {
   const c = e.target.closest('.rcard'); if (!c) return;
   const act = c.dataset.act;
   if (act === 'wrong') $('wrong').checked = true;
   else if (act === 'due' || act === 'weak') $('rev').value = act;
   else return;
-  $('repov').style.display = 'none'; render();
+  showView('bank'); render();
 });
 $('r_mods').addEventListener('click', e => {
   const tr = e.target.closest('tr[data-mod]'); if (!tr) return;
   $('mod').value = tr.dataset.mod; refreshSubs();
-  $('repov').style.display = 'none'; window.scrollTo(0, 0); render();
+  showView('bank'); render();
 });
 $('r_due').addEventListener('click', () => {
-  $('rev').value = 'due'; $('repov').style.display = 'none'; render();
+  $('rev').value = 'due'; showView('bank'); render();
 });
 $('r_weak').addEventListener('click', () => {
-  $('rev').value = 'weak'; $('repov').style.display = 'none'; render();
+  $('rev').value = 'weak'; showView('bank'); render();
 });
 $('r_clean').addEventListener('click', () => {
   const healed = [...wrong].filter(id => review[id] && review[id].g >= 3);
@@ -1121,11 +1245,150 @@ $('r_clean').addEventListener('click', () => {
   if (!confirm(`把 ${healed.length} 道已自评 ≥3 的题移出错题本？\n（只影响错题标记，复习计划保留）`)) return;
   healed.forEach(id => wrong.delete(id));
   localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
-  openRep();
+  renderRep();
+});
+
+// ---- 四视图导航：首页 / 题库 / 训练 / 分析 ----
+document.querySelectorAll('.tab').forEach(t =>
+  t.addEventListener('click', () => showView(t.dataset.v)));
+function showView(v){
+  document.querySelectorAll('.view').forEach(s =>
+    s.classList.toggle('on', s.id === 'view-' + v));
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('on', t.dataset.v === v));
+  if (v === 'home') renderHome();
+  if (v === 'train') renderTrain();
+  if (v === 'rep') renderRep();
+  try { history.replaceState(null, '', '#' + v); } catch {}
+}
+
+// ---- 首页：数据卡 + 快速开始 + 今日任务 + 岗位进度 + 最近记录 ----
+const ACT_LABEL = {due: '今日复习', weak: '薄弱补强', mock: '模拟面试', drill: '项目连环问'};
+function runAct(act){
+  if (act === 'due') { $('rev').value = 'due'; showView('bank'); render(); }
+  else if (act === 'weak') { $('rev').value = 'weak'; showView('bank'); render(); }
+  else if (act === 'mock') { showView('bank'); openMock(); }
+  else if (act === 'drill') showView('train');
+}
+function renderHome(){
+  const d = new Date();
+  const wk = '日一二三四五六'[d.getDay()];
+  $('h_date').textContent = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()} · 周${wk} · 数据都在本机浏览器，换设备先备份`;
+  renderScards();
+  $('h_quick').innerHTML = `
+    <div class="qcard" data-a="due"><b>📋 今日复习</b><small>处理间隔复习到期的题目</small></div>
+    <div class="qcard" data-a="drill"><b>🎯 岗位专项训练</b><small>按真实 JD 模板选题训练</small></div>
+    <div class="qcard" data-a="mock"><b>🎤 模拟面试</b><small>连续答题、追问揭示、训练总结</small></div>
+    <div class="qcard" data-a="bank"><b>📚 全部题库</b><small>搜索与筛选全部 ${DATA.length} 题</small></div>`;
+  // 今日任务：need 为今日目标量，done 从训练历史统计
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const today = hist.filter(h => h.t >= t0.getTime());
+  const dueIds = DATA.filter(q => revState(q) === 'due').map(q => q.id);
+  const weakIds = DATA.filter(q => revState(q) === 'weak').map(q => q.id);
+  const dueSet = new Set(dueIds), weakSet = new Set(weakIds);
+  const projIds = new Set(DATA.filter(q => q.module === '01_project').map(q => q.id));
+  const mockIds = new Set(today.filter(h => h.m).map(h => h.i));
+  const projToday = new Set(today.filter(h => projIds.has(h.i)).map(h => h.i));
+  const tasks = [
+    { act: 'due', need: dueIds.length, done: today.filter(h => dueSet.has(h.i)).length,
+      note: dueIds.length ? `${dueIds.length} 道到期（P0 ${dueIds.filter(id => QBY[id].priority === 'P0').length}）` : '今日无到期，保持节奏' },
+    { act: 'weak', need: Math.min(weakIds.length, 8), done: today.filter(h => weakSet.has(h.i)).length,
+      note: weakIds.length ? `${weakIds.length} 道薄弱，先攻 8 道` : '没有薄弱题' },
+    { act: 'mock', need: 8, done: mockIds.size, note: '一场 10 题 · 自评 8 题算完成' },
+    { act: 'drill', need: 3, done: projToday.size, note: '项目题顺序过 3 道算打卡' },
+  ];
+  $('h_tasks').innerHTML = tasks.map(t => {
+    const st = t.need === 0 ? 'done' : t.done >= t.need ? 'done' : t.done > 0 ? 'doing' : 'todo';
+    const stTxt = st === 'done' ? '已完成' : st === 'doing' ? `进行中 ${t.done}/${t.need}` : t.need === 0 ? '无任务' : '待开始';
+    return `<div class="titem" data-a="${t.act}">
+      <b>${ACT_LABEL[t.act]}</b><span class="tnote">${t.note}</span>
+      <span class="tstat ${st}">${stTxt}</span></div>`;
+  }).join('');
+  // 岗位训练进度：对口 = 模板有权重的模块 + 通用门槛（算法机考）
+  $('h_profs').innerHTML = PROFILES.map(p => {
+    const pool = DATA.filter(q => (p.weights[q.module] || 0) > 0 || ALWAYS.has(q.module));
+    const done = pool.filter(q => review[q.id]);
+    const cov = pool.length ? Math.round(done.length / pool.length * 100) : 0;
+    const mas = done.length ? Math.round(done.filter(q => review[q.id].g >= 3).length / done.length * 100) : 0;
+    return `<div class="prow" data-p="${esc(p.id)}">
+      <b>${esc(p.name)}</b>
+      <div class="pbarw"><span>覆盖</span><span class="pbar"><i style="width:${cov}%"></i></span><span class="rnum">${cov}% · 对口 ${pool.length} 题</span></div>
+      <div class="pbarw"><span>掌握</span><span class="pbar mas"><i style="width:${mas}%"></i></span><span class="rnum">${mas}%（自评≥3）</span></div>
+    </div>`;
+  }).join('');
+  // 最近训练记录：有 hist 用 hist，没有就用 review 最新时间兜底
+  let items;
+  if (hist.length) {
+    items = hist.slice(-6).reverse().map(h => {
+      const q = QBY[h.i]; if (!q) return '';
+      const d2 = new Date(h.t);
+      const sameDay = d2.toDateString() === new Date().toDateString();
+      const when = sameDay ? `${String(d2.getHours()).padStart(2, '0')}:${String(d2.getMinutes()).padStart(2, '0')}`
+        : `${d2.getMonth() + 1}/${d2.getDate()}`;
+      const cls = h.g === 4 ? 'm4' : h.g === 3 ? 'm3' : 'm12';
+      const tag = h.m ? ' · 模拟面试' : '';
+      return `<div class="hitem"><span class="pid">${q.id}</span><b title="${esc(q.title)}">${esc(q.title)}</b>
+        <span class="rscore ${cls}">自评 ${h.g}</span><span class="rnum">${when}${tag}</span></div>`;
+    });
+  } else {
+    const recent = Object.keys(review).filter(id => QBY[id])
+      .sort((a, b) => review[b].ts - review[a].ts).slice(0, 6);
+    items = recent.length
+      ? recent.map(id => {
+          const q = QBY[id], r = review[id], d2 = new Date(r.ts);
+          const cls = r.g === 4 ? 'm4' : r.g === 3 ? 'm3' : 'm12';
+          return `<div class="hitem"><span class="pid">${q.id}</span><b title="${esc(q.title)}">${esc(q.title)}</b>
+            <span class="rscore ${cls}">自评 ${r.g}</span><span class="rnum">${d2.getMonth() + 1}/${d2.getDate()}</span></div>`;
+        })
+      : ['<div class="hempty">还没有训练记录。去题库页给题目打自评分，或开一场模拟面试，这里会开始积累。</div>'];
+    if (recent.length) items.push('<div class="hempty" style="margin-top:6px">（升级前只有每题最新一次自评；从现在起每次训练都会留痕）</div>');
+  }
+  $('h_hist').innerHTML = items.join('');
+}
+$('h_quick').addEventListener('click', e => {
+  const c = e.target.closest('.qcard'); if (!c) return;
+  const a = c.dataset.a;
+  if (a === 'bank') { showView('bank'); window.scrollTo(0, 0); }
+  else runAct(a);
+});
+$('h_tasks').addEventListener('click', e => {
+  const c = e.target.closest('.titem'); if (!c) return;
+  runAct(c.dataset.a);
+});
+$('h_profs').addEventListener('click', e => {
+  const c = e.target.closest('.prow'); if (!c) return;
+  $('prof').value = c.dataset.p;
+  showView('bank'); window.scrollTo(0, 0); render();
+});
+
+// ---- 训练视图：入口 + 项目连环问列表 ----
+function renderTrain(){
+  const subs = Object.keys(PROJ).sort((a, b) => PROJ[b].length - PROJ[a].length);
+  $('tr_projects').innerHTML = subs.map(s => {
+    const qs = PROJ[s];
+    const done = qs.filter(q => review[q.id]).length;
+    const pct = Math.round(done / qs.length * 100);
+    return `<div class="trcard" data-s="${esc(s)}">
+      <b>${esc(s)}</b><small>${qs.length} 题 · 已自测 ${done}</small>
+      <span class="pbar"><i style="width:${pct}%"></i></span>
+    </div>`;
+  }).join('');
+}
+$('tr_projects').addEventListener('click', e => {
+  const c = e.target.closest('.trcard'); if (!c) return;
+  openDrill(c.dataset.s);
+});
+$('tr_mock').addEventListener('click', () => { showView('bank'); openMock(); });
+$('tr_due').addEventListener('click', () => runAct('due'));
+$('tr_weak').addEventListener('click', () => runAct('weak'));
+$('tr_wrong').addEventListener('click', () => {
+  $('wrong').checked = true; showView('bank'); render();
 });
 
 refreshSubs();
 render();
+showView(['home', 'bank', 'train', 'rep'].includes(location.hash.slice(1))
+  ? location.hash.slice(1) : 'home');
 </script>
 </body>
 </html>

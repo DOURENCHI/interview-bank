@@ -41,7 +41,7 @@ def main() -> int:
         pg.reload()
         pg.wait_for_timeout(300)
 
-        pg.click("#rep")
+        pg.click('.tab[data-v="rep"]')
         pg.wait_for_timeout(200)
         stat = pg.evaluate("""() => ({
             cards: document.querySelectorAll('#r_cards .rcard').length,
@@ -66,12 +66,12 @@ def main() -> int:
         pg.click('#r_cards .rcard[data-act="due"]')
         pg.wait_for_timeout(200)
         rev = pg.eval_on_selector("#rev", "el => el.value")
-        visible = pg.eval_on_selector("#repov", "el => el.style.display")
-        print("点击今日复习卡 → rev =", rev, ", 报告关闭:", visible == "none")
-        assert rev == "due" and visible == "none"
+        onbank = pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")
+        print("点击今日复习卡 → rev =", rev, ", 切到题库视图:", onbank)
+        assert rev == "due" and onbank
 
         # 清理错题本：前5题有 g>=3 的应可清理
-        pg.click("#rep")
+        pg.click('.tab[data-v="rep"]')
         pg.wait_for_timeout(200)
         pg.once("dialog", lambda d: d.accept())
         pg.click("#r_clean")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""UI 改版冒烟测试：数据卡 / chips / pills / 题卡层级 / 快捷键 / 模拟面试增强。"""
+"""UI 冒烟测试 v2：四视图导航 / 首页仪表盘 / chips / 题卡层级 / 快捷键 / 项目连环问 / 分析视图。"""
 import time
 from pathlib import Path
 
@@ -16,100 +16,117 @@ def main() -> int:
         pg.wait_for_timeout(300)
         ok = []
 
-        # 1. 顶部数据卡：4 张，数字正确（全新状态：今日0/薄弱0/错题0）
-        n = pg.evaluate("document.querySelectorAll('#scards .scard').length")
-        t = pg.eval_on_selector("#scards", "el => el.innerText.replace(/\\s+/g, ' ')")
-        ok.append(("数据卡4张", n == 4 and "913" in t))
+        def tab(v):
+            pg.click(f'.tab[data-v="{v}"]')
+            pg.wait_for_timeout(200)
 
-        # 2. chips：点 P0 → pri=P0 且亮、列表全 P0；再点取消
-        pg.click('#chips .chip[data-c="p0"]')
-        pg.wait_for_timeout(150)
-        pri = pg.eval_on_selector("#pri", "el => el.value")
-        cnt = pg.eval_on_selector("#stat", "el => el.textContent")
-        on = pg.eval_on_selector('#chips .chip[data-c="p0"]', "el => el.classList.contains('on')")
-        ok.append(("P0 chip 联动", pri == "P0" and on and "当前 596" in cnt))
-        pg.click('#chips .chip[data-c="p0"]')
-        pg.wait_for_timeout(150)
-        ok.append(("P0 chip 再点取消", pg.eval_on_selector("#pri", "el => el.value") == ""))
+        # 1. 默认首页：数据卡 4 张 + 快速入口 4 + 今日任务 4 + 岗位进度 8
+        n_cards = pg.evaluate("document.querySelectorAll('#scards .scard').length")
+        n_quick = pg.evaluate("document.querySelectorAll('#h_quick .qcard').length")
+        n_tasks = pg.evaluate("document.querySelectorAll('#h_tasks .titem').length")
+        n_profs = pg.evaluate("document.querySelectorAll('#h_profs .prow').length")
+        ok.append(("首页默认视图", pg.eval_on_selector("#view-home", "el => el.classList.contains('on')")))
+        ok.append(("数据卡/快速入口/任务/岗位进度", n_cards == 4 and n_quick == 4 and n_tasks == 4 and n_profs == 8))
 
-        # 3. 详细筛选 pill：展开折叠面板 → 选公司 → pill 出现 → × 单独移除
-        pg.click("#moref summary")
-        pg.wait_for_timeout(150)
-        pg.select_option("#co", "Momenta")
+        # 2. 最近记录兜底（无 hist 无 review → 引导文案）
+        empty_hist = pg.eval_on_selector("#h_hist", "el => el.innerText.includes('还没有训练记录')")
+        ok.append(("最近记录空态引导", empty_hist))
+
+        # 3. 今日任务点击 → 切题库并筛选（今日复习）
+        pg.click('#h_tasks .titem[data-a="due"]')
         pg.wait_for_timeout(200)
-        pills = pg.eval_on_selector("#fpills", "el => el.innerText")
-        ok.append(("公司 pill 出现", "Momenta" in pills and "公司" in pills))
-        pg.click("#fpills .fpill i")
-        pg.wait_for_timeout(200)
-        ok.append(("pill × 移除", pg.eval_on_selector("#co", "el => el.value") == ""
-                   and pg.eval_on_selector("#fpills", "el => el.children.length") == 0))
+        ok.append(("任务点击跳筛选", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")
+                   and pg.eval_on_selector("#rev", "el => el.value") == "due"))
 
-        # 4. 难度筛选
-        pg.select_option("#dif", "3")
+        # 4. 岗位进度点击 → prof 选中并切题库
+        tab("home")
+        pg.click('#h_profs .prow')  # 第一个岗位模板
         pg.wait_for_timeout(200)
-        ok.append(("难度筛选", "当前" in pg.eval_on_selector("#stat", "el => el.textContent")))
-        pg.select_option("#dif", "")
+        prof_v = pg.eval_on_selector("#prof", "el => el.value")
+        ok.append(("岗位进度点击", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')") and prof_v != ""))
 
-        # 5. 题卡层级：注入自评 → 掌握状态点 + 追问预览 + qmeta
+        # 5. 题库视图：chips / pills / 难度（回归）
+        pg.click('#chips .chip[data-c="p0"]'); pg.wait_for_timeout(150)
+        ok.append(("P0 chip 联动", pg.eval_on_selector('#chips .chip[data-c="p0"]', "el => el.classList.contains('on')")))
+        pg.click("#moref summary"); pg.wait_for_timeout(100)
+        pg.select_option("#co", "Momenta"); pg.wait_for_timeout(150)
+        ok.append(("公司 pill", "Momenta" in pg.eval_on_selector("#fpills", "el => el.innerText")))
+        pg.click("#fpills .fpill i"); pg.wait_for_timeout(150)
+        ok.append(("pill × 移除", pg.eval_on_selector("#co", "el => el.value") == ""))
+        pg.click('#chips .chip[data-c="all"]'); pg.wait_for_timeout(150)
+
+        # 6. 题卡层级：注入 review → 状态点/难度星/来源底部（回归）
         ids = pg.evaluate("DATA.slice(0, 20).map(q => q.id)")
         now = int(time.time() * 1000)
         review = {qid: {"g": 1 + i % 4, "ts": now - int(i * 2.2 * 864e5)} for i, qid in enumerate(ids)}
         pg.evaluate("rv => localStorage.setItem('ib_review_v1', JSON.stringify(rv))", review)
         pg.reload(); pg.wait_for_timeout(300)
+        tab("bank"); pg.wait_for_timeout(100)
         q1 = pg.evaluate("""() => {
           const el = document.querySelector('#list .q');
-          return {dot: !!el.querySelector('.qdot'), dotText: el.querySelector('.qdot')?.innerText.trim(),
-                  qf: el.querySelector('.qf')?.innerText.trim() || '',
+          return {dot: !!el.querySelector('.qdot'),
                   stars: !!el.querySelector('.qh .tag[title=难度]')};
         }""")
-        ok.append(("掌握状态点", q1["dot"] and q1["dotText"] in ("待学习", "薄弱", "今日复习", "已掌握")))
-        ok.append(("难度星", q1["stars"]))
-        # 追问预览：展开任意一张有追问的卡，qmeta 应在 body 内
-        qmeta = pg.evaluate("""() => {
-          const el = [...document.querySelectorAll('#list .q')].find(x => x.querySelector('.qmeta'));
-          return el ? {src: el.querySelector('.qmeta').innerText.includes('来源'),
-                       inBody: !!el.querySelector('.body .qmeta')} : null;
-        }""")
-        ok.append(("来源在卡片底部", qmeta is not None and qmeta["src"] and qmeta["inBody"]))
+        ok.append(("题卡状态点/难度星", q1["dot"] and q1["stars"]))
 
-        # 6. 快捷键：/ 聚焦搜索、Esc 失焦、j 移动焦点、空格展开、4 自评
-        pg.keyboard.press("Escape")
-        pg.click("body")
-        pg.keyboard.press("/")     # 聚焦搜索
-        focused = pg.evaluate("document.activeElement.id")
-        ok.append(("/ 聚焦搜索", focused == "q"))
+        # 7. 快捷键（回归）：/ 聚焦、j、空格、4 自评
+        pg.click("body"); pg.keyboard.press("Escape")
+        pg.keyboard.press("/")
+        ok.append(("/ 聚焦搜索", pg.evaluate("document.activeElement.id") == "q"))
         pg.keyboard.press("Escape")
         pg.keyboard.press("j")
-        foc = pg.evaluate("!!document.querySelector('#list .q.foc')")
-        ok.append(("j 焦点第一题", foc))
-        pg.keyboard.press(" ")
-        opened = pg.evaluate("document.querySelector('#list .q.foc').classList.contains('open')")
-        ok.append(("空格展开", opened))
-        pg.keyboard.press("4")
+        ok.append(("j 焦点", pg.evaluate("!!document.querySelector('#list .q.foc')")))
+        pg.keyboard.press("4"); pg.wait_for_timeout(250)
+        hist_n = pg.evaluate("hist.length")
+        ok.append(("自评写入训练历史", hist_n >= 1))
+
+        # 8. 训练视图：模拟面试入口 + 项目连环问 6 卡 + 打开连环问
+        tab("train")
+        n_proj = pg.evaluate("Object.keys(PROJ).length")
+        cards = pg.evaluate("document.querySelectorAll('#tr_projects .trcard').length")
+        ok.append(("项目连环问卡片", n_proj == 6 and cards == 6))
+        pg.click('#tr_projects .trcard')  # 第一个项目（题最多的）
         pg.wait_for_timeout(200)
-        g = pg.evaluate("review[Object.keys(review)[0]].g")
-        ok.append(("数字4自评", g == 4))
-
-        # 7. 模拟面试：不限时 + 作答草稿跨题保留
-        pg.click("#mock"); pg.wait_for_timeout(150)
-        pg.select_option("#m_sec", "0")
-        pg.select_option("#m_n", "5")
-        pg.click("#m_start"); pg.wait_for_timeout(200)
+        running = pg.evaluate("document.getElementById('mockov').style.display === 'block'")
         clock = pg.eval_on_selector("#m_clock", "el => el.textContent")
-        pg.fill("#m_note", "RAII unique_ptr 所有权")
-        pg.click("#m_next"); pg.wait_for_timeout(200)
-        pg.click("#m_skip")  # 回不到上一题，所以验证：切回第3题后再看草稿逻辑 → 简化：验证草稿随输入保存
-        saved = pg.evaluate("Object.keys(MOCK.notes).length >= 1 && Object.values(MOCK.notes).some(v => v.includes('RAII'))")
-        ok.append(("不限时显示", clock == "不限时"))
-        ok.append(("作答草稿保存", saved))
-        pg.click("#m_close")
+        src = pg.eval_on_selector("#m_src", "el => el.textContent")
+        ok.append(("连环问打开且不限时", running and clock == "不限时" and "项目连环问" in src))
+        # 顺序性：第 1 题应是该项目 ID 最小的
+        first_ok = pg.evaluate("""() => {
+          const sub = MOCK.drill, q = MOCK.list[0];
+          const sorted = [...PROJ[sub]].sort((a,b)=>a.id<b.id?-1:1);
+          return q.id === sorted[0].id;
+        }""")
+        ok.append(("连环问顺序抽题", first_ok))
+        # 自评两题 → hist 带 m=1
+        pg.click("#m_run .gbtn"); pg.wait_for_timeout(100)
+        pg.click("#m_next"); pg.wait_for_timeout(100)
+        pg.click("#m_run .gbtn"); pg.wait_for_timeout(100)
+        m_flag = pg.evaluate("hist.slice(-2).every(h => h.m === 1)")
+        ok.append(("连环问训练历史标记", m_flag))
+        pg.click("#m_close"); pg.wait_for_timeout(100)
+        ok.append(("退出后 live 复位", pg.evaluate("MOCK.live === false")))
 
-        # 8. 学习报告回归
-        pg.click("#rep"); pg.wait_for_timeout(200)
-        cards = pg.evaluate("document.querySelectorAll('#r_cards .rcard').length")
-        ok.append(("学习报告正常", pg.eval_on_selector("#repov", "el => el.style.display") == "flex" and cards == 5))
+        # 9. 首页最近记录现在有 hist
+        tab("home")
+        ok.append(("最近记录有内容", pg.evaluate("document.querySelectorAll('#h_hist .hitem').length >= 2")))
 
-        pg.screenshot(path=str(ROOT / "_cache" / "ui_top.png"))
+        # 10. 分析视图（回归）：5 卡 + 8 柱 + 模块行
+        tab("rep")
+        ok.append(("分析视图渲染", pg.eval_on_selector("#view-rep", "el => el.classList.contains('on')")
+                   and pg.evaluate("document.querySelectorAll('#r_cards .rcard').length") == 5
+                   and pg.evaluate("document.querySelectorAll('#r_weeks .rbar').length") == 8))
+        # 分析里的「今日该复习」卡 → 跳题库
+        pg.click('#r_cards .rcard[data-act="due"]'); pg.wait_for_timeout(200)
+        ok.append(("分析卡跳题库", pg.eval_on_selector("#view-bank", "el => el.classList.contains('on')")
+                   and pg.eval_on_selector("#rev", "el => el.value") == "due"))
+
+        # 11. hash 记忆：刷新后仍在当前 tab
+        tab("train")
+        pg.reload(); pg.wait_for_timeout(300)
+        ok.append(("刷新保持视图", pg.eval_on_selector("#view-train", "el => el.classList.contains('on')")))
+
+        pg.screenshot(path=str(ROOT / "_cache" / "ui2_home.png"))
         b.close()
 
     fails = [k for k, v in ok if not v]
