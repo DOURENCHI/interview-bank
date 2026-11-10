@@ -1,0 +1,1038 @@
+@@ Q-0676
+@STEM
+**场景**：`std::sort(v.begin(), v.end(), cmp)` 里的 `cmp` 既可以传函数指针、函数对象，也可以传 lambda。
+
+**问**：函数对象和 lambda 有什么区别？为什么谓词要求"无副作用"？
+@ANSWER
+函数对象是**重载了 `operator()` 的类实例**，能带状态；lambda 是**编译器生成的匿名函数对象**的语法糖——本质也是函数对象，只是写起来短。
+
+谓词要求无副作用，是因为标准算法可能**对同一元素多次调用谓词**（快排、去重、lower_bound 都会），也可能**拷贝谓词**（按值传递）。带副作用的谓词（计数、修改外部状态）结果不可预测。
+@DEEP
+```cpp
+struct Greater { bool operator()(int a, int b) const { return a > b; } };
+auto lam = [](int a, int b) { return a > b; };
+
+std::sort(v.begin(), v.end(), Greater{});   // 函数对象
+std::sort(v.begin(), v.end(), lam);         // lambda（等价）
+```
+
+| 维度 | 函数对象 | lambda | 函数指针 |
+|---|---|---|---|
+| 可带状态 | ✅ | ✅（捕获） | ❌ |
+| 可内联 | ✅ | ✅ | 通常 ❌ |
+| 写法长度 | 长 | 短 | 中 |
+| 类型 | 具名 | 匿名（每个不同） | 统一 |
+| 存进容器 | 可以 | 可以（`std::function` 或 `auto`） | 可以 |
+
+**"每个 lambda 都是不同类型"的实际影响**：两个写法相同的 lambda 类型不同，所以 `auto` 存它们没问题，但`std::function` 才能统一类型（有间接调用开销）。
+
+**`operator()` 为什么建议加 `const`**：算法可能持有 `const` 谓词副本，非 const 的 `operator()` 会编译失败。
+@FOLLOW
+1. **函数指针为什么通常不能内联？** —— 编译器不知道运行时指向哪个函数，只能间接调用。
+2. **lambda 捕获的东西存在哪？** —— 存在 lambda 对象的成员里，所以 lambda 有大小。
+3. **`std::function` 有什么代价？** —— 类型擦除 + 可能的堆分配 + 间接调用。
+@TRAPS
+- 谓词里修改外部变量（副作用）
+- `operator()` 忘了 `const`
+- 以为 lambda 没有开销（捕获多时对象会变大）
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 函数对象（预测题，非真实面经）
+
+@@ Q-0678
+**STEM
+@STEM
+**题目**：`std::find` 只能按值找，想按条件找（比如"第一个大于 10 的元素"）就要用 `std::find_if`。
+
+**问**：两者的区别是什么？谓词该怎么写？找不到时返回什么？
+@ANSWER
+`find` 是**按值相等**查找（内部用 `==`），`find_if` 是**按条件**查找（内部调谓词）。都返回迭代器，找不到返回 `last`（通常是 `end()`）。
+
+判断是否找到必须用 `if (it != v.end())`，不能解引用后再判断——`*end()` 是未定义行为。
+@DEEP
+```cpp
+auto it1 = std::find(v.begin(), v.end(), 42);              // 按值
+auto it2 = std::find_if(v.begin(), v.end(),
+                        [](int x) { return x > 10; });     // 按条件
+
+if (it2 != v.end()) {
+    std::cout << *it2 << " at " << (it2 - v.begin());
+}
+```
+
+| 算法 | 条件 | 返回值 |
+|---|---|---|
+| `find` | `*it == value` | 迭代器或 `last` |
+| `find_if` | `pred(*it)` | 迭代器或 `last` |
+| `find_if_not` | `!pred(*it)` | 迭代器或 `last` |
+| `count` / `count_if` | 同上 | 个数 |
+| `any_of` / `all_of` / `none_of` | 谓词 | `bool` |
+
+**这是"开头算法家族"的通用约定**：所有 `_if` 后缀的算法都接收谓词，没后缀的接收值。
+
+**性能提醒**：`find_if` 是**线性扫描**，O(n)。在有序区间里应该用 `lower_bound` / `binary_search`（O(log n)）。
+@FOLLOW
+1. **`find` 对 `set` / `map` 有效率吗？** —— `find` 是线性的；应该用容器自己的 `find()` 成员（O(log n)）。
+2. **谓词能捕获局部变量吗？** —— 能，lambda 捕获；注意生命周期。
+3. **找不到时能返回 `-1` 吗？** —— 不能，迭代器不是整数；要下标就 `std::distance(begin, it)`。
+@TRAPS
+- 解引用 `end()` 判断是否找到
+- 有序区间还用 `find_if`（应该 `lower_bound`）
+- 对 `set` 调 `std::find` 而不是成员 `find`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 查找算法（预测题，非真实面经）
+
+@@ Q-0679
+**STEM
+@STEM
+**题目**：洗牌一个 `vector`，用 `std::random_shuffle` 还是 `std::shuffle`？`rand()` 有什么问题？
+
+**问**：为什么推荐 `std::shuffle`？随机数质量对洗牌有什么影响？
+@ANSWER
+`std::random_shuffle` 在 C++14 被弃用、C++17 移除，因为它内部用 `rand()`，而 `rand()` 的**质量和周期都不可控**（很多实现只有 15 位，周期 2³¹）。
+
+`std::shuffle` 需要你显式提供随机数引擎，质量和可重复性都可控。洗牌用的是 Fisher-Yates，只需要均匀分布的整数，引擎质量差会直接导致排列不均匀。
+@DEEP
+```cpp
+#include <random>
+#include <algorithm>
+
+std::mt19937 gen(std::random_device{}());   // 或固定种子用于复现
+std::shuffle(v.begin(), v.end(), gen);
+```
+
+| 方案 | 状态 | 引擎 | 可复现 |
+|---|---|---|---|
+| `random_shuffle` | C++17 移除 | `rand()` | 依赖实现 |
+| `shuffle` + `mt19937` | ✅ 推荐 | 梅森旋转 | 固定种子可复现 |
+| `shuffle` + `default_random_engine` | 可用 | 实现定义 | 跨平台不一致 |
+
+**为什么跨平台可复现很重要**：测试、调试、A/B 实验都要求"同样的种子产生同样的序列"。`default_random_engine` 在不同标准库上不是同一个算法，所以要用 `mt19937` 这种明确指定的引擎。
+
+**一个常见误区**：`srand(time(0))` 初始化 `rand()`，同一秒内启动两次会得到相同序列——`rand()` 的这个坑在测试里很致命。
+@FOLLOW
+1. **`mt19937` 和 `mt19937_64` 区别？** —— 输出位宽 32 / 64，后者适合生成 64 位随机数。
+2. **`random_device` 慢吗？** —— 慢（可能读 `/dev/urandom`），一般只用来做一次种子。
+3. **洗牌算法本身有坑吗？** —— 有，错误的写法（每次和随机位置交换整个数组）会导致排列不均匀；`shuffle` 内部是正确的 Fisher-Yates。
+@TRAPS
+- 用 `rand() % n`（低位周期短、分布不均）
+- 用 `default_random_engine` 却要求跨平台可复现
+- `srand(time(0))` 在同一秒内重复初始化
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 随机数与 STL 算法（预测题，非真实面经）
+
+@@ Q-0680
+**STEM
+@STEM
+**题目**：`std::reverse(v.begin(), v.end())` 用了 `std::list` 却编不过。
+
+**问**：`std::reverse` 的复杂度是多少？它需要哪类迭代器？`list` 该怎么反转？
+@ANSWER
+`std::reverse` 是 O(n)，只需要**双向迭代器**（能 `++` 和 `--`），所以 `list` **可以**用——真正的限制是它不能用于前向迭代器（如 `forward_list`）。
+
+`list` 有自己的成员 `reverse()`，是 O(n) 且**不交换元素值、只改指针**，比 `std::reverse` 更高效。
+@DEEP
+```cpp
+std::vector<int> v{1,2,3};
+std::reverse(v.begin(), v.end());        // ✅ 双向迭代器即可
+
+std::list<int> l{1,2,3};
+std::reverse(l.begin(), l.end());        // ✅ 也能用（交换值）
+l.reverse();                             // ✅ 更好：只改指针，O(n) 且元素不被移动
+
+std::forward_list<int> fl;
+// std::reverse(fl.begin(), fl.end());   // ❌ 前向迭代器不够
+```
+
+| 算法 | 迭代器要求 | 复杂度 |
+|---|---|---|
+| `reverse` | 双向 | O(n) |
+| `reverse_copy` | 双向输入 | O(n) |
+| `sort` | 随机访问 | O(n log n) |
+| `stable_sort` | 随机访问 | O(n log² n) 或 O(n log n) |
+| `list::reverse` | — | O(n)，只改指针 |
+
+**为什么 `list::reverse` 更好**：`std::reverse` 用 `std::swap(*first, *last)` 交换元素值，对 `list` 意味着多次对象赋值；成员版本直接改节点指针，大对象时差距明显。
+
+**同类规律**：`list` 有成员 `sort`、`reverse`、`merge`、`splice`，都是指针操作版本。
+@FOLLOW
+1. **`reverse` 会失效迭代器吗？** —— 不会，只交换值，迭代器仍有效但指向的元素变了。
+2. **怎么反转字符串？** —— `std::reverse(s.begin(), s.end())`；或 `std::string(s.rbegin(), s.rend())`。
+3. **`rbegin()` 和 `reverse` 的关系？** —— 前者是反向视图，不修改容器；后者原地修改。
+@TRAPS
+- 以为 `reverse` 需要随机访问迭代器
+- 对 `list` 用 `std::reverse` 而不是成员 `reverse`
+- 对 `forward_list` 用 `reverse`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 算法与迭代器要求（预测题，非真实面经）
+
+@@ Q-0681
+**STEM
+@STEM
+**题目**：把一段 `int` 数组复制到另一个数组，用 `std::copy` 还是 `memcpy`？
+
+**问**：两者有什么区别？什么情况下不能互换？为什么非平凡类型只能用 `std::copy`？
+@ANSWER
+`std::copy` 是**类型安全的元素级复制**，对每个元素调用拷贝赋值/拷贝构造；`memcpy` 是**按字节复制**，完全不管类型。
+
+对 `int`、`double` 这类**平凡可复制（trivially copyable）**类型，两者等价（`memcpy` 可能更快）；对 `std::string`、`vector`、含虚函数的类，`memcpy` 会复制指针而不复制内容，导致双重释放或悬垂。
+@DEEP
+```cpp
+int a[10], b[10];
+std::copy(a, a + 10, b);          // ✅
+memcpy(b, a, sizeof(a));          // ✅ 对 int 也安全
+
+std::string s1[3] = {"a","b","c"}, s2[3];
+// memcpy(s2, s1, sizeof(s1));    // ❌ 复制了内部指针，析构时双重释放
+std::copy(s1, s1 + 3, s2);        // ✅ 调用 string 的拷贝赋值
+```
+
+| 类型 | `memcpy` 安全 | 原因 |
+|---|---|---|
+| `int` / `double` / POD | ✅ | 平凡可复制 |
+| `std::string` | ❌ | 内部有堆指针 |
+| `std::vector` | ❌ | 同上 |
+| 含虚函数的类 | ❌ | vptr 复制后可能错乱 |
+| `std::shared_ptr` | ❌ | 引用计数不增加 |
+
+**判断标准**：`std::is_trivially_copyable_v<T>` 为真才能用 `memcpy`。
+
+**性能**：对平凡类型，现代编译器的 `std::copy` 会特化调用 `memmove`，和手写 `memcpy` 一样快；所以"`memcpy` 更快"这个说法在平凡类型上基本不成立。
+@FOLLOW
+1. **`memcpy` 和 `memmove` 区别？** —— 后者处理内存重叠，前者重叠时未定义。
+2. **`std::copy` 能处理重叠区间吗？** —— 不能保证，重叠要用 `std::copy_backward` 或 `memmove`。
+3. **`std::uninitialized_copy` 什么时候用？** —— 目标内存是原始未构造内存时（如自己实现容器）。
+@TRAPS
+- 对 `std::string` 数组用 `memcpy`
+- 用 `memcpy` 复制含虚函数的对象
+- 区间重叠时用 `memcpy`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+C++ 内存操作与算法（预测题，非真实面经）
+
+@@ Q-0682
+**STEM
+@STEM
+**题目**：
+
+```cpp
+std::vector<double> v{1.5, 2.5};
+double s = std::accumulate(v.begin(), v.end(), 0);    // 结果是 3，不是 4
+```
+
+**问**：为什么结果是 3？初始值为什么不能省？填 `0` 会踩什么坑？
+@ANSWER
+因为 `accumulate` 的**累加器类型就是初始值的类型**。这里初始值是 `0`（`int`），所以每次加法都按 `int` 进行，`1.5` 被截断成 `1`，`2.5` 截断成 `2`，最后 `1+2=3`。
+
+正确写法是 `0.0`，或者显式指定类型 `std::accumulate<double>(...)`（C++20）。
+@DEEP
+```cpp
+// ❌ 整数累加，小数被截断
+double s1 = std::accumulate(v.begin(), v.end(), 0);
+
+// ✅ 初始值类型正确
+double s2 = std::accumulate(v.begin(), v.end(), 0.0);
+
+// ✅ C++20 可以显式指定
+double s3 = std::accumulate<double>(v.begin(), v.end(), 0);
+```
+
+| 初始值 | 累加器类型 | 结果 |
+|---|---|---|
+| `0` | `int` | 截断 |
+| `0.0` | `double` | 正确 |
+| `0LL` | `long long` | 防溢出 |
+| `std::string{}` | `string` | 字符串拼接 |
+
+**为什么初始值"不能省"**：它同时承担两个作用——**起点值**和**类型声明**。这也是为什么它对空区间返回的就是初始值本身。
+
+**另一个常见用法**：拼接字符串 `std::accumulate(v.begin(), v.end(), std::string{})`，但注意每次 `+=` 可能重新分配，性能差；要拼大量字符串应先 `reserve` 或用 `std::ostringstream`。
+@FOLLOW
+1. **能自定义操作吗？** —— 能，第四个参数传二元函数：`accumulate(..., 1, std::multiplies<>())` 求积。
+2. **求和会溢出吗？** —— 会，元素接近 `INT_MAX` 时要用 `long long` 初始值。
+3. **`reduce` 和 `accumulate` 区别？** —— `reduce`（C++17）允许乱序执行，要求操作满足结合律，可并行。
+@TRAPS
+- 初始值填 `0` 累加浮点
+- 忘记初始值类型决定返回值类型
+- 用 `accumulate` 拼字符串却不预估容量
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 数值算法（预测题，非真实面经）
+
+@@ Q-0683
+**STEM
+@STEM
+**题目**：`std::set_intersection(a.begin(), a.end(), b.begin(), b.end(), out)` 在未排序的 `vector` 上返回了错误结果。
+
+**问**：为什么要求两个区间都有序？输出是什么顺序？复杂度是多少？
+@ANSWER
+因为它用的是**归并式双指针扫描**：两个指针各自前进，比较当前元素，相等就输出、两边都前进，不等就移动较小的那边。这个逻辑只有在**有序**时才能保证不漏掉交集元素。
+
+输出天然有序（因为是按顺序扫描出来的），复杂度 O(n+m)。
+@DEEP
+```cpp
+std::vector<int> a{1,2,3,4}, b{3,4,5};
+std::sort(a.begin(), a.end());       // 必须有序
+std::sort(b.begin(), b.end());
+std::vector<int> out;
+std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
+                      std::back_inserter(out));   // {3,4}
+```
+
+```cpp
+// 内部逻辑（简化）
+while (first1 != last1 && first2 != last2) {
+    if (*first1 < *first2) ++first1;
+    else if (*first2 < *first1) ++first2;
+    else { *d_first++ = *first1; ++first1; ++first2; }
+}
+```
+
+| 算法 | 输入要求 | 输出 | 重复元素 |
+|---|---|---|---|
+| `set_intersection` | 有序 | 有序 | 取较少的次数 |
+| `set_union` | 有序 | 有序 | 取较多的次数 |
+| `set_difference` | 有序 | 有序 | 差集 |
+| `merge` | 有序 | 有序 | 全部保留 |
+
+**输出容量**：`set_intersection` 不自己扩容，目标区间必须够大，或者用 `back_inserter`。
+
+**为什么不用 `std::set`**：`set_intersection` 对**任意有序区间**都有效（`vector`、数组、`list`），不要求容器是 `set`。
+@FOLLOW
+1. **怎么去重？** —— 先 `sort` 再 `unique` + `erase`，或直接用 `set`。
+2. **能用自定义比较吗？** —— 能，最后一个参数传比较器，两边必须用同一个。
+3. **未排序时怎么办？** —— 先排序（O(n log n)），或用哈希集合（O(n) 但需要额外空间）。
+@TRAPS
+- 输入未排序就调 `set_intersection`
+- 目标区间容量不足（越界写）
+- 两个区间用了不同的比较器
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 集合算法（预测题，非真实面经）
+
+@@ Q-0684
+**STEM
+@STEM
+**题目**：`merge` 和 `set_union` 都合并两个有序区间，结果有什么不同？
+
+**问**：两者有什么区别？什么场景该用哪个？
+@ANSWER
+`merge` **原样保留所有元素**（包括两边都有的重复元素），结果长度是两段长度之和；`set_union` **去重**，两个区间都有的元素只出现一次，长度是并集的势。
+
+所以 `merge` 用于**归并排序**这类不能丢元素的场景，`set_union` 用于**集合运算**。
+@DEEP
+```cpp
+std::vector<int> a{1,2,3}, b{2,3,4};
+std::vector<int> m, u;
+
+std::merge(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(m));
+// m = {1,2,2,3,3,4}   长度 6
+
+std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(u));
+// u = {1,2,3,4}       长度 4
+```
+
+| 算法 | 结果 | 长度 | 用途 |
+|---|---|---|---|
+| `merge` | 全部保留 | n+m | 归并排序 |
+| `set_union` | 去重 | ≤ n+m | 集合运算 |
+| `set_intersection` | 交集 | ≤ min(n,m) | 集合运算 |
+| `set_difference` | 差集 | ≤ n | 集合运算 |
+| `inplace_merge` | 原地合并同一容器两段 | n+m | 原地归并 |
+
+**注意 `merge` 不排序**：它假设两段**各自已有序**，合并结果有序；如果输入无序，结果也无序。
+
+**`inplace_merge` 的用途**：在归并排序的递归实现里，合并同一个数组的两段，不需要额外空间（内部用旋转或临时缓冲）。
+@FOLLOW
+1. **`set_union` 对同一区间内的重复元素怎么处理？** —— 保留每个区间内的重复（取较多的次数），只对"两边都有"的去重。
+2. **`merge` 能用于 `list` 吗？** —— 能，但 `list::merge` 更高效（只改指针）。
+3. **合并后想去重怎么办？** —— 先 `merge` 再 `unique`（要求结果有序）。
+@TRAPS
+- 用 `merge` 当集合并集（结果有重复）
+- 输入未排序就合并
+- 目标区间容量不足
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 集合算法（预测题，非真实面经）
+
+@@ Q-0685
+**STEM
+@STEM
+**题目**：`set_difference(a, b)` 里有重复元素时，结果怎么算？
+
+**问**：差集遇到重复元素怎么处理？`{1,1,2,3}` 减 `{1,2}` 得到什么？
+@ANSWER
+规则是**逐个抵消**：对每个值，如果 `a` 里有 m 个、`b` 里有 n 个，结果保留 `max(m - n, 0)` 个。
+
+所以 `{1,1,2,3}` 减 `{1,2}` 得到 `{1,3}`——`1` 抵消掉一个还剩一个，`2` 抵消完，`3` 保留。
+@DEEP
+```cpp
+std::vector<int> a{1,1,2,3}, b{1,2};
+std::vector<int> d;
+std::set_difference(a.begin(), a.end(), b.begin(), b.end(),
+                    std::back_inserter(d));   // {1,3}
+```
+
+| 运算 | `{1,1,2,3}` 与 `{1,2}` | 结果 |
+|---|---|---|
+| intersection | 取 min(m,n) | `{1,2}` |
+| union | 取 max(m,n) | `{1,1,2,3}` |
+| difference | 取 max(m-n,0) | `{1,3}` |
+| symmetric_difference | 取 \|m-n\| | `{1,3}` |
+
+**这是个常见的"以为是用集合语义"的坑**：很多人以为会去重成 `{3}`，实际是多重集（multiset）语义。
+
+**要真正的集合语义**：先去重（`sort` + `unique`）再做差集。
+
+**`set_symmetric_difference`**（对称差）是"只在一边出现"的元素，`{1,3}` 也是它的结果，但语义不同（它保留两边差异的总和）。
+@FOLLOW
+1. **想要去重语义怎么办？** —— 输入先去重：`sort` + `unique` + `erase`。
+2. **对称差和差集有什么区别？** —— 对称差保留"两边不一致的"，差集只保留"a 有 b 没有的"。
+3. **能对未排序区间用吗？** —— 不能，行为未定义。
+@TRAPS
+- 以为差集会去重
+- 输入未排序
+- 目标容量不足
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+STL 集合算法（预测题，非真实面经）
+
+@@ Q-0686
+**STEM
+@STEM
+**题目**：`int t = std::time(nullptr);` 存时间戳，2038 年会怎样？
+
+**问**：为什么不能用 `int` 存时间戳？除了溢出还有什么坑？
+@ANSWER
+`int` 只有 32 位，`time_t` 的秒数在 **2038-01-19 会溢出**（超过 `INT_MAX` 约 21.4 亿秒），变成负数——这是著名的"2038 问题"。
+
+除此之外还有三个坑：**`time_t` 不保证是秒**、**不包含时区信息**、**精度只到秒**（测耗时完全不够）。
+@DEEP
+```cpp
+// ❌
+int t = std::time(nullptr);          // 2038 溢出
+
+// ✅
+std::int64_t t = std::time(nullptr); // 或 std::time_t
+auto now = std::chrono::system_clock::now();
+auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+              now.time_since_epoch()).count();   // 毫秒，int64
+```
+
+| 类型 | 位宽 | 范围 | 适用 |
+|---|---|---|---|
+| `int`（32 位） | 32 | ±2.1e9 秒 | ❌ 时间戳 |
+| `time_t` | 通常 64 位 | 足够 | ✅（但标准不保证） |
+| `int64_t` | 64 | 约 ±2920 亿年（纳秒） | ✅ 显式 |
+| `chrono::seconds` | 至少 35 位 | 标准保证 | ✅ 推荐 |
+
+**三个额外注意点**：
+1. **`time_t` 单位未规定**（通常是秒，但标准只说"实现定义"）；
+2. **`std::time` 返回的是 UTC 秒数**，转本地时间要 `localtime`，而 `localtime` **不是线程安全的**（要用 `localtime_r`）；
+3. **系统时间会被 NTP 调整**，用 `system_clock` 测耗时可能得到负数——测耗时必须用 `steady_clock`。
+@FOLLOW
+1. **怎么存毫秒时间戳？** —— `int64_t` + `duration_cast<milliseconds>`。
+2. **跨时区怎么处理？** —— 内部统一存 UTC，展示时按用户时区转换。
+3. **`localtime` 为什么不安全？** —— 返回指向静态缓冲区的指针，多线程会互相覆盖。
+@TRAPS
+- 用 `int` 存 `time_t`
+- 用 `system_clock` 测耗时（可能被 NTP 调整）
+- 多线程里用 `localtime`
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 时间处理（预测题，非真实面经）
+
+@@ Q-0687
+**STEM
+@STEM
+**题目**：`chrono` 里有三个时钟，写代码时该用哪个？
+
+**问**：`steady_clock`、`system_clock`、`high_resolution_clock` 各自的特点是什么？分别用在哪？
+@ANSWER
+`system_clock` 是**墙上时钟**（能转成日历时间），但**可能被 NTP 调整、不单调**；`steady_clock` **保证单调递增**，专门用来测间隔；`high_resolution_clock` 是"精度最高的那个"，但**它可能是前两者的别名**，不保证单调。
+
+所以：**测耗时用 `steady_clock`，取当前日期时间用 `system_clock`，不要用 `high_resolution_clock`**。
+@DEEP
+```cpp
+// 测耗时
+auto t0 = std::chrono::steady_clock::now();
+doWork();
+auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(
+              std::chrono::steady_clock::now() - t0);
+
+// 取日历时间
+auto now = std::chrono::system_clock::now();
+std::time_t tt = std::chrono::system_clock::to_time_t(now);
+```
+
+| 时钟 | 单调 | 可转日历 | 典型精度 | 用途 |
+|---|---|---|---|---|
+| `system_clock` | ❌ | ✅ | 微秒~纳秒 | 时间戳、日志 |
+| `steady_clock` | ✅ | ❌ | 纳秒 | **测耗时** |
+| `high_resolution_clock` | 看实现 | 看实现 | 最高 | 不推荐 |
+
+**`high_resolution_clock` 的陷阱**：libstdc++ 里它是 `system_clock` 的别名（**不单调**），MSVC 里是 `steady_clock` 的别名。同一份代码在不同平台行为不同，所以标准库作者（如 libc++）都不推荐用它。
+
+**为什么单调性重要**：NTP 校时可能让 `system_clock` 往回跳，测出来的耗时变成负数或巨大值。这类 bug 在容器/云环境里很常见。
+@FOLLOW
+1. **`steady_clock` 的起点是什么？** —— 未指定（通常是开机时间），所以只能算差值，不能当时间戳。
+2. **精度和分辨率是一回事吗？** —— 不是，`period` 是刻度单位，实际分辨率取决于底层实现。
+3. **跨进程能比较 `steady_clock` 吗？** —— 不能保证，起点可能不同。
+@TRAPS
+- 用 `system_clock` 测耗时
+- 用 `high_resolution_clock` 以为它一定单调
+- 把 `steady_clock` 的值当时间戳存起来
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ chrono（预测题，非真实面经）
+
+@@ Q-0688
+**STEM
+@STEM
+**题目**：`auto d = end - start;` 之后 `cout << d.count()` 输出 `0`，明明跑了几百毫秒。
+
+**问**：为什么直接相减得到 0？`duration_cast` 在做什么？不做会怎样？
+@ANSWER
+因为 `steady_clock` 的 `duration` 单位通常是**纳秒**，而如果代码里把结果赋给了默认构造的 `seconds` 类型，整数除法会**截断**——几百毫秒变成 0 秒。
+
+`duration_cast` 负责**在不同时间单位之间转换**，并且它做的是**截断（向零取整）**，不是四舍五入。
+@DEEP
+```cpp
+auto t0 = std::chrono::steady_clock::now();
+doWork();
+auto t1 = std::chrono::steady_clock::now();
+
+// ❌ 隐式转换到 seconds，截断
+std::chrono::seconds s = t1 - t0;      // 编译不过（duration 精度不同不能隐式转）
+
+// ✅ 显式转换
+auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+std::cout << ms.count() << " ms\n";
+
+// ✅ 直接打印（C++20 有 operator<<）
+std::cout << std::chrono::duration<double>(t1 - t0).count() << " s\n";
+```
+
+| 转换方式 | 精度损失 | 说明 |
+|---|---|---|
+| `duration_cast<ms>` | 截断 | 精度降低时截断 |
+| `duration<double>` | 无（浮点） | 保留小数 |
+| 隐式转换 | 只允许精度提升 | `ms` → `us` 可以，反之不行 |
+
+**为什么不允许隐式降精度**：会静默丢失信息。C++ 规定只有"精度提升"（如秒→毫秒）才能隐式转换，降精度必须显式 `duration_cast`。
+
+**测极短操作用纳秒**：`duration_cast<nanoseconds>`，或者直接用 `duration<double, std::nano>`。
+@FOLLOW
+1. **能四舍五入吗？** —— `duration_cast` 是截断；要四舍五入得手动处理。
+2. **浮点 duration 有什么用？** —— 保留小数，适合算平均耗时。
+3. **两个 `steady_clock` 相减的类型是什么？** —— `steady_clock::duration`，单位由实现决定。
+@TRAPS
+- 相减后直接 `count()` 就打印，单位搞错
+- 用整数除法换算（精度丢失）
+- 以为 `duration_cast` 会四舍五入
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ chrono 转换（预测题，非真实面经）
+
+@@ Q-0689
+**STEM
+@STEM
+**题目**：`high_resolution_clock::now()` 两次相减，偶尔得到负数。
+
+**问**：`high_resolution_clock` 为什么可能不单调？测耗时应选哪个？怎么验证？
+@ANSWER
+因为标准只规定它是"**精度最高的时钟**"，**没规定它必须单调**。libstdc++ 里它就是 `system_clock` 的别名——墙钟会被 NTP 往回调整，于是出现负的耗时。
+
+测耗时必须用 `steady_clock`，标准明确保证它单调。验证方法是查类型的 `is_steady` 常量。
+@DEEP
+```cpp
+static_assert(std::chrono::steady_clock::is_steady, "必须是单调时钟");
+// 如果换成 high_resolution_clock，这个断言在 libstdc++ 上会失败
+
+// 运行时检查
+std::cout << "high_res: " << std::chrono::high_resolution_clock::is_steady
+          << ", steady: " << std::chrono::steady_clock::is_steady << "\n";
+// libstdc++ 输出: 0, 1
+```
+
+| 平台 | `high_resolution_clock` 的别名 | 单调 |
+|---|---|---|
+| libstdc++（GCC） | `system_clock` | ❌ |
+| libc++（Clang） | `steady_clock` | ✅ |
+| MSVC | `steady_clock` | ✅ |
+
+**为什么会有"偶尔负数"**：云主机 / 容器里 NTP 校时频繁，墙钟回跳几十毫秒很常见。如果你的超时逻辑用墙钟，就会出现"刚设置 1 秒超时，立刻判定超时"的诡异现象。
+
+**推论**：所有"间隔""超时""限流"的时间计算都必须用单调时钟。
+@FOLLOW
+1. **`is_steady` 是编译期常量吗？** —— 是，可以 `static_assert`。
+2. **`steady_clock` 精度够吗？** —— 通常纳秒级，足够。
+3. **日志时间戳该用哪个？** —— `system_clock`（需要真实时间），但耗时字段用 `steady_clock` 算。
+@TRAPS
+- 用 `high_resolution_clock` 测耗时
+- 用墙钟实现超时逻辑
+- 以为"高精度"就等于"单调"
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 时钟选择（预测题，非真实面经）
+
+@@ Q-0690
+**STEM
+@STEM
+**题目**：每个函数里都写 `auto t0 = now(); ... auto dt = now() - t0;`，十几个函数重复，而且中途 `return` 就漏了。
+
+**问**：怎么用 RAII 封装一个计时器？为什么这样比手动打点好？
+@ANSWER
+构造时记录起点，析构时算差值并输出——这样**任何退出路径（`return`、`throw`、提前 `break`）都会触发计时**，不会漏。
+
+这就是 RAII 在"测量"上的应用：把"收尾动作"绑到对象生命周期上。
+@DEEP
+```cpp
+class ScopedTimer {
+    using clock = std::chrono::steady_clock;
+    const char* name_;
+    clock::time_point start_;
+public:
+    explicit ScopedTimer(const char* name) : name_(name), start_(clock::now()) {}
+    ~ScopedTimer() {
+        auto ms = std::chrono::duration_cast<std::chrono::microseconds>(
+                      clock::now() - start_).count() / 1000.0;
+        std::cout << name_ << ": " << ms << " ms\n";
+    }
+    ScopedTimer(const ScopedTimer&) = delete;             // 禁止拷贝
+    ScopedTimer& operator=(const ScopedTimer&) = delete;
+};
+
+void work() {
+    ScopedTimer t("work");     // 作用域结束自动输出
+    if (bad) return;           // 也会输出
+    doSomething();             // 抛异常也会输出
+}
+```
+
+| 关键点 | 原因 |
+|---|---|
+| 禁止拷贝 | 否则会输出两次 |
+| 用 `steady_clock` | 墙钟可能回跳 |
+| 析构里不抛异常 | 抛了会 `terminate` |
+| 单位用浮点 | 避免截断成 0 |
+
+**进阶用法**：把结果累加到线程局部统计里，最后统一输出；或用宏 `#define TIME_SCOPE(name) ScopedTimer _t(name)` 省去起名。
+@FOLLOW
+1. **怎么只在调试时启用？** —— 用宏包起来，Release 下展开成空。
+2. **能测嵌套吗？** —— 能，每层一个对象，输出顺序是逆序（内层先结束）。
+3. **多线程会串行输出吗？** —— `cout` 的每次 `<<` 不是原子的，多线程要加锁或用独立缓冲。
+@TRAPS
+- 计时器可拷贝，输出两次
+- 用 `system_clock`
+- 析构函数里 `throw`
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+- YOLO_部署实施记录.html
+@SOURCE
+C++ RAII 与计时（预测题，非真实面经）
+
+@@ Q-0691
+**STEM
+@STEM
+**题目**：面试官让你说说用 `chrono` 计时踩过哪些坑。
+
+**问**：用 `chrono` 计时的三个常见错误是什么？各自的现象和修法？
+@ANSWER
+三个最常见的：**用错时钟**（墙钟被 NTP 调整，出现负耗时）、**单位截断**（纳秒转秒变 0）、**只测一次**（缓存预热、CPU 频率变化导致数据不可信）。
+
+前两个是正确性问题，第三个是方法论问题——单次测量几乎总是错的。
+@DEEP
+| 错误 | 现象 | 修法 |
+|---|---|---|
+| 用 `system_clock` / `high_resolution_clock` | 偶发负耗时、极端值 | 换 `steady_clock` |
+| `duration_cast<seconds>` | 结果恒为 0 | 用毫秒/微秒或浮点 |
+| 只跑一次 | 数据抖动大、不可复现 | 预热 + 多次取中位数/p99 |
+| 循环里混入 I/O | 测的是 I/O 不是计算 | 把测量范围缩到核心逻辑 |
+| 编译器把被测代码优化掉 | 耗时接近 0 | 用 `benchmark::DoNotOptimize` 或累加结果输出 |
+
+```cpp
+// ✅ 一个可信的最小模板
+auto bench = [](auto&& f, int n = 100) {
+    for (int i = 0; i < 10; ++i) f();          // 预热
+    std::vector<double> ts;
+    for (int i = 0; i < n; ++i) {
+        auto t0 = std::chrono::steady_clock::now();
+        f();
+        ts.push_back(std::chrono::duration<double, std::milli>(
+                         std::chrono::steady_clock::now() - t0).count());
+    }
+    std::sort(ts.begin(), ts.end());
+    return ts[ts.size() / 2];                  // 中位数
+};
+```
+
+**为什么用中位数不用平均**：偶发的调度抖动会严重拉高平均值，中位数更能代表典型情况；同时报告 p99 反映最差情况。
+@FOLLOW
+1. **为什么要预热？** —— 首次调用有冷缓存、动态链接、CPU 升频等一次性开销。
+2. **`DoNotOptimize` 是什么？** —— Google Benchmark 提供的屏障，防止编译器把被测代码优化掉。
+3. **测出来波动 20% 正常吗？** —— 在多任务系统上正常，要报告分布而不是单值。
+@TRAPS
+- 用墙钟测耗时
+- 只跑一次就下结论
+- 被测代码被优化掉，耗时接近 0
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+- YOLO_部署实施记录.html
+@SOURCE
+C++ 性能测量（预测题，非真实面经）
+
+@@ Q-0692
+**STEM
+@STEM
+**题目**：`std::bind(&Foo::bar, this, _1)` 和 `[this](int x){ bar(x); }` 功能一样。
+
+**问**：`std::bind` 和 lambda 都能做绑定，为什么现在更推荐 lambda？
+@ANSWER
+lambda 更**易读、易调试、类型安全**，而且没有 `bind` 的那些怪癖：参数求值时机、嵌套 `bind` 的 `std::placeholders` 冲突、重载函数无法直接绑定。
+
+性能上 lambda 通常更好（编译器容易内联），`bind` 返回的对象类型复杂，容易生成难读的错误信息。
+@DEEP
+```cpp
+struct Foo { void bar(int, double); int v = 0; };
+Foo f;
+
+// bind
+auto b = std::bind(&Foo::bar, &f, std::placeholders::_1, 3.14);
+
+// lambda（推荐）
+auto l = [&f](int x) { f.bar(x, 3.14); };
+```
+
+| 维度 | `std::bind` | lambda |
+|---|---|---|
+| 可读性 | 差（占位符多） | 好 |
+| 重载函数 | ❌ 无法直接绑定 | ✅ 可写清楚 |
+| 参数求值时机 | 调用时（易错） | 显式决定 |
+| 内联 | 较难 | 容易 |
+| 嵌套 | `_1` 冲突 | 天然支持 |
+| C++ 状态 | C++11 起可用，C++20 起 `bind_front` 更好 | 首选 |
+
+**`bind` 的经典坑**：`std::bind(&Foo::bar, f, _1)` 传的是**对象副本**，调用的是副本的成员函数，修改不到原对象。必须写 `std::ref(f)` 或传指针。
+
+**替代品**：C++20 的 `std::bind_front` 比 `bind` 简单安全（不支持重排参数，只支持前置绑定）。
+@FOLLOW
+1. **什么时候还必须用 `bind`？** —— 需要重排参数顺序、或用 `_1` 做占位时；`bind_front` 做不到。
+2. **lambda 能存进 `std::function` 吗？** —— 能，但有类型擦除开销。
+3. **`bind` 传成员函数为什么要对象？** —— 成员函数需要 `this`，`bind` 把第一个参数当 `this`。
+@TRAPS
+- `bind` 传对象副本，改不到原对象
+- 嵌套 `bind` 的 `_1` 全部指向最外层
+- 绑定重载函数时出现歧义
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 函数绑定（预测题，非真实面经）
+
+@@ Q-0693
+**STEM
+@STEM
+**题目**：`[=]`、`[&]`、`[this]`、`[x, &y]` 几种捕获方式，什么时候会捕获到悬垂引用？
+
+**问**：`[=]` 和 `[&]` 有什么区别？什么情况下 lambda 会捕获到已销毁的对象？
+@ANSWER
+`[=]` **按值捕获**（拷贝一份，lambda 内部只读，除非 `mutable`），`[&]` **按引用捕获**（引用原对象，能改，但有生命周期风险）。
+
+危险的场景：**lambda 的生命周期超过被捕获对象**——比如把 `[&]` 的 lambda 存进回调、丢给线程、或返回出去，等它执行时局部变量已经销毁。
+@DEEP
+```cpp
+// ❌ 悬垂引用
+std::function<void()> f;
+{
+    int x = 1;
+    f = [&x] { std::cout << x; };   // x 已经销毁
+}
+f();
+
+// ✅ 按值捕获
+std::function<void()> g;
+{
+    int x = 1;
+    g = [x] { std::cout << x; };    // 拷贝 1
+}
+g();
+```
+
+| 捕获 | 拷贝 | 可修改 | 风险 |
+|---|---|---|---|
+| `[=]` | ✅ | 需 `mutable` | 拷贝开销、对象切片 |
+| `[&]` | ❌ | ✅ | **悬垂**（生命周期） |
+| `[this]` | 指针 | ✅ | `this` 悬垂 |
+| `[x, &y]` | 混合 | y 可改 | y 悬垂 |
+| `[p = std::move(ptr)]` | 移动 | ✅ | 无（C++14 初始化捕获） |
+
+**`[=]` 也有坑**：它捕获 `this` 指针（不是对象副本），所以成员函数里用 `[=]` 返回 lambda，对象销毁后一样悬垂。C++20 起 `[=]` 捕获 `this` 被弃用，要求显式 `[this]` 或 `[*this]`。
+
+**异步场景的铁律**：跨线程/跨回调的 lambda 一律按值捕获（或用 `shared_ptr` 保活），不要用 `[&]`。
+@FOLLOW
+1. **`[*this]` 是什么？** —— C++17 起按值捕获整个对象副本，避免 `this` 悬垂。
+2. **`[=]` 真的一律拷贝吗？** —— 数组会退化成指针、`this` 是指针、大对象会拷贝，不总是你想要的。
+3. **怎么在 lambda 里改按值捕获的变量？** —— 加 `mutable`，但改的是副本。
+@TRAPS
+- `[&]` 的 lambda 跨线程/跨回调使用
+- 成员函数里 `[=]` 返回 lambda，`this` 悬垂
+- 以为 `[=]` 拷贝了整个对象
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ lambda 捕获（预测题，非真实面经）
+
+@@ Q-0695
+@STEM
+**场景**：C++ 项目要解析 XML，选库时发现 TinyXML2、pugixml、libxml2、RapidXML 各有拥趸，装了一个发现 API 完全不一样。
+
+**问**：为什么"装了哪个库"会成为问题？选型该看什么？
+@ANSWER
+因为 C++ **没有标准 XML 库**，每个库的 API、内存模型、许可证、依赖都不同——不像 Python 有 `xml.etree`。
+
+选型要看四点：**API 风格**（DOM 还是 SAX）、**依赖**（是否要 expat/iconv）、**许可证**（商用是否友好）、**维护状态**。
+@DEEP
+| 库 | 风格 | 依赖 | 许可证 | 特点 |
+|---|---|---|---|---|
+| pugixml | DOM | 无（单文件） | MIT | 轻量、快、API 简洁 |
+| TinyXML2 | DOM | 无 | zlib | 极小，功能够用 |
+| RapidXML | DOM | 无 | MIT/Boost | 极快，但会修改输入缓冲 |
+| libxml2 | DOM + SAX | 有 | MIT | 功能全，体积大 |
+| Boost.PropertyTree | DOM | Boost | Boost | 通用（XML/JSON/INI），性能一般 |
+
+```cpp
+// pugixml
+pugi::xml_document doc;
+doc.load_file("cfg.xml");
+for (auto node : doc.child("root").children("item"))
+    std::cout << node.attribute("id").as_int();
+```
+
+**C++ 生态的普遍问题**：标准库覆盖窄，选库时要额外考虑 ABI 稳定性、是否 header-only、能否静态链接进 SDK。
+
+**面试里能加分的一句**：如果只是读配置，优先 JSON（有 nlohmann/json 这种 header-only 的成熟方案）；XML 只在对接已有系统时才用。
+@FOLLOW
+1. **DOM 和 SAX 怎么选？** —— 文件小、要随机访问用 DOM；文件大（几百 MB）用 SAX 流式解析。
+2. **header-only 有什么好处？** —— 不用处理链接和 ABI，直接拷进项目。
+3. **解析安全要注意什么？** —— XXE（外部实体注入）和实体展开炸弹，要禁用 DTD。
+@TRAPS
+- 引入重量级库只为了读一个配置
+- 忽略许可证（GPL 库进商业 SDK）
+- 不处理 XXE，解析外部输入有安全风险
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+C++ 第三方库选型（预测题，非真实面经）
+
+@@ Q-0696
+@STEM
+**场景**：多线程程序本地跑一万次都没问题，上线后偶发崩溃，日志里看不出原因。
+
+**问**：多线程程序「能跑」和「跑对」差在哪？哪些问题是"能跑但不对"的？
+@ANSWER
+差在**是否满足同步约束**。"能跑"只说明这次调度没触发竞争，不代表代码正确——数据竞争是**未定义行为**，可能这次对、下次错、换台机器又对。
+
+典型"能跑但不对"：**数据竞争**（无锁读写共享变量）、**伪共享**（性能问题）、**死锁**（特定交错才触发）、**可见性**（缓存/重排导致读到旧值）。
+@DEEP
+| 问题 | 表现 | 检测手段 |
+|---|---|---|
+| 数据竞争 | 偶发错值、崩溃 | TSan（`-fsanitize=thread`） |
+| 死锁 | 卡住不返回 | 固定加锁顺序、超时检测 |
+| 可见性 | 循环读到旧值 | `atomic` 或 `mutex` |
+| 伪共享 | 多核性能上不去 | 缓存行对齐、`alignas(64)` |
+| ABA | CAS 逻辑失效 | 版本号/标记指针 |
+
+```bash
+g++ -fsanitize=thread -g main.cpp     # ThreadSanitizer 能直接报竞争
+```
+
+**为什么很难复现**：竞争窗口可能只有几个指令周期，需要特定核数、特定负载。所以"跑一万次没事"没有说服力，要靠工具和推理。
+
+**一条实用纪律**：共享可变状态要么用 `mutex`/`atomic` 保护，要么彻底不共享（线程局部、消息传递）。
+@FOLLOW
+1. **`atomic` 能替代 `mutex` 吗？** —— 单个变量的读写可以；多个变量要保持一致（不变量）就必须用锁。
+2. **内存序要设吗？** —— 默认 `seq_cst` 最安全；追求性能才考虑 `acquire/release`，且要能证明正确性。
+3. **怎么排查偶发死锁？** —— 固定全局加锁顺序，或用 `try_lock` + 超时打日志。
+@TRAPS
+- 用"跑了很多次没问题"证明线程安全
+- 用 `volatile` 代替 `atomic`
+- 多线程里用 `rand()`（不是线程安全的）
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 并发（预测题，非真实面经）
+
+@@ Q-0697
+@STEM
+**题目**：
+
+```cpp
+void f() {
+    std::thread t([]{ doWork(); });
+}   // 程序直接 terminate
+```
+
+**问**：为什么 `std::thread` 析构时必须已经 `join` 或 `detach`？两种选择各适合什么场景？
+@ANSWER
+因为 `std::thread` 析构时如果线程**仍可 join**（还在运行且没 detach），标准要求调用 `std::terminate`——这是刻意设计的：**不允许静默丢弃一个还在跑的线程**。
+
+`join` 是等待它结束（同步），`detach` 是放任它自己跑（分离）。要么明确等，要么明确放手，不允许含糊。
+@DEEP
+```cpp
+// ✅ join
+void f() {
+    std::thread t([]{ doWork(); });
+    t.join();                 // 等它结束
+}
+
+// ✅ detach（谨慎）
+void g() {
+    std::thread t([]{ doWork(); });
+    t.detach();               // 放任，注意它不能访问局部变量
+}
+
+// ✅ C++20 jthread：析构自动 join
+void h() {
+    std::jthread t([]{ doWork(); });
+}   // 自动 join
+```
+
+| 方式 | 析构行为 | 适合 |
+|---|---|---|
+| `join` | 阻塞等待 | 需要结果、需要保证完成 |
+| `detach` | 放任运行 | 后台常驻任务（但生命周期难管） |
+| `jthread` | 自动 join + 可请求停止 | **C++20 推荐** |
+
+**为什么 `detach` 危险**：分离后的线程无法被等待，程序退出时它可能还在访问已销毁的对象；而且没有任何机制能确认它结束了。
+
+**`jthread` 的好处**：析构自动 `join`，还带 `stop_token` 协作式取消，能避免"忘了 join"这类崩溃。
+@FOLLOW
+1. **`join` 能调用两次吗？** —— 不能，第二次会抛 `std::system_error`；先 `joinable()` 判断。
+2. **`detach` 后还能 join 吗？** —— 不能，`joinable()` 返回 false。
+3. **异常安全怎么写？** —— 用 `jthread`，或自己包一个 RAII 类在析构里 `join`。
+@TRAPS
+- 创建线程后忘了 `join`/`detach`，析构 terminate
+- `detach` 的线程访问局部变量
+- 在析构函数里 `join` 但线程又需要访问该对象
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 线程管理（预测题，非真实面经）
+
+@@ Q-0698
+@STEM
+**题目**：
+
+```cpp
+void f() {
+    int local = 42;
+    std::thread t([&]{ std::cout << local; });
+    t.detach();
+}   // f 返回，local 销毁
+```
+
+**问**：detach 之后线程访问局部变量会发生什么？怎么避免？
+@ANSWER
+`local` 在 `f` 返回时销毁，分离的线程再去读它就是**访问已释放的栈内存**——未定义行为，可能打印乱值、可能崩溃，也可能"看起来正常"。
+
+避免方法：**按值捕获**（拷贝进 lambda）、**用 `shared_ptr` 保活**、或者干脆不要 `detach`（用 `join`/`jthread`）。
+@DEEP
+```cpp
+// ❌ 悬垂
+std::thread t([&]{ std::cout << local; }); t.detach();
+
+// ✅ 按值捕获
+std::thread t([local]{ std::cout << local; }); t.detach();
+
+// ✅ shared_ptr 保活（对象较大或需要共享时）
+auto data = std::make_shared<BigData>();
+std::thread t([data]{ use(*data); }); t.detach();
+```
+
+| 方案 | 适用 | 代价 |
+|---|---|---|
+| 按值捕获 | 小数据 | 一次拷贝 |
+| `shared_ptr` | 大数据/共享 | 原子引用计数 |
+| 不 detach | **首选** | 需要等待 |
+| 线程池 + 任务队列 | 大量短任务 | 需要设计 |
+
+**根本问题**：`detach` 把"线程生命周期"和"对象生命周期"解耦了，但**没有提供任何同步机制**。所以一旦涉及外部状态，就必须靠引用计数或值拷贝来保证安全。
+
+**C++20 的替代**：`std::jthread` + `stop_token`，既能协作取消，又保证析构时线程结束。
+@FOLLOW
+1. **`shared_ptr` 保活有什么代价？** —— 每次拷贝原子操作，且延长对象生命周期（可能延迟释放）。
+2. **分离线程能访问全局变量吗？** —— 能，但要考虑程序退出时全局对象的析构顺序。
+3. **怎么等分离线程结束？** —— 没有标准方法，只能用条件变量/`future` 自己同步——这也是不该 detach 的理由。
+@TRAPS
+- `detach` + `[&]` 捕获局部变量
+- 分离线程访问即将析构的全局/静态对象
+- 以为 `detach` 后线程会被"托管"
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 线程生命周期（预测题，非真实面经）
+
+@@ Q-0699
+@STEM
+**现象**：一个模板相关的编译错误，终端刷出 300 行，第一行是 `In file included from /usr/include/c++/11/vector:66`，真正的原因埋在中间。
+
+**问**：g++ 的报错信息该怎么读？怎么快速定位真正的错误？
+@ANSWER
+**从下往上读**。真正的原因在最后几行的 `error:` 之后，前面的 `In file included from`、`required from`、`In instantiation of` 都是**上下文链**，告诉你"这个错误是怎么被引出来的"。
+
+先搜 `error:` 关键字跳过所有 `note:` 和模板展开噪音，是最快的办法。
+@DEEP
+```bash
+g++ main.cpp 2>&1 | grep -n "error:" | head        # 只看错误行
+g++ main.cpp -fmax-errors=3                        # 限制错误数，先修前三
+g++ main.cpp -ftemplate-backtrace-limit=0          # 模板展开链全打印（默认截断）
+g++ -E main.cpp | less                             # 看预处理结果
+```
+
+典型结构：
+```
+In file included from a.h:1,
+                 from main.cpp:2:      ← 包含链
+/usr/include/.../vector:66: note: ...  ← 库内部触发
+main.cpp:10:5: error: no matching function for call to 'f(int)'   ← 真正的错误
+main.cpp:10:5: note: candidate: 'void f(std::string)'             ← 候选说明
+```
+
+| 关键词 | 含义 | 优先级 |
+|---|---|---|
+| `error:` | 真正的错误 | **先看这个** |
+| `note:` | 补充说明（候选函数、模板参数） | 次看 |
+| `In file included from` | 包含链 | 可忽略 |
+| `required from` | 模板实例化链 | 追到自己的代码为止 |
+
+**模板错误的读法**：从 `required from` 链里找**最后一个指向你自己代码的行**，那才是问题所在，再往下的 `note:` 解释为什么不行。
+
+**减少噪音的手段**：C++20 concepts 能让错误在调用点就报清楚；拆小模板、少嵌套也能显著改善。
+@FOLLOW
+1. **`-fmax-errors` 有什么用？** —— 一个错误可能引发几十个连锁错误，限制数量能先看根因。
+2. **`-fsyntax-only` 呢？** —— 只做语法检查不生成代码，改代码时验证快。
+3. **链接错误怎么读？** —— `undefined reference to 'xxx'` 是符号缺失，看 `c++filt` 还原后的名字，查库路径和顺序。
+@TRAPS
+- 从第一行开始读，被模板展开淹没
+- 看到库头文件就以为库有问题
+- 不区分 `error:` 和 `note:`，把候选说明当成错误
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+C++ 编译诊断（预测题，非真实面经）

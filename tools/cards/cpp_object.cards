@@ -1,0 +1,1319 @@
+@@ Q-0704
+@STEM
+**场景**：两个不同的库都提供了一个 `Logger` 类，你的代码同时 `#include` 了它们的头文件，编译报 `Logger is ambiguous`。
+
+**问**：命名空间解决什么问题？为什么头文件里不该写 `using namespace std;`？
+@ANSWER
+命名空间给名字加了一层**作用域前缀**，让 `libA::Logger` 和 `libB::Logger` 可以共存。没有它，两个库的同名符号在链接期或编译期直接冲突。
+
+头文件里禁止 `using namespace` 的原因是：`#include` 是**文本插入**，头文件里的 `using` 会污染所有包含它的文件。别人写了个 `count` 函数，包含你的头之后可能被解析成 `std::count`，报错位置完全对不上原因。
+@DEEP
+```cpp
+// lib_a.h
+namespace libA { class Logger { ... }; }
+
+// lib_b.h
+namespace libB { class Logger { ... }; }
+
+// 使用处
+libA::Logger a;              // ✅ 明确
+using libA::Logger;          // ✅ 局部引入一个名字
+```
+
+| 写法 | 作用域 | 结论 |
+|---|---|---|
+| `std::cout` | 单处 | ✅ 最安全 |
+| `using std::cout;` | 当前作用域 | ✅ 推荐 |
+| `using namespace std;` 在 `.cpp` | 该文件 | ⚠️ 可接受 |
+| `using namespace std;` 在头文件 | 传染所有包含者 | ❌ 禁止 |
+| 匿名命名空间 `namespace { }` | 当前编译单元 | ✅ 替代 `static` |
+
+**匿名命名空间**值得单独记：里面定义的符号只在当前 `.cpp` 可见，等价于 C 的 `static`，现代 C++ 更推荐这种写法。
+
+**C++17 的嵌套命名空间**：`namespace a::b::c {}` 可以一行写完，不用层层嵌套。
+@FOLLOW
+1. **命名空间能嵌套吗？** —— 能，`A::B::C`；C++17 起可以 `namespace A::B::C {}`。
+2. **命名空间别名有什么用？** —— `namespace fs = std::filesystem;` 缩短长名字。
+3. **匿名命名空间和 `static` 的区别？** —— 效果类似，但匿名命名空间能给类型用（`static` 只能给函数和变量）。
+@TRAPS
+- 在头文件里 `using namespace std;`
+- 用 `using namespace` 解决所有名字冲突（应该用限定名）
+- 以为命名空间有运行时开销（完全没有）
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 命名空间（预测题，非真实面经）
+
+@@ Q-0706
+@STEM
+**追问**：教材上说"引用就是给同一块内存再起个名字"，那 `int& r = x;` 之后 `&r == &x`，能不能说"引用就是 const 指针"？
+
+**问**：这个"别名"的说法准确吗？它解释得了什么、解释不了什么？
+@ANSWER
+"别名"在**语义层面**是准确的：对 `r` 的任何操作都作用在 `x` 上，`&r` 得到的就是 `x` 的地址。
+
+但它解释不了两件事：**引用必须初始化且不能换绑**（指针可以），以及**引用不占独立的存储**（指针占）。所以更准确的说法是"**引用是对象的另一个名字，在语言层面不引入新对象**"。
+@DEEP
+```cpp
+int x = 1;
+int& r = x;
+&r == &x;        // true
+r = 2;           // x 变成 2
+// int& r2;      // ❌ 必须初始化
+// r = y;        // 这是赋值，不是换绑
+```
+
+| 说法 | 解释得了 | 解释不了 |
+|---|---|---|
+| 别名 | 操作等价、地址相同 | 为什么不能换绑 |
+| const 指针 | 不能改指向 | 为什么不需要取地址、为什么必须初始化 |
+| 编译期别名 | 无运行时开销 | 作为成员时仍占空间 |
+
+**一个反直觉的点**：引用作为**类成员**时通常占一个指针大小的空间（编译器需要存地址），但作为**局部变量或参数**时往往被完全优化掉。
+@FOLLOW
+1. **`sizeof(引用)` 是多少？** —— 等于被引用类型的大小（`sizeof(r) == sizeof(int)`），因为它不是独立对象。
+2. **引用能指向引用吗？** —— 语法上不能声明"引用的引用"，但类型推导会折叠（`T& &` → `T&`）。
+3. **引用的引用在模板里会出现吗？** —— 会，靠引用折叠规则处理（`& + && = &`）。
+@TRAPS
+- 说"引用就是 const 指针"，忽略"必须初始化"这个本质差异
+- 以为 `sizeof(引用)` 是指针大小
+- 认为引用一定有运行时存储
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 引用语义（预测题，非真实面经）
+
+@@ Q-0707
+@STEM
+**题目**：
+
+```cpp
+int& bad() { int x = 1; return x; }
+int& ok()  { static int x = 1; return x; }
+```
+
+**问**：`bad()` 为什么危险？返回引用什么时候才是安全的？
+@ANSWER
+`x` 是局部变量，函数返回时它的生命周期就结束了，返回的引用指向**已销毁的栈内存**。调用方拿到的是一个悬垂引用，读写都是未定义行为——可能"看起来正常"，也可能被后续函数调用覆盖。
+
+安全的情况只有三种：**返回静态/全局变量**、**返回成员变量**（对象还活着时）、**返回参数引用**（调用方保证生命周期）。
+@DEEP
+```cpp
+int& bad()  { int x = 1; return x; }        // ❌ 悬垂
+int& ok1()  { static int x = 1; return x; } // ✅ 静态存储期
+int& ok2()  { static int x; return x; }
+struct S { int v; int& get() { return v; } };  // ✅ 成员，对象活着就有效
+
+const std::string& bad2() { return "tmp"; } // ⚠️ 临时量，返回后销毁
+int&& rref() { return 1; }                  // ❌ 悬垂右值引用
+```
+
+| 返回类型 | 安全性 |
+|---|---|
+| `T&`（局部变量） | ❌ 悬垂 |
+| `T&`（静态/全局） | ✅ |
+| `T&`（成员） | ✅ 对象存活期间 |
+| `const T&`（临时量） | ⚠️ 生命周期延长只在本函数内 |
+| `T`（按值） | ✅ 拷贝，最安全 |
+
+**为什么"看起来能跑"**：栈内存还没被覆盖，读到的是旧值。这类 bug 在加了日志、换了编译器、开了优化之后才暴露，极难排查。
+
+**诊断手段**：`-fsanitize=address` 能直接报 `stack-use-after-return`；`-Wall` 会给 `-Wreturn-local-addr` 警告。
+@FOLLOW
+1. **返回 `const T&` 绑定临时量安全吗？** —— 在**同一表达式**里安全（生命周期延长），但返回出去就悬垂。
+2. **`std::string f()` 和 `const std::string& f()` 哪个好？** —— 前者靠 RVO 零拷贝且安全；后者容易悬垂。
+3. **成员函数返回成员引用有什么风险？** —— 对象被销毁后引用悬垂；链式调用时尤其要注意。
+@TRAPS
+- 返回局部变量的引用（或指针）
+- 返回形参的引用（调用方传临时量时悬垂）
+- 以为"能打印出来就是对的"
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 引用与生命周期（预测题，非真实面经）
+
+@@ Q-0708
+@STEM
+**追问**：编译器把引用编译成了什么？如果引用不占空间，函数参数是怎么传的？
+
+**问**：从汇编看，引用和指针到底差在哪？「引用零开销」这个说法在什么情况下不成立？
+@ANSWER
+在**参数和局部变量**层面，引用通常被编译成指针——传引用就是传地址，用的时候解引用。所以"零开销"指的是**没有额外的拷贝**，不是"没有地址传递"。
+
+不成立的情况有三种：**作为类成员**（必须存地址，占一个指针）、**需要运行时绑定且编译器无法优化掉**、**跨编译单元传递**（ABI 上就是指针）。
+@DEEP
+```cpp
+int add1(int& a) { return a + 1; }
+int add2(int* p) { return *p + 1; }
+```
+
+两者生成的汇编基本一致：
+```asm
+; int add1(int&):
+    mov     eax, DWORD PTR [rdi]     ; 从 rdi 指向的地址读
+    add     eax, 1
+    ret
+```
+
+| 场景 | 引用的实现 | 是否占空间 |
+|---|---|---|
+| 函数参数 | 传地址 | 不额外占（复用寄存器） |
+| 局部变量 | 编译器可完全优化掉 | 否 |
+| 类成员 | 存一个指针 | 是（8 字节） |
+| 返回值 | 返回地址 | 否 |
+| 存进 `std::tuple` | 存指针 | 是 |
+
+**"零开销"的准确含义**：相对"按值传递"没有拷贝开销；相对"传指针"没有性能差异。它是一个**语义工具**，不是性能工具。
+
+**这也是 `const T&` 对小类型反而慢的原因**：传 `int` 用寄存器，传 `const int&` 要传地址再解引用，多一次内存访问。
+@FOLLOW
+1. **引用做成员为什么必须初始化？** —— 它要存地址，没有默认值可填。
+2. **引用成员能赋值吗？** —— 不能，赋值运算符被隐式删除（因为不能换绑）。
+3. **`std::reference_wrapper` 有什么用？** —— 让引用可以放进容器、可以重新绑定（因为它是对象）。
+@TRAPS
+- 认为"引用零开销"等于"没有地址传递"
+- 用引用做成员却没意识到占 8 字节
+- 对小类型参数用 `const&`，反而多一次间接寻址
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 引用实现（预测题，非真实面经）
+
+@@ Q-0709
+@STEM
+**题目**：
+
+```cpp
+const int& r = 42;              // 合法
+int& r2 = 42;                   // 编译错误
+void f(const std::string& s);
+f("hello");                     // 合法，构造临时 string
+```
+
+**问**：`const T&` 到底特殊在哪？它为什么能绑定临时量，生命周期又是怎么延长的？
+@ANSWER
+`const T&` 能绑定**临时对象**（右值），普通 `T&` 不能。绑定之后，临时对象的生命周期被**延长到引用的作用域结束**，所以 `const int& r = 42;` 之后 `r` 一直有效。
+
+这个特性让 `const T&` 成为最通用的只读参数类型：既能接受左值，也能接受临时量，还能避免拷贝。
+@DEEP
+```cpp
+const std::string& s = std::string("hi");   // 生命周期延长
+// 等价于：临时对象存活到 s 的作用域结束
+
+struct S { const std::string& ref; };
+S s{ std::string("x") };    // ⚠️ 不延长！成员引用的临时量在构造语句后销毁
+```
+
+| 绑定 | `T&` | `const T&` | `T&&` |
+|---|---|---|---|
+| 左值 | ✅ | ✅ | ❌ |
+| 临时量（右值） | ❌ | ✅（延长） | ✅（延长） |
+| `const` 左值 | ❌ | ✅ | ❌ |
+
+**生命周期延长的边界**（很容易踩）：
+1. **只对"直接绑定"生效**，通过函数返回值绑定不延长；
+2. **成员引用不延长** → 悬垂；
+3. **绑定到 `return` 的临时量**不延长。
+
+**实用结论**：函数参数用 `const T&` 是安全的（调用期间临时量一直活着）；但**不要把 `const T&` 存成成员**。
+@FOLLOW
+1. **`T&&` 也能延长吗？** —— 能，规则同理。
+2. **延长多久？** —— 到引用本身的生命周期结束（作用域结束）。
+3. **`const T&` 和 `T` 参数哪个好？** —— 大对象用 `const&`（省拷贝），小对象（`int`）按值更好。
+@TRAPS
+- 把 `const T&` 存成成员，临时量早销毁
+- 以为延长规则对返回值也生效
+- 对小类型也用 `const&`
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 引用绑定规则（预测题，非真实面经）
+
+@@ Q-0710
+@STEM
+**现象**：`#include "c_lib.h"` 之后调用 `c_func()`，链接报 `undefined reference to 'c_func()'`，但 `nm` 明明能看到 `c_func`。
+
+**问**：为什么 C++ 调不了 C 的函数？`extern "C"` 做了什么？
+@ANSWER
+因为 C++ 有**函数重载**，编译器会对函数名做**名字修饰**（name mangling），把参数类型编进符号名。C 不做修饰，符号就是 `c_func`。
+
+所以 C++ 去链接时找的是 `_Z6c_funci` 这类名字，而 C 库里只有 `c_func`，自然找不到。`extern "C"` 的作用就是**告诉编译器这个符号按 C 的规则生成**，不做修饰。
+@DEEP
+```cpp
+extern "C" {
+    int c_func(int);          // 按 C 规则生成符号 c_func
+}
+```
+
+标准写法（头文件同时支持 C 和 C++）：
+```c
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int c_func(int);
+
+#ifdef __cplusplus
+}
+#endif
+```
+
+| 语言 | `int f(int)` 的符号 |
+|---|---|
+| C | `f` |
+| C++（g++） | `_Z1fi` |
+| C++（MSVC） | `?f@@YAHH@Z` |
+
+```bash
+nm libc_lib.a | grep c_func        # 看到 c_func
+nm myapp | grep c_func             # C++ 侧是 _Z6c_funci
+c++filt _Z1fi                      # 还原成 f(int)
+```
+
+**反过来也成立**：C 调 C++ 函数必须给 C++ 函数加 `extern "C"`，否则 C 侧找不到符号。而且不能用重载（C 无法区分）。
+@FOLLOW
+1. **`extern "C"` 能包类吗？** —— 不能，类、模板、重载函数都不行，只支持自由函数和变量。
+2. **为什么 `nm` 看到的符号带下划线？** —— 不同平台的修饰规则不同，`c++filt` 可以还原。
+3. **C++ 调 C 的库要不要改库？** —— 不用，只要在自己的头文件里用 `extern "C"` 声明。
+@TRAPS
+- 只在函数声明前加 `extern "C"` 却忘了包住整段
+- 试图 `extern "C"` 一个重载函数
+- 头文件没写 `__cplusplus` 判断，C 编译器报错
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+C++ 与 C 互操作（预测题，非真实面经）
+
+@@ Q-0712
+@STEM
+**面试官问**：为什么类的成员变量要设成私有？全 public 不是更方便吗？
+
+**问**：封装到底解决了什么问题？它和「getter/setter 一大坨」是同一件事吗？
+@ANSWER
+封装解决的是**不变量维护**：类的成员之间有约束（比如"余额不能为负""起止下标必须有序"），如果外部能直接改，这些约束随时可能被破坏，而且出错点离现场很远。
+
+但封装**不等于给每个成员配 getter/setter**。如果只是机械地加 `getX/setX`，等于把 public 成员换了个写法，约束仍然没被保护。
+@DEEP
+```cpp
+// ❌ 假封装
+class Account {
+public:
+    double balance;                 // 谁都能改成负数
+};
+class Account2 {
+    double balance_;
+public:
+    double get() const { return balance_; }
+    void set(double v) { balance_ = v; }   // 照样能设负数
+};
+
+// ✅ 真封装：接口表达业务规则
+class Account3 {
+    double balance_ = 0;
+public:
+    double balance() const { return balance_; }
+    bool withdraw(double v) {
+        if (v <= 0 || v > balance_) return false;
+        balance_ -= v; return true;
+    }
+};
+```
+
+| 层次 | 表现 |
+|---|---|
+| 无封装 | 成员全 public |
+| 假封装 | private + 机械 getter/setter |
+| 真封装 | 只暴露**操作**，不暴露**状态修改** |
+
+**判断标准**：接口应该是"你能对它做什么"，而不是"它有哪些字段"。`withdraw()` 比 `setBalance()` 表达了更多约束。
+
+**代价**：过度封装会导致接口膨胀、样板代码多。工程上按"有没有不变量要保护"来决定，不是一律 private。
+@FOLLOW
+1. **所有成员都必须 private 吗？** —— 不必。纯数据聚合（struct）可以全 public，只要没有不变量。
+2. **`friend` 会破坏封装吗？** —— 会削弱，但它把"允许访问"显式写在类里，比全 public 可控。
+3. **什么时候用 struct？** —— 只做数据聚合、没有约束、不需要接口时。
+@TRAPS
+- 认为"加了 getter/setter 就是封装"
+- 把 `struct` 和 `class` 的区别理解成"有没有封装"
+- 过度封装，接口爆炸
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+面向对象封装（预测题，非真实面经）
+
+@@ Q-0714
+@STEM
+**题目**：
+
+```cpp
+struct T { T(){} T(const T&){} T(T&&){} };
+T a;                // (1)
+T b = a;            // (2)
+T c = std::move(a); // (3)
+T d = T();          // (4)
+```
+
+**问**：四种构造分别在什么时候被调用？默认构造、拷贝构造、移动构造怎么区分？
+@ANSWER
+(1) 默认构造；(2) 拷贝构造（`a` 是左值）；(3) 移动构造（`std::move` 产生右值）；(4) C++17 起**零构造**（复制省略，直接构造 `d`）。
+
+区分依据只有一条：**实参是左值还是右值**。左值走拷贝，右值走移动；没有移动构造时右值也退化成拷贝。
+@DEEP
+| 场景 | 调用的构造 |
+|---|---|
+| `T a;` | 默认构造 |
+| `T b = a;` / `T b(a);` | 拷贝构造 |
+| `T c = std::move(a);` | 移动构造 |
+| `T d = T();` | C++17 起省略，直接默认构造 |
+| `f(T x)` 传左值 | 拷贝构造 |
+| `f(T x)` 传 `std::move(a)` | 移动构造 |
+| `return local;` | 通常 NRVO（零构造） |
+| `v.push_back(a)` | 拷贝构造 |
+| `v.push_back(std::move(a))` | 移动构造 |
+
+**一个高频陷阱**：`T b = a;` 里 `=` 不是赋值运算符，是**初始化**，所以调拷贝构造而不是拷贝赋值。只有对**已存在对象**赋值才调 `operator=`。
+@FOLLOW
+1. **拷贝构造和拷贝赋值的区别？** —— 前者创建新对象，后者修改已有对象；后者要处理自赋值和释放旧资源。
+2. **不写移动构造会怎样？** —— 右值也会走拷贝构造（如果拷贝构造可用）。
+3. **`= default` 和手写的区别？** —— `= default` 由编译器生成，通常更优；手写会抑制其他特殊成员的隐式生成。
+@TRAPS
+- 把 `T b = a;` 当成赋值
+- 以为右值一定走移动构造（可能退化成拷贝）
+- 手写一个特殊成员，导致其他成员不再自动生成
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 特殊成员函数（预测题，非真实面经）
+
+@@ Q-0716
+@STEM
+**题目**：
+
+```cpp
+struct A { A(){cout<<"A";} ~A(){cout<<"~A";} };
+struct B {
+    A a1, a2;
+    B() { cout << "B"; }
+    ~B() { cout << "~B"; }
+};
+```
+
+**问**：输出是什么？如果初始化列表写成 `B() : a2(), a1() {}`，顺序会变吗？
+@ANSWER
+输出 `AAB~B~AA`。构造是 `a1`、`a2`、`B` 自身；析构完全逆序：`~B`、`~a2`、`~a1`。
+
+**初始化列表的书写顺序不影响构造顺序**，成员永远按**声明顺序**构造。上面写成 `a2(), a1()` 输出仍然是 `AAB`——编译器会按声明顺序执行，多数编译器还会给出 `-Wreorder` 警告。
+@DEEP
+```cpp
+struct B {
+    A a1, a2;
+    B() : a2(), a1() {}     // 仍然先构造 a1！
+};
+```
+
+| 对象 | 构造顺序 | 析构顺序 |
+|---|---|---|
+| 基类 | 1（最先） | 最后 |
+| 成员 | 按**声明**顺序 | 逆序 |
+| 自身构造函数体 | 最后 | 最先 |
+
+**为什么这样规定**：析构顺序必须是构造的严格逆序，而构造顺序如果依赖初始化列表，就不可预测（不同构造函数可能写不同顺序）。按声明顺序才能保证"无论哪个构造函数，析构顺序都一样"。
+
+**真正的坑**：初始化列表里 `a2(v)` 用到了 `a1` 的值，但 `a1` 还没构造——读到未初始化数据。
+@FOLLOW
+1. **基类和成员的顺序？** —— 基类总是先于成员构造。
+2. **虚基类呢？** —— 最派生类先构造虚基类，且只构造一次。
+3. **能让成员晚构造吗？** —— 不能，成员总在构造函数体之前构造；需要延迟创建就用 `std::optional` 或指针。
+@TRAPS
+- 以为初始化列表顺序决定构造顺序
+- 在初始化列表里用未构造的成员
+- 忘记成员按声明顺序析构
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 对象构造顺序（预测题，非真实面经）
+
+@@ Q-0717
+@STEM
+**追问**：类里同时定义了拷贝构造和移动构造，`T b = std::move(a);` 一定走移动构造吗？
+
+**问**：什么情况下"有移动构造却还是走了拷贝"？这会造成什么后果？
+@ANSWER
+三种情况会退化成拷贝：**移动构造不是 `noexcept`**（某些容器如 `vector` 扩容时会选拷贝以保证异常安全）、**实参是 `const` 右值**（`const T&&` 只能绑到拷贝构造）、**类没有可移动的资源**（成员自己不可移动）。
+
+后果是性能回退，而且很隐蔽——代码看起来用了 `std::move`，实际一次拷贝都没省。
+@DEEP
+```cpp
+class Buf {
+    char* p_;
+public:
+    Buf(Buf&& o) noexcept : p_(o.p_) { o.p_ = nullptr; }   // ✅ noexcept
+    Buf(const Buf& o) : p_(new char[...]) { ... }
+};
+
+std::vector<Buf> v;
+v.push_back(Buf{});      // noexcept → 走移动
+```
+
+| 条件 | 结果 |
+|---|---|
+| 移动构造 `noexcept` | 移动 ✅ |
+| 移动构造可能抛异常，容器扩容 | 拷贝（保证强异常安全） |
+| 实参是 `const T&&` | 拷贝 |
+| 没有移动构造 | 拷贝（若有拷贝） |
+| 移动构造被 `= delete` | 编译错误 |
+
+**`noexcept` 为什么关键**：`vector` 扩容时如果移动中途抛异常，原容器已被破坏（元素被移走了一部分），无法回滚。所以标准库规定：**只有移动构造 `noexcept` 时才用移动**，否则用拷贝来保证强异常安全。
+@FOLLOW
+1. **怎么确认真的移动了？** —— 在移动构造里打日志，或 `static_assert(std::is_nothrow_move_constructible_v<T>)`。
+2. **`= default` 的移动构造是 `noexcept` 吗？** —— 取决于成员；成员都可无异常移动时，默认的才是 `noexcept`。
+3. **容器里存 `unique_ptr` 为什么没这问题？** —— `unique_ptr` 的移动是 `noexcept` 的。
+@TRAPS
+- 移动构造没标 `noexcept`，容器扩容仍走拷贝
+- 对 `const` 对象用 `std::move`
+- 以为写了移动构造就一定被调用
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 移动语义（预测题，非真实面经）
+
+@@ Q-0718
+@STEM
+**追问**：`cout << obj` 里的 `<<`，为什么不能写成 `obj.operator<<(cout)`？
+
+**问**：`operator<<` 为什么通常写成非成员函数？写成成员函数会怎样？
+@ANSWER
+因为**左操作数是 `cout`**，不是你的类。成员函数的隐含第一参数是 `this`（本类对象），而这里左边是 `std::ostream`，语法上根本表达不出来。
+
+所以只能写成非成员函数（自由函数或 `friend`），参数顺序是 `(ostream&, const T&)`。
+@DEEP
+```cpp
+struct Point { int x, y; };
+
+// ✅ 非成员
+std::ostream& operator<<(std::ostream& os, const Point& p) {
+    return os << '(' << p.x << ',' << p.y << ')';
+}
+
+// ✅ 需要访问私有成员时才用 friend
+class Secret {
+    int v_ = 1;
+    friend std::ostream& operator<<(std::ostream&, const Secret&);
+};
+
+// ❌ 成员函数，左操作数成了 Point
+struct Bad { std::ostream& operator<<(std::ostream& os) const; };
+// 只能写成 p << cout，没人这么用
+```
+
+| 运算符 | 建议写法 | 原因 |
+|---|---|---|
+| `<<` `>>` | 非成员（`friend`） | 左操作数是流 |
+| `+` `-` `*` | 非成员（基于 `+=`） | 允许左操作数隐式转换 |
+| `+=` `-=` | 成员 | 要修改自身 |
+| `==` `<=>` | 非成员 | 两侧对称 |
+| `[]` `()` `->` | **必须**成员 | 语言规定 |
+
+**一条经验**：需要"两侧对称"或"左操作数不是本类"的运算符，写成非成员；需要修改自身状态的，写成成员。
+@FOLLOW
+1. **非成员怎么访问私有成员？** —— 声明为 `friend`，或提供公有 getter。
+2. **`operator==` 为什么也推荐非成员？** —— 让 `1 == obj` 也能工作（如果允许隐式转换）。
+3. **`friend` 会破坏封装吗？** —— 削弱，但它把授权显式写在类里，可控。
+@TRAPS
+- 把 `operator<<` 写成成员函数
+- 返回 `ostream` 而不是 `ostream&`，产生拷贝
+- 忘记 `return os`，链式调用断掉
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 运算符重载（预测题，非真实面经）
+
+@@ Q-0719
+@STEM
+**场景**：手写一个 `unique_ptr` 的简化版，写完发现 `p->method()` 编译不过。
+
+**问**：`operator->` 和 `operator*` 分别返回什么？为什么 `operator->` 可以「递归调用」？
+@ANSWER
+`operator*` 返回**对象的引用**（`T&`），所以 `*p` 可以直接用；`operator->` 返回**指针**（`T*`），所以 `p->method()` 等价于 `(p.operator->())->method()`。
+
+`operator->` 的特殊之处是**语言规定它会自动递归**：如果返回的又是一个重载了 `->` 的类，编译器会继续调用，直到拿到裸指针。这让智能指针、迭代器能无感地模拟指针语法。
+@DEEP
+```cpp
+template <typename T>
+class UniquePtr {
+    T* p_ = nullptr;
+public:
+    ~UniquePtr() { delete p_; }
+    T& operator*()  const { return *p_; }    // 返回引用
+    T* operator->() const { return p_; }     // 返回裸指针
+    explicit operator bool() const { return p_ != nullptr; }
+};
+
+UniquePtr<Foo> p(new Foo);
+(*p).method();      // 解引用
+p->method();        // 等价于 (p.operator->())->method()
+```
+
+| 运算符 | 返回类型 | 调用形式 |
+|---|---|---|
+| `operator*` | `T&` | `*p` |
+| `operator->` | `T*`（或带 `->` 的类型） | `p->x` |
+| `operator[]` | `T&` | `p[i]` |
+| `operator bool` | `bool` | `if (p)` |
+
+**递归的用途**：`std::vector<T>::iterator` 的 `operator->` 可能返回另一个代理对象，链式递归让 `it->field` 能一路解到真正的成员。
+
+**注意**：`operator->` 必须返回指针或"有 `->` 的对象"，返回 `T&` 会编译错误。
+@FOLLOW
+1. **为什么 `operator*` 返回引用而不是值？** —— 要支持 `*p = 1;` 这种写操作。
+2. **`explicit operator bool` 有什么用？** —— 让 `if (p)` 可用，同时禁止 `int n = p;` 这种隐式转换。
+3. **`operator->` 能带参数吗？** —— 不能，必须是零参数成员函数。
+@TRAPS
+- `operator->` 返回 `T&`
+- `operator*` 返回值，导致 `*p = 1` 改不到原对象
+- 忘了 `operator bool` 加 `explicit`，产生意外隐式转换
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 运算符重载与智能指针（预测题，非真实面经）
+
+@@ Q-0722
+@STEM
+**题目**：
+
+```cpp
+struct S {
+    int a, b;
+    S() : b(2), a(1) {}     // 先 b 后 a？
+};
+```
+
+**问**：成员的初始化顺序由什么决定？为什么和初始化列表的书写顺序无关？
+@ANSWER
+由**声明顺序**决定，不是初始化列表顺序。所以 `a` 先初始化成 1，`b` 再初始化成 2，尽管列表里先写了 `b`。
+
+这样规定是为了保证"**无论用哪个构造函数，析构顺序都一致**"——析构必须严格逆序，如果构造顺序可变，析构顺序就不确定了。
+@DEEP
+```cpp
+struct S {
+    int a, b;
+    S() : b(2), a(1) {}   // 实际：a 先，b 后
+    // GCC/Clang: warning: 'b' will be initialized after 'a'
+};
+```
+
+| 阶段 | 顺序 |
+|---|---|
+| 虚基类 | 最先（只一次） |
+| 非虚基类 | 按继承声明顺序 |
+| 成员 | 按**声明顺序** |
+| 构造函数体 | 最后 |
+
+**真正的 bug 场景**：初始化列表里用另一个还没构造的成员。
+
+```cpp
+struct Bad {
+    int x, y;
+    Bad() : x(1), y(x + 1) {}    // ⚠️ 若 y 声明在前，y 读到未初始化的 x
+};
+```
+
+**怎么避免**：开启 `-Wreorder`（`-Wall` 已包含），编译器会警告顺序不一致。
+@FOLLOW
+1. **`-Wreorder` 会误报吗？** —— 不会，它只报列表顺序和声明顺序不一致的情况。
+2. **基类和成员谁先？** —— 基类先；多个基类按声明顺序。
+3. **成员能在构造函数体里再赋值吗？** —— 能，但那是赋值不是初始化，多一次构造+赋值开销。
+@TRAPS
+- 依赖初始化列表顺序写逻辑
+- 在初始化列表里用未构造的成员
+- 内在类型成员忘了初始化（值不确定）
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 成员初始化（预测题，非真实面经）
+
+@@ Q-0723
+@STEM
+**场景**：`Shape* p = new Circle; p->area();` 走的是 `Circle::area`，但编译器在编译 `p->area()` 时只知道 `Shape`。
+
+**问**：运行期是怎么找到正确实现的？这个机制的开销在哪？
+@ANSWER
+通过 **vptr → vtable → 函数地址** 三级跳：对象里存的 vptr 指向 `Circle` 的虚函数表，表里对应槽位是 `Circle::area` 的地址，`call` 指令取出来调用。
+
+开销有三处：**一次间接跳转**（无法内联）、**无法做编译期优化**、**可能分支预测失败**。
+@DEEP
+```cpp
+Shape* p = new Circle;
+p->area();
+```
+
+编译后大致是：
+```asm
+mov  rax, [p]          ; 取 vptr
+call [rax + 0]         ; 调 vtable 第 0 项
+```
+
+| 概念 | 存哪 | 每类一份 | 每对象一份 |
+|---|---|---|---|
+| vtable | 只读数据段 | ✅ | ❌ |
+| vptr | 对象头部 | ❌ | ✅ |
+
+**为什么构造/析构期间"失效"**：构造基类部分时 vptr 指向基类 vtable，此时派生成员还没构造，调用派生版本会访问未初始化数据。所以标准规定按当前构造层次调用。
+
+**能省掉开销的手段**：`final`（去虚化）、`if constexpr` + 静态多态（CRTP）、编译期已知类型时直接调用。
+@FOLLOW
+1. **`final` 怎么帮忙？** —— 标记后编译器知道没有更派生的实现，可以直接调用甚至内联。
+2. **多继承有几个 vptr？** —— 每个带虚函数的多重基类各一个，所以 `dynamic_cast` 需要调整指针。
+3. **虚函数一定比普通函数慢吗？** —— 单次调用差距很小（一次间接跳转），但无法内联会放大差距。
+@TRAPS
+- 说"对象里存了 vtable"
+- 以为虚函数很慢，其实主要在无法内联
+- 忽略构造期间虚调用的特殊规则
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 动态绑定（预测题，非真实面经）
+
+@@ Q-0724
+@STEM
+**面试官问**：这个功能你用继承还是组合？很多人答"继承更面向对象"。
+
+**问**：继承和组合该怎么选？为什么《Effective C++》说「优先用组合」？
+@ANSWER
+判断标准是 **is-a 还是 has-a**：`Circle` 是 `Shape`（继承）；`Car` 有 `Engine`（组合）。
+
+优先组合的理由：继承是**最强的耦合**——派生类依赖基类的实现细节，基类一改可能破坏所有派生类；而且继承把接口全部暴露（包括 protected 成员），组合只暴露你想暴露的那部分。
+@DEEP
+| 维度 | 继承 | 组合 |
+|---|---|---|
+| 关系 | is-a | has-a |
+| 耦合 | 强（依赖实现） | 弱（只依赖接口） |
+| 复用 | 白盒（能看到 protected） | 黑盒 |
+| 运行时替换 | 需要虚函数 | 换成员对象即可 |
+| 编译依赖 | 头文件必须完整 | 可用前置声明 + pimpl |
+| 菱形问题 | 有 | 无 |
+
+```cpp
+// ❌ 用继承复用代码
+class Stack : public std::vector<int> { };   // 现在 Stack 也有 insert/erase，破坏语义
+
+// ✅ 组合
+class Stack {
+    std::vector<int> v_;
+public:
+    void push(int x) { v_.push_back(x); }
+    void pop() { v_.pop_back(); }
+};
+```
+
+**经典反例**：`Stack` 继承 `vector` 后，用户可以直接 `insert` 到中间，栈的语义被破坏。这是"用继承复用实现"的典型错误。
+
+**什么时候必须用继承**：需要**运行时多态**（通过基类指针统一处理）、或者确实表达 is-a。
+@FOLLOW
+1. **private 继承算什么？** —— "用基类实现"，本质是组合的替代品，但耦合更强，一般不推荐。
+2. **什么时候用组合 + 虚函数？** —— 想在运行时替换行为（策略模式），组合一个基类指针比继承更灵活。
+3. **继承的层数多少合适？** —— 一般不超过 2–3 层，深继承层次难以理解和维护。
+@TRAPS
+- 为了复用代码而继承（应该组合）
+- 继承 `std::vector` / `std::string` 这类标准容器
+- 认为"继承更面向对象"
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+面向对象设计（预测题，非真实面经）
+
+@@ Q-0727
+@STEM
+**题目**：
+
+```cpp
+struct Base { Base(int x) {} };      // 只有有参构造，没有默认构造
+struct D : Base {
+    D() {}                            // 编译错误
+};
+```
+
+**问**：为什么必须在初始化列表里显式调用父类构造？不写会怎样？
+@ANSWER
+因为派生类构造时**必须先构造基类部分**，而基类没有默认构造函数，编译器不知道传什么参数，所以报错。
+
+必须在初始化列表里写 `D() : Base(42) {}`。如果不写，编译器尝试调用 `Base()`，但那个构造函数不存在。
+@DEEP
+```cpp
+struct Base { Base(int x) { cout << "Base" << x; } };
+
+struct D : Base {
+    D() : Base(42) {}          // ✅ 显式调用
+    // D() {}                  // ❌ no matching function for call to Base::Base()
+};
+```
+
+| 基类情况 | 派生类要不要显式调用 |
+|---|---|
+| 有默认构造 | 不用（隐式调用） |
+| 只有有参构造 | **必须** |
+| 有默认构造但想用别的 | 要 |
+| 多个基类 | 每个都可指定，按声明顺序构造 |
+
+**顺序注意**：初始化列表里基类的书写顺序不影响实际顺序，**基类总按继承声明顺序构造**，且在成员之前。
+
+**相关的坑**：如果基类构造可能失败（抛异常），派生类的成员还没构造，此时只有已完成的基类会被析构。
+@FOLLOW
+1. **能在构造函数体里调基类构造吗？** —— 不能，基类在进入函数体前就已构造完；函数体里只能赋值。
+2. **虚基类谁负责构造？** —— 最派生类，中间类对虚基类的初始化会被忽略。
+3. **委托构造是什么？** —— `D() : D(0) {}`，一个构造函数调用同类的另一个。
+@TRAPS
+- 忘了基类没有默认构造
+- 在函数体里"调用"基类构造（实际是创建临时对象）
+- 以为初始化列表顺序决定基类构造顺序
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 继承与构造（预测题，非真实面经）
+
+@@ Q-0729
+@STEM
+**场景**：一段 300 行的 `switch` 按类型分支处理，每加一种类型就要改三处。改成多态后代码短了，但有人说"性能变差了"。
+
+**问**：用多态改写 if-else 分支，好处和代价各是什么？什么情况下不该改？
+@ANSWER
+好处是**开闭原则**：加新类型只需新增一个类，不改已有代码；分支逻辑分散到各子类，可读性和可测试性都更好。
+
+代价是**间接调用**（无法内联）、**对象要动态分配**、**代码分散**（一个流程要跳好几个文件才能看全）。所以**分支少、逻辑简单、性能敏感**的地方不该改成多态。
+@DEEP
+```cpp
+// ❌ 每加一种类型要改三处
+double area(Shape* s) {
+    switch (s->type) {
+        case CIRCLE: return 3.14 * s->r * s->r;
+        case RECT:   return s->w * s->h;
+    }
+}
+
+// ✅ 多态
+struct Shape { virtual double area() const = 0; };
+struct Circle : Shape { double r; double area() const override { return 3.14*r*r; } };
+```
+
+| 维度 | if-else / switch | 多态 |
+|---|---|---|
+| 加新类型 | 改多处 | 加一个类 |
+| 性能 | 直接调用，可内联 | 间接调用 |
+| 逻辑集中度 | 集中（好读全貌） | 分散（好扩展） |
+| 测试 | 难以单独测分支 | 每类可独立测 |
+| 适合 | 分支少、稳定 | 分支多、会增长 |
+
+**判断标准**：**变化的方向**。如果"类型"是主要变化维度且会持续增加，用多态；如果分支固定不变，switch 更简单直接。
+
+**C++17 的中间选择**：`std::variant` + `std::visit`，静态分派、无堆分配、仍能集中写逻辑。
+@FOLLOW
+1. **多态一定慢吗？** —— 一次间接跳转开销很小，真正的代价是无法内联。
+2. **什么时候 switch 更好？** —— 分支少（3–5 个）、逻辑短、性能敏感（如热循环里）。
+3. **`std::variant` 的优势？** —— 值语义、无堆分配、编译期检查是否覆盖所有类型。
+@TRAPS
+- 无脑改成多态，代码反而更难读
+- 忽略对象分配和间接调用开销
+- 用继承改写的却是"数据分支"而非"行为分支"
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+面向对象设计（预测题，非真实面经）
+
+@@ Q-0732
+@STEM
+**追问**：`template<typename T> T add(T a, T b)` 用了 10 种类型，可执行文件会变大吗？
+
+**问**：模板在编译期还是运行期展开？代码膨胀怎么控制？
+@ANSWER
+**编译期**。每组模板参数都实例化出一份独立的代码，所以 10 种类型就是 10 份 `add` 函数，二进制会变大。
+
+这是模板"零开销"的另一面：没有运行时类型分发，代价是**代码体积**。控制手段有显式实例化、抽公共基类、以及接受"体积换速度"。
+@DEEP
+```cpp
+template <typename T> T add(T a, T b) { return a + b; }
+add(1, 2);        // 实例化 add<int>
+add(1.0, 2.0);    // 实例化 add<double>
+add(1.0f, 2.0f);  // 实例化 add<float>
+```
+
+| 控制手段 | 做法 | 效果 |
+|---|---|---|
+| 显式实例化 | `template int add<int>(int,int);` 放一个 `.cpp` | 避免每个编译单元各生成一份 |
+| 抽公共实现 | 模板调用非模板函数 | 减少重复代码 |
+| 类型擦除 | `std::function`、虚函数 | 一份代码，但失去内联 |
+| 接受膨胀 | — | 换性能 |
+
+**显式实例化声明（C++11）**：头文件里写 `extern template class Stack<int>;`，告诉编译器"别在这里实例化"，只在指定 `.cpp` 里实例化一次。
+
+**典型膨胀场景**：`std::vector<MyType>` 在每个 `.cpp` 里都实例化一遍，链接后代码重复（链接器可能合并，但不保证）。
+@FOLLOW
+1. **链接器会去重吗？** —— 模板实例化的符号是弱符号，链接器通常会合并，但优化级别不同时可能不合并。
+2. **`extern template` 有什么用？** —— 抑制隐式实例化，加快编译并减小体积。
+3. **什么时候会真的膨胀严重？** —— 模板里有大量代码（如 `std::sort` 嵌在多层模板里）。
+@TRAPS
+- 以为模板是运行时多态，只有一份代码
+- 不知道 `extern template` 能抑制实例化
+- 在头文件里放大量模板实现，编译时间爆炸
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 模板实例化（预测题，非真实面经）
+
+@@ Q-0733
+@STEM
+**场景**：`std::hash<T>` 对自定义类型不能用；`std::is_pointer<T>` 需要区分 `T` 和 `T*`。
+
+**问**：模板特化解决什么问题？全特化和偏特化各怎么写？
+@ANSWER
+特化让你**为特定类型提供不同实现**，而不改变调用方式。全特化指定所有参数（`Printer<int>`），偏特化只指定部分或加约束（`Printer<T*>`）。
+
+语义上它解决的是"**大部分情况用通用实现，少数情况需要特殊处理**"，比如 `vector<bool>` 就是 `vector<T>` 的全特化（按位存储）。
+@DEEP
+```cpp
+template <typename T> struct TypeName { static const char* get() { return "unknown"; } };
+template <> struct TypeName<int>    { static const char* get() { return "int"; } };     // 全特化
+template <typename T> struct TypeName<T*> { static const char* get() { return "pointer"; } }; // 偏特化
+template <typename T> struct TypeName<std::vector<T>> { static const char* get() { return "vector"; } };
+
+TypeName<int>::get();        // "int"
+TypeName<char*>::get();      // "pointer"
+TypeName<std::vector<int>>::get();  // "vector"
+```
+
+| 类型 | 全特化 | 偏特化 |
+|---|---|---|
+| 类模板 | ✅ | ✅ |
+| 函数模板 | ✅ | ❌（用重载代替） |
+| 变量模板 | ✅ | ✅ |
+
+**匹配优先级**：全特化 > 偏特化 > 主模板。多个偏特化都匹配时选"更特化"的，无法比较则报歧义。
+
+**标准库里的例子**：`std::vector<bool>`（位压缩）、`std::hash` 对整型的特化、`std::tuple_size`、`std::is_integral`。
+@FOLLOW
+1. **为什么函数模板不能偏特化？** —— 语言规则；用重载或 `if constexpr`（C++17）替代。
+2. **特化必须写在同一个命名空间吗？** —— 必须，否则是未定义行为（ODR 违反）。
+3. **`if constexpr` 能替代偏特化吗？** —— 多数场景能，但要求所有分支都能编译。
+@TRAPS
+- 在不同头文件里写同一个特化，ODR 冲突
+- 试图偏特化函数模板
+- 特化写错签名，静默没生效
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 模板特化（预测题，非真实面经）
+
+@@ Q-0734
+@STEM
+**追问**：类模板的成员函数写在 `.cpp` 里，链接报 `undefined reference`。
+
+**问**：为什么类模板的成员函数必须写在头文件里？有没有例外？
+@ANSWER
+因为**只有实例化时才生成代码**，而编译器在编译某个 `.cpp` 时，如果只看到声明，不知道模板参数是什么，就无法生成成员函数的代码。
+
+链接时其他 `.cpp` 调用 `Stack<int>::push`，但没有任何编译单元生成过它，于是 `undefined reference`。
+@DEEP
+```cpp
+// stack.h
+template <typename T>
+class Stack {
+    std::vector<T> v_;
+public:
+    void push(const T& x);      // 只有声明
+};
+
+// stack.cpp —— ❌ 没人告诉编译器 T 是什么，不会生成任何代码
+template <typename T>
+void Stack<T>::push(const T& x) { v_.push_back(x); }
+```
+
+三个解决方案：
+
+| 方案 | 做法 | 适用 |
+|---|---|---|
+| 放头文件 | 定义写进 `.h` 或 `.hpp` | 通用 |
+| 显式实例化 | `.cpp` 末尾写 `template class Stack<int>;` | 类型可枚举 |
+| 分离 + 显式实例化声明 | 头里 `extern template class Stack<int>;` | 大项目加速编译 |
+
+```cpp
+// stack.cpp 末尾
+template class Stack<int>;
+template class Stack<double>;
+```
+
+**为什么标准库的头文件那么大**：`<vector>` 把所有成员函数的实现都写在头文件里，就是为了让每个使用点都能实例化。
+@FOLLOW
+1. **`.hpp` 是什么？** —— 约定俗成的扩展名，表示"含实现的头文件"，编译器不区别对待。
+2. **显式实例化能减小体积吗？** —— 能，避免每个编译单元各生成一份。
+3. **模板能编译成动态库吗？** —— 能，但必须在库里显式实例化所有需要的类型。
+@TRAPS
+- 模板成员函数放 `.cpp`，链接失败
+- 显式实例化漏了某个类型
+- 以为 `.hpp` 有特殊语法
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 模板与链接（预测题，非真实面经）
+
+@@ Q-0735
+@STEM
+**场景**：一个函数要接收 `Stack<int>` 参数，`void f(Stack<int> s)`、`void f(Stack<int>& s)`、`template<typename T> void f(Stack<T>& s)` 三种写法都能用。
+
+**问**：类模板作为函数参数有哪几种写法？各适合什么场景？
+@ANSWER
+三种：**具体类型**（`Stack<int>`，只接受一种）、**模板参数化容器**（`Stack<T>`，接受任意 `Stack`）、**模板参数化元素**（`template<typename T> void f(T& c)`，接受任意容器）。
+
+选择依据是"**需要多通用**"：只服务一种类型就用具体类型（编译快、错误信息清楚）；需要泛化才上模板。
+@DEEP
+```cpp
+// 1. 具体类型
+void f1(Stack<int>& s);
+
+// 2. 容器模板化（只接受 Stack）
+template <typename T>
+void f2(Stack<T>& s);
+
+// 3. 元素模板化（接受任何支持 push/pop 的容器）
+template <typename Container>
+void f3(Container& c);
+
+// 4. C++20 concepts 约束
+template <typename C>
+requires requires(C c) { c.push(1); }
+void f4(C& c);
+```
+
+| 写法 | 通用性 | 编译速度 | 错误信息 |
+|---|---|---|---|
+| `Stack<int>` | 最低 | 最快 | 最清晰 |
+| `Stack<T>` | 中 | 中 | 中 |
+| `template<typename C>` | 最高 | 慢 | 最难读 |
+| concepts | 高（有约束） | 中 | 较好 |
+
+**经验**：**从最具体的写法开始**，等真的需要泛化再抽象。过早模板化会让编译变慢、错误信息变成天书。
+@FOLLOW
+1. **为什么错误信息那么长？** —— 模板实例化链条完整打印，一层套一层。
+2. **concepts 解决了什么？** —— 把"要求什么能力"写在签名里，错误在调用点就报清楚。
+3. **传值还是传引用？** —— 容器一般传 `const&`，避免拷贝。
+@TRAPS
+- 一上来就用最泛化的模板
+- 传值导致整个容器拷贝
+- 没用 concepts，错误信息难以定位
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 模板参数（预测题，非真实面经）
+
+@@ Q-0736
+@STEM
+**题目**：
+
+```cpp
+template <typename T> struct Base { T v; };
+template <typename T> struct D : Base<T> { void f() { v = 1; } };   // 编译错误
+```
+
+**问**：为什么 `v` 找不到？类模板继承时，父类的模板参数怎么确定？
+@ANSWER
+因为 `Base<T>` 是**依赖基类**——`T` 还没确定，编译器不知道 `Base<T>` 里有什么，所以不会去里面查找 `v`。
+
+解决办法有三种：写 `this->v`、写 `Base<T>::v`、或者 `using Base<T>::v;`。前两种是告诉编译器"这是个依赖名字，实例化后再找"。
+@DEEP
+```cpp
+template <typename T> struct Base { T v; void g(); };
+
+template <typename T> struct D : Base<T> {
+    void f() {
+        // v = 1;              // ❌ 找不到
+        this->v = 1;           // ✅
+        Base<T>::v = 1;        // ✅
+        this->g();             // ✅
+    }
+    using Base<T>::v;          // ✅ 也可以先引入
+};
+```
+
+| 写法 | 说明 |
+|---|---|
+| `this->v` | 声明这是成员访问 |
+| `Base<T>::v` | 显式限定 |
+| `using Base<T>::v;` | 引入名字到派生作用域 |
+| `v` | 非依赖上下文才可用 |
+
+**为什么这样设计**：C++ 是两阶段名字查找。模板定义时先做一次（非依赖名字），实例化时再做一次（依赖名字）。`Base<T>` 里的成员属于"依赖名字"，定义阶段不查，所以必须显式告诉编译器。
+
+**同样的问题也出现在**：`typename T::value_type`（嵌套依赖类型必须加 `typename`）。
+@FOLLOW
+1. **`typename` 什么时候必须写？** —— 访问依赖类型的嵌套类型时，如 `typename T::iterator`。
+2. **`template` 关键字什么时候必须写？** —— 调用依赖模板的成员模板时，如 `t.template foo<int>()`。
+3. **为什么要两阶段查找？** —— 让模板定义时就能发现明显的拼写错误。
+@TRAPS
+- 在模板派生类里直接写 `v`
+- 忘了嵌套依赖类型要加 `typename`
+- 以为这只是编译器 bug
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 模板继承（预测题，非真实面经）
+
+@@ Q-0738
+@STEM
+**面试官问**：`friend` 是不是破坏了封装？既然破坏了，为什么还要有？
+
+**问**：友元会破坏封装吗？什么时候该用友元？
+@ANSWER
+它**削弱**了封装，但没有"破坏"到不可控——因为授权是**显式写在类里**的，看类的定义就知道谁能访问私有成员。相比之下，全 public 才是真正无法追踪的。
+
+该用的场景：**运算符重载**（`<<`、`==`）、**需要访问两个类的内部**（如 `Matrix` 和 `Vector` 的乘法）、**测试类**、**工厂函数**。
+@DEEP
+```cpp
+class Matrix {
+    std::vector<double> data_;
+    int rows_, cols_;
+public:
+    friend Matrix operator*(const Matrix&, const Matrix&);   // 需要同时访问两个对象内部
+    friend std::ostream& operator<<(std::ostream&, const Matrix&);
+    friend class MatrixTest;                                  // 测试类
+};
+```
+
+| 用法 | 合理 | 说明 |
+|---|---|---|
+| `friend operator<<` | ✅ | 无法用成员函数表达 |
+| `friend operator*`（双操作数） | ✅ | 需要访问双方私有 |
+| `friend class XxxTest` | ✅ | 测试专用 |
+| 大量 `friend` 互相访问 | ⚠️ | 说明类边界没划清 |
+| 用 `friend` 图省事 | ❌ | 应该设计接口 |
+
+**友元的三个特点**：
+1. **单向**：A 声明 B 是友元，B 能访问 A，反之不行；
+2. **不传递**：B 是 A 的友元，C 继承 B，C 不是 A 的友元；
+3. **不被继承**：派生类不会自动成为基类友元的友元。
+@FOLLOW
+1. **友元函数能访问派生类私有成员吗？** —— 不能，除非派生类也声明它是友元。
+2. **友元声明放哪？** —— 类的任意位置（public/private 都一样，因为友元不是成员）。
+3. **有替代方案吗？** —— 提供公有 getter、或用 pimpl 暴露内部实现类。
+@TRAPS
+- 认为友元会传递或继承
+- 用友元代替设计良好的接口
+- 把友元声明当成成员函数声明
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+C++ 友元（预测题，非真实面经）
+
+@@ Q-0739
+@STEM
+**题目**：
+
+```cpp
+class String {
+public:
+    String(int n);          // 本意是"预留 n 个字符"
+};
+String s = 'a';             // 编译通过！'a' 被转成 int(97)
+```
+
+**问**：`explicit` 解决什么问题？不加会怎样？哪些构造函数应该加？
+@ANSWER
+不加 `explicit` 的构造函数是**隐式转换**的入口：`'a'` 被转成 `int`，再隐式构造成 `String(97)`——得到一个长度 97 的字符串，完全不是本意。
+
+`explicit` 禁止这种隐式转换，要求必须显式写 `String(97)` 或 `static_cast`。
+
+**该加的场景**：单参数构造函数（尤其参数是数值或指针）、转换构造函数、有默认参数导致实际可单参数的构造函数。
+@DEEP
+```cpp
+class String {
+public:
+    explicit String(int n);          // ✅ 禁止隐式
+    String(const char* s);           // 这个可以不加（从字面量构造是自然的）
+};
+
+String s1(97);                           // ✅ 显式
+// String s2 = 97;                       // ❌ 被禁止
+void f(String);
+// f(97);                                // ❌ 被禁止
+```
+
+| 情况 | 建议 |
+|---|---|
+| `explicit T(int)` | ✅ 加 |
+| `explicit T(T*)` | ✅ 加（防 nullptr 意外转换） |
+| `explicit operator bool()` | ✅ 加（允许 `if (x)`，禁止 `int n = x`） |
+| 拷贝/移动构造 | 不加（`T b = a` 是自然的） |
+| `initializer_list` 构造 | 一般不加 |
+
+**C++11 起 `explicit` 还能用于转换运算符**：`explicit operator bool()` 让 `if (obj)` 可用但禁止 `int n = obj;`。
+
+**标准库的例子**：`std::vector<int> v(10)`（10 个元素）和 `v{10}`（一个元素 10）的区别，就是 `explicit` 与 `initializer_list` 优先级共同作用的结果。
+@FOLLOW
+1. **`explicit` 影响拷贝初始化吗？** —— 影响，`T b = x;` 被禁止，但 `T b(x);` 可以。
+2. **能对多参数构造用吗？** —— C++11 起可以，用于禁止花括号隐式转换。
+3. **为什么 `vector<int> v = 10;` 不合法？** —— 因为 `vector(size_type)` 是 `explicit` 的。
+@TRAPS
+- 单参数构造不加 `explicit`，产生意外转换
+- 以为 `explicit` 会禁止直接初始化
+- 忘了 `explicit operator bool`
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 隐式转换（预测题，非真实面经）
+
+@@ Q-0740
+@STEM
+**题目**：
+
+```cpp
+struct Guard { ~Guard() { cout << "cleanup "; } };
+void f() {
+    Guard g;
+    throw std::runtime_error("boom");
+}
+```
+
+**问**：抛出异常后 `g` 会被析构吗？这个过程叫什么？有什么例外？
+@ANSWER
+会。异常抛出后，栈上**已经构造完成的对象会按构造的逆序逐个析构**，这个过程叫**栈解旋**（stack unwinding）。它是 RAII 能在异常下正确释放资源的基础。
+
+例外是：**析构函数本身抛异常**会导致 `terminate`（栈展开过程中不能有第二个异常在传播）。
+@DEEP
+```cpp
+void f() {
+    Guard g1;
+    Guard g2;
+    throw std::runtime_error("boom");   // 依次 ~g2、~g1
+}
+// 输出：cleanup cleanup
+```
+
+| 情况 | 是否析构 |
+|---|---|
+| 已构造完成的局部对象 | ✅ 逆序析构 |
+| 正在构造中的对象 | ❌ 只析构已完成的部分 |
+| `new` 出来的裸指针对象 | ❌ 不析构（这才是泄漏的根源） |
+| 析构函数抛异常 | ❌ `std::terminate` |
+
+**为什么裸指针会泄漏**：栈解旋只对**栈对象**生效，`Foo* p = new Foo()` 里的 `p` 本身是栈对象，析构它不会 `delete` 指向的对象——这就是 RAII 存在的理由。
+
+**析构函数的最佳实践**：标 `noexcept`（默认就是），内部捕获所有异常，失败要在显式 `close()` 里处理。
+@FOLLOW
+1. **栈解旋的代价是什么？** —— 需要生成额外的清理代码（unwind table），二进制略大，正常路径几乎无开销。
+2. **`noexcept` 函数里抛异常会怎样？** —— 直接 `terminate`，不展开栈。
+3. **构造函数抛异常，对象算构造成功吗？** —— 不算，它的析构函数不会被调用，但已完成的成员会被析构。
+@TRAPS
+- 认为 `new` 出来的对象会被自动清理
+- 析构函数里抛异常
+- 构造函数抛异常时试图 `delete this`
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 异常与栈解旋（预测题，非真实面经）
+
+@@ Q-0741
+@STEM
+**题目**：
+
+```cpp
+try { throw std::runtime_error("x"); }
+catch (std::exception e) { }        // 按值
+catch (const std::exception& e) { } // 按引用
+```
+
+**问**：异常对象存在哪？为什么 catch 要写引用？按值捕获会发生什么？
+@ANSWER
+异常对象由编译器分配在**特殊的异常存储区**（不是栈，因为栈要被展开），生命周期从抛出到最后一个 catch 结束。
+
+按值捕获会**拷贝一份并发生切片**：`std::exception e = runtime_error(...)` 只保留基类部分，`what()` 返回基类信息，派生类数据全丢。按引用捕获不拷贝、不切片，虚调用正常。
+@DEEP
+```cpp
+struct MyErr : std::runtime_error {
+    int code;
+    MyErr(int c) : std::runtime_error("my"), code(c) {}
+};
+
+try { throw MyErr(42); }
+catch (std::exception e) {          // ❌ 切片，拿不到 code
+    // e.what() 是基类信息
+}
+catch (const MyErr& e) {            // ✅ 保留全部信息
+    cout << e.code;
+}
+```
+
+| 捕获方式 | 拷贝 | 切片 | 动态类型 |
+|---|---|---|---|
+| `catch (E e)` | ✅ | ✅ | 丢失 |
+| `catch (E& e)` | ❌ | ❌ | 保留 |
+| `catch (const E& e)` | ❌ | ❌ | 保留（推荐） |
+| `catch (...)` | — | — | 完全丢失 |
+
+**为什么不能用 `catch (E&& e)` 通用**：能捕获，但异常对象是左值语义，`&&` 反而限制了能捕获的范围。
+
+**顺序要求**：派生类在前、基类在后，否则派生分支永远不执行。
+@FOLLOW
+1. **异常对象能被修改吗？** —— `catch (E& e)` 可以，但修改的是副本（异常对象本身的副本），影响不到抛出方。
+2. **`throw;` 和 `throw e;` 区别？** —— 前者重新抛出原对象（保留类型），后者拷贝一份（可能切片）。
+3. **异常对象的拷贝次数？** —— 标准允许实现省略，通常只有一次（构造异常对象时）。
+@TRAPS
+- 按值捕获导致切片，`what()` 信息丢失
+- `throw e;` 而不是 `throw;`，重新抛出时切片
+- 基类 catch 写在前面
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+C++ 异常对象（预测题，非真实面经）
+
+@@ Q-0743
+@STEM
+**场景**：写 ROS2 节点时，示例代码都是 `class MyNode : public rclcpp::Node`。而写普通工具类时，大家又说"优先用组合"。
+
+**问**：为什么 ROS2 节点通常要继承 `rclcpp::Node`？这和"优先组合"矛盾吗？
+@ANSWER
+不矛盾，因为这里用的是**继承的另一个用途：实现接口 + 获得基类能力**。`rclcpp::Node` 提供了创建发布者、订阅者、定时器、参数等一整套基础设施，继承后直接 `this->create_publisher(...)`，代码最短。
+
+如果改成组合（`class MyNode { rclcpp::Node node_; }`），也能工作，但要处处写 `node_.create_publisher(...)`，而且回调里拿不到 `this` 当节点用。
+@DEEP
+```cpp
+// 继承（ROS2 官方风格）
+class Detector : public rclcpp::Node {
+public:
+    Detector() : Node("detector") {
+        sub_ = create_subscription<Image>("img", 10,
+            [this](Image::SharedPtr m) { onImage(m); });
+    }
+private:
+    rclcpp::Subscription<Image>::SharedPtr sub_;
+};
+
+// 组合（也能用，但啰嗦）
+class Detector2 {
+public:
+    Detector2() : node_(std::make_shared<rclcpp::Node>("detector")) {
+        sub_ = node_->create_subscription<Image>("img", 10, ...);
+    }
+private:
+    std::shared_ptr<rclcpp::Node> node_;
+};
+```
+
+| 方案 | 优点 | 缺点 |
+|---|---|---|
+| 继承 `Node` | 代码短、回调里 `this` 就是节点、官方示例一致 | 耦合框架，难单测 |
+| 组合 `Node` | 可测试、可替换、符合"优先组合" | 代码啰嗦，要传 `node_` |
+| 继承 + 抽接口 | 兼顾 | 多一层设计 |
+
+**为什么这里继承是合理的**：`rclcpp::Node` 本质上是"给派生类提供能力的基类"（类似 `std::enable_shared_from_this`），不是"数据模型"。而且节点类通常只做一层派生。
+
+**真正的代价**：难做单元测试——想脱离 ROS2 环境测逻辑，得把业务逻辑抽到独立的类里，节点只做胶水。这也是工程上推荐的写法。
+@FOLLOW
+1. **怎么让节点可测？** —— 业务逻辑放独立类，节点只负责订阅、转换参数、调用业务类。
+2. **`rclcpp::Node` 有虚析构吗？** —— 有，继承它并 `delete` 基类指针是安全的。
+3. **一个进程能有多个节点吗？** —— 能，用 `rclcpp::executors::MultiThreadedExecutor` 把多个节点加进去。
+@TRAPS
+- 把业务逻辑全写在节点类里，无法单测
+- 认为"继承一定错、组合一定对"
+- 忘了 `Node` 的构造函数要传节点名
+@RELATED
+- ROS2 理论与实践教程
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+ROS2 节点设计 + C++ 继承（预测题，非真实面经）

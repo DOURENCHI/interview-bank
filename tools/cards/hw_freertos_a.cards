@@ -1,0 +1,1187 @@
+@@ Q-4102
+@STEM
+**场景**：一块板子要同时做三件事——每 1 ms 采样一次 ADC、每 20 ms 扫一次按键、每 500 ms 刷一次屏幕。裸机 `while(1)` 里用 `HAL_Delay` 串起来，结果按键迟钝、采样丢点。
+
+**问**：裸机主循环为什么"遇到不同周期就顾此失彼"？RTOS 是怎么解决的？
+@ANSWER
+因为裸机是**单线程顺序执行**，`HAL_Delay(1)` 期间 CPU 在空转等，什么都不能做。三个周期一旦不是整数倍关系，就只能取最小公约数不停地查，或者牺牲某个任务的响应。
+
+RTOS 用**时间片 + 阻塞唤醒**解决：每个任务写成一个死循环，用 `vTaskDelay` 让出 CPU，调度器按优先级和时间片切换。等待期间 CPU 去跑别的任务，不是空转。
+@DEEP
+```c
+// 裸机：串行，总周期 = 各段之和
+while (1) {
+    adc_sample();  HAL_Delay(1);
+    key_scan();    HAL_Delay(20);   // 这 20 ms 里 ADC 完全停摆
+    lcd_refresh(); HAL_Delay(500);
+}
+```
+
+```c
+// RTOS：并行（看起来），各自按自己的周期阻塞
+void task_adc(void* p) { for (;;) { adc_sample(); vTaskDelay(pdMS_TO_TICKS(1)); } }
+void task_key(void* p) { for (;;) { key_scan();   vTaskDelay(pdMS_TO_TICKS(20)); } }
+void task_lcd(void* p) { for (;;) { lcd_refresh();vTaskDelay(pdMS_TO_TICKS(500)); } }
+```
+
+| 维度 | 裸机超级循环 | RTOS |
+|---|---|---|
+| 并发 | 伪并发（轮流跑） | 真并发（抢占 + 阻塞） |
+| 响应延迟 | 等于一轮循环时间 | 高优先级任务可随时抢占 |
+| 代码结构 | 全部挤在 `main` | 一任务一文件 |
+| 周期精度 | 受其他任务拖累 | 各自独立 |
+| 资源开销 | 几乎为零 | RAM + 每个任务一份栈 |
+
+**本质区别**：裸机的"等待"是**占用 CPU 等待**，RTOS 的"等待"是**让出 CPU 等待**。
+@FOLLOW
+1. **RTOS 一定更快吗？** —— 不一定。任务切换有开销（几微秒），任务少、逻辑简单时裸机反而更快。
+2. **什么时候不该上 RTOS？** —— 只有一个主循环、时序要求宽松、RAM 紧张（如 2 KB 的 MCU）。
+3. **RTOS 的"并发"是真的并行吗？** —— 单核上是分时复用，看起来并行；多核才真并行。
+@TRAPS
+- 认为 RTOS 让 CPU 变快（它只是让等待不占 CPU）
+- 任务里用 `HAL_Delay` 而不是 `vTaskDelay`（前者空转，后者让出）
+- 任务数开太多，RAM 不够
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 通用知识 + 项目实践（预测题，非真实面经）
+
+@@ Q-4103
+@STEM
+**场景**：一个 Cortex-M3、64 KB RAM 的板子，有人开了 10 个任务，`configMINIMAL_STACK_SIZE` 设 128，编译过了，跑起来 HardFault。
+
+**问**：一个 FreeRTOS 任务占多少 RAM？TCB 加栈怎么算？`usStackDepth` 的单位是什么？
+@ANSWER
+两块：**TCB**（任务控制块，Cortex-M 上约 80–100 字节）加**任务栈**（由 `usStackDepth` 指定）。
+
+关键坑是：**`usStackDepth` 的单位是"字"不是"字节"**。Cortex-M 上一字 4 字节，写 128 就是 512 字节。10 个任务就是 10×(100+512) ≈ 6 KB，再加上堆和其他开销。
+@DEEP
+```c
+// usStackDepth = 128 → 128 字 = 512 字节
+xTaskCreate(task_fn, "adc", 128, NULL, 3, NULL);
+```
+
+| 项 | 大小（Cortex-M3/M4） | 说明 |
+|---|---|---|
+| TCB | 约 80–100 B | 链表节点、优先级、栈顶指针等 |
+| 最小栈 | 约 128 B | 只够空任务 |
+| 带 `printf` 的栈 | 512 B–1 KB | `printf` 内部吃栈很凶 |
+| 浮点任务 | + 额外保存区 | FPU 上下文 |
+
+典型取值参考：
+
+| 任务类型 | 建议栈（字） |
+|---|---|
+| 空循环/闪灯 | 64–128 |
+| 普通业务逻辑 | 128–256 |
+| 用了 `printf` / `sprintf` | 256–512 |
+| 递归 / 大局部数组 | 单独评估 |
+
+**怎么看实际用量**：`uxTaskGetStackHighWaterMark(handle)` 返回历史最小剩余量（单位字），剩得越少越危险。留 20–30% 余量比较稳。
+@FOLLOW
+1. **为什么单位是字？** —— 栈按 `StackType_t`（通常 32 位）分配，用字更自然；但和"字节"混淆是经典坑。
+2. **栈能动态增长吗？** —— 不能，FreeRTOS 栈大小创建后固定。
+3. **`configMINIMAL_STACK_SIZE` 是什么？** —— 空闲任务用的栈大小，不是所有任务的默认值。
+@TRAPS
+- 把 `usStackDepth` 当字节数，栈小了 4 倍
+- 用 `printf` 却没加大栈
+- 只算栈不算 TCB
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 内存模型（预测题，非真实面经）
+
+@@ Q-4104
+@STEM
+**现象**：程序跑几分钟就死机，或者变量莫名其妙被改值，重启后又能跑一会。
+
+**问**：任务栈给小了会有什么现象？怎么发现和定位？
+@ANSWER
+典型现象是**随机性故障**：栈溢出会踩坏相邻内存（通常是 TCB 或别的任务的栈），表现为变量被改、HardFault、任务跑飞、莫名重启——而且**位置每次都不一样**，极难复现。
+
+发现手段：开启 `configCHECK_FOR_STACK_OVERFLOW`，用 `uxTaskGetStackHighWaterMark` 看余量。
+@DEEP
+```c
+// FreeRTOSConfig.h
+#define configCHECK_FOR_STACK_OVERFLOW 2    // 2 = 切换时检查 + 栈底填充值
+```
+
+```c
+// 溢出钩子必须实现，否则链接失败
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char* pcTaskName) {
+    taskDISABLE_INTERRUPTS();
+    printf("STACK OVERFLOW in %s\n", pcTaskName);
+    for (;;);
+}
+```
+
+```c
+// 定期检查余量（单位：字）
+UBaseType_t hw = uxTaskGetStackHighWaterMark(NULL);
+printf("stack left: %u words\n", hw);
+```
+
+| 检查级别 | 机制 | 开销 |
+|---|---|---|
+| 0 | 不检查 | 0 |
+| 1 | 切换时看栈指针是否越界 | 小 |
+| 2 | 加栈底填充图案（0xA5），切换时检查 | 略大，**推荐** |
+
+**为什么级别 2 更好**：级别 1 只能发现"栈指针已经越界"，此时可能已经踩坏了数据；级别 2 通过填充图案能更早发现。
+
+**定位方法**：看 `pcTaskName` 就知道是哪个任务；再看剩余水位历史最小值。**建议所有任务都定期打印水位**，尤其是在加了新功能之后。
+@FOLLOW
+1. **水位多少算安全？** —— 剩余 ≥ 20–30% 比较稳；接近 0 就要加。
+2. **中断也用任务栈吗？** —— Cortex-M 上中断用主栈（MSP），和任务栈分开，但中断里调用的函数也会吃栈。
+3. **`printf` 会吃多少？** —— 视实现，几百字节很常见，带浮点更多。
+@TRAPS
+- 不开栈溢出检查，出问题只能靠猜
+- 只看当前余量不看历史最小值
+- 加了新的 `printf` 却没重新评估栈
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 调试（预测题，非真实面经）
+
+@@ Q-4105
+@STEM
+**题目**：`configUSE_PREEMPTION`、`configUSE_TIME_SLICING` 两个宏，四个组合。
+
+**问**：FreeRTOS 支持哪几种调度策略？抢占式和协作式区别在哪？
+@ANSWER
+FreeRTOS 本质是**基于优先级的调度**，两个宏控制两种行为：
+
+- `configUSE_PREEMPTION=1`：**抢占式**，高优先级任务就绪立刻抢占低优先级；
+- `configUSE_TIME_SLICING=1`：**同优先级任务按时间片轮转**（tick 到了就换）。
+
+关掉抢占（=0）就是**协作式**：任务必须主动让出（`vTaskDelay`、等信号量、`taskYIELD`）才会切换。
+@DEEP
+| 组合 | 行为 | 适用 |
+|---|---|---|
+| 抢占 + 时间片 | 默认，响应最好 | 大多数场景 |
+| 抢占 + 无时间片 | 高优先级抢占；同优先级先进先出直到阻塞 | 想减少切换开销 |
+| 协作 + 时间片 | 只在主动让出时切换 | 几乎不用 |
+| 协作 + 无时间片 | 纯协作 | 老式系统/极简场景 |
+
+```c
+// FreeRTOSConfig.h
+#define configUSE_PREEMPTION    1
+#define configUSE_TIME_SLICING  1
+#define configUSE_TICKLESS_IDLE 0
+```
+
+**协作式的风险**：一个任务写死循环不阻塞，**所有低优先级任务永远得不到执行**，看门狗都跑不了。
+
+**优先级数字越大越高**（和某些 RTOS 相反），范围 0 到 `configMAX_PRIORITIES-1`；空闲任务固定优先级 0。
+@FOLLOW
+1. **时间片多长？** —— 一个 tick（`1/configTICK_RATE_HZ`），1000 Hz 时是 1 ms。
+2. **同优先级任务怎么排队？** —— 就绪链表按优先级分桶，同桶内轮转。
+3. **优先级反转怎么解决？** —— 用互斥量（带优先级继承），不要用二值信号量做互斥。
+@TRAPS
+- 以为 FreeRTOS 默认是协作式
+- 认为优先级数字越小越高
+- 协作式下写死循环，低优先级任务饿死
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 调度器（预测题，非真实面经）
+
+@@ Q-4106
+@STEM
+**题目**：看 FreeRTOS 的启动代码，发现它打开了 SVC、PendSV、SysTick 三个异常。分别干什么？
+
+**问**：FreeRTOS 内核用到哪几个中断？各自的作用是什么？
+@ANSWER
+三个各司其职：**SVC** 用于启动第一个任务（从特权态切到任务上下文）；**PendSV** 负责**上下文切换**（保存/恢复寄存器）；**SysTick** 提供**系统节拍**（tick），驱动延时和时间片。
+
+关键设计是 **PendSV 的优先级设成最低**：这样上下文切换会等所有其他中断处理完再执行，避免在中断中间切换导致状态错乱。
+@DEEP
+| 异常 | 作用 | 优先级 |
+|---|---|---|
+| SVC | 启动调度器、任务首次运行 | 高 |
+| PendSV | 上下文切换（保存/恢复 R0-R15） | **最低** |
+| SysTick | 系统节拍（tick 计数、延时、时间片） | 通常低于 SVC |
+
+```c
+// port.c 里的典型配置（Cortex-M）
+#define configKERNEL_INTERRUPT_PRIORITY      255        // PendSV/SysTick 最低
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY 191        // 可调 API 的最高优先级
+```
+
+**为什么 PendSV 必须最低**：切上下文要保存完整寄存器组，如果在中断嵌套中间切换，返回时恢复的上下文可能是错的。放到最低优先级，保证"所有中断都处理完了再切"。
+
+**SysTick 可以被替换**：用 `configSYSTICK_CLOCK_HZ` 改时钟源，或改用其他定时器提供 tick（见 Q-4112）。
+@FOLLOW
+1. **能改 PendSV 优先级吗？** —— 能配，但不能高于"可调 API 的最高优先级"，否则会破坏临界区保护。
+2. **上下文切换保存了什么？** —— R4–R11、R14 等（R0–R3、R12、LR、PC、xPSR 由硬件自动压栈）。
+3. **tick 中断里做了什么？** —— `xTaskIncrementTick()`，判断是否需要切换，需要就挂起 PendSV。
+@TRAPS
+- 把 PendSV 优先级设高，导致切换在中断中间发生
+- 以为 SysTick 是唯一 tick 来源
+- 在中断里调用非 FromISR 版本 API
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 内核机制（预测题，非真实面经）
+
+@@ Q-4108
+@STEM
+**场景**：从官网下了 FreeRTOS 源码，目录里几十个文件，不知道该往 Keil 工程里加哪些。
+
+**问**：移植 FreeRTOS 时，源码目录里哪些文件必须拷进工程？哪些可以裁掉？
+@ANSWER
+分三类：**内核核心**（`tasks.c`、`queue.c`、`list.c`，必需）、**可选模块**（`timers.c`、`event_groups.c`、`stream_buffer.c`，用才加）、**移植层**（`port.c`、`portmacro.h`，必需，且要选对编译器/架构目录）、**堆实现**（`heap_1.c`~`heap_5.c`，**只选一个**）。
+
+`portable/` 下有很多目录，只保留你用的那个（如 `GCC/ARM_CM3` 或 `RVDS/ARM_CM3`）。
+@DEEP
+```
+FreeRTOS/Source/
+├── tasks.c            必需
+├── queue.c            必需
+├── list.c             必需
+├── timers.c           用软件定时器才加
+├── event_groups.c     用事件组才加
+├── stream_buffer.c    用流缓冲/消息缓冲才加
+├── croutine.c         协程，基本不用，可裁
+├── include/           必需（头文件目录）
+└── portable/
+    ├── MemMang/
+    │   └── heap_4.c   ← 只选一个
+    └── GCC/ARM_CM3/
+        └── port.c     ← 按内核/编译器选
+```
+
+| 目录/文件 | 是否必需 | 说明 |
+|---|---|---|
+| `tasks.c` `queue.c` `list.c` | ✅ | 内核基础 |
+| `port.c` + `portmacro.h` | ✅ | 与架构强相关 |
+| `heap_x.c` | ✅（选一） | 内存管理方案 |
+| `FreeRTOSConfig.h` | ✅ | 自己写，不放源码目录 |
+| `timers.c` / `event_groups.c` | 按需 | 不用就别加，省空间 |
+| `croutine.c` | ❌ | 协程已过时 |
+
+**选错 port 目录的典型报错**：`undefined symbol vPortSVCHandler`、或编译过但 HardFault——因为寄存器保存方式不对。
+@FOLLOW
+1. **`port.c` 怎么选？** —— 按"编译器 + 内核"两级：`GCC/ARM_CM4F` 表示 GCC + Cortex-M4F（带 FPU）。
+2. **`heap_x.c` 能加多个吗？** —— 不能，符号冲突（都定义 `pvPortMalloc`）。
+3. **新版还把 `portmacro.h` 放在 port 目录吗？** —— 是，跟着 `port.c` 一起。
+@TRAPS
+- 加了多个 `heap_x.c`，链接报重复定义
+- 选错 port 目录（CM3 的 port 用在 CM4F 上）
+- 把 `FreeRTOSConfig.h` 放在源码目录，换项目时被覆盖
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 移植（预测题，非真实面经）
+
+@@ Q-4109
+@STEM
+**题目**：`FreeRTOSConfig.h` 里几十个宏，哪些必须改、哪些可以默认？
+
+**问**：哪些配置最关键？配错会怎样？
+@ANSWER
+六个必须按板子改：**`configCPU_CLOCK_HZ`**（CPU 频率，错了所有延时都错）、**`configTICK_RATE_HZ`**（节拍频率）、**`configMAX_PRIORITIES`**（优先级数量）、**`configMINIMAL_STACK_SIZE`**、**`configTOTAL_HEAP_SIZE`**（堆大小）、以及两个**中断优先级**宏。
+
+最危险的错法是 `configCPU_CLOCK_HZ` 写错——`vTaskDelay(1000)` 可能变成 0.5 秒或 2 秒，而且不会报错。
+@DEEP
+```c
+#define configCPU_CLOCK_HZ                    (72000000UL)   // 必须与时钟树一致
+#define configTICK_RATE_HZ                    ((TickType_t)1000)  // 1 ms
+#define configMAX_PRIORITIES                  (7)
+#define configMINIMAL_STACK_SIZE              ((uint16_t)128)     // 单位：字
+#define configTOTAL_HEAP_SIZE                 ((size_t)(20*1024))
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY  (5 << 4)   // 数值越大优先级越低
+#define configKERNEL_INTERRUPT_PRIORITY       (15 << 4)
+#define configCHECK_FOR_STACK_OVERFLOW        2
+#define configUSE_PREEMPTION                  1
+#define configUSE_TIMERS                      1
+```
+
+| 宏 | 配错的表现 |
+|---|---|
+| `configCPU_CLOCK_HZ` | 延时全错、tick 频率不对，**不报错** |
+| `configTICK_RATE_HZ` | 时间片和延时精度不对 |
+| `configMAX_PRIORITIES` | 任务创建失败（优先级越界） |
+| `configTOTAL_HEAP_SIZE` | `pvPortMalloc` 返回 NULL，任务创建失败 |
+| `configMAX_SYSCALL_INTERRUPT_PRIORITY` | 中断里调 API 导致 HardFault |
+
+**中断优先级那两个宏是最容易搞错的**：Cortex-M 的 NVIC 优先级**数值越小优先级越高**，而 FreeRTOS 的"可调 API 中断"要求**优先级数值 ≥ 该宏**（即优先级更低）。配反了会在中断里调用 API 时崩溃。
+@FOLLOW
+1. **`configTOTAL_HEAP_SIZE` 设多大？** —— 按"任务栈总和 + 队列 + 定时器 + 动态分配"估算，留 30% 余量。
+2. **`configUSE_TIMERS=0` 会怎样？** —— `xTimerCreate` 不可用，`timers.c` 也不用编进来。
+3. **怎么确认配对了？** —— 用示波器量一个 `vTaskDelay(1000)` 的翻转周期。
+@TRAPS
+- `configCPU_CLOCK_HZ` 写成 8 MHz（实际 72 MHz）
+- 中断优先级宏没左移 4 位
+- 堆开太小，任务创建静默失败
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 配置（预测题，非真实面经）
+
+@@ Q-4110
+@STEM
+**追问**：`configUSE_PREEMPTION` 和 `configUSE_TIME_SLICING` 都设 1，同优先级任务会怎样？
+
+**问**：这两个宏的相互作用是什么？关掉时间片会有什么后果？
+@ANSWER
+两个都开：高优先级任务**立刻抢占**，同优先级任务**按 tick 轮转**（每个 tick 换一次）。
+
+关掉 `configUSE_TIME_SLICING`：同优先级任务变成**先进先出**，只有当前任务阻塞/让出才换下一个。好处是减少切换开销，坏处是同优先级的两个死循环任务，第一个会把第二个饿死。
+@DEEP
+| 配置 | 高优先级就绪 | 同优先级 |
+|---|---|---|
+| 抢占 + 时间片 | 立刻抢占 | 每 tick 轮转 |
+| 抢占 + 无时间片 | 立刻抢占 | 先进先出，直到阻塞 |
+| 协作 + 时间片 | 不抢占 | 每 tick 轮转（仅当主动 yield 后） |
+| 协作 + 无时间片 | 不抢占 | 先进先出 |
+
+```c
+// 想减少切换开销（同优先级任务本来就很少同时就绪）
+#define configUSE_PREEMPTION    1
+#define configUSE_TIME_SLICING  0
+```
+
+**时间片关闭的典型用途**：几个同优先级的任务都是"事件驱动"（等信号量才干活），根本不会同时就绪，时间片纯属浪费。
+
+**代价**：一旦有任务长时间不阻塞，同优先级的其他任务就完全没有机会——这类 bug 很难查，因为"平时都是好的"。
+@FOLLOW
+1. **tick 中断还会触发吗？** —— 会，`vTaskDelay` 仍然依赖 tick，只是不再因为时间片而切换。
+2. **能运行时改吗？** —— 不能，是编译期宏。
+3. **协作式下 `taskYIELD()` 有用吗？** —— 有，主动让出给同优先级任务。
+@TRAPS
+- 关时间片后写同优先级死循环，饿死另一个任务
+- 以为关时间片就没有 tick 了
+- 把这两个宏和 `configUSE_TICKLESS_IDLE` 搞混
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 调度配置（预测题，非真实面经）
+
+@@ Q-4111
+@STEM
+**题目**：`configMAX_SYSCALL_INTERRUPT_PRIORITY` 写成 `5 << 4`，为什么不是直接写 5？
+
+**问**：为什么 FreeRTOS 的中断优先级要左移 4 位？不左移会怎样？
+@ANSWER
+因为 Cortex-M 的 NVIC 优先级寄存器是 **8 位字段**，但芯片只实现了**高位的那几位**（常见 4 位）。硬件规定：**优先级值必须放在高 4 位**，低 4 位无效。
+
+所以 4 位优先级 `5`（二进制 0101）写进寄存器要变成 `0101 0000` = `0x50` = `5<<4`。直接写 5 会被硬件当成"最高优先级"（因为低 4 位被忽略，高 4 位是 0）。
+@DEEP
+```
+NVIC IPR 寄存器（8 位），芯片实现 4 位：
+  位: 7 6 5 4 | 3 2 1 0
+      ↑ 有效   ↑ 读回为 0
+  优先级 5 → 0101 0000 = 0x50
+  直接写 5 → 0000 0101 → 硬件读到高 4 位 0000 = 最高优先级！
+```
+
+| 写法 | 实际优先级 | 后果 |
+|---|---|---|
+| `5 << 4` = 0x50 | 5 | ✅ 正确 |
+| `5` = 0x05 | 0（最高） | ❌ 变成最高优先级，可能破坏临界区 |
+| `15 << 4` = 0xF0 | 15（最低） | ✅ |
+
+```c
+#define configKERNEL_INTERRUPT_PRIORITY      (15 << 4)   // PendSV/SysTick 最低
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY (5 << 4)    // 高于它（数值更小）的中断不能调 API
+```
+
+**为什么这么严格**：FreeRTOS 的临界区通过 `BASEPRI` 屏蔽中断，只屏蔽"优先级数值 ≥ 阈值"的中断。如果某个中断优先级配错成 0，它不会被屏蔽，在里面调用 `xQueueSend` 就会破坏内核数据结构。
+
+**CMSIS 有现成宏**：`NVIC_SetPriority(IRQn, pri)` 内部会做移位，但 FreeRTOSConfig.h 里的宏是直接写寄存器值，所以要自己移。
+@FOLLOW
+1. **怎么知道芯片实现了几位优先级？** —— 读 `NVIC->IPR` 写 0xFF 再读回，看低几位被清零。
+2. **8 位全实现的芯片要移吗？** —— 不用，但为可移植性一般仍按 4 位写。
+3. **`configPRIO_BITS` 是什么？** —— FreeRTOS 用它表示实现的优先级位数，通常在移植文件里定义。
+@RELATED
+- 教学文档/STM32 相关章节
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+Cortex-M NVIC 优先级（预测题，非真实面经）
+@TRAPS
+- 直接写 `5` 而不是 `5 << 4`
+- 以为优先级数值越大越高
+- 在高于 `configMAX_SYSCALL_INTERRUPT_PRIORITY` 的中断里调用 FreeRTOS API
+
+@@ Q-4112
+@STEM
+**场景**：用 CubeMX 生成 HAL 工程，再挂 FreeRTOS，发现 `HAL_Delay` 变慢或卡死。
+
+**问**：FreeRTOS 的时基为什么常用独立定时器（如 TIM6）而不是 SysTick？
+@ANSWER
+因为 **HAL 库自己也用 SysTick** 做 1 ms 时基（`HAL_Delay`、`HAL_GetTick` 都依赖它）。FreeRTOS 接管 SysTick 中断后，HAL 的时基要么被打断、要么和 FreeRTOS 抢同一个中断，结果就是 `HAL_Delay` 不准确甚至死等。
+
+解决办法：**给 HAL 换一个定时器做时基**（TIM6/TIM7），SysTick 留给 FreeRTOS。
+@DEEP
+```c
+// main.c 里把 HAL 时基改到 TIM6
+HAL_InitTick(TIM6);   // 或在 CubeMX 里把 Timebase Source 设为 TIM6
+
+// stm32f1xx_it.c 里保留 SysTick_Handler 给 FreeRTOS
+void SysTick_Handler(void) {
+    xPortSysTickHandler();     // FreeRTOS 接管
+}
+```
+
+| 方案 | HAL 时基 | FreeRTOS tick | 结果 |
+|---|---|---|---|
+| 都用 SysTick | SysTick | SysTick | ❌ `HAL_Delay` 不准/死锁 |
+| HAL 用 TIM6，RTOS 用 SysTick | TIM6 | SysTick | ✅ **推荐** |
+| RTOS 用 TIM6，HAL 用 SysTick | SysTick | TIM6 | ✅ 也可以（需改 port 配置） |
+
+**为什么 `HAL_Delay` 会死**：它内部是 `while (uwTick - start < ms)`，`uwTick` 靠 SysTick 中断累加。如果 SysTick 被 FreeRTOS 接管且不再更新 `uwTick`，这个 while 就永远不结束。
+
+**一条纪律**：RTOS 工程里**不要用 `HAL_Delay`**，用 `vTaskDelay`——后者会让出 CPU，前者是空转。
+@FOLLOW
+1. **改了时基还要改什么？** —— 确认 TIM6 的中断优先级低于 `configMAX_SYSCALL_INTERRUPT_PRIORITY`（HAL 时基中断可能调 API）。
+2. **`HAL_GetTick` 还能用吗？** —— 能，但值来自 TIM6，和 FreeRTOS 的 tick 不同源。
+3. **能不用 HAL 吗？** —— 能，裸用寄存器 + FreeRTOS，就没有这个冲突。
+@TRAPS
+- RTOS 工程里调 `HAL_Delay`，空转 + 时基冲突
+- 改了 Timebase 但没改中断优先级
+- 以为 `HAL_Delay` 会让出 CPU
+@RELATED
+- 教学文档/STM32 相关章节
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+STM32 + FreeRTOS 集成（预测题，非真实面经）
+
+@@ Q-4113
+@STEM
+**现象**：`pvPortMalloc` 一直返回 NULL，但 `configTOTAL_HEAP_SIZE` 明明设了 20 KB，任务也没几个。
+
+**问**：FreeRTOS 的堆和 C 库的 `malloc` 是什么关系？为什么 `printf` 会偷偷吃堆？
+@ANSWER
+**两套完全独立的堆**：FreeRTOS 的 `pvPortMalloc` 用自己的静态数组（大小由 `configTOTAL_HEAP_SIZE` 定），C 库的 `malloc` 用链接脚本里的 heap 段（`_Min_Heap_Size`）。两者互不相干。
+
+`printf` 吃的是 **C 库的堆**——newlib 会为格式化缓冲、浮点转换等动态分配内存。如果 heap 段给得太小（CubeMX 默认 0x200），`printf` 就可能失败甚至 HardFault。
+@DEEP
+| 分配器 | 内存来源 | 大小配置 | 线程安全 |
+|---|---|---|---|
+| `pvPortMalloc` | FreeRTOS 静态数组 | `configTOTAL_HEAP_SIZE` | ✅（内部挂起调度器） |
+| `malloc` | 链接脚本 heap 段 | `_Min_Heap_Size` | ❌（newlib 默认不安全） |
+
+```c
+// FreeRTOSConfig.h —— 想用 heap_3 让 pvPortMalloc 走 C 库 malloc
+// 此时两者共用，C 库 malloc 会加锁
+```
+
+**`printf` 的三个坑**：
+1. **吃堆**：格式化缓冲可能动态分配；
+2. **吃栈**：`printf` 内部栈用量可达几百字节；
+3. **不是线程安全的**：多任务同时 `printf` 会输出交错，需要加锁或用 `vsnprintf` 到自己的缓冲再输出。
+
+**工程做法**：把 `printf` 重定向到串口时，用**自己的静态缓冲 + 互斥量**，或者干脆用轻量的 `snprintf` + `HAL_UART_Transmit`。
+@FOLLOW
+1. **怎么知道堆用了多少？** —— `xPortGetFreeHeapSize()`、`xPortGetMinimumEverFreeHeapSize()`。
+2. **`heap_3` 为什么线程安全？** —— 它用 `vTaskSuspendAll` 包住 `malloc/free`。
+3. **能关掉 newlib 的动态分配吗？** —— 能，用 `--specs=nano.specs` + 自定义 `_sbrk`，或避免 `printf`。
+@TRAPS
+- 以为 `configTOTAL_HEAP_SIZE` 也管 `malloc`
+- `printf` 在中断里调用（不可重入 + 可能阻塞）
+- 多任务同时 `printf`，输出交错
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+FreeRTOS 堆与 C 库（预测题，非真实面经）
+
+@@ Q-4114
+@STEM
+**追问**：`configCHECK_FOR_STACK_OVERFLOW` 设 2 之后，钩子函数被调用了，怎么找出是谁吃掉了栈？
+
+**问**：任务栈溢出会怎么表现？FreeRTOS 怎么检测？找到之后怎么修？
+@ANSWER
+表现是**随机故障**：HardFault、变量被改、任务跑飞、重启。因为溢出会踩坏相邻内存，位置不固定。
+
+检测靠 `configCHECK_FOR_STACK_OVERFLOW`（推荐 2）+ `vApplicationStackOverflowHook`，钩子里能拿到任务名。定位后用 `uxTaskGetStackHighWaterMark` 看历史水位，找出最紧张的那个任务。
+@DEEP
+```c
+#define configCHECK_FOR_STACK_OVERFLOW 2
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char* pcTaskName) {
+    taskDISABLE_INTERRUPTS();
+    // 此时来不及 printf（可能也吃栈），直接点灯/死循环
+    volatile char* name = pcTaskName;
+    (void)name;
+    for (;;);
+}
+
+// 平时巡检
+void stack_report(void) {
+    TaskHandle_t hs[16]; UBaseType_t n = 16;
+    uxTaskGetSystemState(NULL, 0, &n);           // 先拿任务数
+    for (UBaseType_t i = 0; i < n; ++i) { /* 遍历打印水位 */ }
+}
+```
+
+| 常见吃栈原因 | 修法 |
+|---|---|
+| `printf` / `sprintf` | 加大栈到 512 字以上，或改轻量输出 |
+| 大局部数组 `char buf[512]` | 改成 `static` 或 malloc |
+| 递归 | 改迭代 |
+| 深层函数调用链 | 精简调用层次 |
+| 浮点运算 + FPU 上下文 | 额外预留空间 |
+
+**钩子里的注意事项**：不能再调用可能阻塞或吃栈的 API；最稳的做法是点个 LED 或写一个全局标志然后死循环，让调试器停在那里看调用栈。
+@FOLLOW
+1. **溢出后还能恢复吗？** —— 不能可靠恢复，数据已经被破坏；只能复位。
+2. **水位单位是什么？** —— 字（`StackType_t` 个数），Cortex-M 上是 4 字节。
+3. **中断用的栈会溢出吗？** —— 会，主栈（MSP）大小在启动文件里配，`printf` 在中断里尤其危险。
+@TRAPS
+- 钩子里调用 `printf`（可能再次溢出/阻塞）
+- 只看当前水位不看最小值
+- 溢出后试图"继续跑"
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 栈调试（预测题，非真实面经）
+
+@@ Q-4115
+@STEM
+**题目**：
+
+```c
+void my_task(void* p) {
+    do_something();      // 没有 while(1)，直接返回
+}
+```
+
+**问**：任务函数为什么必须是死循环？返回了会怎样？
+@ANSWER
+因为任务函数返回时，FreeRTOS **没有"任务结束"这个概念**——它不会自动删除任务，而是继续用这个已经被弹出的栈帧执行，行为未定义：可能 HardFault，可能跳回某个随机地址。
+
+正确做法有两种：**写成死循环**（最常用），或者在末尾调用 `vTaskDelete(NULL)` 自杀。
+@DEEP
+```c
+// ✅ 死循环
+void task_a(void* p) {
+    for (;;) {
+        work();
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+// ✅ 一次性任务，主动删除自己
+void task_once(void* p) {
+    work();
+    vTaskDelete(NULL);      // 删除自身，释放 TCB 和栈
+}
+```
+
+| 写法 | 结果 |
+|---|---|
+| `for(;;)` + 阻塞 | ✅ 正常 |
+| 直接 return | ❌ 未定义（多数是 HardFault） |
+| `vTaskDelete(NULL)` | ✅ 任务被清理 |
+| `while(1);` 无阻塞 | ⚠️ 高优先级会饿死别人 |
+
+**`vTaskDelete(NULL)` 的两个注意点**：
+1. **内存不会自动回收**——栈和 TCB 要空闲任务来清理，所以空闲任务必须能跑；
+2. **`configSUPPORT_DYNAMIC_ALLOCATION` 必须为 1**。
+
+**为什么"返回"这么危险**：Cortex-M 上任务首次运行是由 SVC 手工构造栈帧启动的，返回地址是故意设的陷阱（`prvTaskExitError`），所以通常会进入 HardFault 或死循环。
+@FOLLOW
+1. **任务函数能有返回值吗？** —— 签名是 `void (*)(void*)`，不能有返回值。
+2. **参数怎么传？** —— 通过 `xTaskCreate` 的 `pvParameters`，注意生命周期（不要传栈上变量的地址）。
+3. **删除任务后内存什么时候回收？** —— 空闲任务下一次运行时。
+@TRAPS
+- 任务函数忘了 `for(;;)`
+- 传了局部变量的地址当参数，任务还没跑变量就销毁了
+- `vTaskDelete` 之后还访问任务句柄
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 任务（预测题，非真实面经）
+
+@@ Q-4117
+**STEM
+@STEM
+**题目**：一个高优先级任务里写了 `while (1) { do_work(); }`，没有 `vTaskDelay`，结果低优先级任务和看门狗全都不动了。
+
+**问**：为什么必须用 `vTaskDelay` 让出 CPU？不阻塞会怎样？
+@ANSWER
+因为**抢占式调度下，高优先级任务只要就绪就永远占着 CPU**。它不阻塞，低优先级任务（包括空闲任务）就永远得不到运行机会——这就是"任务饥饿"。
+
+`vTaskDelay` 把任务从就绪链表移到延时链表，让调度器去跑别的任务，时间到了再放回就绪链表。
+@DEEP
+```c
+// ❌ 高优先级死循环，饿死所有低优先级任务
+void task_fast(void* p) {
+    for (;;) { do_work(); }
+}
+
+// ✅ 让出 CPU
+void task_fast(void* p) {
+    for (;;) {
+        do_work();
+        vTaskDelay(pdMS_TO_TICKS(10));   // 阻塞 10 ms，期间别人能跑
+    }
+}
+
+// ✅ 或者等事件（更精确）
+void task_event(void* p) {
+    for (;;) {
+        if (xSemaphoreTake(sem, portMAX_DELAY) == pdTRUE) do_work();
+    }
+}
+```
+
+| 让出方式 | 多久回来 | 适合 |
+|---|---|---|
+| `vTaskDelay(n)` | 固定 n 个 tick | 周期任务 |
+| `vTaskDelayUntil` | 固定**周期**（补偿执行时间） | 严格周期采样 |
+| 等信号量/队列 | 事件到来时 | 事件驱动 |
+| `taskYIELD()` | 立刻（同优先级） | 让给同优先级 |
+
+**`vTaskDelay` 和 `vTaskDelayUntil` 的区别**（重要）：前者是"从现在起等 n 个 tick"，执行时间会累积成周期漂移；后者是"到下一个绝对时刻"，周期严格。
+
+**空闲任务的重要性**：它负责回收被删除任务的栈和 TCB。高优先级任务不让出，删除的任务内存永远不回收。
+@FOLLOW
+1. **`vTaskDelay(0)` 有用吗？** —— 有用，等于 `taskYIELD()`，让给同优先级。
+2. **延时精度多少？** —— 一个 tick（1000 Hz 时 1 ms），实际可能多一个 tick。
+3. **中断里能调用 `vTaskDelay` 吗？** —— 不能，中断没有任务上下文。
+@TRAPS
+- 高优先级任务死循环不让出，饿死低优先级
+- 用 `vTaskDelay` 做严格周期，累积漂移
+- `HAL_Delay` 当让出（它是空转）
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 任务调度（预测题，非真实面经）
+
+@@ Q-4118
+@STEM
+**题目**：`configTICK_RATE_HZ` 设 100 还是 1000？设太高会怎样？
+
+**问**：tick 中断和 `configTICK_RATE_HZ` 是什么关系？怎么选这个值？
+@ANSWER
+`configTICK_RATE_HZ` 是**每秒 tick 数**，它决定：延时精度（1/tick_hz）、时间片长度、以及 tick 中断的 CPU 开销。
+
+1000 Hz 给 1 ms 精度，但每秒 1000 次中断；100 Hz 只有 10 ms 精度，开销小 10 倍。一般选 1000，功耗敏感或任务周期长时选 100。
+@DEEP
+| `configTICK_RATE_HZ` | 精度 | 中断开销 | 适用 |
+|---|---|---|---|
+| 100 | 10 ms | 低 | 低速控制、低功耗 |
+| 1000 | 1 ms | 中 | **通用默认** |
+| 10000 | 0.1 ms | 高（10% CPU） | 少见，需评估 |
+
+```c
+#define configTICK_RATE_HZ ((TickType_t)1000)
+
+// 毫秒转 tick 一定要用宏，别手算
+vTaskDelay(pdMS_TO_TICKS(50));
+```
+
+| 概念 | 含义 |
+|---|---|
+| tick | 一次 SysTick 中断，计数加一 |
+| `TickType_t` | tick 计数类型（16 或 32 位，由 `configUSE_16_BIT_TICKS` 决定）|
+| 时间片 | 一个 tick（同优先级轮转的粒度） |
+
+**16 位 tick 的坑**：`configUSE_16_BIT_TICKS=1` 时 `TickType_t` 只有 16 位，1000 Hz 下 **65 秒就溢出**，`vTaskDelay(70000)` 会算错。所以基本都用 32 位。
+
+**`pdMS_TO_TICKS` 为什么必须用**：直接写 `vTaskDelay(50)` 是 50 个 tick，1000 Hz 下是 50 ms，100 Hz 下是 500 ms——换个配置行为就变了。
+@FOLLOW
+1. **能动态改 tick 频率吗？** —— 不能（`configTICK_RATE_HZ` 是编译期宏）。
+2. **低功耗怎么做？** —— `configUSE_TICKLESS_IDLE`，空闲时关掉 tick 中断。
+3. **tick 溢出怎么办？** —— 32 位 @1000 Hz 约 49 天；用 `xTaskGetTickCount` 相减（无符号运算自动处理回绕）。
+@TRAPS
+- 手写 `vTaskDelay(50)` 当 50 ms
+- 开 16 位 tick，延时超过 65 秒出错
+- tick 频率设太高，CPU 大量时间在中断里
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 时基（预测题，非真实面经）
+
+@@ Q-4119
+@STEM
+**题目**：一个按键要区分短按、长按 2 秒、双击。
+
+**问**：按键的长按和短按怎么在 RTOS 里区分？为什么不能在中断里做？
+@ANSWER
+用**一个按键任务 + 状态机**：任务每 10–20 ms 扫一次，记录按下时刻，松开时算时长判断短按/长按，同时用时间窗口判断双击。
+
+**不能在中断里做**：中断服务函数必须极短，而按键判断需要延时和多次采样，放中断里会长时间占用 CPU、阻塞其他中断。
+@DEEP
+```c
+typedef enum { IDLE, PRESSED, LONG_SENT } key_state_t;
+
+void task_key(void* p) {
+    key_state_t st = IDLE;
+    TickType_t t_press = 0;
+    for (;;) {
+        int down = (HAL_GPIO_ReadPin(KEY_PORT, KEY_PIN) == GPIO_PIN_RESET);
+        switch (st) {
+        case IDLE:
+            if (down) { st = PRESSED; t_press = xTaskGetTickCount(); }
+            break;
+        case PRESSED:
+            if (!down) {                                  // 松开
+                if (xTaskGetTickCount() - t_press < pdMS_TO_TICKS(500))
+                    send_event(EV_SHORT);
+                st = IDLE;
+            } else if (xTaskGetTickCount() - t_press > pdMS_TO_TICKS(2000)) {
+                send_event(EV_LONG);
+                st = LONG_SENT;                           // 防止重复触发
+            }
+            break;
+        case LONG_SENT:
+            if (!down) st = IDLE;
+            break;
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));                    // 扫描周期，兼做消抖
+    }
+}
+```
+
+| 需求 | 做法 |
+|---|---|
+| 消抖 | 10–20 ms 扫描周期天然消抖 |
+| 短按 | 按下到松开 < 500 ms |
+| 长按 | 按住 > 2000 ms，触发一次 |
+| 双击 | 第一次松开后启动窗口定时器，窗口内再按算双击 |
+
+**双击的实现要点**：需要一个"等待第二击"的状态，用 `xTaskGetTickCount()` 记第一次松开时刻，超过窗口（如 300 ms）就当作单击。
+@FOLLOW
+1. **为什么用 `xTaskGetTickCount()` 而不是自己计数？** —— 它是系统 tick，天然单调且和 `vTaskDelay` 同源。
+2. **按键多怎么办？** —— 一个任务扫全部按键，事件通过队列发出去。
+3. **能做成事件驱动吗？** —— 用 EXTI 中断唤醒任务，任务里再做状态机（省电）。
+@TRAPS
+- 在 EXTI 中断里做长按判断
+- 长按触发后不复位，一直重复触发
+- 扫描周期太长（>50 ms），快速点按丢失
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+FreeRTOS 按键处理（预测题，非真实面经）
+
+@@ Q-4120
+@STEM
+**追问**：按键任务里 `vTaskDelay(10)` 既能消抖，又刚好够用。为什么不能改成 100 ms？
+
+**问**：延时长短各有什么代价？怎么选？
+@ANSWER
+延时就是**扫描周期**：太长会漏掉快速点按（按下 50 ms 就松开，100 ms 扫一次可能完全没看到）；太短则任务频繁唤醒，白耗 CPU。
+
+10–20 ms 是折中：**大于机械抖动时间（5–20 ms，天然消抖），小于人的最快点按（约 50–100 ms）**。
+@DEEP
+| 扫描周期 | 漏按风险 | CPU 开销 | 消抖效果 |
+|---|---|---|---|
+| 1 ms | 无 | 高（每秒 1000 次唤醒） | 需要软件消抖 |
+| 10 ms | 极低 | 低 | 天然消抖 |
+| 20 ms | 低 | 更低 | 天然消抖 |
+| 100 ms | **高**（快速点按丢失） | 最低 | 过长，响应迟钝 |
+
+```c
+// 更好的做法：中断唤醒 + 任务处理，兼顾省电和响应
+void EXTI_IRQHandler(void) {
+    BaseType_t woken = pdFALSE;
+    xSemaphoreGiveFromISR(key_sem, &woken);
+    portYIELD_FROM_ISR(woken);
+}
+
+void task_key(void* p) {
+    for (;;) {
+        xSemaphoreTake(key_sem, portMAX_DELAY);   // 睡到按键按下
+        vTaskDelay(pdMS_TO_TICKS(20));            // 消抖
+        if (still_pressed()) handle_press();
+    }
+}
+```
+
+**`vTaskDelay` 的实际时长**：至少 n 个 tick，可能多一个（取决于调用时刻在 tick 周期的位置），所以"10 ms"实际是 10–11 ms。
+@FOLLOW
+1. **为什么不用定时器中断做消抖？** —— 会引入更多中断，反而不如轮询简单。
+2. **多按键能共用一个任务吗？** —— 能，一次扫全部，10 ms 够用。
+3. **低功耗怎么兼顾？** —— 用 EXTI 唤醒，空闲时进 STOP 模式。
+@TRAPS
+- 扫描周期设 100 ms，快速点按丢失
+- 周期设 1 ms 却不做消抖，一次按下触发多次
+- 以为 `vTaskDelay(10)` 精确等于 10 ms
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 轮询周期选择（预测题，非真实面经）
+
+@@ Q-4121
+@STEM
+**场景**：六个按键用同一份驱动，最初写成全局变量 `current_key`，结果两个任务同时读，互相覆盖。
+
+**问**：多个任务共用一份驱动，为什么用句柄而不是全局变量？
+@ANSWER
+因为全局变量是**所有任务共享同一份状态**，多任务并发访问必然冲突；而句柄（handle）让**每个使用者拥有一份独立的实例**，状态互不干扰。
+
+句柄的本质是"指向一个不透明结构体的指针"，调用方不需要知道内部结构，只需要传句柄。
+@DEEP
+```c
+// ❌ 全局状态，多任务互相覆盖
+int current_key;
+void key_scan(void) { current_key = read_pin(); }
+
+// ✅ 句柄，每人一份
+typedef struct key_dev_s* key_handle_t;
+
+key_handle_t key_create(GPIO_TypeDef* port, uint16_t pin) {
+    key_handle_t h = pvPortMalloc(sizeof(struct key_dev_s));
+    h->port = port; h->pin = pin; h->state = 0;
+    return h;
+}
+void key_scan(key_handle_t h) { h->state = read(h->port, h->pin); }
+```
+
+| 方式 | 状态份数 | 多任务安全 | 可复用 |
+|---|---|---|---|
+| 全局变量 | 1 份 | ❌ | ❌ |
+| 句柄 + 实例 | 每句柄 1 份 | ✅（各自独立） | ✅ |
+| 加锁的全局 | 1 份 | ✅（串行） | ❌ |
+
+**句柄的额外好处**：可以同时驱动 6 个同型号 LCD、2 路串口，代码只写一份——这就是"面向对象"在 C 里的表达方式。
+
+**代价**：多一次指针间接访问，以及要管理句柄的生命周期（创建/销毁）。
+@FOLLOW
+1. **句柄一定要 malloc 吗？** —— 不一定，静态数组池更常见（避免碎片）。
+2. **句柄内部要不要加锁？** —— 如果多个任务会同时操作**同一个**句柄，需要；各自一个句柄就不需要。
+3. **C++ 里对应什么？** —— 类的实例 + 成员函数。
+@TRAPS
+- 多任务共用一个全局驱动状态
+- 句柄 malloc 后忘了释放
+- 句柄内部结构暴露在头文件里（失去封装意义）
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+嵌入式驱动设计（预测题，非真实面经）
+
+@@ Q-4122
+@STEM
+**题目**：一个 FreeRTOS 工程所有代码都写在 `main.c` 里，2000 行，改一处要重新理解全部。
+
+**问**：为什么 RTOS 工程要按功能拆文件，而不是全放 `main.c`？
+@ANSWER
+三个理由：**编译隔离**（改一个文件只重编它）、**职责清晰**（任务、驱动、协议分层）、**可复用**（驱动层不带业务逻辑，换个项目能直接搬）。
+
+RTOS 天然按任务划分边界，一个任务一个文件是最自然的组织方式。
+@DEEP
+```
+project/
+├── Core/
+│   ├── main.c              只做初始化和启动调度器
+│   └── app_freertos.c      创建任务
+├── Tasks/
+│   ├── task_adc.c/h
+│   ├── task_key.c/h
+│   └── task_comm.c/h
+├── Drivers/
+│   ├── drv_lcd.c/h         硬件相关，不含业务
+│   └── drv_key.c/h
+├── Middlewares/
+│   └── protocol.c/h        纯逻辑，不碰寄存器
+└── Config/
+    └── FreeRTOSConfig.h
+```
+
+| 层次 | 职责 | 依赖 |
+|---|---|---|
+| 应用（Tasks） | 业务逻辑、任务调度 | 驱动 + 协议 |
+| 协议（Middlewares） | 报文解析、状态机 | 无（纯逻辑） |
+| 驱动（Drivers） | 寄存器/外设操作 | HAL |
+| 硬件抽象 | HAL / 寄存器 | — |
+
+**分层带来的可测试性**：协议层不碰硬件，可以在 PC 上编译单测；驱动层换个 MCU 只改这一层。
+
+**`main.c` 该剩什么**：`HAL_Init`、时钟配置、外设初始化、创建任务、`vTaskStartScheduler()`——**不超过 150 行**。
+@FOLLOW
+1. **头文件里该放什么？** —— 只有声明和必要的类型，实现放 `.c`。
+2. **跨文件共享变量怎么办？** —— `extern` 声明放头文件，定义放一个 `.c`。
+3. **任务间通信放哪层？** —— 队列/信号量的创建放应用层，驱动层只提供接口。
+@TRAPS
+- 所有代码挤在 `main.c`
+- 头文件里定义变量（多个 `.c` 包含就重复定义）
+- 驱动层里写业务逻辑，无法复用
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+嵌入式工程结构（预测题，非真实面经）
+
+@@ Q-4123
+@STEM
+**题目**：`configTOTAL_HEAP_SIZE` 是干什么的？为什么不用 C 库的 `malloc` 就够了？
+
+**问**：为什么 FreeRTOS 需要自己的一块堆？
+@ANSWER
+四个原因：**确定性**（分配时间可预测，`heap_1` 甚至没有释放）、**可控性**（不会和 C 库抢内存、不怕碎片策略不可控）、**线程安全**（FreeRTOS 内部会挂起调度器）、**可观测**（能查剩余/历史最小剩余）。
+
+C 库的 `malloc` 在嵌入式上往往不可重入、碎片策略不透明，还可能因为 `printf` 之类偷偷分配而失败。
+@DEEP
+| 方案 | 能否释放 | 碎片 | 确定性 | 适用 |
+|---|---|---|---|---|
+| `heap_1` | ❌ | 无 | 最高 | 任务只创建不删除 |
+| `heap_2` | ✅ | 有（不合并） | 中 | 已不推荐 |
+| `heap_3` | ✅ | 看 C 库 | 低 | 需要和 C 库共用 |
+| `heap_4` | ✅ | 有（**会合并**） | 中 | **最常用** |
+| `heap_5` | ✅ | 会合并 | 中 | 多块不连续 RAM |
+
+```c
+// 运行时观测
+size_t free_now  = xPortGetFreeHeapSize();
+size_t free_min  = xPortGetMinimumEverFreeHeapSize();   // 历史最低
+```
+
+**`heap_4` 为什么最常用**：支持释放且会合并相邻空闲块（减少碎片），实现简单可靠。
+
+**为什么不用 `heap_3`（走 C 库 malloc）**：C 库的 `malloc` 在嵌入式上通常不可重入，而且和 `printf` 抢同一块 heap，出问题很难查。
+@FOLLOW
+1. **堆会碎片化吗？** —— `heap_4` 会合并相邻块，长期运行仍可能碎片；固定大小对象建议用内存池。
+2. **能同时用两个堆吗？** —— 不能直接，但可以自己实现 `pvPortMalloc` 包装多区域。
+3. **`configTOTAL_HEAP_SIZE` 从哪块内存来？** —— 从 `.bss`（一个大静态数组），所以会占 RAM。
+@TRAPS
+- 只加 `configTOTAL_HEAP_SIZE` 却忘了它会占 RAM
+- 用 `heap_2`（不合并，碎片严重）
+- 运行时内存不足只看返回值不查剩余量
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 内存管理（预测题，非真实面经）
+
+@@ Q-4124
+@STEM
+**题目**：`heap_3.c` 里为什么到处是 `vTaskSuspendAll()` / `xTaskResumeAll()`？
+
+**问**：`heap_3` 为什么要暂停调度器？它和其他 heap 方案差在哪？
+@ANSWER
+因为 `heap_3` 直接调用 C 库的 `malloc/free`，而 **C 库的 malloc 不是线程安全的**——两个任务同时调用可能破坏内部的空闲链表。
+
+暂停调度器保证调用期间不会发生任务切换，等价于"独占 malloc"。这就是它和其他方案的本质区别：别人自己管内存，它借 C 库的但要用调度器保护。
+@DEEP
+```c
+// heap_3.c 的核心（简化）
+void* pvPortMalloc(size_t xWantedSize) {
+    void* pvReturn;
+    vTaskSuspendAll();          // 禁止任务切换
+    pvReturn = malloc(xWantedSize);
+    xTaskResumeAll();
+    return pvReturn;
+}
+```
+
+| 方案 | 内存来源 | 线程安全手段 | 可释放 |
+|---|---|---|---|
+| `heap_1` | 静态数组 | 不需要（只分配） | ❌ |
+| `heap_2` | 静态数组 | 挂起调度器 | ✅ |
+| `heap_3` | **C 库 malloc** | 挂起调度器 | ✅ |
+| `heap_4` | 静态数组 | 挂起调度器 | ✅（合并） |
+| `heap_5` | 多块区域 | 同上 | ✅ |
+
+**`vTaskSuspendAll` 和临界区的区别**：
+- `vTaskSuspendAll` **只禁止任务切换，不关中断**，所以中断仍能响应（但中断里不能调 malloc）；
+- `taskENTER_CRITICAL` **关中断**，时间必须极短。
+
+**`heap_3` 的适用场景**：C 库 heap 已经够大、且你希望 FreeRTOS 和 `printf` 共用同一块内存（省 RAM）。
+@FOLLOW
+1. **`heap_3` 有什么风险？** —— C 库 heap 太小会失败；`malloc` 的实现质量不可控。
+2. **中断里能调 `pvPortMalloc` 吗？** —— 不能，任何 heap 方案都不允许。
+3. **`vTaskSuspendAll` 能嵌套吗？** —— 能，内部有计数。
+@TRAPS
+- 用 `heap_3` 但 C 库 heap 只有 0x200
+- 在中断里调 `malloc` / `pvPortMalloc`
+- 以为 `vTaskSuspendAll` 会关中断
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 内存方案（预测题，非真实面经）
+
+@@ Q-4125
+@STEM
+**题目**：板子有两块 RAM：内部 SRAM（20 KB）+ 外部 SRAM（512 KB）。`heap_4` 只能用一块，怎么办？
+
+**问**：`heap_4` 和 `heap_5` 有什么区别？什么时候必须用 `heap_5`？
+@ANSWER
+区别在**内存区域数量**：`heap_4` 只用一块连续内存（`ucHeap[]` 数组），`heap_5` 支持**多块不连续区域**，需要显式初始化告诉它有哪些段。
+
+所以内存分散在多块（内部 + 外部、CCM + 普通 SRAM）时必须用 `heap_5`。
+@DEEP
+```c
+// heap_5：先声明区域，再初始化
+static uint8_t ucHeap1[10 * 1024];                    // 内部 SRAM
+static uint8_t ucHeap2[512 * 1024] __attribute__((section(".ext_sram")));
+
+HeapRegion_t regions[] = {
+    { ucHeap1, sizeof(ucHeap1) },
+    { ucHeap2, sizeof(ucHeap2) },
+    { NULL, 0 }                                       // 结束标记
+};
+
+int main(void) {
+    vPortDefineHeapRegions(regions);                  // 必须在创建任何对象前调用
+    xTaskCreate(...);
+    vTaskStartScheduler();
+}
+```
+
+| 方案 | 区域数 | 初始化 | 适用 |
+|---|---|---|---|
+| `heap_4` | 1 | 自动 | 单块 RAM |
+| `heap_5` | 多 | `vPortDefineHeapRegions` | 内外部 RAM 混合 |
+
+**顺序很重要**：`vPortDefineHeapRegions` 必须在**创建任务/队列/定时器之前**调用，否则那些对象会分配到未初始化的堆上。
+
+**STM32 的常见场景**：F4/F7 有 CCM RAM（内核专用，DMA 访问不到），H7 有 DTCM + AXI SRAM 多块——这些场合 `heap_5` 几乎是唯一选择。
+@FOLLOW
+1. **能只用外部 SRAM 吗？** —— 能，但外部 SRAM 慢（要配 FMC），高频访问的任务栈放里面会拖慢。
+2. **`heap_5` 会合并跨区域的空闲块吗？** —— 不会，不同区域之间不能合并。
+3. **DMA 缓冲区能放 CCM 吗？** —— 不能，CCM 不被 DMA 访问。
+@TRAPS
+- 忘了 `vPortDefineHeapRegions` 就创建任务
+- 把 DMA 缓冲分配到 CCM RAM
+- 区域数组没有 `{NULL, 0}` 结束标记
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+FreeRTOS 多区域内存（预测题，非真实面经）
+
+@@ Q-4126
+@STEM
+**题目**：任务 A 等任务 B 采完数据。用了 `xSemaphoreCreateBinary`，B 里 `xSemaphoreGive`，A 里 `xSemaphoreTake`。
+
+**问**：二进制信号量到底是什么？它和队列什么关系？为什么不能用来做互斥？
+@ANSWER
+二进制信号量本质是**长度 1、消息大小 0 的队列**——只有"有/无"两个状态，不携带数据。`give` 是投递，`take` 是取走。
+
+**不能当互斥用**的原因：它没有**优先级继承**。低优先级任务持有信号量时，高优先级任务只能干等，中间优先级的任务反而能抢占——这就是优先级反转。互斥量（`xSemaphoreCreateMutex`）带继承，能缓解这个问题。
+@DEEP
+```c
+SemaphoreHandle_t sem = xSemaphoreCreateBinary();   // 初始为空
+
+// 任务 B
+xSemaphoreGive(sem);
+// 任务 A
+if (xSemaphoreTake(sem, pdMS_TO_TICKS(100)) == pdTRUE) { use_data(); }
+```
+
+| 类型 | 初始值 | 携带数据 | 优先级继承 | 用途 |
+|---|---|---|---|---|
+| 二进制信号量 | 空 | ❌ | ❌ | **同步**（事件通知） |
+| 计数信号量 | 0 | ❌ | ❌ | 资源计数 |
+| 互斥量 | 可用 | ❌ | ✅ | **互斥**（保护共享资源） |
+| 队列 | 空 | ✅ | ❌ | 传数据 |
+
+**"同步"和"互斥"的区别**：
+- **同步**：任务 A 等任务 B 完成某事（单向通知）；
+- **互斥**：多个任务轮流访问同一资源（要保证"谁锁谁开"）。
+
+**互斥量的额外规则**：谁获取谁释放，不能在中断里 give，也不能递归获取（除非用递归互斥量）。
+@FOLLOW
+1. **二进制信号量能连续 give 两次吗？** —— 不能"累积"，第二次无效（已经是满的）。
+2. **计数信号量能累积吗？** —— 能，直到达到最大计数。
+3. **中断里怎么 give？** —— 用 `xSemaphoreGiveFromISR` + `portYIELD_FROM_ISR`。
+@TRAPS
+- 用二进制信号量做互斥，出现优先级反转
+- 在中断里调用非 FromISR 版本
+- 以为二进制信号量能存数据
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 同步机制（预测题，非真实面经）
+
+@@ Q-4127
+@STEM
+**题目**：串口中断里收到一帧数据，要通知任务处理。写了 `xSemaphoreGive(sem)` 编译不过。
+
+**问**：在中断里发信号为什么要用 FromISR 版本？三步曲是什么？
+@ANSWER
+因为中断上下文**不能阻塞**，而普通版本内部可能会阻塞（等锁、触发调度）。FromISR 版本不阻塞，并且需要知道"是否唤醒了更高优先级任务"。
+
+三步曲：**用 FromISR 版本 → 接收 `xHigherPriorityTaskWoken` → 用 `portYIELD_FROM_ISR` 决定是否立即切换**。
+@DEEP
+```c
+void USART1_IRQHandler(void) {
+    BaseType_t woken = pdFALSE;
+
+    // 1. FromISR 版本
+    xSemaphoreGiveFromISR(uart_sem, &woken);
+
+    // 2. 清中断标志（别忘了）
+    __HAL_UART_CLEAR_OREFLAG(&huart1);
+
+    // 3. 按需切换
+    portYIELD_FROM_ISR(woken);
+}
+```
+
+| API | 任务中 | 中断中 |
+|---|---|---|
+| 给信号量 | `xSemaphoreGive` | `xSemaphoreGiveFromISR` |
+| 发队列 | `xQueueSend` | `xQueueSendFromISR` |
+| 置事件位 | `xEventGroupSetBits` | `xEventGroupSetBitsFromISR` |
+| 延时 | `vTaskDelay` | ❌ 不可用 |
+
+**`xHigherPriorityTaskWoken` 的作用**：如果被唤醒的任务优先级高于当前被打断的任务，就应该在中断退出时立刻切换过去，而不是等下一个 tick——这能显著降低延迟。
+
+**`portYIELD_FROM_ISR` 的写法**：老版本是 `portEND_SWITCHING_ISR(woken)`；新版也可以直接 `portYIELD_FROM_ISR(woken)`，内部会判断。
+@FOLLOW
+1. **忘了 `portYIELD_FROM_ISR` 会怎样？** —— 不会错，只是延迟变高（要等下一个 tick 才切换）。
+2. **能在中断里调用 `vTaskDelay` 吗？** —— 不能，中断没有任务上下文。
+3. **中断优先级有什么限制？** —— 优先级数值必须 ≥ `configMAX_SYSCALL_INTERRUPT_PRIORITY`，否则不能调 API。
+@TRAPS
+- 中断里调用非 FromISR 版本
+- 忘了传 `&woken` 或忘了 `portYIELD_FROM_ISR`
+- 中断优先级配得过高，调用 API 直接 HardFault
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+FreeRTOS 中断安全 API（预测题，非真实面经）
+
+@@ Q-4128
+@STEM
+**题目**：LCD1602 有 RS、RW、E 三根控制线，写命令和写数据都走同一组 D0–D7。
+
+**问**：RS 引脚是干什么的？命令和数据怎么区分？为什么必须判忙？
+@ANSWER
+RS 是**寄存器选择**：`RS=0` 表示写指令（清屏、设置光标等），`RS=1` 表示写数据（要显示的字符）。RW 控制读/写，E 是使能脉冲（下降沿锁存）。
+
+**必须判忙**：LCD 内部处理一条指令需要几十微秒到几毫秒（清屏要 1.64 ms），不判忙连续写会丢指令。
+@DEEP
+```c
+#define RS_HIGH()  HAL_GPIO_WritePin(RS_PORT, RS_PIN, GPIO_PIN_SET)
+#define RS_LOW()   HAL_GPIO_WritePin(RS_PORT, RS_PIN, GPIO_PIN_RESET)
+
+void lcd_write_cmd(uint8_t cmd) {
+    lcd_wait_busy();                 // 等内部处理完
+    RS_LOW();                        // 指令
+    data_out(cmd);
+    pulse_enable();
+}
+
+void lcd_write_data(uint8_t dat) {
+    lcd_wait_busy();
+    RS_HIGH();                       // 数据
+    data_out(dat);
+    pulse_enable();
+}
+```
+
+| 引脚 | 作用 |
+|---|---|
+| RS | 0=指令，1=数据 |
+| RW | 0=写，1=读 |
+| E | 使能，下降沿锁存数据 |
+| D0–D7 | 数据总线（4 线模式只用 D4–D7） |
+
+**判忙的原理**：读状态字，最高位 BF=1 表示忙。这要求 RW 能拉高（有些板子把 RW 接地，就只能用延时替代判忙）。
+
+**"用延时替代判忙"的写法**：`HAL_Delay(2)` 保险但慢；在 RTOS 里应该用 `vTaskDelay`，不要用 `HAL_Delay` 空转。
+@FOLLOW
+1. **4 线模式怎么办？** —— 一个字节分两次传（高 4 位先），初始化时序也不同。
+2. **为什么 E 要脉冲？** —— 数据在 E 的下降沿被锁存，需要给建立/保持时间。
+3. **RW 接地有什么影响？** —— 不能读忙标志，只能靠固定延时。
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+LCD1602 驱动（预测题，非真实面经）

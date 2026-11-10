@@ -8,10 +8,10 @@ difficulty: 3
 roles: [AI算法, 感知]
 companies: [联影医疗, 迈瑞医疗, 西门子医疗]
 qtype: project
-status: indexed
+status: answered
 source_type: self_exp
 source_ref: 方向与规划/项目/跟骨（数据集 / 预处理 / result，未成文）
-verified_at: 2026-11-09
+verified_at: 2026-11-10
 tags: [项目深挖, 医学影像, U-Net, 图文, 待填答案]
 auto: true
 proj_seed: true
@@ -19,50 +19,46 @@ proj_seed: true
 
 ## 题目
 
-**问**：医学影像标注通常只有几百例，U-Net 参数量又不小，怎么防过拟合？
+**追问**：数据只有几百例，训练集上 Dice 0.95、验证集 0.78，怎么处理？
 
-<svg viewBox="0 0 860 340" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="340" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
-<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
-<text x="135" y="76" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">编码器</text>
-<text x="375" y="76" font-size="12" font-weight="700" fill="#2e6b3e" text-anchor="middle">解码器</text>
-<rect x="60" y="88" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/><text x="60" y="83" font-size="10" fill="#665c49">512×512</text><rect x="60" y="126" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.71"/><text x="60" y="121" font-size="10" fill="#665c49">256×256</text><rect x="60" y="164" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.57"/><text x="60" y="159" font-size="10" fill="#665c49">128×128</text><rect x="60" y="202" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.43"/><text x="60" y="197" font-size="10" fill="#665c49">64×64</text><rect x="60" y="240" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.29"/><text x="60" y="235" font-size="10" fill="#665c49">32×32</text><rect x="300" y="88" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/><rect x="300" y="126" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.42"/><rect x="300" y="164" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.56"/><rect x="300" y="202" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/><rect x="300" y="240" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.84"/><path d="M210,101 L300,101" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M170,139 L300,139" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M134,177 L300,177" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M106,215 L300,215" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M86,253 L300,253" fill="none" stroke="#1b5e8c" stroke-width="1.8"/><text x="193" y="272" font-size="10" fill="#1b5e8c" text-anchor="middle">瓶颈</text>
-<text x="470" y="112" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
-<text x="470" y="132" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
-<text x="470" y="149" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
-<text x="470" y="178" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
-<text x="470" y="196" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
-<text x="470" y="213" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
-<text x="20" y="306" font-size="11" fill="#665c49">编码器逐层减半分辨率、通道加倍，解码器反向恢复；跳跃连接共 4 条，对应前 4 层。</text>
-</svg>
+**问**：数据量小的时候你怎么防止过拟合？实际用了哪几种？
 
 ## 口述答案
 
-> 待补充。给出实际用了哪几种，并说明各自效果差异（有消融最好）。
+> 分四类手段，我实际用了其中几项：
+> 1. **数据增强**：随机旋转/翻转/缩放/弹性形变/亮度对比度扰动（X 光要注意**不能做不合理的几何变换**，比如垂直翻转会让左脚变右脚）。
+> 2. **正则化**：Dropout、权重衰减、早停（按验证集 HD95 停，不按 loss）。
+> 3. **模型容量控制**：减小通道数、加 BatchNorm、用预训练编码器。
+> 4. **验证策略**：**按病人划分**做交叉验证，不能按图片随机划分（同一病人的多张片子会泄漏）。
+> `【待填：你实际用了哪几项、增强参数是什么、几折交叉验证】`
 
 ## 讲深一层
 
-| 手段 | 作用 | 代价 |
+| 手段 | 作用 | 注意 |
 |---|---|---|
-| 数据增强 | 扩充多样性 | 过强会引入伪影 |
-| 迁移学习 | 好的初始特征 | 域差异大时收益有限 |
-| 强正则 | 抑制过拟合 | 可能欠拟合 |
-| 小模型 / 深监督 | 降容量 | 精度上限下降 |
-| K 折交叉验证 | 评估更可靠 | 成本 × K |
+| 几何增强 | 扩充样本 | 医学影像**慎用垂直翻转/大角度旋转** |
+| 亮度/对比度 | 适应不同设备 | 幅度别太大，会破坏灰度语义 |
+| 弹性形变 | 模拟组织形变 | 医学上合理，但别过度 |
+| Dropout | 防共适应 | 放在解码器末端更有效 |
+| 早停 | 防过训练 | 监控指标要和业务一致 |
+| 按病人划分 | 防数据泄漏 | **最重要的一条** |
 
-关键：**增强必须符合成像物理**。X 光弹性形变过度会让骨骼形态失真，模型学到假特征。
+**"按病人划分"为什么关键**：同一病人的多张 X 光高度相似，随机划分会让验证集"见过"训练集的人，指标虚高 10 个点以上——这是医学影像最常见的评估错误。
+
+**判断过拟合的方法**：训练 loss 持续降、验证 loss 先降后升；或者训练 Dice 与验证 Dice 差距 >0.1。
 
 ## 高频追问
 
-> 待补充。
+1. **增强越多越好吗？** —— 不是，不合理的增强（如左右翻转不分）会引入错误标签。
+2. **早停按什么指标？** —— 按验证集 Dice 或 HD95，不按 loss。
+3. **预训练有用吗？** —— ImageNet 预训练在 X 光上收益有限（域差异大），但比随机初始化好。
 
 ## 易错点
 
-- ❌ 列一堆手段说不出哪个起作用 —— 需要消融
-- ❌ 强增强不检查是否引入伪影
-- ✅ 说清「验证集上过拟合的表现」：训练 loss 降、验证 Dice 不涨
+- 按图片随机划分，数据泄漏
+- 用了垂直翻转，左右脚混淆
+- 只看 loss 不看业务指标
 
 ## 关联项目
 
-- `方向与规划/项目/跟骨（数据集 / 预处理 / result，未成文）`（`result/`）
+- 方向与规划/项目/跟骨

@@ -1,5 +1,38 @@
 # Changelog
 
+## v1.0.0 — 2026-11-10
+
+**题库填完：739 道，答案 739 道（100%）**。本轮补 195 道。
+
+### C++（余 68 道）
+
+| 子方向 | 题数 | 覆盖 |
+|---|---|---|
+| 对象模型 | 27 | 命名空间污染、引用底层实现、返回局部引用、`const T&` 生命周期延长、`extern "C"` 名字修饰、成员初始化顺序、多态改写 if-else 的代价、模板依赖基类、`explicit`、栈解旋、异常对象切片 |
+| 时间与算法 | 22 | 函数对象与谓词无副作用、`find_if`、`shuffle` vs `rand`、`copy` vs `memcpy`、`accumulate` 初始值陷阱、`set_intersection` 有序性、`int` 存时间戳、三种 clock、`duration_cast` 截断、RAII 计时器、`bind` vs lambda、lambda 捕获悬垂、C++ 第三方库选型、多线程"能跑但不对"、`thread` 析构 terminate、`detach` 悬垂、g++ 报错定位 |
+| Qt 与 GUI | 19 | 信号槽 moc 与连接类型、事件派发与过滤器、调度场算法、GUI 线程阻塞、TCP 信号顺序、三个网络坑、`hide` vs `close`、父子对象内存管理、`QThread` vs `moveToThread`、槽的执行线程、`qRegisterMetaType`、Model/View、`QTcpSocket` 线程归属 |
+
+### 硬件嵌入式（120 道，删 3 道重复）
+
+| 子方向 | 题数 | 覆盖 |
+|---|---|---|
+| FreeRTOS | 38 | 裸机 vs RTOS、任务 RAM（TCB+栈，`usStackDepth` 单位是字）、栈溢出检测、调度策略四组合、SVC/PendSV/SysTick、源码裁剪、`FreeRTOSConfig.h` 六个关键宏、`15<<4` 的由来、时基与 HAL 冲突、两套堆、`heap_3/4/5`、二进制/计数/互斥量边界、`FromISR` 三步曲、LCD1602 RS、队列按值/按引用、`printf` 吃堆、定时器守护任务、回调不能阻塞、事件组 24 位、与/或等待、事件位粘性、竞态撕裂、三种保护手段 |
+| STM32 | 47 | HAL 分层与回调、四种 GPIO 输出模式、标准库 vs HAL 中断、`__weak`、优先级分组、定时器时基与 PWM 公式、APB1 定时器 72 MHz 的由来、ISR 判断标志、W25Q64 擦除、库迁移五坑、SWD 共地、GPIO 速度、LED 低电平点亮、四种输入模式、BRR 换算、引脚复用、I2C 五段时序、末字节 NACK、SPI 全双工、TXE/BSY、轮询 vs 中断、中断全过程、抢占/子优先级、ISR 名字来源、ISR 要短、RXNE 反复进中断、EXTI vs NVIC、PR 写 1 清零、Flash 等待周期、SystemInit、PWM 输入测周期占空比、TRGI 来源、ADC 量化、位数与 ENOB、规则组 vs 注入组、通道缺失、ADCCLK ≤14 MHz、12.5 周期、采样时间与源阻抗、TRGO 等间隔采样、printf 重定向与半主机、I2C 电平定义、不定长收包框架、MQTT、环形缓冲 |
+| PCB | 3 | 符号 vs 封装、MCU 选型硬指标、布局与去耦电容 |
+| 单片机 | 6 | 网络标号、三极管驱动、继电器 vs MOS、协议五要素、先查电源、上电前万用表 |
+| 总线协议 | 6 | 串行 vs 并行（偏斜）、推挽 vs 开漏、UART 帧格式、0x55 波形为何像 0xAA、波特率误差、TTL vs RS-232/485 |
+| 模拟电路 | 17 | 短路烧毁、高压输电、先仿真、焦耳定律、保险丝 I²t、电阻拉爆功率、三种特种电阻、四环/五环色环、E24 标准值、datasheet 四块必看、RC 指数曲线、贴片电容识别、电感通直阻交、半导体掺杂、上下拉 10 kΩ、MOS vs IGBT |
+
+### 项目深挖（跟骨 10 道）
+
+**答案已按"骨架 + 待填数字"写完**，`【待填：…】` 标出只有本人知道的四个数（例数、标注一致性、Dice/HD95、折数）。
+包含：四段式课题介绍、X 光 vs 自然图像的四点差异、为什么选 U-Net、跳跃连接补什么、小数据防过拟合（按病人划分）、Dice vs HD95、类别不平衡、可解释性验证（防标记泄漏）、标注一致性流程、影像→机器人的技术链路（标定是关键接缝）。
+
+### 工具
+
+- 新增 `tools/cards/*.cards`（11 个纯文本卡文件）+ `tools/apply_cards.py` + `tools/fill.py` + `tools/cards_io.py`
+- 新增 `tools/clean_titles.py`（标题清洗，见 v0.9.0）
+
 ## v0.9.0 — 2026-11-10
 
 标题清洗 + 批量补答案。题库 745 → **742**（删 52 道无意义标题、3 道重复题），

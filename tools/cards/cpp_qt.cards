@@ -1,0 +1,922 @@
+@@ Q-0744
+@STEM
+**场景**：要给一个 C++ 工具做个界面，可选 MFC、Win32 API、Qt、或者网页前端 + 本地服务。
+
+**问**：Qt 相比直接写原生 GUI，优势在哪？代价是什么？
+@ANSWER
+优势主要是三点：**跨平台**（一套代码编 Windows/Linux/macOS）、**信号槽机制**（对象间解耦的通信方式，不用手写回调注册）、**完整的配套**（网络、串口、多线程、数据库、图表、OpenGL 都有模块）。
+
+代价是**体积大**（动态库几十 MB，静态链接更大）、**许可证要看清**（LGPL 有动态链接要求，商业闭源要用商业授权）、学习曲线比写个小工具陡。
+@DEEP
+| 方案 | 跨平台 | 开发效率 | 体积 | 适合 |
+|---|---|---|---|---|
+| Win32 / MFC | ❌ | 低 | 极小 | 只跑 Windows 的小工具 |
+| Qt Widgets | ✅ | 高 | 大 | 桌面工具、上位机 |
+| Qt Quick (QML) | ✅ | 高（UI 声明式） | 大 | 需要动画/触屏 |
+| Electron | ✅ | 高 | 很大 | Web 技术栈 |
+| 本地服务 + 浏览器 | ✅ | 中 | 小 | 远程访问 |
+
+**对机器人/上位机场景的实际价值**：串口、TCP、多线程、图表（QCustomPlot/QtCharts）都能直接用，不用东拼西凑第三方库——这是它在这类项目里最实在的优势。
+
+**许可证要点**：LGPL 下可以闭源商用，但必须**动态链接**并允许用户替换 Qt 库；静态链接则要求开源或买商业授权。
+@FOLLOW
+1. **Qt Widgets 和 QML 怎么选？** —— 传统桌面表单用 Widgets；触屏、动画、移动端用 QML。
+2. **Qt5 和 Qt6 差别大吗？** —— 构建系统（CMake 为主）、部分模块拆分、QML 引擎重写；新项目建议 Qt6。
+3. **能用 Qt 做纯后端吗？** —— 能，`QCoreApplication` 不含 GUI 模块。
+@TRAPS
+- 忽略 LGPL 的动态链接要求
+- 用 Qt 做只跑 Windows 的小工具（杀鸡用牛刀）
+- 把 Qt 当成只是"画界面"，不知道它有网络/串口/线程模块
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 技术选型（预测题，非真实面经）
+
+@@ Q-0747
+@STEM
+**场景**：Qt 程序点了按钮没反应，加了几个断点，但 `QApplication::exec()` 一进去就出不来，看不出问题。
+
+**问**：Qt 程序调试时，断点下在哪里才有用？
+@ANSWER
+**不要走在事件循环主线程的入口断点**，因为 `exec()` 是个死循环，停在那里什么都看不到。
+
+有用的断点是：**槽函数的第一行**（确认信号有没有连上、有没有触发）、**`connect` 的返回值**（确认连接成功）、**事件处理函数 `event()` / `mousePressEvent`**（确认事件到了）、以及**出问题那个成员函数的数据入口**。
+@DEEP
+```cpp
+// 1. 确认 connect 成功
+bool ok = connect(btn, &QPushButton::clicked, this, &MainWindow::onClick);
+Q_ASSERT(ok);                                  // 失败会在这里停住
+
+// 2. 槽函数第一行断点
+void MainWindow::onClick() {
+    int x = 0;                                 // ← 断点放这里
+    ...
+}
+
+// 3. 事件过滤器
+bool MainWindow::eventFilter(QObject* o, QEvent* e) {
+    if (e->type() == QEvent::MouseButtonPress) { /* 断点 */ }
+    return QMainWindow::eventFilter(o, e);
+}
+```
+
+| 现象 | 该在哪断 |
+|---|---|
+| 点了没反应 | 槽函数首行 + `connect` 返回值 |
+| 界面卡死 | 所有可能阻塞的槽函数（看调用栈） |
+| 数据不对 | 成员函数的入口和出口 |
+| 事件不触发 | `event()` / `eventFilter` |
+| 崩溃 | 用调试器捕获异常，看栈 |
+
+**调试 Qt 的两个实用技巧**：
+1. **`qDebug()` 比断点更适合事件循环**——不打断流程，能看到时序。
+2. **`QT_LOGGING_RULES`** 可以打开 Qt 内部日志（如 `qt.qpa.*`），排查平台插件问题。
+
+**卡死时怎么办**：附加调试器，暂停，看**主线程的调用栈**——99% 是槽函数里做了阻塞操作。
+@FOLLOW
+1. **怎么知道信号连没连上？** —— 断在 `connect` 那行看返回值，或运行时看控制台有没有 `QObject::connect: No such slot` 警告。
+2. **能断在事件循环里吗？** —— 能但要小心，`exec()` 里会反复停；用条件断点。
+3. **`qDebug` 输出到哪？** —— Windows 下是调试器输出窗口，Linux 下是 stderr。
+@TRAPS
+- 在 `exec()` 上打断点，程序"卡住"以为是 bug
+- 不看 `connect` 返回值和运行时的 connect 警告
+- 阻塞式操作写在槽函数里导致界面假死
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 调试实践（预测题，非真实面经）
+
+@@ Q-0748
+@STEM
+**题目**：`connect(sender, &Sender::sig, receiver, &Receiver::slot, Qt::QueuedConnection);` 第五个参数是什么？
+
+**问**：信号槽的底层原理是什么？`connect` 的第五个参数有什么作用？
+@ANSWER
+底层是**元对象系统（moc）**：`Q_OBJECT` 宏让 moc 生成元数据，`connect` 把"信号索引 → 接收者/槽索引"记录到发送者的连接表里。信号触发时执行 moc 生成的代码，按连接类型**直接调用或投递事件**。
+
+第五个参数是**连接类型**，决定槽在哪个线程、同步还是异步执行——这是 Qt 多线程最容易搞错的地方。
+@DEEP
+| 连接类型 | 行为 | 线程 |
+|---|---|---|
+| `AutoConnection`（默认） | 同线程直接调用，跨线程排队 | 自动判断 |
+| `DirectConnection` | 立即调用，等价于函数调用 | **发送者线程** |
+| `QueuedConnection` | 投递事件，稍后处理 | **接收者线程** |
+| `BlockingQueuedConnection` | 排队并阻塞等待 | 接收者线程（同线程会死锁） |
+| `UniqueConnection` | 避免重复连接（可 `|` 组合） | — |
+
+```cpp
+// 跨线程：自动变成 Queued
+connect(worker, &Worker::progress, this, &MainWindow::onProgress);
+
+// 强制排队，即使同线程
+connect(a, &A::sig, b, &B::slot, Qt::QueuedConnection);
+```
+
+**`QueuedConnection` 的前提**：参数类型必须能被 Qt 元系统识别（基本类型、`QString` 等已注册；自定义类型要 `qRegisterMetaType`）。否则运行时报
+`Cannot queue arguments of type 'MyStruct'`。
+
+**`AutoConnection` 的判断依据**：比较 `QThread::currentThread()` 和接收者对象的线程归属，不是"声明在哪个类"。
+@FOLLOW
+1. **`BlockingQueuedConnection` 什么时候用？** —— 需要等对方处理完再继续，且不在同一线程；同线程会立刻死锁。
+2. **信号能返回值吗？** —— 不能，信号没有返回值（要结果就用回调或 `QFuture`）。
+3. **连接能断开吗？** —— `disconnect(sender, signal, receiver, slot)`，或 `sender->disconnect()`。
+@TRAPS
+- 跨线程用 `DirectConnection`，槽在错误线程操作 UI 导致崩溃
+- 自定义结构体没注册元类型就用队列连接
+- `BlockingQueuedConnection` 用在同线程，死锁
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 信号槽（预测题，非真实面经）
+
+@@ Q-0750
+**STEM
+@STEM
+**题目**：用 `QTimer` 每 10 ms 刷新一次数据，实测间隔 15–30 ms，偶尔几百毫秒。
+
+**问**：`QTimer` 的 `timeout` 信号怎么用？为什么它不能保证精确定时？
+@ANSWER
+基本用法是 `setInterval` + `start`，然后连 `timeout`。但它**不是精确定时器**：它依赖事件循环，超时事件要排队等主线程处理，所以只要有槽函数耗时、有重绘、有阻塞操作，就会延迟。
+
+精度上限取决于**事件循环的响应速度**，不是 `QTimer` 本身。
+@DEEP
+```cpp
+QTimer* t = new QTimer(this);
+t->setInterval(10);
+t->setTimerType(Qt::PreciseTimer);      // 提高优先级，但仍不保证
+connect(t, &QTimer::timeout, this, &MainWindow::tick);
+t->start();
+```
+
+| 定时器类型 | 精度 | 说明 |
+|---|---|---|
+| `Qt::PreciseTimer` | 1 ms | 尽量精确 |
+| `Qt::CoarseTimer` | 5% 误差 | **默认**，省电 |
+| `Qt::VeryCoarseTimer` | 500 ms | 秒级场景 |
+
+**为什么不准**：
+1. **事件循环排队**：超时事件和鼠标、重绘、网络事件同一个队列，槽函数慢就全慢；
+2. **默认是 Coarse**：允许 5% 误差（10 ms 就是 0.5 ms，但加上排队就更明显）；
+3. **系统调度**：Windows 定时器分辨率默认 15.6 ms。
+
+**要精确周期怎么办**：
+- 用**高精度时钟自己算时间差**做补偿（记录上次触发时刻，动态调整 interval）；
+- 或把定时逻辑放到**独立线程**用 `QThread::msleep` + `steady_clock`（但仍受调度影响）；
+- 硬实时（微秒级）必须用操作系统实时调度或硬件定时器。
+@FOLLOW
+1. **`singleShot` 怎么用？** —— `QTimer::singleShot(1000, this, &f);`，一次性定时。
+2. **定时器能在子线程跑吗？** —— 能，但必须在该线程启动（`QTimer` 依赖所属线程的事件循环）。
+3. **`QElapsedTimer` 是干什么的？** —— 测时间间隔，不受系统时间调整影响，适合测耗时。
+@TRAPS
+- 期待 `QTimer` 精确到毫秒
+- 槽函数里做耗时操作，拖慢所有定时器
+- 在子线程创建定时器但没启动事件循环
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 定时器（预测题，非真实面经）
+
+@@ Q-0751
+@STEM
+**题目**：想全局拦截某个控件的鼠标点击，可以重写 `mousePressEvent`，也可以装 `eventFilter`。
+
+**问**：Qt 的事件怎么派发？`event()` 和事件过滤器有什么区别？
+@ANSWER
+派发路径是：**事件循环取出事件 → `QCoreApplication::notify` → 目标对象的 `event()` → 分发给具体的 `mousePressEvent` 等处理函数**。
+
+事件过滤器插在 `notify` 和目标 `event()` 之间——**比目标对象更早看到事件**，而且能拦截多个对象的事件。重写 `event()` 只能处理自己的事件。
+@DEEP
+```cpp
+// 事件过滤器：能在目标之前拦截
+target->installEventFilter(this);
+
+bool MainWindow::eventFilter(QObject* obj, QEvent* e) {
+    if (obj == target && e->type() == QEvent::MouseButtonPress) {
+        // 处理或拦截
+        return true;        // true = 已处理，不再往下传
+    }
+    return QMainWindow::eventFilter(obj, e);
+}
+```
+
+| 手段 | 位置 | 范围 | 能否拦截别人的事件 |
+|---|---|---|---|
+| `eventFilter` | 目标 `event()` 之前 | 可监听多个对象 | ✅ |
+| 重写 `event()` | 目标对象 | 只有自己 | ❌ |
+| 重写 `mousePressEvent` | 最后 | 只有自己 | ❌ |
+| `installEventFilter` 在 `qApp` 上 | 全局 | 所有对象 | ✅（慎用，性能） |
+
+**`return true` 和 `return false` 的区别**：`true` 表示"事件已处理，别再传下去"；`false` 表示"我看过了，继续按正常流程走"。
+
+**顺序**：多个过滤器按**安装的逆序**执行（后装的先看到），最后才到对象的 `event()`。
+@FOLLOW
+1. **事件和信号槽什么关系？** —— 事件是"输入/系统通知"，信号是"对象状态变化"；Qt 内部有些信号由事件触发。
+2. **`event()` 里要调基类吗？** —— 未处理的事件必须调 `QWidget::event(e)`，否则会丢失默认行为。
+3. **能否阻止事件继续传递？** —— `e->accept()` / `ignore()` 控制，或在过滤器里 `return true`。
+@TRAPS
+- 事件过滤器里 `return true` 但没处理，导致控件行为丢失
+- 重写 `event()` 不调基类，默认行为全失效
+- 在 `qApp` 上装过滤器监听所有事件，拖慢整个程序
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 事件机制（预测题，非真实面经）
+
+@@ Q-0752
+@STEM
+**追问**：信号槽和事件都能"通知"，为什么 Qt 要两套机制？
+
+**问**：信号槽和事件机制有什么区别？各自适合什么场景？
+@ANSWER
+**事件是"从外到内"的输入**：由 Qt 或操作系统产生（鼠标、键盘、重绘、定时器），按事件循环派发，有明确的接收者。**信号是"从内到外"的通知**：由对象自己的状态变化产生，一对多广播，接收者是谁由 `connect` 决定。
+
+一句话区分：**事件是"别人告诉我发生了什么"，信号是"我告诉别人我变了"**。
+@DEEP
+| 维度 | 事件 | 信号槽 |
+|---|---|---|
+| 来源 | 系统/Qt 内部 | 对象自身状态变化 |
+| 方向 | 从外到内（派发） | 从内到外（广播） |
+| 接收者 | 明确（目标对象） | 由 connect 决定，可多个 |
+| 同步性 | 事件循环驱动 | 可同步可异步 |
+| 能否拦截 | ✅（过滤器） | ❌ |
+| 典型用途 | 鼠标、键盘、重绘、窗口 | 按钮点击、数据就绪、状态变更 |
+
+```cpp
+// 事件：重写处理函数
+void MyWidget::mousePressEvent(QMouseEvent* e) { /* ... */ }
+
+// 信号：定义并发射
+signals:
+    void dataReady(const QByteArray& buf);
+void onData() { emit dataReady(buf_); }
+```
+
+**它们会互相转化**：`QPushButton` 收到 `mouseReleaseEvent`（事件），判断在按钮区域内后 `emit clicked()`（信号）。这是 Qt 控件的典型结构。
+
+**选型建议**：需要拦截/改变默认行为用事件；需要解耦"谁关心我"用信号。
+@FOLLOW
+1. **信号能被拦截吗？** —— 不能直接拦，但可以不连；要拦截就用事件。
+2. **事件能跨线程吗？** —— `postEvent` 可以投递到目标线程的事件队列。
+3. **什么时候该自定义信号？** —— 内部逻辑需要通知外部，但不想暴露实现细节时。
+@TRAPS
+- 用信号实现"拦截鼠标"（做不到，该用事件过滤器）
+- 用事件实现一对多通知（该用信号）
+- 以为信号一定异步（同线程是同步直接调用）
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 事件与信号（预测题，非真实面经）
+
+@@ Q-0753
+@STEM
+**题目**：做一个计算器，需要把 `3+4*2-(1+5)` 转成后缀表达式再求值。
+
+**问**：中缀转后缀（调度场算法）的思路是什么？括号和优先级怎么处理？
+@ANSWER
+用**一个操作数输出队列 + 一个运算符栈**：遇到数字直接输出；遇到运算符时，把栈里**优先级不低于它**的运算符全部弹出输出，再把自己压栈；遇到 `(` 压栈；遇到 `)` 一直弹到 `(` 为止。
+
+核心规则就一条：**栈里等待的运算符，只有在遇到更低优先级时才轮到它输出**。
+@DEEP
+```cpp
+int prec(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+std::string toRPN(const std::string& s) {
+    std::string out;
+    std::stack<char> ops;
+    for (char c : s) {
+        if (isdigit(c)) out += c;
+        else if (c == '(') ops.push(c);
+        else if (c == ')') {
+            while (!ops.empty() && ops.top() != '(') { out += ops.top(); ops.pop(); }
+            ops.pop();                       // 弹出 '('
+        } else {
+            while (!ops.empty() && prec(ops.top()) >= prec(c)) { out += ops.top(); ops.pop(); }
+            ops.push(c);
+        }
+    }
+    while (!ops.empty()) { out += ops.top(); ops.pop(); }
+    return out;
+}
+```
+
+`3+4*2-(1+5)` → `342*+15+-`
+
+| 输入 | 动作 | 输出 | 栈 |
+|---|---|---|---|
+| `3` | 数字 | 3 | |
+| `+` | 压栈 | 3 | + |
+| `4` | 数字 | 34 | + |
+| `*` | 优先级高，压栈 | 34 | +* |
+| `2` | 数字 | 342 | +* |
+| `-` | 弹出 `*`、`+` | 342*+ | - |
+| `(` | 压栈 | 342*+ | -( |
+| ... | | | |
+
+**求值时**：遇数字压栈，遇运算符弹两个数计算再压回。
+
+**右结合运算符（如 `^`）**：弹出条件要改成 `>` 而不是 `>=`，否则 `2^3^2` 会算错。
+@FOLLOW
+1. **为什么用栈？** —— 括号嵌套和优先级都是"后进先出"的匹配关系。
+2. **能直接求值不转后缀吗？** —— 能，用两个栈（数字栈 + 符号栈）一次扫描。
+3. **怎么支持多位数？** —— 数字要连续读，读到非数字才结束。
+@TRAPS
+- `)` 时忘了弹出左括号
+- 右结合运算符用了 `>=`
+- 多位数被拆成单字符
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+栈的经典应用（预测题，非真实面经）
+
+@@ Q-0754
+@STEM
+**场景**：Linux 下写好的 socket 客户端代码（`socket()` + `recv()` 阻塞循环），想搬到 Qt 界面里，结果界面卡死。
+
+**问**：为什么不能直接把原生 socket 代码搬进 GUI 线程？Qt 的正确做法是什么？
+@ANSWER
+因为**原生 `recv()` 是阻塞调用**，跑在 GUI 线程里会阻塞事件循环——界面不重绘、不响应点击，看起来就是卡死。
+
+Qt 的正确做法是用 **`QTcpSocket`**：它把 socket 集成到事件循环里，**非阻塞**，数据到达时发 `readyRead` 信号。或者把原生代码放到**独立线程**里。
+@DEEP
+```cpp
+// ✅ Qt 方式：异步 + 信号
+socket_ = new QTcpSocket(this);
+connect(socket_, &QTcpSocket::connected,    this, &MainWindow::onConnected);
+connect(socket_, &QTcpSocket::readyRead,    this, &MainWindow::onReadyRead);
+connect(socket_, &QTcpSocket::disconnected, this, &MainWindow::onDisconnected);
+socket_->connectToHost("127.0.0.1", 8080);
+
+void MainWindow::onReadyRead() {
+    QByteArray data = socket_->readAll();     // 不阻塞
+}
+```
+
+| 方案 | 阻塞 | 集成事件循环 | 适合 |
+|---|---|---|---|
+| 原生 socket + `recv` | ✅ | ❌ | 独立线程/命令行程序 |
+| `QTcpSocket` | ❌ | ✅ | **GUI 程序** |
+| 原生 + `select`/`poll` | ❌ | 需自己接 | 高性能多路复用 |
+| 原生 socket 放子线程 | ✅ | 子线程内 | 复用已有代码 |
+
+**`readyRead` 的一个坑**：它表示"**有数据可读**"，不保证一次读到完整报文。TCP 是字节流，必须自己处理**粘包/半包**（定长、分隔符、或长度前缀）。
+
+**`readAll()` 也可能只拿到部分数据**，不要在 `readyRead` 里假设一次就是一条完整消息。
+@FOLLOW
+1. **怎么处理粘包？** —— 用长度前缀或分隔符，维护一个缓冲区累积到完整报文再解析。
+2. **`QTcpSocket` 能在子线程用吗？** —— 能，但必须在那个线程创建和使用（见 Q-0766）。
+3. **需要 UDP 呢？** —— 用 `QUdpSocket`，同样非阻塞。
+@TRAPS
+- 在 GUI 线程调用阻塞 `recv()`，界面假死
+- 在 `readyRead` 里假设一次读到完整报文
+- 用 `waitForReadyRead()`（也是阻塞的）在 GUI 线程里
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 网络编程（预测题，非真实面经）
+
+@@ Q-0755
+@STEM
+**题目**：`connectToHost` 之后调 `write()`，程序没报错但数据丢了。加日志发现 `connected` 信号比 `write` 晚到。
+
+**问**：TCP 建连时 `connected`、`readyRead`、`disconnected` 的触发顺序是怎样的？为什么不能在 `connectToHost` 后立刻 `write`？
+@ANSWER
+`connectToHost` 是**异步**的：它立刻返回，真正的连接建立后才会发 `connected`。在 `connected` 之前调用 `write()`，数据会进入 Qt 的写缓冲，等连接建立后再发——但如果你在这期间销毁了 socket，数据就丢了。
+
+正确做法是**在 `connected` 槽里才开始收发**。断开时的顺序是 `disconnected` 最后，之前可能还有一次 `readyRead`（对端发完数据再关）。
+@DEEP
+```cpp
+void MainWindow::onConnectClicked() {
+    socket_->connectToHost(host, port);      // 立刻返回
+    // ❌ 这里 write 会进缓冲，语义不明确
+}
+
+void MainWindow::onConnected() {
+    qDebug() << "connected";
+    socket_->write(hello);                   // ✅ 安全
+}
+
+void MainWindow::onReadyRead() {
+    buf_ += socket_->readAll();
+    parse();
+}
+
+void MainWindow::onDisconnected() {
+    qDebug() << "disconnected";
+}
+```
+
+| 信号 | 时机 | 注意 |
+|---|---|---|
+| `connected` | 三次握手完成 | 之后才能安全 write |
+| `readyRead` | 有数据可读 | 可能多次、可能半包 |
+| `bytesWritten` | 数据已交给系统 | 不等于对端收到 |
+| `disconnected` | 连接关闭 | 之前可能还有 `readyRead` |
+| `errorOccurred` | 出错 | 之后通常跟 `disconnected` |
+
+**常见误判**：`write()` 返回正数只表示"进入缓冲"，不代表发送成功。要确认发送进度看 `bytesWritten`，要确认对方收到只能靠应用层 ACK。
+@FOLLOW
+1. **连接失败怎么知道？** —— `errorOccurred` 信号 + `errorString()`。
+2. **能同步等待连接吗？** —— `waitForConnected()`，但会阻塞，GUI 线程慎用。
+3. **对端关闭和本地关闭有什么区别？** —— 对端关闭会触发 `readyRead`（读到 0 字节）+ `disconnected`。
+@TRAPS
+- `connectToHost` 后立刻 `write` 并假设已发送
+- 把 `write` 返回值当成"对端已收到"
+- 忽略 `errorOccurred`，连接失败无感知
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt TCP 编程（预测题，非真实面经）
+
+@@ Q-0756
+@STEM
+**面试官问**：你用 Qt 写过网络程序，踩过哪些坑？
+
+**问**：Qt 网络编程最常见的三个坑是什么？各自怎么解决？
+@ANSWER
+三个最常见的：**粘包/半包**（`readyRead` 不等于一条完整报文）、**在 GUI 线程用阻塞 API**（`waitForReadyRead` 让界面假死）、**socket 跨线程使用**（在 A 线程创建、B 线程调用，崩溃或警告）。
+
+前两个是使用方式问题，第三个是 Qt 对象线程归属的硬约束。
+@DEEP
+| 坑 | 现象 | 解决 |
+|---|---|---|
+| 粘包/半包 | 解析出错、消息错位 | 长度前缀 / 分隔符 + 缓冲累积 |
+| 阻塞 API | 界面假死 | 只用信号槽异步接口 |
+| 跨线程使用 | 崩溃、`QObject: Cannot create children for a parent in a different thread` | 在所属线程创建和使用 |
+| 没处理错误 | 连接失败无感知 | 连 `errorOccurred` |
+| 缓冲区无限增长 | 内存涨 | 设上限，超限断开 |
+
+```cpp
+// 长度前缀协议的最小实现
+void onReadyRead() {
+    buf_ += socket_->readAll();
+    while (buf_.size() >= 4) {
+        quint32 len;
+        memcpy(&len, buf_.constData(), 4);
+        if ((int)buf_.size() < 4 + (int)len) break;      // 半包，等更多
+        QByteArray msg = buf_.mid(4, len);
+        buf_.remove(0, 4 + len);
+        handle(msg);
+    }
+    if (buf_.size() > kMaxBuf) socket_->abort();          // 防内存爆炸
+}
+```
+
+**`QObject` 线程归属规则**：对象属于创建它的线程，`delete`、`start timer`、socket 操作都必须在那个线程。跨线程只能通过信号槽（队列连接）投递。
+@FOLLOW
+1. **怎么判断是否跨线程？** —— `obj->thread() != QThread::currentThread()`。
+2. **缓冲区上限设多少？** —— 按协议最大报文来，比如 4 MB；超了直接断开。
+3. **UDP 也有粘包吗？** —— 没有（保留消息边界），但可能丢包、乱序、重复。
+@TRAPS
+- 假设 `readyRead` 一次给一条完整消息
+- GUI 线程调用 `waitForReadyRead()`
+- 在子线程操作主线程创建的 socket
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 网络编程实践（预测题，非真实面经）
+
+@@ Q-0757
+@STEM
+**题目**：点"设置"按钮弹出子窗口，关掉后想再打开；同时纠结子窗口对象该 `new` 在堆上还是放成员变量。
+
+**问**：子窗口用 `hide()` 还是 `close()`？对象放栈上还是堆上？
+@ANSWER
+`close()` 默认只是**隐藏**（除非设了 `WA_DeleteOnClose`），对象还在，所以"关掉再打开"两种都能用。区别是：`hide()` 不触发 `closeEvent`，`close()` 会（可以在这里拦截"是否真的关闭"）。
+
+对象**建议放堆上并用 `new` + 父对象**：Qt 的父子对象机制会在父销毁时自动 `delete` 子对象，不会有泄漏；放栈上则受作用域限制，容易悬垂。
+@DEEP
+```cpp
+// 成员指针 + 懒创建
+void MainWindow::openSettings() {
+    if (!settings_) {
+        settings_ = new SettingsDialog(this);   // this 作为父对象
+        connect(settings_, &QDialog::finished, this, [this]{ settings_->hide(); });
+    }
+    settings_->show();
+    settings_->raise();
+    settings_->activateWindow();
+}
+```
+
+| 方式 | 行为 | 对象是否销毁 |
+|---|---|---|
+| `hide()` | 隐藏 | 否 |
+| `close()` | 隐藏 + 发 `closeEvent` | 否（默认） |
+| `close()` + `WA_DeleteOnClose` | 关闭即销毁 | 是 |
+| `deleteLater()` | 事件循环空闲时销毁 | 是（安全） |
+
+**`exec()` vs `show()`**：`exec()` 是模态，阻塞到关闭；`show()` 非模态，立刻返回。模态用 `exec()`，非模态用 `show()`。
+
+**`deleteLater()` 而不是 `delete`**：在槽函数里直接 `delete this` 很危险（后续代码还在用），`deleteLater` 把销毁推迟到事件循环安全点。
+@FOLLOW
+1. **模态对话框返回值怎么拿？** —— `exec()` 返回 `Accepted` / `Rejected`，或读 `result()`。
+2. **父对象机制会 double delete 吗？** —— 不会，Qt 会从父的子对象列表移除。
+3. **子窗口为什么点关闭后没退出程序？** —— 最后一个窗口关闭才退出，或 `quitOnLastWindowClosed` 设置。
+@TRAPS
+- 在槽函数里直接 `delete this`
+- 子窗口无父对象，主窗口关了它还在
+- 用 `exec()` 却期望非阻塞
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 窗口管理（预测题，非真实面经）
+
+@@ Q-0758
+@STEM
+**追问**：Qt 的示例代码里窗口总是 `new` 出来，`new` 了不 `delete` 不会泄漏吗？
+
+**问**：Qt 的窗口对象为什么通常 `new` 在堆上？这个 `new` 会不会泄漏？
+@ANSWER
+两个原因：**窗口的生命周期要长于创建它的函数**（放栈上函数返回就销毁了）；**Qt 的父子对象机制会自动管理**——把父对象传给构造函数，父销毁时会 `delete` 所有子对象。
+
+所以不会泄漏，前提是**设了父对象**或者**顶层窗口在程序退出时被清理**。
+@DEEP
+```cpp
+// ✅ 有父对象，父销毁时自动 delete
+auto* btn = new QPushButton("ok", this);
+
+// ✅ 顶层窗口，用 WA_DeleteOnClose 或程序退出时随 QApplication 清理
+auto* w = new MainWindow();
+w->setAttribute(Qt::WA_DeleteOnClose);
+w->show();
+```
+
+| 情况 | 会泄漏吗 |
+|---|---|
+| `new` + 传父对象 | ❌ 父销毁时清 |
+| 顶层窗口，程序退出 | ❌ 通常由 `QApplication` 清理 |
+| `new` 无父对象且不 delete | ✅ 泄漏 |
+| 栈上创建（局部） | 函数返回即销毁（窗口一闪而过） |
+| `new` 后 `deleteLater()` | ❌ |
+
+**父子机制的实现**：`QObject` 构造时把子对象指针加入父的 `children()` 列表，父析构时遍历 `delete`。所以**不要手动 `delete` 一个有父对象的子对象**（Qt 会从列表移除，安全但容易搞混所有权）。
+
+**顶层窗口的特殊性**：它不是任何对象的子对象，但 `QApplication` 析构时会清理剩余的窗口。所以"程序退出时"不会报泄漏，但**运行期间反复创建不销毁**就会累积。
+@FOLLOW
+1. **怎么验证没泄漏？** —— valgrind / ASan，或在析构里打日志。
+2. **能放栈上吗？** —— 只有"函数内用完就关"的临时对话框可以。
+3. **`QScopedPointer` / `std::unique_ptr` 能用吗？** —— 能，但和有父对象混用容易出现双重释放，二选一。
+@TRAPS
+- `new` 了窗口既不给父对象也不 delete
+- 手动 delete 有父对象的子对象
+- 以为 Qt 会垃圾回收所有对象
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 对象所有权（预测题，非真实面经）
+
+@@ Q-0759
+@STEM
+**题目**：Qt 多线程有两种写法：`class W : public QThread { void run() override; }` 和 `moveToThread`。
+
+**问**：两种写法差在哪？为什么官方现在推荐 `moveToThread`？
+@ANSWER
+关键区别是**哪些代码跑在新线程**：重写 `run()` 时只有 `run()` 函数体在新线程，`W` 的其他槽函数仍在**创建它的线程**执行——很容易误以为整个对象都在新线程。
+
+`moveToThread` 把**整个对象的槽函数**都搬到新线程执行，语义更清晰，也符合"QObject 属于某个线程"的模型。
+@DEEP
+```cpp
+// 方式一：继承 QThread（只有 run 在新线程）
+class Worker : public QThread {
+    void run() override { /* 这里在新线程 */ }
+    void onTimeout() { /* ⚠️ 这里在旧线程！ */ }
+};
+
+// 方式二：moveToThread（整个对象的槽都在新线程）
+class Worker : public QObject {
+    Q_OBJECT
+public slots:
+    void doWork() { /* 在新线程 */ }
+};
+
+auto* th = new QThread(this);
+auto* w = new Worker();
+w->moveToThread(th);
+connect(th, &QThread::started, w, &Worker::doWork);
+connect(w, &Worker::done, th, &QThread::quit);
+th->start();
+```
+
+| 方式 | 新线程执行什么 | 适合 |
+|---|---|---|
+| 继承 `QThread` | 只有 `run()` | 纯计算循环，不需要事件循环 |
+| `moveToThread` | 对象的**所有槽** | 需要信号槽、定时器、事件循环 |
+| `QtConcurrent::run` | 一个函数 | 一次性任务 |
+| 线程池 `QThreadPool` | 若干 `QRunnable` | 大量短任务 |
+
+**判断标准**：需要在新线程里**收信号、用定时器**，就必须用 `moveToThread`（因为这些依赖事件循环，而 `QThread::run` 默认不跑事件循环）。
+@FOLLOW
+1. **`moveToThread` 后原线程还能调它的方法吗？** —— 能，但那是直接调用（在新线程之外执行），要排队就用信号槽。
+2. **对象能有多个线程吗？** —— 不能，`moveToThread` 是把整个对象搬过去。
+3. **`run()` 里想用信号槽怎么办？** —— 在 `run()` 里调 `exec()` 启动事件循环。
+@TRAPS
+- 继承 `QThread` 后把槽函数当"在子线程执行"
+- `moveToThread` 后对象还有父对象（不允许跨线程有父）
+- 忘了 `th->start()`，以为 move 完就跑了
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 多线程（预测题，非真实面经）
+
+@@ Q-0760
+@STEM
+**题目**：两个线程都要读写同一个 `QVector`，什么时候必须加锁？
+
+**问**：Qt 多线程共享数据，哪些情况必须加锁？`QMutex` 和 `QMutexLocker` 怎么选？
+@ANSWER
+只要**至少一个线程在写**，就必须加锁——包括"一个读一个写"和"两个都写"。多个线程同时**只读**不需要锁。
+
+`QMutexLocker` 是 RAII 封装：构造加锁、析构解锁，异常或提前 `return` 也能保证解锁。手写 `lock()/unlock()` 一旦漏掉就是死锁。
+@DEEP
+```cpp
+class Store {
+    mutable QMutex m_;
+    QVector<int> data_;
+public:
+    void append(int x) {
+        QMutexLocker lock(&m_);        // ✅ RAII
+        data_.append(x);
+    }
+    QVector<int> snapshot() const {
+        QMutexLocker lock(&m_);
+        return data_;                  // 拷贝出去，锁外使用
+    }
+};
+```
+
+| 场景 | 需要锁 |
+|---|---|
+| 多线程只读 | ❌ |
+| 一读一写 | ✅ |
+| 多写 | ✅ |
+| 跨线程传值（信号槽队列连接） | ❌（Qt 会拷贝） |
+| 操作 GUI 控件 | ✅ 但更应该"只在主线程操作" |
+
+**更好的思路：别共享**。用信号槽把数据**拷贝**到另一个线程（队列连接自动深拷贝），或者每个线程持有自己的数据，最后合并。锁是最后手段。
+
+**`QReadWriteLock`** 适合"读多写少"：多个读可并发，写独占。但开销比 `QMutex` 大，读操作很短时反而不划算。
+@FOLLOW
+1. **`QMutex` 递归锁是什么？** —— `QMutex::Recursive` 允许同一线程重复加锁（容易掩盖设计问题，慎用）。
+2. **`QAtomicInt` 能替代锁吗？** —— 单个计数器可以；多个变量要保持一致就必须用锁。
+3. **锁的粒度怎么定？** —— 保护"不变量"，而不是"整个函数"；粒度太粗会串行化。
+@TRAPS
+- 只读也加锁（性能浪费）
+- 手写 `lock/unlock`，中途 `return` 忘记解锁
+- 在锁内调用可能触发信号槽的代码（死锁风险）
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 线程同步（预测题，非真实面经）
+
+@@ Q-0761
+@STEM
+**题目**：工作线程算出了结果，想更新界面上的 label，直接 `ui->label->setText(...)` 偶尔崩溃。
+
+**问**：子线程怎么把数据送回界面？为什么不能直接改控件？
+@ANSWER
+因为**Qt 的 GUI 类不是线程安全的**，所有控件操作必须在**主线程（GUI 线程）**执行。子线程直接改控件可能导致重绘竞态、崩溃，Qt 会打印
+`QObject::setParent: Cannot set parent, new parent is in a different thread` 之类的警告。
+
+正确做法是**发信号**：信号通过队列连接投递到主线程的事件队列，槽函数在主线程执行。
+@DEEP
+```cpp
+class Worker : public QObject {
+    Q_OBJECT
+signals:
+    void resultReady(const QString& text);     // 只传数据，不传控件
+public slots:
+    void doWork() {
+        QString r = compute();
+        emit resultReady(r);                  // 跨线程 → 队列连接
+    }
+};
+
+// 主线程
+connect(worker, &Worker::resultReady, this, [this](const QString& s) {
+    ui->label->setText(s);                    // 在主线程执行 ✅
+});
+```
+
+| 方式 | 线程安全 | 说明 |
+|---|---|---|
+| 直接改控件 | ❌ | 未定义行为 |
+| 信号槽（队列连接） | ✅ | **推荐** |
+| `QMetaObject::invokeMethod` | ✅ | 指定 `Qt::QueuedConnection` |
+| `postEvent` 自定义事件 | ✅ | 较繁琐 |
+
+**关键细节**：信号参数必须是**可拷贝、已注册元类型**的。传 `QString`、`QImage` 没问题；传自定义结构体要 `qRegisterMetaType`。
+
+**为什么"偶尔"崩溃**：多数时候队列恰好排上了，看起来正常；负载高或重绘频繁时才暴露。所以"跑了很多次没事"不能作为证据。
+@FOLLOW
+1. **能传指针吗？** —— 能传 `QImage*` 但要管生命周期，更安全的是传值（Qt 隐式共享，拷贝很便宜）。
+2. **`invokeMethod` 怎么用？** —— `QMetaObject::invokeMethod(obj, "slot", Qt::QueuedConnection, Q_ARG(QString, s))`。
+3. **`QImage` 跨线程安全吗？** —— `QImage` 可以（隐式共享 + 写时复制），`QPixmap` 只能在 GUI 线程用。
+@TRAPS
+- 子线程直接 `setText` / `repaint`
+- 传 `QPixmap` 到子线程处理
+- 信号参数是自定义类型却没注册元类型
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 线程与 UI（预测题，非真实面经）
+
+@@ Q-0763
+@STEM
+**题目**：信号参数用了自定义结构体 `struct Result { int id; double score; };`，运行时报
+`QObject::connect: Cannot queue arguments of type 'Result'`。
+
+**问**：为什么需要 `qRegisterMetaType`？什么时候必须注册？
+@ANSWER
+因为队列连接**不能直接传对象**，Qt 要把参数**拷贝进事件对象**，而拷贝需要一个"元类型"的构造/析构/拷贝函数指针。自定义类型默认不在元类型系统里，所以要注册。
+
+**只有队列连接（跨线程）才需要**；同线程的直接连接是普通函数调用，不需要注册。
+@DEEP
+```cpp
+struct Result { int id; double score; };
+Q_DECLARE_METATYPE(Result)          // 让 QVariant 能装它
+
+// main() 里或首次使用前注册
+qRegisterMetaType<Result>("Result");
+
+// 现在可以跨线程发信号了
+signals:
+    void done(const Result& r);
+```
+
+| 场景 | 需要注册 |
+|---|---|
+| 队列连接 / 跨线程信号 | ✅ |
+| 直接连接（同线程） | ❌ |
+| 存进 `QVariant` | ✅（`Q_DECLARE_METATYPE`） |
+| 用于 `Q_PROPERTY` | ✅ |
+| 用于 `QMetaObject::invokeMethod` 的 `Q_ARG` | ✅ |
+
+**两个宏的区别**：
+- `Q_DECLARE_METATYPE(T)` 让 `QVariant` 能容纳 `T`（编译期）；
+- `qRegisterMetaType<T>()` 把 `T` 注册到运行时类型系统（队列连接需要）。
+
+**常见替代方案**：直接传 `QByteArray` 或 `QVariantMap`，省掉注册；或者用 Qt 已注册的类型（`QString`、`QPointF`、`QImage`…）。
+@FOLLOW
+1. **`Q_DECLARE_METATYPE` 放哪？** —— 类型定义之后、全局作用域（通常在头文件里）。
+2. **注册一次就够吗？** —— 是，整个进程一次即可（线程安全）。
+3. **注册时为什么要传名字？** —— 旧式信号槽按名字匹配，现代写法可以省略。
+@TRAPS
+- 只写了 `Q_DECLARE_METATYPE` 没 `qRegisterMetaType`，队列连接仍失败
+- 在同线程测试正常，跨线程才报错
+- 把注册放在使用之后的代码路径里
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 元对象系统（预测题，非真实面经）
+
+@@ Q-0764
+@STEM
+**题目**：用 `QTableWidget` 循环 `setItem` 填 10 万行，界面卡了十几秒。
+
+**问**：Qt 的 Model/View 架构比手动填表格好在哪？什么时候该换？
+@ANSWER
+`QTableWidget` 是"**每一项都是一个对象**"的简单封装，10 万行就是 10 万个 `QTableWidgetItem`，内存和构建时间都爆掉。
+
+Model/View 把**数据**和**显示**分开：`QAbstractTableModel` 只在需要时通过 `data()` 提供当前可见的单元格，视图只渲染屏幕上那几十行。这才是能处理大数据量的结构。
+@DEEP
+```cpp
+class MyModel : public QAbstractTableModel {
+    QVector<Row> rows_;
+public:
+    int rowCount(const QModelIndex& = {}) const override { return rows_.size(); }
+    int columnCount(const QModelIndex& = {}) const override { return 3; }
+    QVariant data(const QModelIndex& idx, int role) const override {
+        if (role != Qt::DisplayRole) return {};
+        const auto& r = rows_[idx.row()];
+        return idx.column() == 0 ? QVariant(r.id)
+             : idx.column() == 1 ? QVariant(r.name)
+                                 : QVariant(r.score);
+    }
+};
+```
+
+| 对比 | `QTableWidget` | Model/View |
+|---|---|---|
+| 数据存储 | 每项一个对象 | 你自己的容器 |
+| 10 万行 | 内存爆炸、卡顿 | 流畅 |
+| 排序/筛选 | 手动 | `QSortFilterProxyModel` |
+| 多视图共享数据 | 难 | 天然支持 |
+| 代码量 | 少 | 多（要写 model） |
+
+**关键理解**：视图只调 `data()` 取**可见区域**的数据，所以 model 的 `data()` 必须**快**——不要在里面对整个数据集做遍历或 IO。
+
+**`QSortFilterProxyModel` 的价值**：排序、筛选、多视图共享都能复用，不用改 model。
+@FOLLOW
+1. **数据变了怎么通知视图？** —— `beginInsertRows/endInsertRows`、`dataChanged` 信号，必须成对调用。
+2. **什么时候还用 `QTableWidget`？** —— 数据量小（几百行）、快速原型。
+3. **`QTableView` 和 `QTableWidget` 什么关系？** —— 后者是前者的便捷子类（内置了默认 model）。
+@TRAPS
+- 大数据量用 `QTableWidget`
+- 改了数据不发 `dataChanged`，界面不刷新
+- 在 `data()` 里做耗时计算
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt Model/View（预测题，非真实面经）
+
+@@ Q-0765
+@STEM
+**题目**：`moveToThread` 之后，槽函数一定在新线程执行吗？有人说"看连接类型"。
+
+**问**：槽函数在哪个线程执行？由什么决定？
+@ANSWER
+由**接收者对象所属的线程**和**连接类型**共同决定：
+
+- **直接连接**：在**发送者**线程执行（就是普通函数调用）；
+- **队列连接**：在**接收者所属**线程执行（通过事件循环投递）；
+- **自动连接**：两者同线程则直接，跨线程则排队。
+
+所以同一个槽，连接方式不同可能跑在不同线程——`moveToThread` 只是改变了"接收者属于哪个线程"。
+@DEEP
+```cpp
+// worker 已被 moveToThread(workerThread)
+connect(this, &Main::request, worker, &Worker::doWork);        // Auto → Queued（跨线程）
+connect(this, &Main::request, worker, &Worker::doWork,
+        Qt::DirectConnection);                                  // 在主线程执行！
+```
+
+| 连接类型 | 槽在哪个线程 |
+|---|---|
+| `DirectConnection` | 发送者线程 |
+| `QueuedConnection` | 接收者所属线程 |
+| `AutoConnection` | 同线程直接，跨线程排队 |
+| `BlockingQueuedConnection` | 接收者线程，发送者阻塞 |
+
+**判断方法**：槽函数里打 `QThread::currentThreadId()`，和 `worker->thread()` 比较。
+
+**一个高频误解**：以为"信号发出去就在子线程跑"。实际上槽的执行线程只由接收者决定，与信号在哪发射无关。
+@FOLLOW
+1. **怎么确认对象属于哪个线程？** —— `obj->thread()`，创建时确定，`moveToThread` 可改。
+2. **`BlockingQueuedConnection` 同线程会怎样？** —— 死锁（自己等自己）。
+3. **lambda 连接时线程归属怎么算？** —— 第三个参数传 `this`，则按 `this` 的线程算；不传则按发送者。
+@TRAPS
+- 以为槽永远在子线程执行
+- 跨线程用 `DirectConnection`，槽在错误线程操作 UI
+- lambda 槽没传上下文对象，线程归属判断错
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 线程模型（预测题，非真实面经）
+
+@@ Q-0766
+@STEM
+**题目**：在 A 线程创建 `QTcpSocket`，B 线程调 `write()`，程序崩溃或报
+`QObject: Cannot create children for a parent in a different thread`。
+
+**问**：`QTcpSocket` 为什么不能跨线程使用？正确的跨线程网络编程该怎么做？
+@ANSWER
+因为 `QObject` **属于创建它的线程**，它的内部定时器、事件通知、`QSocketNotifier` 都绑定在那个线程的事件循环上。在别的线程调用，等于在没有事件循环的线程里操作一个依赖事件循环的对象——行为未定义。
+
+正确做法：**在哪个线程创建就在哪个线程用**。要让网络跑在子线程，就把整个 socket 一起 `moveToThread`，或者干脆在网络线程里创建。
+@DEEP
+```cpp
+// ✅ 方案一：socket 在网络线程创建
+class NetWorker : public QObject {
+    Q_OBJECT
+    QTcpSocket* sock_ = nullptr;
+public slots:
+    void start() {
+        sock_ = new QTcpSocket(this);       // 在所属线程创建
+        connect(sock_, &QTcpSocket::readyRead, this, &NetWorker::onReady);
+        sock_->connectToHost(host_, port_);
+    }
+};
+
+auto* th = new QThread;
+auto* w = new NetWorker;
+w->moveToThread(th);
+th->start();
+QMetaObject::invokeMethod(w, "start", Qt::QueuedConnection);   // 在子线程执行
+```
+
+| 做法 | 是否可行 |
+|---|---|
+| A 线程创建、B 线程调用方法 | ❌ |
+| `moveToThread` 把 socket 搬到 B 线程 | ✅（但要在 B 线程启动前） |
+| 在 B 线程创建并使用 | ✅ **推荐** |
+| 主线程用 `QTcpSocket` 异步接口 | ✅（不需要子线程） |
+
+**关键认识**：`QTcpSocket` 本身**已经是异步非阻塞**的，多数场景根本不需要单独开线程——除非解析逻辑很重。
+
+**要跨线程传数据**：用信号槽（队列连接），把 `QByteArray` 传回主线程或业务线程。
+@FOLLOW
+1. **怎么判断对象在哪个线程？** —— `sock->thread()` 与 `QThread::currentThread()` 比较。
+2. **`moveToThread` 有前提吗？** —— 对象不能有父对象，且必须在原线程调用。
+3. **崩溃为什么是偶发的？** —— 取决于事件循环是否恰好处理到，典型的竞争型 bug。
+@TRAPS
+- 跨线程直接调用 socket 方法
+- sql/网络对象在主线程创建、子线程使用
+- 以为"加个 mutex 就安全了"（这是线程归属问题，不是数据竞争）
+@RELATED
+- 教学文档/Qt快速入门
+@SOURCE
+Qt 对象线程归属（预测题，非真实面经）

@@ -8,10 +8,10 @@ difficulty: 2
 roles: [AI算法, 感知]
 companies: [联影医疗, 迈瑞医疗, 西门子医疗]
 qtype: project
-status: indexed
+status: answered
 source_type: self_exp
 source_ref: 方向与规划/项目/跟骨（数据集 / 预处理 / result，未成文）
-verified_at: 2026-11-09
+verified_at: 2026-11-10
 tags: [项目深挖, 医学影像, U-Net, 图文, 待填答案]
 auto: true
 proj_seed: true
@@ -19,53 +19,47 @@ proj_seed: true
 
 ## 题目
 
-**背景**：研究生主线课题，跟骨 X 光影像分割，技术路线 U-Net / MONAI，目标是一作论文。
+**背景**：面试官开场问"介绍一下你的科研"，这是唯一一题你能完全掌控的。
 
-**已知**：数据集与预处理在 `跟骨/`、`跟骨_预处理/`，实验结果在 `result/`，
-但目前没有成文的方法与结果文档。
-
-**问**：一分钟说清四件事——临床要解决什么、数据从哪来、方法是什么、跑到什么程度。
-
-<svg viewBox="0 0 860 340" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" role="img"><defs><marker id="unar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1b5e8c"/></marker></defs>
-<rect x="0" y="0" width="860" height="340" fill="#fffcf3"/>
-<text x="20" y="28" font-size="15" font-weight="700" fill="#2d2a21">U-Net：下采样抓语义，上采样回分辨率，跳跃连接补细节</text>
-<text x="20" y="48" font-size="12" fill="#665c49">医学影像分割的主力结构，跟骨 X 光也是这条路线</text>
-<text x="135" y="76" font-size="12" font-weight="700" fill="#1b5e8c" text-anchor="middle">编码器</text>
-<text x="375" y="76" font-size="12" font-weight="700" fill="#2e6b3e" text-anchor="middle">解码器</text>
-<rect x="60" y="88" width="150" height="26" rx="4" fill="#1b5e8c" opacity="0.85"/><text x="60" y="83" font-size="10" fill="#665c49">512×512</text><rect x="60" y="126" width="110" height="26" rx="4" fill="#1b5e8c" opacity="0.71"/><text x="60" y="121" font-size="10" fill="#665c49">256×256</text><rect x="60" y="164" width="74" height="26" rx="4" fill="#1b5e8c" opacity="0.57"/><text x="60" y="159" font-size="10" fill="#665c49">128×128</text><rect x="60" y="202" width="46" height="26" rx="4" fill="#1b5e8c" opacity="0.43"/><text x="60" y="197" font-size="10" fill="#665c49">64×64</text><rect x="60" y="240" width="26" height="26" rx="4" fill="#1b5e8c" opacity="0.29"/><text x="60" y="235" font-size="10" fill="#665c49">32×32</text><rect x="300" y="88" width="26" height="26" rx="4" fill="#2e6b3e" opacity="0.28"/><rect x="300" y="126" width="46" height="26" rx="4" fill="#2e6b3e" opacity="0.42"/><rect x="300" y="164" width="74" height="26" rx="4" fill="#2e6b3e" opacity="0.56"/><rect x="300" y="202" width="110" height="26" rx="4" fill="#2e6b3e" opacity="0.70"/><rect x="300" y="240" width="150" height="26" rx="4" fill="#2e6b3e" opacity="0.84"/><path d="M210,101 L300,101" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M170,139 L300,139" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M134,177 L300,177" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M106,215 L300,215" fill="none" stroke="#9a5a12" stroke-width="1.4" stroke-dasharray="5 3"/><path d="M86,253 L300,253" fill="none" stroke="#1b5e8c" stroke-width="1.8"/><text x="193" y="272" font-size="10" fill="#1b5e8c" text-anchor="middle">瓶颈</text>
-<text x="470" y="112" font-size="12" font-weight="700" fill="#9a5a12">橙色虚线 = 跳跃连接</text>
-<text x="470" y="132" font-size="11" fill="#2d2a21">把下采样前的高分辨率特征直接拼到上采样，</text>
-<text x="470" y="149" font-size="11" fill="#2d2a21">补回池化丢掉的边界信息。</text>
-<text x="470" y="178" font-size="12" font-weight="700" fill="#a63a2e">跟骨的难点不在结构，在边界：</text>
-<text x="470" y="196" font-size="11" fill="#2d2a21">骨与软组织灰度接近，边缘本就模糊，</text>
-<text x="470" y="213" font-size="11" fill="#2d2a21">所以 Dice 高不代表边界准，要配 HD95。</text>
-<text x="20" y="306" font-size="11" fill="#665c49">编码器逐层减半分辨率、通道加倍，解码器反向恢复；跳跃连接共 4 条，对应前 4 层。</text>
-</svg>
+**问**：临床目标、数据、方法、当前结果，四段怎么组织？
 
 ## 口述答案
 
-> 待补充。建议结构：临床问题 → 数据与方法 → 当前结果（Dice / HD95，几折）→ 明确局限。
+> 按"**为什么做 → 用什么做 → 怎么做 → 做到什么程度**"四段讲，控制在 90 秒：
+> 1. **临床目标**：跟骨骨折在 X 光上要靠医生逐片判读，漏诊和一致性是问题；目标是自动分割出跟骨区域，为后续测量（Böhler 角等）和机器人路径规划提供基础。
+> 2. **数据**：`【待填：共 __ 例，来自 __ 医院，__ 位标注者，分辨率 __】`
+> 3. **方法**：以 U-Net 为基线，`【待填：预处理/增强/损失函数的关键选择】`
+> 4. **结果**：`【待填：Dice __，HD95 __ mm，__ 折交叉验证】`
+> **关键**：数字一定要说，没有数字的"效果不错"在面试里等于没做。
 
 ## 讲深一层
 
-答辩前必须准备的三层：
+四段的时间分配建议：
 
-| 层 | 要能答的问题 |
-|---|---|
-| 临床 | 跟骨分割用在哪？骨折分型、术前规划、角度测量？ |
-| 数据 | 多少例？谁标的？标注一致性怎么保证？分辨率与预处理？ |
-| 方法 | 为什么 U-Net？损失函数？评价指标？基线是什么？ |
+| 段落 | 时长 | 必须包含 |
+|---|---|---|
+| 临床目标 | 20 s | 痛点 + 谁在用 |
+| 数据 | 20 s | 例数、来源、标注方式 |
+| 方法 | 30 s | 一个明确的技术选择 + 理由 |
+| 结果 | 15 s | Dice / HD95 + 验证方式 |
+| 收尾 | 5 s | 当前在做什么 |
+
+**为什么先讲临床目标**：面试官不熟悉骨科影像，先给"为什么这件事有价值"，后面的技术细节才有落点。反过来先讲网络结构，容易被当成"调包"。
+
+**收尾留钩子**：说一句"下一步打算做 __"，把追问引到你准备好的方向。
 
 ## 高频追问
 
-> 待补充。
+1. **会被追问什么？** —— 数据从哪来、标注谁做的、为什么用这个指标、和 SOTA 差多少。
+2. **没有论文怎么办？** —— 讲清"当前结果 + 正在解决的问题"，如实说阶段。
+3. **能讲多长？** —— 90 秒版本 + 5 分钟版本都要准备。
 
 ## 易错点
 
-- ❌ 只讲「我用了 U-Net」 —— 面试官要听「为什么这么选」
-- ❌ 报 Dice 不说多少例、怎么划分
-- ✅ 主动交代数据规模与标注质量，这是医学影像面试的核心可信度
+- 全程讲网络结构不讲临床价值
+- 只说"效果不错"不给数字
+- 数据来源说不清（合规问题）
 
 ## 关联项目
 
-- `方向与规划/项目/跟骨（数据集 / 预处理 / result，未成文）`
+- 方向与规划/项目/跟骨

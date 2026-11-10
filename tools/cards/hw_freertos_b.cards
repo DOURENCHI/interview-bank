@@ -1,0 +1,606 @@
+@@ Q-4129
+@STEM
+**题目**：一个共享的 SPI Flash 有 4 个"槽位"能被访问，最多允许 4 个任务同时读写。用二进制信号量只能 1 个。
+
+**问**：计数信号量解决什么问题？它和二进制信号量、互斥量的边界在哪？
+@ANSWER
+计数信号量维护一个**可用资源计数**：`take` 减一（减到 0 就阻塞），`give` 加一（加到上限就失败）。它表达的是"**还有几个名额**"。
+
+边界很清楚：二进制信号量是上限 1 的特例（表达"有/无"）；互斥量表达"独占"，且带优先级继承。计数信号量**不带继承**，所以不适合保护需要互斥的临界资源。
+@DEEP
+```c
+SemaphoreHandle_t slots = xSemaphoreCreateCounting(4, 4);   // 最大 4，初始 4
+
+if (xSemaphoreTake(slots, pdMS_TO_TICKS(100)) == pdTRUE) {
+    use_flash_slot();
+    xSemaphoreGive(slots);        // 归还名额
+}
+```
+
+| 类型 | 上限 | 初始 | 优先级继承 | 典型用途 |
+|---|---|---|---|---|
+| 二进制 | 1 | 空 | ❌ | 事件通知 |
+| 计数 | N | 可设 | ❌ | 资源池、生产者-消费者计数 |
+| 互斥量 | 1 | 可用 | ✅ | 保护共享资源 |
+
+**经典用法：中断计数**。中断里 `give`，任务里 `take`，能记录"积压了多少次中断"，不会像二进制信号量那样丢失中间的次数。
+
+**另一个用法：限流**。初始化 N 个名额，任务取到才干活，天然限制并发数。
+@FOLLOW
+1. **计数满了再 give 会怎样？** —— 返回失败（`pdFALSE`），不会溢出。
+2. **能当"事件计数"用吗？** —— 能，这正是它的强项；但注意它不携带数据。
+3. **和队列有什么区别？** —— 队列带数据，信号量只计数。
+@TRAPS
+- 用计数信号量做互斥（没有优先级继承）
+- 上限设太小，任务互相等待
+- `take` 后忘了 `give`，名额泄漏
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 同步机制（预测题，非真实面经）
+
+@@ Q-4130
+@STEM
+**题目**：往队列里发一个结构体，任务收到后发现数据被改了；改成发指针，又出现数据错乱。
+
+**问**：队列是按值拷贝还是按引用？两种方式各自的坑是什么？
+@ANSWER
+队列**按值拷贝**：`xQueueSend` 会把 `itemSize` 字节复制进队列的存储区，接收时再复制出来。所以发结构体是安全的（两份独立数据）。
+
+发**指针**时复制的是指针值，指向的仍是原来那块内存——如果发送方在接收方处理前修改或释放了它，就会读到错数据。
+
+两个坑正好相反：**按值时结构体不能太大**（拷贝开销 + 队列内存），**按指针时要管生命周期**。
+@DEEP
+```c
+// ✅ 按值：安全，但结构体别太大
+typedef struct { uint16_t id; float val; } sample_t;
+QueueHandle_t q = xQueueCreate(8, sizeof(sample_t));
+sample_t s = {1, 3.14f};
+xQueueSend(q, &s, 0);            // 拷贝 8 字节进队列
+
+// ⚠️ 按指针：必须保证生命周期
+QueueHandle_t qp = xQueueCreate(8, sizeof(sample_t*));
+sample_t* p = pvPortMalloc(sizeof(sample_t));
+*p = s;
+xQueueSend(qp, &p, 0);           // 发送方不能释放 p，接收方负责释放
+```
+
+| 方式 | 拷贝量 | 生命周期 | 适合 |
+|---|---|---|---|
+| 按值 | 整个对象 | 安全 | 小结构体（≤ 几十字节） |
+| 按指针 | 4/8 字节 | **发送方要保证** | 大缓冲区、零拷贝 |
+| 按指针 + 内存池 | 指针 | 池管理 | 高频大对象 |
+
+**经验阈值**：结构体超过 32–64 字节就考虑传指针或指针 + 内存池。队列存储是按 `itemSize × length` 静态分配的，8 个 1 KB 的结构体就是 8 KB RAM。
+
+**按指针的安全做法**：用内存池（固定大小块）+ 引用计数，或者干脆用 `xQueueSend` 传"索引"而不是指针。
+@FOLLOW
+1. **能发引用吗？** —— C 里没有引用，本质都是拷贝值（指针也是值）。
+2. **队列满了怎么办？** —— 用超时参数，或 `xQueueOverwrite`（长度 1 的队列专用）。
+3. **接收方怎么知道数据有效？** —— 协议里带长度/校验；指针方式还要约定谁负责释放。
+@TRAPS
+- 发局部变量的地址，函数返回后失效
+- 发完指针立刻释放，接收方读到野内存
+- 大结构体按值发，RAM 不够
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 队列（预测题，非真实面经）
+
+@@ Q-4131
+@STEM
+**题目**：ADC 转换完成中断里把采样值发到队列，写了 `xQueueSend(q, &v, 0)`，编译过了但偶尔丢数据。
+
+**问**：中断里往队列发数据，为什么必须用 FromISR 版本？还会遇到什么问题？
+@ANSWER
+普通 `xQueueSend` 在队列满时可能阻塞，而中断**不能阻塞**；FromISR 版本不阻塞，并且能通过 `pxHigherPriorityTaskWoken` 告知是否需要立即切换。
+
+偶尔丢数据的真正原因通常是：**队列满了**（`xQueueSendFromISR` 返回 `errQUEUE_FULL` 被忽略），或者**发送频率高于消费速度**。
+@DEEP
+```c
+void ADC_IRQHandler(void) {
+    BaseType_t woken = pdFALSE;
+    uint16_t v = ADC1->DR;
+
+    if (xQueueSendFromISR(adc_q, &v, &woken) != pdPASS) {
+        ++drop_count;                     // 记录丢弃，别静默
+    }
+    portYIELD_FROM_ISR(woken);
+}
+```
+
+| 问题 | 原因 | 修法 |
+|---|---|---|
+| 丢数据 | 队列满 | 加长队列 / 提高消费优先级 / 记丢弃计数 |
+| 数据错乱 | 没清中断标志，重复入队 | 中断里清标志 |
+| HardFault | 中断优先级过高 | 降到 `configMAX_SYSCALL_INTERRUPT_PRIORITY` 之下 |
+| 延迟大 | 忘了 `portYIELD_FROM_ISR` | 补上 |
+
+**设计建议**：队列长度按"中断频率 × 最长处理时间"估。1 kHz 采样、任务 10 ms 处理一次，至少要 10 个槽位。
+
+**更高频的做法**：用**流缓冲区（stream buffer）**或 DMA + 半满/全满中断，一次搬一批，减少中断次数。
+@FOLLOW
+1. **能发到队列后立刻处理吗？** —— 不能，中断里只能发信号，处理留给任务。
+2. **中断里能 `malloc` 吗？** —— 不能，任何堆分配都不行。
+3. **丢数据怎么统计？** —— 全局计数器，任务里定期打印。
+@TRAPS
+- 中断里用 `xQueueSend` 并传超时
+- 忽略 `xQueueSendFromISR` 的返回值
+- 中断优先级配太高，调用 API 直接崩
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/STM32 相关章节
+@SOURCE
+FreeRTOS 队列与中断（预测题，非真实面经）
+
+@@ Q-4132
+@STEM
+**题目**：写了 `xTimerCreate(...)` 编译报 `implicit declaration of function`。
+
+**问**：为什么非得先打开 `configUSE_TIMERS`？打开之后内核多了什么？
+@ANSWER
+因为软件定时器是**可选模块**，`configUSE_TIMERS=0` 时 `timers.c` 不参与编译，函数根本没有声明。打开它（=1）才引入定时器功能，并且内核会自动创建一个**定时器服务任务（Daemon Task）**。
+
+这个守护任务负责：接收定时器命令（启动/停止/改周期）、检查到期、执行回调。
+@DEEP
+```c
+#define configUSE_TIMERS              1
+#define configTIMER_TASK_PRIORITY     (configMAX_PRIORITIES - 1)  // 通常设高
+#define configTIMER_QUEUE_LENGTH      10
+#define configTIMER_TASK_STACK_DEPTH  (configMINIMAL_STACK_SIZE * 2)
+```
+
+| 宏 | 作用 | 配错的表现 |
+|---|---|---|
+| `configUSE_TIMERS` | 总开关 | 函数未声明 |
+| `configTIMER_TASK_PRIORITY` | 守护任务优先级 | 太低 → 定时不准 |
+| `configTIMER_QUEUE_LENGTH` | 命令队列长度 | 太短 → `xTimerStart` 失败 |
+| `configTIMER_TASK_STACK_DEPTH` | 守护任务栈 | 回调复杂 → 溢出 |
+
+```c
+TimerHandle_t t = xTimerCreate("blink", pdMS_TO_TICKS(500), pdTRUE,
+                               NULL, blink_cb);
+xTimerStart(t, 0);      // 第二个参数是"命令入队"的超时，不是定时周期
+```
+
+**注意**：`xTimerStart` 只是"把命令投进队列"，真正的启动由守护任务完成，所以它不是立即生效的。
+@FOLLOW
+1. **回调在哪个任务里执行？** —— 守护任务里，所以**绝对不能阻塞**。
+2. **定时器精度多少？** —— 一个 tick，且有守护任务的调度延迟。
+3. **能不用软件定时器吗？** —— 能，用硬件定时器 + 中断，或任务里 `vTaskDelayUntil`。
+@TRAPS
+- `configUSE_TIMERS=0` 却调用 `xTimerCreate`
+- 把 `xTimerStart` 的第二参数当周期
+- 守护任务栈开太小，回调里用 `printf` 就溢出
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 软件定时器（预测题，非真实面经）
+
+@@ Q-4133
+@STEM
+**题目**：`xTimerStart(t, 0)` 之后，回调什么时候执行？在哪个任务的上下文？
+
+**问**：定时器的命令队列是怎么工作的？回调在哪里执行？
+@ANSWER
+链路是：**调用方把命令投进定时器命令队列 → 守护任务取出命令、更新定时器链表 → tick 中断检查到期、把到期定时器标记为待处理 → 守护任务执行回调**。
+
+所以回调**在守护任务上下文执行**，不是中断里，也不是调用方任务里。
+@DEEP
+```
+调用方任务 ──xTimerStart()──▶ 命令队列 ──▶ 守护任务（更新链表）
+                                              ▲
+SysTick ──检查到期，发送通知───────────────┘
+                                              │
+                                        执行回调函数
+```
+
+| 动作 | 谁执行 | 上下文 |
+|---|---|---|
+| `xTimerStart/Stop/Reset` | 调用方 | 投递命令 |
+| 更新定时器链表 | 守护任务 | 任务 |
+| 判断到期 | tick 中断（`xTimerPendFunctionCall` 或直接） | 中断 |
+| 回调函数 | **守护任务** | 任务 |
+
+**推论（很重要）**：
+1. 回调里**不能阻塞**（会卡住整个定时器系统）；
+2. 回调里**不能调用会阻塞的 API**（如 `vTaskDelay`）；
+3. 回调的执行时间会**影响其他定时器的准时性**。
+
+**`xTimerStart(t, xTicksToWait)` 的第二个参数**是"命令入队等待时间"，不是定时周期——参数意义搞错是高频错误。
+@FOLLOW
+1. **回调能调用 `xTimerStop` 吗？** —— 能，但推荐用 `xTimerStopFromISR` 之外的方式；在回调里操作自身是允许的。
+2. **多个定时器会并行执行吗？** —— 不会，都在守护任务里串行。
+3. **能改守护任务优先级吗？** —— 能，`configTIMER_TASK_PRIORITY`。
+@TRAPS
+- 在回调里 `vTaskDelay` 或等信号量（卡死整个定时器）
+- 把第二个参数当周期
+- 守护任务优先级太低，定时不准
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 定时器机制（预测题，非真实面经）
+
+@@ Q-4134
+**STEM
+@STEM
+**题目**：定时器回调里读了一个 I2C 传感器（约 5 ms），结果其他定时器全部延迟。
+
+**问**：回调函数为什么绝对不能阻塞？正确做法是什么？
+@ANSWER
+因为**所有软件定时器的回调都在同一个守护任务里串行执行**。一个回调阻塞 5 ms，后面所有到期定时器就都晚 5 ms——定时精度被最慢的回调决定。
+
+正确做法：回调里只做**极轻的标记动作**（置标志、发信号量、发队列），耗时操作交给普通任务。
+@DEEP
+```c
+// ❌ 回调里做耗时操作
+void cb_slow(TimerHandle_t t) {
+    i2c_read_sensor();      // 5 ms，阻塞所有定时器
+}
+
+// ✅ 回调只发通知
+void cb_fast(TimerHandle_t t) {
+    BaseType_t woken = pdFALSE;
+    xSemaphoreGiveFromISR(sensor_sem, &woken);   // 或 xTaskNotifyGive
+    portYIELD_FROM_ISR(woken);
+}
+
+void task_sensor(void* p) {
+    for (;;) {
+        xSemaphoreTake(sensor_sem, portMAX_DELAY);
+        i2c_read_sensor();           // 耗时操作在任务里
+    }
+}
+```
+
+| 回调里禁止 | 原因 |
+|---|---|
+| `vTaskDelay` | 阻塞守护任务 |
+| 等信号量/队列 | 同上 |
+| `malloc` | 不确定耗时 |
+| 长 `printf` | 慢且可能阻塞 |
+| 大量浮点运算 | 占满守护任务 |
+
+**同样的规则适用于中断**：ISR 也必须是"标记 + 退出"，耗时逻辑交给任务。这是 RTOS 设计的通用原则——**中断和回调只负责"通知"，任务负责"干活"**。
+@FOLLOW
+1. **回调里能调用 `xTimerStop` 吗？** —— 能，它是非阻塞的命令投递。
+2. **`xTaskNotifyGive` 和信号量哪个好？** —— 通知更轻（不占额外内存），但要配对使用。
+3. **守护任务栈要开多大？** —— 按回调里最深的调用链估，用 `printf` 时要 512 字以上。
+@TRAPS
+- 回调里做 I/O 或 `vTaskDelay`
+- 回调里 `malloc`
+- 守护任务栈开太小
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 定时器回调约束（预测题，非真实面经）
+
+@@ Q-4135
+**STEM
+@STEM
+**题目**：20 个定时器和一个任务，哪个更占 RAM？
+
+**问**：FreeRTOS 软件定时器占多少内存？为什么比任务便宜？
+@ANSWER
+一个定时器大约 **40–60 字节**（`Timer_t` 结构体：链表节点、周期、到期时间、回调指针、名字等），加上启动后占用一个命令队列项。
+
+它比任务便宜得多，因为**没有独立的栈**——任务必须有自己的栈（几百字节到几 KB），而定时器共用守护任务的栈。
+@DEEP
+| 对象 | 内存构成 | 典型大小 |
+|---|---|---|
+| 任务 | TCB + **独立栈** | 100 B + 512 B 起 |
+| 定时器 | `Timer_t` + 队列项 | 约 50–80 B |
+| 队列 | 结构体 + `itemSize × length` | 按需 |
+| 信号量 | 队列结构 + 少量 | 约 80 B |
+
+```c
+// 想看实际占用：查堆剩余量
+size_t before = xPortGetFreeHeapSize();
+TimerHandle_t t = xTimerCreate("t", 100, pdTRUE, NULL, cb);
+size_t after  = xPortGetFreeHeapSize();
+printf("timer costs %u bytes\n", (unsigned)(before - after));
+```
+
+**为什么定时器不能替代任务**：定时器回调**不能阻塞**、**串行执行**、**不能有独立状态栈**。需要阻塞等待的场景必须用任务。
+
+**选择标准**：周期性、极短的动作 → 定时器；需要阻塞、需要独立栈、耗时较长 → 任务。
+@FOLLOW
+1. **定时器能动态创建/删除吗？** —— 能，`xTimerCreate` / `xTimerDelete`，注意堆碎片。
+2. **静态创建省 RAM 吗？** —— 不一定省，但避免堆碎片（`xTimerCreateStatic`）。
+3. **定时器多了会慢吗？** —— 会，到期检查是遍历链表（按到期时间排序，O(1) 取首个）。
+@TRAPS
+- 用定时器做耗时任务（阻塞守护任务）
+- 以为定时器也有独立栈
+- 大量动态创建删除定时器，造成碎片
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 内存占用（预测题，非真实面经）
+
+@@ Q-4136
+@STEM
+**题目**：一个任务要等"网络就绪"和"传感器就绪"两个条件同时满足；另一个任务只等其中任意一个。
+
+**问**：事件组是什么？`EventBits_t` 有多少可用位？
+@ANSWER
+事件组是一组**位标志**（类似一个位图），任务可以等"某几位全部置位"或"任意一位置位"，还能设置等完后自动清除。
+
+位数取决于 `configUSE_16_BIT_TICKS`：32 位 tick 时 `EventBits_t` 是 32 位，**可用 24 位**（高 8 位被内核保留）；16 位 tick 时只有 **8 位**可用。
+@DEEP
+```c
+#define BIT_NET  (1u << 0)
+#define BIT_SENS (1u << 1)
+
+EventGroupHandle_t eg = xEventGroupCreate();
+
+// 任务 A：等两个都就绪
+xEventGroupWaitBits(eg, BIT_NET | BIT_SENS,
+                    pdTRUE,    // 等完自动清除
+                    pdTRUE,    // 要求全部置位（与）
+                    portMAX_DELAY);
+
+// 任务 B：等任意一个
+xEventGroupWaitBits(eg, BIT_NET | BIT_SENS, pdTRUE, pdFALSE, portMAX_DELAY);
+```
+
+| 配置 | `EventBits_t` 宽度 | 可用位 |
+|---|---|---|
+| `configUSE_16_BIT_TICKS=0`（默认） | 32 位 | **24 位** |
+| `configUSE_16_BIT_TICKS=1` | 16 位 | **8 位** |
+
+**为什么高位被保留**：内核用高 8 位记录"是否有任务在等这些位"，用于控制阻塞/唤醒，所以应用不能碰。
+
+**中断里置位**：`xEventGroupSetBitsFromISR` —— 注意它内部是**投递给守护任务**完成的，所以需要 `configUSE_TIMERS=1`。
+@FOLLOW
+1. **事件位会自动清除吗？** —— 取决于 `xClearOnExit` 参数，不是自动的。
+2. **多个任务能等同一组事件吗？** —— 能，置位时全部唤醒（满足条件的）。
+3. **能等"某几位置位且另几位清零"吗？** —— 不能直接，`WaitBits` 只检查置位；要清零判断得自己轮询。
+@TRAPS
+- 用了第 25 位以上（保留位）
+- 以为事件位等完自动清除
+- 中断里用 `xEventGroupSetBits`（非 FromISR）
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 事件组（预测题，非真实面经）
+
+@@ Q-4137
+**STEM
+@STEM
+**题目**：要等 5 个条件，一种做法是 5 个二进制信号量，一种是一个事件组。
+
+**问**：为什么事件组比一堆二进制信号量省内存？什么时候反而该用信号量？
+@ANSWER
+因为事件组只有**一个对象**（几十字节 + 24 个位），而 5 个二进制信号量就是 5 个队列对象（每个约 80 字节），还要 5 次 `take`/`give`。
+
+但事件组**不携带数据、不计数**——需要传数据用队列，需要计数用计数信号量，需要互斥用互斥量。
+@DEEP
+| 需求 | 最合适 |
+|---|---|
+| 等多个条件（与/或） | **事件组** |
+| 传数据 | 队列 |
+| 计数 / 资源池 | 计数信号量 |
+| 单次事件通知 | 二进制信号量 / 任务通知 |
+| 保护共享资源 | 互斥量 |
+
+```c
+// 5 个信号量：5 个对象 + 5 次等待
+xSemaphoreTake(s1, portMAX_DELAY);
+xSemaphoreTake(s2, portMAX_DELAY);
+// ...
+
+// 1 个事件组：1 个对象 + 1 次等待
+xEventGroupWaitBits(eg, ALL_BITS, pdTRUE, pdTRUE, portMAX_DELAY);
+```
+
+**事件组的额外优势**：可以"等任意一个"（`xWaitForAllBits = pdFALSE`），信号量做不到——要么等第一个，要么等固定顺序。
+
+**事件组的一个局限**：位是**粘性**的（置位后一直保持），用不好会出现"上次的位还在，这次直接通过了"——所以通常配 `xClearOnExit = pdTRUE`。
+
+**任务通知（Task Notification）更省**：单个任务等待时用 `xTaskNotifyGive` / `ulTaskNotifyTake`，不占额外内存，比信号量还轻。
+@FOLLOW
+1. **事件组能当信号量用吗？** —— 勉强可以，但要注意粘性位和清除时机（见下一题）。
+2. **任务通知有什么限制？** —— 只能一对一（发给指定任务），不能广播。
+3. **事件组能在中断里用吗？** —— 能，`FromISR` 版本，但内部依赖守护任务。
+@TRAPS
+- 用 5 个信号量等"全部满足"
+- 事件位不清除，下次直接通过
+- 需要传数据却用事件组
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 事件组（预测题，非真实面经）
+
+@@ Q-4139
+@STEM
+**题目**：`xEventGroupWaitBits(eg, bits, xClearOnExit, xWaitForAllBits, timeout)` 里倒数第二个参数是什么意思？
+
+**问**：「或」等待与「与」等待有什么区别？各自适合什么场景？
+@ANSWER
+`xWaitForAllBits = pdTRUE` 是**与**等待：指定的位**全部**置位才唤醒；`pdFALSE` 是**或**等待：**任意一个**置位就唤醒。
+
+- **与**：适合"多个前置条件都满足才能继续"（网络 + 传感器 + 配置都就绪）；
+- **或**：适合"多个事件任一来就处理"（按键、串口、定时器任一触发）。
+@DEEP
+```c
+// 与：三个都就绪
+xEventGroupWaitBits(eg, BIT_A | BIT_B | BIT_C,
+                    pdTRUE, pdTRUE, portMAX_DELAY);
+
+// 或：任一个就绪，返回值告诉你是哪个
+EventBits_t got = xEventGroupWaitBits(eg, BIT_A | BIT_B | BIT_C,
+                                      pdTRUE, pdFALSE, portMAX_DELAY);
+if (got & BIT_A) handle_a();
+if (got & BIT_B) handle_b();
+```
+
+| 参数 | 值 | 含义 |
+|---|---|---|
+| `xClearOnExit` | `pdTRUE` | 返回前清除**满足条件的那些位** |
+| `xWaitForAllBits` | `pdTRUE` | 全部置位才唤醒 |
+| | `pdFALSE` | 任一置位就唤醒 |
+| `xTicksToWait` | 0 / n / `portMAX_DELAY` | 立即返回 / 等 n tick / 永等 |
+| **返回值** | `EventBits_t` | 唤醒时的位状态（含未等待的位） |
+
+**返回值要注意**：它返回的是**当时的全部位状态**，不只是你等的那几位，所以判断时要用 `&` 掩码。
+
+**超时的处理**：超时返回时位可能部分满足，必须检查返回值是否符合预期，不能只看"函数返回了"。
+@FOLLOW
+1. **`xClearOnExit` 清哪些位？** —— 只清你等待的那些位中已置位的。
+2. **超时后位会保留吗？** —— 会，除非设了 `xClearOnExit`。
+3. **能在中断里等待吗？** —— 不能，中断里只能 set，不能 wait。
+@TRAPS
+- 与/或参数搞反，条件永远不满足
+- 不检查返回值，超时也当成功
+- 忘了 `xClearOnExit`，位粘住
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 事件组等待（预测题，非真实面经）
+
+@@ Q-4140
+@STEM
+**追问**：有人用事件组的某一位当二进制信号量，结果偶尔"没发信号也通过了"。
+
+**问**：事件位什么时候会丢、什么时候会"粘住"？用它当二进制信号量的局限在哪？
+@ANSWER
+事件位是**粘性**的：置位后一直保持，直到被清除。所以如果上次用完没清，下次 `WaitBits` 会立刻返回——表现就是"没发信号也通过了"。
+
+反过来"丢失"的情况是：**同一位被连续置位两次**，中间那次无法被感知（位还是 1），所以它**不能计数**。
+@DEEP
+| 问题 | 原因 | 表现 |
+|---|---|---|
+| 粘连 | 置位后未清除 | 下次立即通过 |
+| 丢事件 | 连续置位同一位 | 只感知到一次 |
+| 误判 | 返回值没做掩码 | 用了不关心的位 |
+| 无法传值 | 事件组只存位 | 需要额外共享变量 |
+
+```c
+// ✅ 当信号量用的正确姿势：等 + 清
+xEventGroupWaitBits(eg, BIT_EVT, pdTRUE /*清除*/, pdTRUE, portMAX_DELAY);
+
+// ⚠️ 如果置位方可能连续置位，就会丢
+xEventGroupSetBits(eg, BIT_EVT);
+```
+
+**结论**：事件组适合表达"**状态**"（某个条件是否满足），不适合表达"**事件次数**"。要计数就用计数信号量，要"每次都不丢"就用队列或任务通知。
+
+**任务通知的计数版**：`xTaskNotifyGive` 会累加计数（32 位），`ulTaskNotifyTake(pdFALSE, ...)` 每次减一，比事件组更适合"事件计数"。
+@FOLLOW
+1. **怎么保证不粘？** —— 每次 `WaitBits` 都传 `xClearOnExit = pdTRUE`。
+2. **能手动清位吗？** —— `xEventGroupClearBits`，但要注意竞态。
+3. **能用两个位做"乒乓"吗？** —— 能，交替置位/清除，但复杂且易错。
+@TRAPS
+- 用事件位做事件计数
+- 不清位导致粘连
+- 手动 `ClearBits` 和 `SetBits` 竞态
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 事件组局限（预测题，非真实面经）
+
+@@ Q-4141
+@STEM
+**题目**：两个任务同时对一个 32 位计数器 `counter++`，跑久了结果比预期小。
+
+**问**：竞态条件怎么复现？「撕裂读写」是什么？怎么避免？
+@ANSWER
+`counter++` 是**读-改-写三步**，不是原子操作。两个任务交错执行时，可能都读到旧值，各自加一写回，结果只加了 1——这就是**丢失更新**。
+
+**撕裂读写**指一个 32 位变量被拆成两次 16 位访问（在 8/16 位 MCU 上很常见），读到"一半新一半旧"的值。Cortex-M 上 32 位对齐访问本身是原子的，但读-改-写仍不是。
+@DEEP
+```
+时间 →
+任务A: 读 counter=5 ────────▶ 写 6
+任务B:      读 counter=5 ──────────▶ 写 6
+结果：6（应该是 7）
+```
+
+| 保护手段 | 关中断 | 禁任务切换 | 开销 | 适用 |
+|---|---|---|---|---|
+| `taskENTER_CRITICAL` | ✅ | ✅ | 极低 | 极短操作（几条指令） |
+| `vTaskSuspendAll` | ❌ | ✅ | 低 | 稍长的操作 |
+| 互斥量 | ❌ | ❌（阻塞） | 中 | 有阻塞/较长的临界区 |
+| 原子操作 / 信号量 | — | — | 低 | 简单计数 |
+
+```c
+// 临界区：几行代码
+taskENTER_CRITICAL();
+counter++;
+taskEXIT_CRITICAL();
+
+// 原子包装（CMSIS）
+__disable_irq(); ... __enable_irq();     // 不推荐直接这么写，用宏更可移植
+```
+
+**怎么复现**：在两个任务里各加一个 `vTaskDelay(0)` 或 `taskYIELD()` 插到读和写之间，制造交错窗口，问题立刻稳定出现——这是定位竞态最好的手段。
+
+**中断与任务之间的竞态**：必须用临界区（关中断），因为互斥量不能在中断里用。
+@FOLLOW
+1. **临界区里能调用 FreeRTOS API 吗？** —— 大部分不能（会断言），只能做纯计算/赋值。
+2. **临界区多久算长？** —— 超过几十微秒就该换方案，否则影响中断响应。
+3. **`volatile` 能解决吗？** —— 不能，它只阻止编译器优化，不保证原子性。
+@TRAPS
+- 用 `volatile` 当同步手段
+- 临界区里调用 `vTaskDelay` 或 `printf`
+- 临界区太长，中断延迟变大
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+- 教学文档/C++面向对象高级特性教程.html（多线程章节）
+@SOURCE
+FreeRTOS 竞态与保护（预测题，非真实面经）
+
+@@ Q-4142
+@STEM
+**题目**：三种保护手段摆在面前：临界区、挂起调度器、互斥量。
+
+**问**：三种保护手段怎么选？各自的边界在哪？
+@ANSWER
+按"**要保护什么**"和"**保护多久**"选：
+
+- **临界区**（关中断）：保护**几行代码**、涉及中断与任务共享的数据，开销最小；
+- **挂起调度器**：保护**稍长的操作**（如 `malloc`），不关中断所以中断仍能响应，但中断里不能调 API；
+- **互斥量**：保护**可能阻塞的较长临界区**，带优先级继承，但不能在中断里用。
+@DEEP
+| 维度 | 临界区 | 挂起调度器 | 互斥量 |
+|---|---|---|---|
+| 关中断 | ✅ | ❌ | ❌ |
+| 禁止任务切换 | ✅ | ✅ | ❌（阻塞） |
+| 中断里能用 | ✅（成对） | ❌ | ❌ |
+| 可嵌套 | ✅（计数） | ✅（计数） | 需递归互斥量 |
+| 优先级继承 | — | — | ✅ |
+| 开销 | 极低 | 低 | 中（系统调用） |
+| 适合时长 | 微秒级 | 几十微秒 | 毫秒级/可阻塞 |
+
+```c
+// 1. 临界区：最短
+taskENTER_CRITICAL();
+shared_flag = 1;
+taskEXIT_CRITICAL();
+
+// 2. 挂起调度器：稍长，不关中断
+vTaskSuspendAll();
+reorganize_list();       // 不能调用可能阻塞的 API
+xTaskResumeAll();
+
+// 3. 互斥量：可能阻塞
+xSemaphoreTake(mtx, portMAX_DELAY);
+write_flash();           // 慢操作
+xSemaphoreGive(mtx);
+```
+
+**判断口诀**：**能在几行内做完 → 临界区；会阻塞或很长 → 互斥量；介于两者且要保中断响应 → 挂起调度器。**
+
+**互斥量的优先级继承**：低优先级任务持锁时，会临时提升到等待者的优先级，避免被中间优先级任务插队——这是它相对二进制信号量的关键优势。
+@FOLLOW
+1. **临界区能嵌套吗？** —— 能，内部有嵌套计数。
+2. **`vTaskSuspendAll` 期间能收中断吗？** —— 能，但中断里不能调用 FreeRTOS API。
+3. **互斥量能递归获取吗？** —— 普通互斥量不能（会死锁），要用递归互斥量。
+@TRAPS
+- 用临界区保护耗时操作，中断响应变差
+- 中断里用互斥量
+- 用二进制信号量代替互斥量（无优先级继承）
+@RELATED
+- 教学文档/FreeRTOS 相关章节
+@SOURCE
+FreeRTOS 临界区与互斥（预测题，非真实面经）
