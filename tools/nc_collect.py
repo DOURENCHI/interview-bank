@@ -29,23 +29,47 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 DAILY_CAP = 300
 API_SLEEP, RENDER_SLEEP = 1.0, 1.5
 
-# 目标公司（公司名 -> 命中关键词）。歧义词用大小写敏感正则。
-COMPANIES = {
-    "Momenta": [r"momenta", r"魔门塔"],
-    "华为":    [r"华为", r"huawei"],
-    "蔚来":    [r"蔚来"],
-    "小鹏":    [r"小鹏", r"xpeng"],
-    "地平线":  [r"地平线", r"horizon"],
-    "联影":    [r"联影"],
-    "迈瑞":    [r"迈瑞", r"mindray"],
-    "ABB":     [r"\bABB\b"],
-    "追觅":    [r"追觅", r"dreame"],
-}
+# 目标公司注册表：companies/targets.json 是唯一来源（tier core+watch）。
+# JSON 顺序即匹配顺序，"关键词更具体"的公司必须排在会吞掉它的公司之前
+# （如 联影智能 → 联影医疗；西门子（工业）用负向先行排除 西门子医疗）。
+def load_registry() -> list[tuple[str, list[str]]]:
+    tf = ROOT / "companies" / "targets.json"
+    if tf.exists():
+        d = json.loads(tf.read_text(encoding="utf-8"))
+        return [(c["name"], c.get("nc_keywords") or []) for c in d["companies"]
+                if c.get("nc_keywords")]
+    # 兜底：注册表缺失时退回内置 9 家
+    return [
+        ("Momenta", [r"momenta", r"魔门塔"]),
+        ("华为",    [r"华为", r"huawei"]),
+        ("蔚来",    [r"蔚来"]),
+        ("小鹏",    [r"小鹏", r"xpeng"]),
+        ("地平线",  [r"地平线", r"horizon"]),
+        ("联影",    [r"联影"]),
+        ("迈瑞",    [r"迈瑞", r"mindray"]),
+        ("ABB",     [r"\bABB\b"]),
+        ("追觅",    [r"追觅", r"dreame"]),
+    ]
+
+
+REGISTRY = load_registry()
+
 ROLE_WORDS = [
     "C++", "嵌入式", "SDK", "推理", "部署", "机器人", "ROS", "算法", "后端",
     "自动驾驶", "固件", "驱动", "感知", "SLAM", "Linux", "软件工程师", "软件开发",
     "机械", "结构", "电机", "测试开发", "图像", "BSP", "单片机", "底层软件",
 ]
+
+
+def match_company(text: str) -> str | None:
+    """返回命中的公司名；歧义词用大小写敏感匹配。"""
+    for comp, pats in REGISTRY:
+        for pat in pats:
+            flags = 0 if (pat[0].isupper() or pat.startswith("\\b") or pat[:1].isascii()
+                          and pat.lower() != pat) else re.I
+            if re.search(pat, text, flags):
+                return comp
+    return None
 ROUND_RE = re.compile(r"(五面|四面|三面|二面|一面|终面|交叉面|主管面|HR面|hr面|人事面)")
 STOP_MARKS = {"评论", "点赞", "收藏", "真题解析", "邀请牛友回答"}
 STOP_PREFIX = re.compile(r"^(点赞成功|评论成功|收藏成功|送花成功|关注成功)")
@@ -138,16 +162,6 @@ def cmd_feed(pages: int) -> int:
     total = len(load_jsonl(FEED))
     print(f"累计缓存 {total} 条（本轮新 {new}，命中目标公司 {matched}）")
     return 0
-
-
-def match_company(text: str) -> str | None:
-    """返回命中的公司名；歧义词用大小写敏感匹配。"""
-    for comp, pats in COMPANIES.items():
-        for pat in pats:
-            flags = 0 if pat[0].isupper() or pat.startswith("\\b") else re.I
-            if re.search(pat, text, flags):
-                return comp
-    return None
 
 
 # ---------------------------------------------------------------- --fetch

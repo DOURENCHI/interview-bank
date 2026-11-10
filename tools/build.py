@@ -330,9 +330,11 @@ function roleHit(q, r){
   if (ALWAYS.has(q.module)) return true;
   return (r.mods || []).includes(q.module) || (r.subs || []).includes(q.sub);
 }
-// 公司口径：主投岗位族 + 该公司额外列出的子方向
+// 公司口径：主投岗位族 + 该公司额外列出的子方向 + 出现记录真实命中
+// appearances 格式 "公司·岗位"——出现过该公司面试题的题卡，选该公司时必中
 function coHit(q, c){
   if (!c) return false;
+  if ((q.appearances || []).some(a => a.split("·")[0] === c.name)) return true;
   if ((c.extra || []).includes(q.sub)) return true;
   return (c.roles || []).some(k => roleHit(q, ROLE_BY_KEY[k]));
 }

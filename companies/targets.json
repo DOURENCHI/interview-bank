@@ -1,5 +1,5 @@
 {
-  "_comment": "公司 / 岗位筛选的机器可读映射。source_type 一律是 inferred：按 JD 与技术方向推导，不代表该公司真实考过。真实面经请写进题卡的 appearances 字段。",
+  "_comment": "公司 / 岗位筛选的机器可读映射 + 牛客采集器的公司注册表。tier: core=有档案且采集（10家）; watch=仅索引与筛选（来自 公司池_苏南优先 xlsx + 常见互联网补充）。source_type 一律是 inferred：按 JD 与技术方向推导，不代表该公司真实考过。真实面经请写进题卡的 appearances 字段。新增公司：复制一条条目、给 nc_keywords、注意把它排在会吞掉其关键词的公司之前。",
   "always": [
     "01_project"
   ],
@@ -151,11 +151,16 @@
         "C",
         "B"
       ],
-      "main": "A SDK / 基础软件",
+      "main": "A · SDK / 基础软件",
       "extra": [
         "工程化与 SDK",
         "对象模型",
         "YOLO 部署"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "Momenta",
+        "魔门塔"
       ]
     },
     {
@@ -173,11 +178,19 @@
         "F",
         "E"
       ],
-      "main": "A · C 推理部署",
+      "main": "A · SDK / 基础软件",
       "extra": [
         "时间与算法",
         "端侧部署",
         "多传感器"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "华为",
+        "huawei",
+        "海思",
+        "车BU",
+        "车 bu"
       ]
     },
     {
@@ -190,11 +203,18 @@
         "C",
         "A"
       ],
-      "main": "C 推理部署",
+      "main": "C · 推理部署",
       "extra": [
         "端侧部署",
         "工程化与 SDK",
         "优化"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "地平线",
+        "horizon",
+        "征程",
+        "Horizon Robotics"
       ]
     },
     {
@@ -207,14 +227,19 @@
         "B",
         "C"
       ],
-      "main": "A · B",
+      "main": "A · SDK / 基础软件",
       "extra": [
         "多传感器",
         "仿真与建图"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "蔚来",
+        "NIO"
       ]
     },
     {
-      "name": "小鹏汽车",
+      "name": "小鹏",
       "aliases": [
         "xpeng",
         "小鹏"
@@ -225,11 +250,16 @@
         "C",
         "D"
       ],
-      "main": "A · B",
+      "main": "A · SDK / 基础软件",
       "extra": [
         "多传感器",
         "YOLO 部署",
         "训练"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "小鹏",
+        "xpeng"
       ]
     },
     {
@@ -242,12 +272,16 @@
         "F",
         "B"
       ],
-      "main": "F 机器人软件",
+      "main": "F · 机器人软件",
       "extra": [
         "运动学",
         "力控",
         "控制",
         "标定"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "ABB"
       ]
     },
     {
@@ -261,13 +295,30 @@
         "A",
         "D"
       ],
-      "main": "E · A",
+      "main": "E · 嵌入式",
       "extra": [
         "DICOM",
         "工具链",
         "评价指标",
         "STM32"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "西门子医疗",
+        "Healthineers"
       ]
+    },
+    {
+      "name": "联影智能",
+      "tier": "watch",
+      "nc_keywords": [
+        "联影智能"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
     },
     {
       "name": "联影医疗",
@@ -280,12 +331,18 @@
         "A",
         "E"
       ],
-      "main": "D · A",
+      "main": "D · 感知算法",
       "extra": [
         "UNet",
         "DICOM",
         "跟骨分割（科研）",
         "训练"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "联影医疗",
+        "united imaging",
+        "联影"
       ]
     },
     {
@@ -298,16 +355,22 @@
         "E",
         "A"
       ],
-      "main": "E 嵌入式",
+      "main": "E · 嵌入式",
       "extra": [
         "FreeRTOS",
         "STM32",
         "总线协议",
         "模拟电路"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "迈瑞医疗",
+        "mindray",
+        "迈瑞"
       ]
     },
     {
-      "name": "追觅科技",
+      "name": "追觅",
       "aliases": [
         "dreame",
         "追觅"
@@ -317,13 +380,1597 @@
         "F",
         "C"
       ],
-      "main": "E · F",
+      "main": "E · 嵌入式",
       "extra": [
         "FreeRTOS",
         "控制",
         "端侧部署",
         "多传感器"
+      ],
+      "tier": "core",
+      "nc_keywords": [
+        "追觅",
+        "dreame",
+        "青庭"
       ]
+    },
+    {
+      "name": "GE医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "GE医疗",
+        "GE HealthCare",
+        "GE Healthcare"
+      ],
+      "roles": [
+        "B",
+        "D"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "东软医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "东软医疗",
+        "东软"
+      ],
+      "roles": [
+        "B",
+        "D"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "推想医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "推想医疗",
+        "推想科技"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "数坤科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "数坤"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "深睿医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "深睿"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "微创医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "微创医疗",
+        "微创机器人"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "华大基因",
+      "tier": "watch",
+      "nc_keywords": [
+        "华大基因"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "亿嘉和",
+      "tier": "watch",
+      "nc_keywords": [
+        "亿嘉和",
+        "佗道"
+      ],
+      "roles": [
+        "D",
+        "E",
+        "F"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "祥生医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "祥生"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "敏捷医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "敏捷医疗",
+        "AGIBOT医疗"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "霆升医疗",
+      "tier": "watch",
+      "nc_keywords": [
+        "霆升"
+      ],
+      "roles": [
+        "D",
+        "F"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "鑫君特",
+      "tier": "watch",
+      "nc_keywords": [
+        "鑫君特"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "铸正机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "铸正"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "海康机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "海康机器人"
+      ],
+      "roles": [
+        "F",
+        "E",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "图达通",
+      "tier": "watch",
+      "nc_keywords": [
+        "图达通",
+        "Innovusion"
+      ],
+      "roles": [
+        "D",
+        "E"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "埃斯顿",
+      "tier": "watch",
+      "nc_keywords": [
+        "埃斯顿"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "因克斯智能",
+      "tier": "watch",
+      "nc_keywords": [
+        "因克斯"
+      ],
+      "roles": [
+        "F",
+        "E",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "穿山甲机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "穿山甲机器人",
+        "穿山甲科技"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "箸境智能",
+      "tier": "watch",
+      "nc_keywords": [
+        "箸境"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "星海图",
+      "tier": "watch",
+      "nc_keywords": [
+        "星海图"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "宇树科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "宇树",
+        "Unitree"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "智元机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "智元"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "傅利叶智能",
+      "tier": "watch",
+      "nc_keywords": [
+        "傅利叶"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "银河通用",
+      "tier": "watch",
+      "nc_keywords": [
+        "银河通用"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "优必选",
+      "tier": "watch",
+      "nc_keywords": [
+        "优必选",
+        "UBTECH"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "云深处科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "云深处"
+      ],
+      "roles": [
+        "F",
+        "D"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "新松机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "新松"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "节卡机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "节卡"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "非夕机器人",
+      "tier": "watch",
+      "nc_keywords": [
+        "非夕",
+        "Flexiv"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "越疆科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "越疆"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "逐际动力",
+      "tier": "watch",
+      "nc_keywords": [
+        "逐际动力"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "加速进化",
+      "tier": "watch",
+      "nc_keywords": [
+        "加速进化"
+      ],
+      "roles": [
+        "F"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "大疆",
+      "tier": "watch",
+      "nc_keywords": [
+        "大疆",
+        "DJI"
+      ],
+      "roles": [
+        "E",
+        "D",
+        "F"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "英伟达",
+      "tier": "watch",
+      "nc_keywords": [
+        "英伟达",
+        "NVIDIA"
+      ],
+      "roles": [
+        "C",
+        "A"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "英特尔",
+      "tier": "watch",
+      "nc_keywords": [
+        "英特尔",
+        "Intel"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "AMD",
+      "tier": "watch",
+      "nc_keywords": [
+        "AMD"
+      ],
+      "roles": [
+        "C",
+        "A"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "高通",
+      "tier": "watch",
+      "nc_keywords": [
+        "高通",
+        "Qualcomm"
+      ],
+      "roles": [
+        "C",
+        "E"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "Arm中国",
+      "tier": "watch",
+      "nc_keywords": [
+        "安谋",
+        "Arm中国"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "德州仪器",
+      "tier": "watch",
+      "nc_keywords": [
+        "德州仪器"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "意法半导体",
+      "tier": "watch",
+      "nc_keywords": [
+        "意法半导体",
+        "STMicroelectronics"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "英飞凌",
+      "tier": "watch",
+      "nc_keywords": [
+        "英飞凌",
+        "Infineon"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "三星",
+      "tier": "watch",
+      "nc_keywords": [
+        "三星",
+        "Samsung"
+      ],
+      "roles": [
+        "E",
+        "C"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "西部数据",
+      "tier": "watch",
+      "nc_keywords": [
+        "西部数据",
+        "Western Digital"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "联发科",
+      "tier": "watch",
+      "nc_keywords": [
+        "联发科",
+        "MediaTek",
+        "MTK"
+      ],
+      "roles": [
+        "E",
+        "C"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "长鑫存储",
+      "tier": "watch",
+      "nc_keywords": [
+        "长鑫"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "登临科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "登临"
+      ],
+      "roles": [
+        "C",
+        "A"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "日联科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "日联"
+      ],
+      "roles": [
+        "D"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "苏州科达",
+      "tier": "watch",
+      "nc_keywords": [
+        "苏州科达",
+        "科达（603660）"
+      ],
+      "roles": [
+        "D",
+        "E"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "硅山技术",
+      "tier": "watch",
+      "nc_keywords": [
+        "硅山"
+      ],
+      "roles": [
+        "C",
+        "E"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "罗克韦尔",
+      "tier": "watch",
+      "nc_keywords": [
+        "罗克韦尔",
+        "Rockwell"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "西门子（工业）",
+      "tier": "watch",
+      "nc_keywords": [
+        "西门子(?!医疗)"
+      ],
+      "roles": [
+        "B",
+        "A"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "博世",
+      "tier": "watch",
+      "nc_keywords": [
+        "博世",
+        "Bosch"
+      ],
+      "roles": [
+        "B",
+        "E",
+        "D"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "施耐德电气",
+      "tier": "watch",
+      "nc_keywords": [
+        "施耐德"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "汇川技术",
+      "tier": "watch",
+      "nc_keywords": [
+        "汇川"
+      ],
+      "roles": [
+        "E",
+        "B",
+        "F"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "海康威视",
+      "tier": "watch",
+      "nc_keywords": [
+        "海康威视"
+      ],
+      "roles": [
+        "D",
+        "E",
+        "C"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "大华股份",
+      "tier": "watch",
+      "nc_keywords": [
+        "大华"
+      ],
+      "roles": [
+        "D",
+        "E"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "霍尼韦尔",
+      "tier": "watch",
+      "nc_keywords": [
+        "霍尼韦尔",
+        "Honeywell"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "美的集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "美的集团",
+        "美的机器人"
+      ],
+      "roles": [
+        "E",
+        "F",
+        "B"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "三一重工",
+      "tier": "watch",
+      "nc_keywords": [
+        "三一"
+      ],
+      "roles": [
+        "E",
+        "F"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "卡尔蔡司",
+      "tier": "watch",
+      "nc_keywords": [
+        "蔡司",
+        "ZEISS"
+      ],
+      "roles": [
+        "B",
+        "D",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "发那科",
+      "tier": "watch",
+      "nc_keywords": [
+        "发那科",
+        "FANUC"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "库卡",
+      "tier": "watch",
+      "nc_keywords": [
+        "库卡",
+        "KUKA"
+      ],
+      "roles": [
+        "F",
+        "E"
+      ],
+      "main": "F · 机器人软件",
+      "extra": []
+    },
+    {
+      "name": "松下",
+      "tier": "watch",
+      "nc_keywords": [
+        "松下",
+        "Panasonic"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "佳能",
+      "tier": "watch",
+      "nc_keywords": [
+        "佳能",
+        "Canon"
+      ],
+      "roles": [
+        "E",
+        "D"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "海尔",
+      "tier": "watch",
+      "nc_keywords": [
+        "海尔"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "格力",
+      "tier": "watch",
+      "nc_keywords": [
+        "格力"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "中联重科",
+      "tier": "watch",
+      "nc_keywords": [
+        "中联重科"
+      ],
+      "roles": [
+        "E",
+        "F"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "字节跳动",
+      "tier": "watch",
+      "nc_keywords": [
+        "字节跳动",
+        "ByteDance",
+        "抖音"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "阿里巴巴",
+      "tier": "watch",
+      "nc_keywords": [
+        "阿里巴巴",
+        "阿里",
+        "淘宝"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "腾讯",
+      "tier": "watch",
+      "nc_keywords": [
+        "腾讯"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "百度",
+      "tier": "watch",
+      "nc_keywords": [
+        "百度",
+        "Apollo"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "美团",
+      "tier": "watch",
+      "nc_keywords": [
+        "美团"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "京东",
+      "tier": "watch",
+      "nc_keywords": [
+        "京东"
+      ],
+      "roles": [
+        "A",
+        "E"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "快手",
+      "tier": "watch",
+      "nc_keywords": [
+        "快手"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "网易",
+      "tier": "watch",
+      "nc_keywords": [
+        "网易",
+        "有道"
+      ],
+      "roles": [
+        "A",
+        "E",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "小米汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "小米汽车"
+      ],
+      "roles": [
+        "C",
+        "E",
+        "B"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "小米集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "小米"
+      ],
+      "roles": [
+        "A",
+        "E",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "商汤科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "商汤",
+        "SenseTime"
+      ],
+      "roles": [
+        "D",
+        "C"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "蚂蚁集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "蚂蚁"
+      ],
+      "roles": [
+        "A",
+        "B"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "携程",
+      "tier": "watch",
+      "nc_keywords": [
+        "携程"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "滴滴",
+      "tier": "watch",
+      "nc_keywords": [
+        "滴滴"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "拼多多",
+      "tier": "watch",
+      "nc_keywords": [
+        "拼多多",
+        "PDD"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "小红书",
+      "tier": "watch",
+      "nc_keywords": [
+        "小红书"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "D"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "哔哩哔哩",
+      "tier": "watch",
+      "nc_keywords": [
+        "B站",
+        "bilibili",
+        "哔哩哔哩"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "OPPO",
+      "tier": "watch",
+      "nc_keywords": [
+        "OPPO"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "vivo",
+      "tier": "watch",
+      "nc_keywords": [
+        "vivo",
+        "VIVO"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "荣耀",
+      "tier": "watch",
+      "nc_keywords": [
+        "荣耀终端",
+        "HONOR",
+        "荣耀手机"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "科大讯飞",
+      "tier": "watch",
+      "nc_keywords": [
+        "讯飞",
+        "iFlytek",
+        "科大讯飞"
+      ],
+      "roles": [
+        "A",
+        "D",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "智加科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "智加"
+      ],
+      "roles": [
+        "C",
+        "D"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "满帮集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "满帮"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "同程旅行",
+      "tier": "watch",
+      "nc_keywords": [
+        "同程"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "思必驰",
+      "tier": "watch",
+      "nc_keywords": [
+        "思必驰"
+      ],
+      "roles": [
+        "D",
+        "A"
+      ],
+      "main": "D · 感知算法",
+      "extra": []
+    },
+    {
+      "name": "帆软软件",
+      "tier": "watch",
+      "nc_keywords": [
+        "帆软"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "焦点科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "焦点科技"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "汇通达",
+      "tier": "watch",
+      "nc_keywords": [
+        "汇通达"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "朗新科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "朗新"
+      ],
+      "roles": [
+        "A",
+        "E"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "理想汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "理想汽车",
+        "Li Auto"
+      ],
+      "roles": [
+        "C",
+        "B",
+        "E"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "比亚迪",
+      "tier": "watch",
+      "nc_keywords": [
+        "比亚迪",
+        "BYD"
+      ],
+      "roles": [
+        "E",
+        "B",
+        "D"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "上汽集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "上汽"
+      ],
+      "roles": [
+        "E",
+        "B",
+        "C"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "零跑汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "零跑"
+      ],
+      "roles": [
+        "C",
+        "E"
+      ],
+      "main": "C · 推理部署",
+      "extra": []
+    },
+    {
+      "name": "赛力斯",
+      "tier": "watch",
+      "nc_keywords": [
+        "赛力斯"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "长安汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "长安汽车"
+      ],
+      "roles": [
+        "B",
+        "E",
+        "C"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "长城汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "长城汽车"
+      ],
+      "roles": [
+        "E",
+        "B"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "奇瑞集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "奇瑞"
+      ],
+      "roles": [
+        "E",
+        "B"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "广汽集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "广汽"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "吉利汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "吉利",
+        "极氪"
+      ],
+      "roles": [
+        "B",
+        "E",
+        "C"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "东风汽车",
+      "tier": "watch",
+      "nc_keywords": [
+        "东风汽车"
+      ],
+      "roles": [
+        "B",
+        "E"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "大陆集团",
+      "tier": "watch",
+      "nc_keywords": [
+        "大陆集团",
+        "Continental"
+      ],
+      "roles": [
+        "E",
+        "B"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "德赛西威",
+      "tier": "watch",
+      "nc_keywords": [
+        "德赛西威",
+        "均胜",
+        "华阳集团"
+      ],
+      "roles": [
+        "E",
+        "B"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "大众CARIAD",
+      "tier": "watch",
+      "nc_keywords": [
+        "CARIAD",
+        "大众安徽"
+      ],
+      "roles": [
+        "B",
+        "A"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "梅赛德斯-奔驰",
+      "tier": "watch",
+      "nc_keywords": [
+        "奔驰",
+        "梅赛德斯"
+      ],
+      "roles": [
+        "B",
+        "E",
+        "A"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "宝马",
+      "tier": "watch",
+      "nc_keywords": [
+        "宝马",
+        "BMW"
+      ],
+      "roles": [
+        "B",
+        "E",
+        "A"
+      ],
+      "main": "B · 系统集成",
+      "extra": []
+    },
+    {
+      "name": "中兴通讯",
+      "tier": "watch",
+      "nc_keywords": [
+        "中兴"
+      ],
+      "roles": [
+        "E",
+        "A",
+        "C"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "烽火通信",
+      "tier": "watch",
+      "nc_keywords": [
+        "烽火"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "微软",
+      "tier": "watch",
+      "nc_keywords": [
+        "微软",
+        "Microsoft"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
+      "name": "索尼",
+      "tier": "watch",
+      "nc_keywords": [
+        "索尼",
+        "Sony"
+      ],
+      "roles": [
+        "E",
+        "D"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "谷歌",
+      "tier": "watch",
+      "nc_keywords": [
+        "Google",
+        "谷歌"
+      ],
+      "roles": [
+        "A",
+        "C"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
     }
   ],
   "universal": [
