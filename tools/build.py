@@ -1400,10 +1400,21 @@ function renderHome(){
   $('h_date').textContent = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()} · 周${wk} · 数据都在本机浏览器，换设备先备份`;
   const srcs = RADAR.sources || [];
   const okN = srcs.filter(x => x.status === 'success').length;
-  const openN = (RADAR.jobs || []).filter(x => x.status === 'open').length;
-  const suspectN = (RADAR.jobs || []).filter(x => x.status === 'suspect').length;
+  const all = RADAR.jobs || [];
+  // 三段拆分：可关注（届别匹配/未标注/实习）· 技能参考（届别不符但方向相关）· 待核实（suspect/届别未知）
+  let canGo = 0, refN = 0, suspectN = 0;
+  all.forEach(j => {
+    if (j.status === 'suspect') { suspectN++; return; }
+    const gy = j.grad_year;
+    if (gy && gy !== USER_GRAD && !(j.type || '').includes('实习')) refN++;
+    else canGo++;
+  });
+  const ps = RADAR.pool_stats || {};
+  const openN = all.filter(x => x.status === 'open').length;
+  const targetN = all.filter(x => x.status === 'open' && (x.families || []).some(f => f !== '其他')).length;
   $('h_radar').innerHTML = srcs.length
-    ? `🛰 岗位雷达：<b>${srcs.length}</b> 个官方源（成功 ${okN}${srcs.length - okN ? `、失败 ${srcs.length - okN}` : ''}）· 最近实际扫描 <b>${esc((RADAR.updated || '—').replace('T', ' ').slice(0, 16))}</b> · 在招 <b>${openN}</b> 岗${suspectN ? ` · 疑似下线 ${suspectN} 待核实` : ''} · 目标届别 <b>${USER_GRAD} 届</b>`
+    ? `🛰 岗位雷达：<b>${srcs.length}</b> 个官方源（成功 ${okN}）· 最近实际扫描 <b>${esc((RADAR.updated || '—').replace('T', ' ').slice(0, 16))}</b> · 官方在招 <b>${openN}</b>（可关注 ${canGo} · 技能参考 ${refN} · 待核实 ${suspectN}）· 目标方向命中 <b>${targetN}</b> · 目标届别 <b>${USER_GRAD} 届</b><br>` +
+      `公司池 <b>${ps.pool_total || '—'}</b> 家（启用 ${ps.enabled || 0} · 本次成功 ${ps.scanned_ok || 0} · ATS：${Object.entries(ps.ats_dist || {}).map(([k, v]) => k + ' ' + v).join('、') || '—'}）· 岗位族：${Object.entries(RADAR.family_stats || {}).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${v}`).join(' · ')}`
     : '🛰 岗位雷达尚未运行（GitHub Actions 每日 09:30 自动扫描官方招聘门户）';
   renderScards();
   $('h_quick').innerHTML = `
@@ -1703,7 +1714,7 @@ function renderRadar(){
           <div class="rh"><b>${esc(j.company)}</b>
             <span class="rscore ${gcls}" title="技能覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ ${m.eli.txt}">覆盖 ${m.cover}%</span></div>
           <div class="rt">${esc(j.title)}</div>
-          <small>${esc(j.city)} ｜ ${esc(j.label || j.type)} ｜ ${m.eli.txt} ｜ 发现 ${esc(j.found)} ｜ ${j.src === 'zhiye' ? '官方门户·智业云' : '官方门户·飞书招聘'}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
+          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))} ｜ ${m.eli.txt} ｜ 发现 ${esc(j.found)}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
           <div class="mrow">
             <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
             <button class="mini" data-rdismiss="${idx}">忽略</button>

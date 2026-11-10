@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""岗位雷达：低频增量监控目标公司官方招聘门户（CareerOS V1.6：数据可信度升级）。
+"""岗位雷达：低频增量监控目标公司官方招聘门户（CareerOS V1.7：覆盖率升级）。
+
+V1.7：公司池驱动——扫描对象来自 companies/radar_companies.json（enabled=true 且带 source），
+不再硬编码；岗位按四层岗位族关键词自动打标（families），命中排除词的岗位直接跳过并计数；
+快照附 pool_stats（公司覆盖率）与 families 统计。
 
 用法：
   python tools/job_radar.py --scan      # 扫描全部监控源 → sources/jobs_radar.json + radar_report.md
@@ -30,7 +34,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-WATCH = ROOT / "sources" / "jobs_watch.json"
+POOL = ROOT / "companies" / "radar_companies.json"
 RADAR = ROOT / "sources" / "jobs_radar.json"
 REPORT = ROOT / "sources" / "radar_report.md"
 
@@ -40,6 +44,33 @@ CST = timezone(timedelta(hours=8))
 SUSPECT_AFTER = 2          # 连续 2 次成功扫描未见 → 疑似下线
 HISTORY_KEEP = 3           # 每岗位保留最近 3 条变更记录
 HARD_PAT = re.compile(r"届|毕业|学历|本科|硕士|博士")
+
+# 四层岗位族关键词（V1.7）：很多公司不用新词，传统岗位名也要命中
+JOB_FAMILIES = [
+    ("AI推理部署", ["模型部署", "推理优化", "推理", "inference", "tensorrt", "onnx",
+                    "边缘计算", "异构计算", "ai runtime", "部署工程师", "量化", "编译优化"]),
+    ("机器人软件/ROS2", ["机器人软件", "ros", "机器人中间件", "运动控制", "导航",
+                        "规划控制", "系统集成", "机器人系统", "机器人算法"]),
+    ("C++ SDK/系统软件", ["c++", "sdk", "平台软件", "基础软件", "车载软件",
+                          "基础组件", "系统软件", "中间件"]),
+    ("VLM/VLA/视觉算法", ["视觉算法", "感知算法", "vlm", "vla", "多模态", "世界模型",
+                          "端到端", "强化学习", "图像算法", "具身智能"]),
+    ("嵌入式/控制", ["嵌入式", "固件", "bsp", "驱动", "单片机", "mcu",
+                    "电机驱动", "硬件工程师"]),
+]
+# 轻排除：只排明确无关岗，不排算法岗（视觉/VLA 是第二优先级方向）
+EXCLUDE_PAT = re.compile(
+    r"销售|售前|实施顾问|产品经理|市场(?!营销算法)|行政|人事|hr|h r|财务|会计|法务|"
+    r"商务|运营专员|客服|采购|行政专员|设计师|视觉设计|平面|品牌|文案|直播|电商运营")
+
+
+def families_of(title: str, jd: str) -> list:
+    text = ((title or "") + " " + (jd or "")[:400]).lower()
+    fams = []
+    for fam, kws in JOB_FAMILIES:
+        if any(k.lower() in text for k in kws):
+            fams.append(fam)
+    return fams or ["其他"]
 
 
 # ================================================================ 纯函数（可单测）
@@ -265,16 +296,28 @@ ADAPTERS = {"zhiye": scan_zhiye, "feishu": scan_feishu}
 
 # ---------------------------------------------------------------- main
 def scan_all() -> int:
-    watch = json.loads(WATCH.read_text(encoding="utf-8")).get("watch", [])
+    pool = json.loads(POOL.read_text(encoding="utf-8")).get("companies", [])
     today = datetime.now(CST).strftime("%Y-%m-%d %H:%M")
     scans: dict = {}
-    for site in watch:
-        sid = f"{site['name']}·{site.get('label', '')}"
+    skipped = 0
+    for comp in pool:
+        if not comp.get("enabled") or not comp.get("source"):
+            continue
+        site = {"name": comp["company_name"], "tier": comp.get("tier"),
+                **comp["source"]}
+        site.setdefault("label", "")
+        sid = f"{comp['company_name']}·{site.get('label', '')}"
         try:
-            jobs = ADAPTERS[site["type"]](site)
+            jobs = ADAPTERS[comp["ats_type"]](site)
+            kept = []
             for j in jobs:
+                if EXCLUDE_PAT.search(j.get("title") or ""):
+                    skipped += 1
+                    continue
                 j["source_id"] = sid
-            scans[sid] = {"status": "success", "jobs": jobs, "error": None}
+                j["families"] = families_of(j.get("title"), j.get("jd"))
+                kept.append(j)
+            scans[sid] = {"status": "success", "jobs": kept, "error": None}
         except Exception as e:
             scans[sid] = {"status": "failed", "jobs": [], "error": f"{type(e).__name__} {str(e)[:100]}"}
             print(f"  [FAIL] {site['name']}: {e}")
@@ -287,12 +330,30 @@ def scan_all() -> int:
     old_by_key = {j["key"]: j for j in old.get("jobs", [])}
     added = [k for k in by_key if k not in old_by_key]
     removed = [k for k in old_by_key if k not in by_key and old_by_key[k].get("status") != "suspect"]
-    changed = [k for k in by_key if old_by_key.get(k, {}).get("jd_hash") and
+    changed = [k for k in by_key if k not in added and old_by_key.get(k, {}).get("jd_hash") and
                by_key[k].get("prev_jd_hash") != by_key[k].get("jd_hash")]
     suspects = [k for k in by_key if by_key[k].get("status") == "suspect"]
 
+    # 公司覆盖率（评审 §四.2）：池总量 / 已配置源 / 本次成功 / ATS 分布
+    enabled = [c for c in pool if c.get("enabled") and c.get("source")]
+    from collections import Counter
+    ats_dist = Counter(c["ats_type"] for c in pool if c.get("source"))
+    pool_stats = {
+        "pool_total": len(pool),
+        "enabled": len(enabled),
+        "scanned_ok": sum(1 for v in src_states.values() if v["status"] == "success"),
+        "ats_dist": dict(ats_dist),
+        "skipped_jobs": skipped,
+    }
+    fam_stat = Counter()
+    for j in merged:
+        if j.get("status") == "open":
+            for f in (j.get("families") or ["其他"]):
+                fam_stat[f] += 1
     snap = {"updated": datetime.now(CST).isoformat(timespec="seconds"),
             "sources": [{"source_id": k, **v} for k, v in src_states.items()],
+            "pool_stats": pool_stats,
+            "family_stats": dict(fam_stat),
             "jobs": merged}
     RADAR.parent.mkdir(parents=True, exist_ok=True)
     RADAR.write_text(json.dumps(snap, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -305,6 +366,13 @@ def scan_all() -> int:
         f"- 新增 **{len(added)}** · 下线 **{len(removed)}** · JD 变更 **{len(changed)}** · 疑似下线 **{len(suspects)}**",
         f"- 说明：采集失败 ≠ 岗位下线；连续 {SUSPECT_AFTER} 次成功扫描未见才标记疑似下线（suspect），需人工核实",
     ]
+    lines.append("\n## 岗位族覆盖（open 岗位按族统计）")
+    lines.append("| 岗位族 | 官方在招 |")
+    lines.append("| --- | --- |")
+    for fam, _ in JOB_FAMILIES:
+        lines.append(f"| {fam} | {fam_stat.get(fam, 0)} |")
+    lines.append(f"| 其他 | {fam_stat.get('其他', 0)} |")
+    lines.append(f"\n公司池 {pool_stats['pool_total']} 家：启用 {pool_stats['enabled']} · 本次成功 {pool_stats['scanned_ok']} · ATS 分布 {pool_stats['ats_dist']} · 排除无关岗 {skipped}")
     if added:
         lines.append("\n## 新增岗位")
         lines += [f"- **{by_key[k]['company']} · {by_key[k]['title']}**（{by_key[k]['city']}｜{by_key[k].get('label') or by_key[k]['type']}）" for k in added]
