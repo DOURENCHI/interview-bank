@@ -45,8 +45,13 @@ def parse_fm(text: str) -> tuple[dict, str]:
         if not line or line.lstrip().startswith("#") or ":" not in line:
             continue
         k, _, v = line.partition(":")
-        # 去掉行内注释，否则 `key: []  # 说明` 会被当成字符串
-        k, v = k.strip(), re.sub(r"\s+#.*$", "", v).strip()
+        k, v = k.strip(), v.strip()
+        # 带引号的值不做行内注释剥离：标题里可能有 "#include"、"# 和 ## 的区别"
+        if v[:1] in ('"', "'"):
+            v = v[1:-1] if v[-1:] == v[0] else v[1:]
+        else:
+            # 去掉行内注释，否则 `key: []  # 说明` 会被当成字符串
+            v = re.sub(r"\s+#.*$", "", v).strip()
         if v.startswith("[") and v.endswith("]"):
             items = [x.strip().strip('"\'') for x in v[1:-1].split(",")]
             meta[k] = [x for x in items if x]

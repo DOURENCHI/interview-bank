@@ -57,7 +57,7 @@ tags: [YOLO, ONNX, ROS2, TensorRT, 部署]
 | `companies` | 公司/部门数组 | **通用八股留空**。只有确实只对口某类公司时才填（如影像题填联影/迈瑞）。公司×岗位的归属关系统一在 `companies/README.md` 维护，避免两处不一致 |
 | `qtype` | `project` `principle` `coding` `design` `followup` | 题型 |
 | `status` | 见下 | **决定网页是否折叠显示"待补充"** |
-| `source_type` | 见下 | 可信度标记，不许含糊 |
+| `source_type` | 见下 | 可信度标记，不许含糊；**`video`** = 来自 B 站面试合集的分 P 标题 |
 | `source_ref` | 本地相对路径或 URL | 必须有，能溯源到原文 |
 | `verified_at` | `YYYY-MM-DD` | 最近一次技术核验日期 |
 | `tags` | 关键词数组 | 搜索用，3–6 个 |

@@ -1,0 +1,740 @@
+@@ Q-0925
+@STEM
+**题目**：老代码里到处是 `(int*)p` 这种 C 风格转换，重构时被要求换成 C++ 的 cast。
+
+**问**：C++ 的四种 cast 和 C 风格强制转换有什么区别？
+@ANSWER
+四种分工明确：**`static_cast`**（编译期能检查的转换，如数值、上行转换、void* 互转）、**`dynamic_cast`**（运行期检查的向下转换，需 RTTI，失败返回 `nullptr` 或抛 `bad_cast`）、**`const_cast`**（只去/加 const）、**`reinterpret_cast`**（重新解释位模式，最危险）。
+
+C 风格转换 `(T)x` 会**依次尝试** const_cast / static_cast / reinterpret_cast，取第一个能编过的——所以它能做的事最多、也最容易掩盖错误，而且在代码里搜不到。
+@DEEP
+| cast | 检查时机 | 典型用途 | 失败表现 |
+|---|---|---|---|
+| `static_cast` | 编译期 | 数值转换、基类→派生类（不检查） | 编译错误 |
+| `dynamic_cast` | 运行期 | 多态类型安全的向下转换 | 返回 nullptr / 抛异常 |
+| `const_cast` | 编译期 | 去掉 const（调用旧接口） | 编译错误 |
+| `reinterpret_cast` | 无 | 指针↔整数、位模式重解释 | 无（UB 自负） |
+- `dynamic_cast` 有运行时开销（查 RTTI），高频路径慎用。
+- `static_cast` 做向下转换**不做检查**，转错了是 UB——这是最容易出事的地方。
+- 用 `const_cast` 修改真正的 const 对象是 UB。
+@FOLLOW
+1. **`dynamic_cast` 为什么慢？** —— 要沿继承链查 RTTI 表，且通常无法内联。
+2. **什么时候必须用 `reinterpret_cast`？** —— 硬件寄存器地址、和 C 库的 opaque 指针互转。
+@TRAPS
+- 用 `static_cast` 做向下转换以为安全
+- 用 C 风格转换后搜不到转换点
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P10（影石 C++ 二面，13:53）
+
+@@ Q-0926
+@STEM
+**题目**：和硬件寄存器/网络协议结构体对接时，`sizeof` 多了几个填充字节，数据对不上。
+
+**问**：不想让编译器做字节对齐，该怎么办？
+@ANSWER
+三种手段：**`#pragma pack(1)`**（配合 push/pop 恢复）、**`__attribute__((packed))`**（GCC/Clang）、**MSVC 的 `#pragma pack` 同样有效**。
+
+C++11 起还能用 `alignas` 反向提高对齐，但没有"降低到 1"的标准语法——降低只能靠编译器扩展。
+@DEEP
+```c
+#pragma pack(push, 1)
+typedef struct { uint8_t a; uint32_t b; } Pkt;   // sizeof = 5
+#pragma pack(pop)
+```
+```c
+typedef struct __attribute__((packed)) { uint8_t a; uint32_t b; } Pkt;
+```
+- 代价：**非对齐访问变慢**，某些架构（老 ARM）直接触发异常；编译器会生成逐字节拼装的代码。
+- 更稳的做法：协议解析时**手工按偏移取值**（`memcpy` + `ntohl`），不依赖结构体布局。
+- 收尾一定要 `pop`，否则污染后面所有结构体。
+@FOLLOW
+1. **`packed` 结构体能取成员地址吗？** —— 能，但得到的指针是非对齐的，解引用可能崩。
+2. **`alignas(1)` 能取消对齐吗？** —— 不能，标准不允许降低到比自然对齐更小。
+@TRAPS
+- 忘了 `pop`，后续结构体全被压紧
+- 在对齐敏感的架构上直接解引用 packed 成员
+@RELATED
+- 教学文档/C++程序设计速通.html
+@SOURCE
+B站 BV17n6PY7EYB P118（5:01） · 嵌入式 Linux 八股
+
+@@ Q-0927
+@STEM
+**题目**：面试官问"`const` 和 `static` 各有什么用"，很多人只答得出 const 是常量。
+
+**问**：`const` 和 `static` 各自的作用是什么？
+@ANSWER
+**`const`** 是"只读承诺"：修饰变量（不可改）、修饰指针（锁内容还是锁指针，看位置）、修饰成员函数（不修改成员）、修饰参数/返回值（承诺不改）。
+
+**`static`** 有三处完全不同的语义：**局部静态变量**（生命周期延长到程序结束，只初始化一次）、**文件作用域的 static**（内部链接，只本编译单元可见）、**类的静态成员**（属于类不属于对象，所有实例共享）。
+@DEEP
+| 位置 | static 的含义 |
+|---|---|
+| 函数内局部变量 | 静态存储期，只初始化一次 |
+| 全局变量/函数 | 内部链接，仅本文件可见 |
+| 类成员变量 | 全类共享，需类外定义（C++17 可 `inline static`） |
+| 类成员函数 | 无 `this`，不能访问非静态成员 |
+- 局部静态的线程安全初始化由 C++11 保证（magic static），但之后的多线程读写仍需同步。
+- `static` 成员函数常用于工厂函数、工具函数。
+- `const` 成员函数里 `this` 是 `const T*`，所以不能改成员（`mutable` 除外）。
+@FOLLOW
+1. **`static` 局部变量线程安全吗？** —— 初始化安全，后续访问不安全。
+2. **`const` 成员函数能改成员吗？** —— 只能改 `mutable` 成员。
+@TRAPS
+- 只说"static 是静态的"
+- 忘了类静态成员要在类外定义
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P11（灵岫科技 C++ 一面，10:21）
+
+@@ Q-0928
+@STEM
+**题目**：`printf("%d %s", 1, "hi")` 能处理任意多个参数，而普通函数不行。
+
+**问**：printf 为什么能打印个数不定的参数？
+@ANSWER
+靠**可变参数**：函数声明里用 `...`，函数体内用 `va_list` 系列宏遍历——`va_start` 定位到第一个可变参数，`va_arg` 按类型取下一个，`va_end` 收尾。
+
+但**参数个数和类型完全靠格式串推断**，编译器不检查，所以格式写错就是 UB——这就是 `printf` 不安全的原因。
+@DEEP
+```c
+int my_sum(int n, ...) {
+    va_list ap; va_start(ap, n);
+    int s = 0;
+    for (int i = 0; i < n; ++i) s += va_arg(ap, int);
+    va_end(ap);
+    return s;
+}
+```
+- 必须先有一个"固定参数"（如 `n` 或格式串），`va_start` 要靠它定位。
+- 默认实参提升：`char`/`short` 提升为 int，`float` 提升为 double。
+- 类型不匹配（`%d` 传 double）不会报错，只会读错栈——这也是格式化字符串漏洞的根源。
+- C++ 的替代：`std::format`（C++20，类型安全）、`iostream`（无格式串）、可变参数模板。
+@FOLLOW
+1. **能对 `...` 做类型检查吗？** —— 不能；GCC 的 `__attribute__((format))` 能在编译期检查格式串。
+2. **`va_list` 能重复遍历吗？** —— 不能直接重来，要 `va_copy` 复制一份。
+@TRAPS
+- 格式串和实参不匹配（`%s` 传 int）
+- 忘记 `va_end`
+@RELATED
+- 教学文档/C++程序设计速通.html
+@SOURCE
+B站 BV1Tz9MBTEFi P2（腾讯应用宝 C++ 一面，7:28）
+
+@@ Q-0929
+@STEM
+**题目**：面试官问"不改类定义、不加 friend，你能读到私有成员吗"。
+
+**问**：如何拿到一个类里私有成员变量的值？
+@ANSWER
+能，但都是**踩在未定义行为上**的手法：按内存布局算偏移，用 `reinterpret_cast` 直接把对象当成成员类型数组读。
+
+这题的真正考点不是"能不能"，而是**说明访问控制是编译期约定，运行期没有保护**。
+@DEEP
+```cpp
+class A { int x_ = 42; double y_ = 1.5; public: int pub() { return x_; } };
+
+A a;
+// 利用布局：第一个成员就在对象起始处
+int v = *reinterpret_cast<int*>(&a);        // 42（未定义行为）
+```
+其他路子：
+- `#define private public` 再包含头文件（会破坏标准库，慎用）；
+- 模板特化/友元注入（`template<typename> struct Stealer;`）；
+- gdb：`p *(A*)0x...`。
+- 标准允许**标准布局类型**用 `offsetof` 算偏移，但访问仍需合法途径。
+@FOLLOW
+1. **为什么说这是 UB？** —— 标准不保证成员顺序和填充，编译器也可能重排/优化。
+2. **有合法办法吗？** —— 只能加 `friend` 或提供 getter；序列化库常用宏生成访问器。
+@TRAPS
+- 在面试里只答"不可能"
+- 真在生产代码里这么干（换编译器就崩）
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P6（快手 C++ 一面，11:18）
+
+@@ Q-0930
+@STEM
+**题目**：知道对象里有 vptr，但怎么验证它真的指向 vtable、vtable 里的顺序又是什么？
+
+**问**：怎么验证虚函数表在内存里的布局？
+@ANSWER
+把对象**前 8 字节**当成 `void**` 读出来，那就是 vptr；再把它当成函数指针数组，逐个调用并与成员函数地址比对。
+
+顺序规律：**按声明顺序**，先基类后派生类；派生类覆写的槽位被替换成派生版本。
+@DEEP
+```cpp
+struct Base { virtual void f(); virtual void g(); virtual ~Base(); };
+struct D : Base { void f() override; };
+
+D d;
+void** vptr = *reinterpret_cast<void***>(&d);   // 取对象头部
+using Fn = void(*)(void*);
+reinterpret_cast<Fn>(vptr[0])(&d);              // 等价于 d.f()
+```
+- 用 `nm`/`objdump` 能看到 `vtable for D` 符号，地址与 `vptr` 一致。
+- 多继承时对象里有**多个 vptr**（每个带虚函数的多重基类一个），`dynamic_cast` 需要做指针调整。
+- 这些全是实现细节（Itanium ABI），面试可讲，代码里别依赖。
+@FOLLOW
+1. **虚析构在 vtable 里占几个槽？** —— 通常两个（complete 和 deleting destructor）。
+2. **`typeid` 信息存在哪？** —— vtable 前面（Itanium ABI 的 offset-to-top 和 typeinfo 指针）。
+@TRAPS
+- 说"vtable 存在对象里"（存的是 vptr）
+- 在 ARM/多继承场景下套用单继承的槽位假设
+@RELATED
+- 教学文档/C++面向对象_从零手写教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P5（C++ 高频面试题，19:11）
+
+@@ Q-0931
+@STEM
+**题目**：面试官问"你平时用 C++14 的哪些特性"，答不出具体的会很尴尬。
+
+**问**：C++14 有哪些常用特性？
+@ANSWER
+四个最常用：**泛型 lambda**（参数写 `auto`）、**函数返回值类型推导**（`auto f()`）、**`std::make_unique`**、**变量模板**。
+
+还有容易被忽略但实用的：二进制字面量 `0b1010`、数字分隔符 `1'000'000`、放宽的 `constexpr`（允许循环和局部变量）。
+@DEEP
+```cpp
+auto add = [](auto a, auto b) { return a + b; };   // 泛型 lambda
+auto sq(int x) { return x * x; }                   // 返回类型推导
+auto p = std::make_unique<int>(1);                 // make_unique
+template <typename T> constexpr T pi = T(3.14159); // 变量模板
+int big = 1'000'000;   int bin = 0b1010;
+```
+- C++14 是"补 C++11 的坑"的版本，特性不多但都用得上。
+- 面试若追问"和 C++11 的区别"，答"泛型 lambda + make_unique + 返回类型推导"三点足够。
+@FOLLOW
+1. **泛型 lambda 怎么实现的？** —— 编译器生成带模板 `operator()` 的闭包类型。
+2. **`make_unique` 为什么 C++11 没有？** —— 被遗漏了，C++14 补上（C++11 只能自己写）。
+@TRAPS
+- 把 C++17 的特性说成 C++14（`if constexpr`、结构化绑定）
+- 只答"没什么特别的"
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P7（小红书 C++ 一面，9:30）
+
+@@ Q-0932
+@STEM
+**题目**：同一道面试题，被问"C++17 你用过什么"。
+
+**问**：C++17 有哪些常用特性？
+@ANSWER
+按使用频率排：**结构化绑定**（`auto [k, v] : map`）、**`if constexpr`**（编译期分支，替代大量 SFINAE）、**`std::optional` / `variant` / `any` / `string_view`**、**`std::filesystem`**、**类模板实参推导 CTAD**（`std::pair p{1, 2.0}`）、**内联变量**（头文件里定义全局变量不再需要 inline 函数包装）。
+
+还有 `[[nodiscard]]`、`[[maybe_unused]]`、折叠表达式、并行算法。
+@DEEP
+```cpp
+for (auto& [k, v] : mymap) { ... }              // 结构化绑定
+if constexpr (std::is_integral_v<T>) { ... }    // 编译期分支
+std::optional<int> f();                          // 可能没有值
+std::string_view sv = "abc";                     // 零拷贝只读视图
+inline int g_counter = 0;                        // 内联变量
+```
+- `string_view` 不拥有内存、不保证 `\0` 结尾，**不能存生命周期短于它的字符串**。
+- `optional` 替代"用 -1 / nullptr 表示失败"的写法，语义更清楚。
+- `if constexpr` 让模板代码从"特化地狱"回到普通 if。
+@FOLLOW
+1. **`string_view` 有什么坑？** —— 指向的缓冲被释放后就是悬垂，函数返回 `string_view` 要小心。
+2. **CTAD 会影响重载决议吗？** —— 会，推导出的类型可能不是你想要的（如 `vector v{1,2}` 是 `vector<int>`）。
+@TRAPS
+- 用 `string_view` 接临时 `std::string`
+- 把 C++20 的 concepts 说成 C++17
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P8（阿里 C++ 一面，15:39）
+
+@@ Q-0933
+@STEM
+**题目**：面试官问"了解协程吗"，接着追问"它和线程、回调有什么区别"。
+
+**问**：C++20 的协程是怎么工作的？
+@ANSWER
+协程是**能被挂起和恢复的函数**，用三个关键字标记：`co_await`（挂起等一个异步结果）、`co_yield`（产出一个值）、`co_return`（返回）。
+
+编译器会把这个函数**改写成状态机**：局部变量放进堆上的协程帧，挂起点变成"保存现场 + 返回调用者"，恢复时跳回挂起点。所以它**没有线程切换开销**，一个线程能跑成千上万个协程。
+@DEEP
+```cpp
+Task<int> fetch(url u) {
+    auto r = co_await http_get(u);   // 挂起，不阻塞线程
+    co_return r.size();
+}
+```
+- **无栈协程**：状态存在堆上，不占用线程栈。
+- 需要用户提供 `promise_type`（定义初始/最终挂起、返回值、异常处理），标准库只给了基础设施（`coroutine_handle`）。
+- C++23 才有 `std::generator` 这类开箱可用的封装。
+- 和线程相比：协程是**协作式**、单线程内切换；线程是抢占式、由 OS 调度。
+@FOLLOW
+1. **协程能并行吗？** —— 不能，它只是"不阻塞地等待"，要并行还得靠线程池。
+2. **和回调比好在哪？** —— 代码是同步写法，没有回调地狱，异常和局部变量都能正常工作。
+@TRAPS
+- 以为协程等于多线程
+- 不知道要自己实现 promise_type
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P9（虾皮 C++ 二面，17:03）
+
+@@ Q-0934
+@STEM
+**题目**：
+
+```cpp
+int x = 1;
+auto  a = x;    // ?
+auto& b = x;    // ?
+auto&& c = x;   // ?
+```
+
+**问**：`auto`、`auto&`、`auto&&` 有什么区别？
+@ANSWER
+`auto` 是**值拷贝**（丢弃引用和顶层 const）；`auto&` 是**左值引用**（必须绑左值）；`auto&&` 是**转发引用**（能绑左值也能绑右值，配合 `std::forward` 保持值类别）。
+
+关键坑：`auto` 会**悄悄拷贝**，在范围 for 里写 `for (auto s : vec)` 就复制了每个元素。
+@DEEP
+```cpp
+std::vector<std::string> v{"a", "b"};
+for (auto s : v)        { }   // 每个元素一次拷贝
+for (auto& s : v)       { }   // 引用，可修改
+for (const auto& s : v) { }   // 只读引用，零拷贝（推荐）
+```
+- `auto` 推导**丢弃顶层 const**：`const int x = 1; auto y = x;` 里 `y` 是 `int`。
+- `auto&&` 在**没有模板推导**时（如 `auto&& c = x;`）仍然按引用折叠规则工作，等价于万能引用。
+- `decltype(auto)` 保留引用和 const，适合转发返回值。
+@FOLLOW
+1. **`auto` 能推导数组吗？** —— 会退化成指针；要保留数组用 `auto&`。
+2. **`auto&&` 一定要配 `forward` 吗？** —— 要转发时配 `std::forward<decltype(x)>(x)`；否则具名变量是左值。
+@TRAPS
+- 范围 for 用 `auto` 拷贝大对象
+- 以为 `auto` 保留 const
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P21（阿里、360 C++ 一面，11:27）
+
+@@ Q-0935
+@STEM
+**题目**：要存 10 万条"用户 ID → 信息"，需要频繁按 ID 查，偶尔要按 ID 排序输出。
+
+**问**：map 和 unordered_map 有什么区别？怎么选？
+@ANSWER
+`map` 是**红黑树**：有序、查找/插入 O(log n)、迭代器稳定（除被删元素）；`unordered_map` 是**哈希表**：无序、平均 O(1)、最坏 O(n)、扩容时迭代器全失效。
+
+选法：**要排序或范围查询 → map；只按 key 查、追求性能 → unordered_map**。
+@DEEP
+| 维度 | map | unordered_map |
+|---|---|---|
+| 底层 | 红黑树 | 哈希桶 |
+| 查找 | O(log n) | 平均 O(1)，最坏 O(n) |
+| 有序 | ✅ | ❌ |
+| 内存 | 每节点 3 指针 + 颜色 | 桶数组 + 节点 |
+| key 要求 | `operator<` | `std::hash` + `operator==` |
+| 迭代器失效 | 只失效被删的 | rehash 后全失效 |
+- 自定义类型当 key：`map` 提供比较器；`unordered_map` 要特化 `std::hash` 并定义 `operator==`。
+- `unordered_map` 可 `reserve` 预留桶数，避免反复 rehash。
+- 遍历顺序稳定性的差别常导致"本地对、上线错"的 bug。
+@FOLLOW
+1. **哈希冲突怎么处理？** —— 标准没规定，主流实现是链地址法（桶挂链表/或树化）。
+2. **为什么 unordered_map 最坏 O(n)？** —— 所有 key 哈希到同一个桶，退化成链表。
+@TRAPS
+- 依赖 `unordered_map` 的遍历顺序
+- 自定义 key 只写了 hash 没写 `operator==`
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+B站 BV1Tz9MBTEFi P22（腾讯 C++ 一面，25:10）
+
+@@ Q-0936
+@STEM
+**题目**：想让任务异步执行并拿到结果，除了 `std::thread` 还有 `packaged_task`。
+
+**问**：std::thread 和 packaged_task 是什么关系？
+@ANSWER
+`std::thread` 是**执行载体**（真的开一个线程）；`packaged_task` 是**任务包装器**（把可调用对象和 `future` 绑在一起），它自己不创建线程。
+
+所以 `packaged_task` 可以丢进线程池、放进队列，由别的线程执行；`thread` 一创建线程就跑起来了，没法排队。
+@DEEP
+```cpp
+std::packaged_task<int()> task([]{ return 42; });
+std::future<int> fut = task.get_future();
+std::thread t(std::move(task));     // 也可以用线程池执行
+t.join();
+int v = fut.get();                  // 42
+```
+| 工具 | 作用 |
+|---|---|
+| `thread` | 创建线程 |
+| `async` | 交给实现决定同步/异步，返回 future |
+| `packaged_task` | 包装任务，可延迟/排队执行，取 future |
+| `promise` | 手动在某一刻 set_value |
+- `packaged_task` 只能移动不能拷贝。
+- 任务抛异常会被存进 future，`get()` 时重新抛出。
+@FOLLOW
+1. **`async` 和 `packaged_task` 怎么选？** —— 想控制执行载体（线程池）用 `packaged_task`；只想"异步跑一下"用 `async`。
+2. **future 能取几次？** —— 一次，`get()` 之后 `valid()` 为 false。
+@TRAPS
+- 以为 `packaged_task` 会自己开线程
+- 对同一个 future 调两次 `get()`
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P23（B站 C++ 实习一面，9:43）
+
+@@ Q-0937
+@STEM
+**题目**：多线程里每个线程要有独立的错误码/随机数引擎，用全局变量不行。
+
+**问**：thread_local 的作用是什么？
+@ANSWER
+`thread_local` 让变量**每个线程各有一份独立副本**，生命周期跟随线程——线程创建时构造，线程结束时析构。
+
+它解决的正是"看起来是全局、实际要按线程隔离"的需求：`errno`、随机数引擎、线程本地缓存、调试上下文。
+@DEEP
+```cpp
+thread_local int t_counter = 0;          // 每线程独立
+thread_local std::mt19937 rng(std::random_device{}());
+
+void worker() { ++t_counter; }           // 不会互相干扰
+```
+- 可以是 `static thread_local`（文件内可见 + 每线程一份）。
+- 析构时机：线程正常退出时；`detach` 的线程退出时也会析构。
+- 实现上靠 TLS（线程本地存储），访问比普通全局稍慢（一次间接寻址）。
+- 陷阱：动态库里的 `thread_local` 在 `dlclose` 后可能悬垂；大量线程 × 大对象会吃内存。
+@FOLLOW
+1. **`thread_local` 变量能跨线程传值吗？** —— 不能，它就是隔离的。
+2. **和 `__thread` 有什么区别？** —— GNU 扩展 `__thread` 更快但不支持非平凡类型；`thread_local` 支持构造析构。
+@TRAPS
+- 用它存"需要共享"的数据
+- 在大批量短线程里放大的 thread_local 对象
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P24（腾讯 C++ 一面，7:56）
+
+@@ Q-0938
+@STEM
+**题目**：`std::move` 和 `std::forward` 都返回右值引用，为什么还需要两个？
+
+**问**：std::move 和 std::forward 有什么区别？完美转发怎么实现？
+@ANSWER
+`std::move` **无条件**转成右值；`std::forward` **有条件**——只有当原参数是右值时才是右值，否则保持左值。
+
+所以：`move` 用于"我确定这个对象不要了"，`forward` 用于**模板里把参数原样传给下一层**（完美转发）。
+@DEEP
+```cpp
+template <typename T>
+void relay(T&& x) {                 // 转发引用
+    callee(std::forward<T>(x));     // 保持左值/右值
+}
+
+relay(1);        // T = int,    转发为右值
+int a; relay(a); // T = int&,   转发为左值
+```
+- 完美转发 = **转发引用（`T&&` 且 T 需推导）** + **`std::forward<T>`**，两者缺一不可。
+- 直接用 `x` 传给下一层会退化成左值（具名变量都是左值），丢了移动机会。
+- 转发引用只在**有类型推导**时成立；`void f(int&& x)` 是普通右值引用。
+@FOLLOW
+1. **为什么不能统一用 `move`？** —— 会把本该拷贝的左值参数当右值移走，调用方数据被掏空。
+2. **`const T&` 能完美转发吗？** —— 不能，const 右值无法移动。
+@TRAPS
+- 在转发函数里直接传 `x`
+- 用 `std::move` 转发模板参数
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P25（联想 C++ 一面，9:09）
+
+@@ Q-0939
+@STEM
+**题目**：函数里要修改调用方的指针本身（不是它指向的内容），参数该怎么写？
+
+**问**：二级指针有什么用？它和一级指针、引用怎么选？
+@ANSWER
+二级指针指向"指针变量"，所以能**修改指针本身**——这是它不可替代的地方（一级指针只能改指向的内容）。
+
+三个用途：**在函数内改变调用方的指针**、**指针数组/二维数组传参**、**接收 `char** argv` 这类接口**。C++ 里能用 `T*&`（指针的引用）代替，更安全易读。
+@DEEP
+```c
+void alloc(char** out, size_t n) { *out = malloc(n); }   // 改调用方的指针
+void alloc2(char*& out, size_t n) { out = malloc(n); }   // C++ 更清晰
+```
+| 写法 | 能改指针本身 | 能改内容 | 可空 |
+|---|---|---|---|
+| `T*` | ❌ | ✅ | ✅ |
+| `T**` | ✅ | ✅ | ✅ |
+| `T*&` | ✅ | ✅ | ✅（引用本身不可空） |
+- 传二级指针时记得判空（`if (!out) return;`）。
+- 二维数组 `int a[3][4]` 传参是 `int (*)[4]`，不是 `int**`。
+@FOLLOW
+1. **`int**` 能接 `int[3][4]` 吗？** —— 不能，类型不同，这是经典错误。
+2. **什么时候必须用二级指针？** —— 接口签名已经定了（如 C 库的 `xxx_create(T** out)`）。
+@TRAPS
+- 用 `int**` 接收二维数组
+- 二级指针不判空就解引用
+@RELATED
+- 教学文档/C++程序设计速通.html
+@SOURCE
+B站 BV1Tz9MBTEFi P26（蚂蚁 C++ 一面，13:42）
+
+@@ Q-0940
+@STEM
+**题目**：引用计数的对象在计数归零时调用 `delete this`，这样写有问题吗？
+
+**问**：在成员函数里 delete this 有什么问题？
+@ANSWER
+能用，但风险很大：`delete this` 之后**对象已销毁**，任何对成员变量、虚函数、`this` 的访问都是 UB；如果对象不是 `new` 出来的（栈对象/静态对象），直接崩溃。
+
+另外在**析构函数里**写 `delete this` 会无限递归。
+@DEEP
+```cpp
+void release() {
+    if (--ref_ == 0) delete this;   // 之后不能再碰任何成员
+}
+```
+安全使用的前提：
+1. 对象必须是 `new` 分配的；
+2. `delete this` 之后**立刻 return**，不做任何访问；
+3. 调用方之后不能再使用该指针（要提前置空）；
+4. 不能在构造函数/析构函数里调用。
+- 现代替代：`std::shared_ptr` + `enable_shared_from_this`，或 `unique_ptr` 明确所有权。
+@FOLLOW
+1. **`delete this` 后能调用虚函数吗？** —— 不能，vptr 已随对象销毁。
+2. **为什么析构里不能 `delete this`？** —— 析构中再 delete 会再次进入析构，无限递归/双重释放。
+@TRAPS
+- `delete this` 之后继续访问成员
+- 对栈对象 `delete this`
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P15（网易 C++ 二面，4:34）
+
+@@ Q-0941
+@STEM
+**题目**：构造函数里 `new` 了资源，后面抛异常了，会不会泄漏？
+
+**问**：构造函数或析构函数抛异常会发生什么？
+@ANSWER
+**构造函数抛异常**：对象**没有构造完成**，它的析构函数**不会被调用**；但已经构造完成的成员和基类会被正常析构。所以构造函数里裸 `new` 的资源会泄漏——要用 RAII 成员或智能指针接住。
+
+**析构函数抛异常**：如果是栈展开过程中再抛，C++11 起析构默认 `noexcept`，直接 `std::terminate`。所以析构函数**绝不能抛异常**。
+@DEEP
+| 场景 | 结果 |
+|---|---|
+| 构造函数抛 | 对象析构函数不调用，已构造成员/基类会析构 |
+| 构造函数体内裸 `new` 后抛 | **泄漏** |
+| 析构函数抛（栈展开中） | `std::terminate` |
+| 析构函数抛（无异常传播时） | 也会 terminate（默认 noexcept） |
+```cpp
+class A {
+    std::unique_ptr<int> p_;      // RAII：抛异常也会释放
+public:
+    A() { p_ = std::make_unique<int>(1); mayThrow(); }
+};
+```
+- 想在析构里做可能失败的操作：提供显式 `close()`，让调用方处理错误。
+- 构造函数可以用 **function-try-block** 捕获成员初始化时的异常。
+@FOLLOW
+1. **析构函数能声明 `noexcept(false)` 吗？** —— 能，但极不推荐。
+2. **构造失败后能重试吗？** —— 对象已不存在，只能重新构造。
+@TRAPS
+- 构造函数里裸 `new` 后抛异常
+- 析构函数里抛异常（默认 terminate）
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P31（影石 C++ 一面，11:30）
+
+@@ Q-0942
+@STEM
+**题目**：`shared_ptr<T> p(new T);` 和 `auto p = make_shared<T>();` 有性能差别吗？
+
+**问**：make_shared 和 shared_ptr(new T) 有什么区别？
+@ANSWER
+`make_shared` **一次分配**（对象和控制块在同一块内存里），`shared_ptr<T>(new T)` **两次分配**（对象一次、控制块一次）。所以前者更快、缓存更友好。
+
+但 `make_shared` 有个代价：**只要有 `weak_ptr` 活着，对象那块内存就不能释放**（因为对象和控制块在一块），而 `new` 版本可以在强引用归零时立刻析构对象。
+@DEEP
+| 维度 | `make_shared` | `shared_ptr(new T)` |
+|---|---|---|
+| 内存分配 | 1 次 | 2 次 |
+| 异常安全 | ✅（标准保证） | 需注意求值顺序 |
+| 强引用归零后对象内存 | 被 weak 拖住 | 立即释放 |
+| 自定义删除器 | ❌ 不支持 | ✅ 支持 |
+- `f(shared_ptr<T>(new T), g())` 里如果 `g()` 抛异常，`new` 出来的对象会泄漏（C++17 前）；`make_shared` 没有这个问题。
+- 需要自定义删除器（如 `fclose`）时只能用 `shared_ptr(new T, deleter)`。
+@FOLLOW
+1. **为什么 make_shared 不支持自定义删除器？** —— 它自己管理内存，无法插入外部删除逻辑。
+2. **大对象 + 长期 weak_ptr 会怎样？** —— 内存被拖住，考虑用 `new` 版本。
+@TRAPS
+- 一律推荐 make_shared 却忽略 weak_ptr 的内存拖累
+- 在同一个表达式里混用 `new` 和可能抛异常的函数
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P18（腾讯 C++ 二面，15:38）
+
+@@ Q-0943
+@STEM
+**题目**：`weak_ptr` 本身不持有对象，它怎么知道对象已经被 `shared_ptr` 释放了？
+
+**问**：weak_ptr 怎么知道 shared_ptr 已经把对象释放了？
+@ANSWER
+因为**控制块是共享的**。控制块里有两个计数：**强引用计数**（`shared_ptr` 个数）和**弱引用计数**（`weak_ptr` 个数）。
+
+强计数归零时对象被析构，但控制块**要等弱计数也归零才释放**。`weak_ptr::lock()` 就是去读强计数：为 0 返回空 `shared_ptr`，否则原子地加一返回有效指针。
+@DEEP
+```cpp
+std::weak_ptr<int> wp = sp;
+if (auto p = wp.lock()) {        // 原子地"检查 + 提升"
+    use(*p);
+} else {
+    // 对象已释放
+}
+```
+- `expired()` 等价于 `lock() == nullptr`，但**单独用它再访问是不安全的**（检查和使用之间有窗口），必须 `lock()` 一次拿到 shared_ptr。
+- 弱计数的作用：让 `weak_ptr` 能安全存在，同时控制块不提前释放。
+- 控制块还存删除器、分配器，所以即使对象已销毁，删除器仍可用。
+@FOLLOW
+1. **`weak_ptr` 能直接解引用吗？** —— 不能，必须先 `lock()`。
+2. **控制块什么时候释放？** —— 强、弱计数都归零时。
+@TRAPS
+- 先 `expired()` 再 `*wp`（有竞态）
+- 以为 `weak_ptr` 会增加强计数
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P29（米哈游 C++ 二面，7:45）
+
+@@ Q-0944
+@STEM
+**题目**：频繁 `new` 小对象很慢，面试官问 STL 的内存池是怎么做的。
+
+**问**：STL 的内存池是怎么实现的？结构长什么样？
+@ANSWER
+以 SGI STL 的**二级配置器**为例：大于 128 字节走**一级配置器**（直接 `malloc/free`）；小于等于 128 字节走**二级配置器**（内存池 + 16 条自由链表）。
+
+16 条链表按 8 字节递增（8、16、…、128），分配时从对应链表摘一个节点，释放时挂回去；链表空了就向内存池批量要一块（20 个节点左右），内存池不够再 `malloc` 一大块。
+@DEEP
+```
+free_list[0] → 8B  → 8B  → ...
+free_list[1] → 16B → ...
+...
+free_list[15] → 128B
+```
+| 分配器 | 适用 | 机制 |
+|---|---|---|
+| 一级 | > 128 B | malloc/free + OOM 处理 |
+| 二级 | ≤ 128 B | 自由链表 + 内存池 |
+- 收益：小对象分配从"系统调用级"降到"链表摘取"，且**没有 per-object 头部开销**。
+- 代价：只能按 8 字节档位分配，会有内部碎片（申请 9 字节占 16）。
+- 现代 `std::allocator` 已经简化，标准库实现多用 `malloc` + 平台优化；但 `pmr`（C++17）允许自定义内存资源，思路相同。
+@FOLLOW
+1. **为什么不统一用内存池？** —— 大对象用池会浪费（档位粒度太粗），且容易长期占住内存。
+2. **内存池和对象池的区别？** —— 前者管字节，后者管已构造的对象（省构造析构）。
+@TRAPS
+- 把内存池说成"预分配数组"（那只是一种特例）
+- 忽略内部碎片
+@RELATED
+- 教学文档/C++_STL容器_零基础教学文档.html
+@SOURCE
+B站 BV1Tz9MBTEFi P28（快手 C++ 一面，11:22）
+
+@@ Q-0945
+@STEM
+**题目**：交付 SDK 时纠结给 `.a` 还是 `.so`，客户还问"能不能只换一个文件就升级"。
+
+**问**：静态链接和动态链接有什么区别？
+@ANSWER
+**静态链接**把库代码**复制进可执行文件**：产物大、不依赖外部文件、启动快、升级要重新链接。
+**动态链接**在**运行时加载 `.so`**：多个程序共享同一份库、可以只替换库文件升级、但依赖环境（`rpath` / `LD_LIBRARY_PATH`）、启动有符号解析开销。
+
+"只换一个文件就升级"就是动态库的核心价值，前提是**ABI 兼容**。
+@DEEP
+| 维度 | 静态链接 | 动态链接 |
+|---|---|---|
+| 产物大小 | 大 | 小 |
+| 依赖 | 无 | 需要 `.so` 在搜索路径 |
+| 升级 | 重新编译链接 | 替换 `.so`（ABI 兼容时） |
+| 启动 | 快 | 需重定位/符号解析 |
+| 内存 | 每个进程一份 | 代码段共享 |
+- 动态库要用 `-fPIC` 编译；导出符号用 `-fvisibility=hidden` + 显式导出宏控制。
+- 升级不兼容时（删了符号、改了类布局）会 `undefined symbol` 或行为错乱。
+- 静态链接 glibc 有坑（`getaddrinfo` 需要动态库），一般静态链接自己的库、动态链接 libc。
+@FOLLOW
+1. **`-fPIC` 是什么？** —— 位置无关代码，动态库必须，否则加载时无法重定位。
+2. **怎么让客户找不到 `.so` 也能跑？** —— 编译时写 `rpath`（`-Wl,-rpath,$ORIGIN`），或静态链接。
+@TRAPS
+- 动态库没编 `-fPIC`
+- 以为换 `.so` 一定兼容（ABI 变了就崩）
+@RELATED
+- 教学文档/C++工程化开发
+@SOURCE
+B站 BV17n6PY7EYB P89（3:42） · 嵌入式八股
+
+@@ Q-0946
+@STEM
+**题目**：单例的 `getInstance()` 里 `new` 失败了怎么办？为什么线上会看到两个单例？
+
+**问**：单例模式初始化失败怎么办？为什么会出现多份实例？
+@ANSWER
+**初始化失败**：C++11 的局部静态（magic static）保证只初始化一次，但**如果构造函数抛异常，下次调用会重试**——所以失败不会"永久缓存"，但也不会自动降级。工程上应改成显式 `init()` 返回 `bool`，或捕获异常后进入降级模式。
+
+**多份实例**：最常见于**跨动态库**——每个 `.so` 各自有一份静态变量；其次是旧写法在头文件里定义全局对象；还有多线程下裸双检锁没加 `atomic`。
+@DEEP
+```cpp
+// C++11 起线程安全且只初始化一次
+static Config& instance() {
+    static Config c;      // magic static
+    return c;
+}
+```
+```cpp
+// 跨 SO 的正确做法：把单例放到主程序，或用一个"全局注册表"（dlsym RTLD_DEFAULT 查找）
+```
+| 多份来源 | 修法 |
+|---|---|
+| 多个 `.so` 各有一份静态 | 单例定义放主程序 / 用符号可见性控制 |
+| 头文件里定义全局变量 | 改成函数内静态 + 声明放头文件 |
+| 裸双检锁 | 用 `std::call_once` 或 magic static |
+| fork 后子进程 | 明确是否需要重置状态 |
+@FOLLOW
+1. **双检锁为什么需要 `atomic`？** —— 对象构造和指针赋值可能被重排，别的线程可能拿到半构造的对象。
+2. **单例怎么保证可测试？** —— 提供 `setInstance()` 注入假实现，或干脆用依赖注入。
+@TRAPS
+- 裸双检锁不加 `atomic`
+- 在头文件里 `static T inst;` 被多个 TU 各定义一份
+@RELATED
+- 教学文档/C++面向对象高级特性教程.html
+@SOURCE
+B站 BV1Tz9MBTEFi P33（联影 C++ 一面，13:56）
+
+@@ Q-0947
+@STEM
+**题目**：代码评审时有人把 `if (a == 0)` 改成 `if (0 == a)`，说这样更安全。
+
+**问**：if 判断写 0 == a 和 a == 0 有什么讲究？
+@ANSWER
+这是 C 时代的老技巧：`if (a = 0)` 少写一个等号时**编译能过**（赋值表达式有值），而 `if (0 = a)` 会直接报错"左值不可赋值"，把 bug 挡在编译期。
+
+但在现代工程里这个理由基本不成立了：**`-Wall` 会报 `suggest parentheses around assignment used as truth value`**，静态分析也能查出来；而且反着写**降低可读性**（主语在后，读起来别扭）。
+@DEEP
+- 唯一还有意义的场景：老编译器/无警告选项的嵌入式工具链。
+- 对指针写 `if (NULL == p)` 同理，现代写法是 `if (p == nullptr)`。
+- 更值得关注的是"用 `=` 还是 `==`"之外的坑：浮点比较要用容差，`if (ptr)` 判空比 `if (ptr != nullptr)` 简洁但要注意重载 `operator bool`。
+@FOLLOW
+1. **C++ 里 `if (a = 0)` 会编译通过吗？** —— 会（int 可转 bool），但 GCC 默认给警告。
+2. **更好的做法是什么？** —— 开 `-Wall -Wextra`，用 `nullptr`，浮点用 `std::abs(a-b) < eps`。
+@TRAPS
+- 把老技巧当规范强制推行
+- 以为 `if (0 == a)` 能防所有手误（`a != 0` 写错照样不报）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV17n6PY7EYB P44（1:56） · 嵌入式八股

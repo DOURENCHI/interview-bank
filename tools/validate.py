@@ -29,7 +29,7 @@ REQUIRED = ["id", "title", "module", "priority", "difficulty", "status",
             "source_type", "source_ref", "tags"]
 VALID_PRI = {"P0", "P1", "P2"}
 VALID_STATUS = {"indexed", "draft", "answered", "verified"}
-VALID_SRC = {"self_doc", "self_exp", "upstream", "official", "inferred"}
+VALID_SRC = {"self_doc", "self_exp", "upstream", "official", "inferred", "video"}
 SECTIONS = ["口述答案", "讲深一层", "高频追问", "易错点", "关联项目", "来源"]
 # 代码题型额外要求题面小节
 CODING_SECTIONS = ["题目"]
@@ -46,8 +46,12 @@ def parse_fm(text: str) -> tuple[dict, str]:
         line = line.rstrip()
         if line and ":" in line and not line.lstrip().startswith("#"):
             k, _, v = line.partition(":")
-            v = re.sub(r"\s+#.*$", "", v).strip()
-            meta[k.strip()] = v.strip().strip('"\'')
+            v = v.strip()
+            if v[:1] in ('"', "'") and v[-1:] == v[0]:
+                meta[k.strip()] = v[1:-1]      # 带引号：原样保留，不当注释
+            else:
+                v = re.sub(r"\s+#.*$", "", v).strip()
+                meta[k.strip()] = v.strip('"\'')
     return meta, text[end + 4:]
 
 

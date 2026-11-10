@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.2.0 — 2026-11-10
+
+题库 779 → **893 道**，从三个 B 站面试合集提取 **114 道视频真题**。
+
+### 来源
+
+| 标记 | BV | 合集 | 分 P | 收录 |
+|---|---|---|---|---|
+| V1 | `BV1pdW86SEAo` | 【备战2027春招】嵌入式面试八股文（GPIO点亮人生） | 82 | 26 |
+| V2 | `BV17n6PY7EYB` | 嵌入式八股文面试题合集 100 题（嵌入式自学DeepMeet） | 119 | 55 |
+| V3 | `BV1Tz9MBTEFi` | 2026 最新 C++ 大厂高频面试题（Linux集结地） | 33 | 33 |
+
+去重流程：234 个分 P → 剔除广告/导学 → **203 条**题目式标题 → 组内去重 **174 条** → 与既有题库比对 → **收录 114 条**，未收录 60 条（明细见 `sources/video_questions.md`）。
+
+### 新增编号段（各模块 400+ 偏移，与自建题分开）
+
+| 模块 | 号段 | 题数 | 覆盖 |
+|---|---|---|---|
+| `02_cpp` | Q-0901–0948 | **48** | `#`/`##`、volatile、压栈顺序、数组指针 vs 指针数组、函数指针、sizeof/strlen、struct/union、程序分段、手写 strcpy/strcmp/strcat、memcpy vs memmove、四种 cast、取消对齐、const/static、printf 变参、取私有成员、验证 vtable、C++14/17/20 协程、auto&&、map vs unordered_map、thread_local、move vs forward、二级指针、delete this、构造析构抛异常、make_shared、weak_ptr 控制块、STL 内存池、静态/动态链接、单例两坑、双缓冲日志库、0==a |
+| `09_hardware` | Q-4501–4532 | **32** | 哈佛 vs 冯诺依曼、ARM 工作模式/寄存器/FIQ、大小端、绝对地址、M3 vs M4、上电到 main、ISR 无参数、位域、PWM 概念、看门狗、NAND/NOR、CPU/MPU/MCU/SoC/SOPC、交叉编译、ROM/RAM、Cache、DMA、UART/I2C/SPI 对比、SPI 线数/四模式、SPI vs I2C 寻址、软硬 I2C、vTaskDelayUntil、空闲任务钩子、任务状态、动态/静态创建、信号量 vs 队列、状态机、JSON、回调、中断 vs 异常 |
+| `03_linux` | Q-1501–1525 | **25** | 进程 vs 线程、IPC、僵尸/孤儿/守护、系统调用、fork 循环、fork 与 fd、上下文切换、自旋 vs 互斥、原子操作、线程池、内存碎片、OOM killer、valgrind、调试方法、内核启动、驱动三大类、多进程 vs 多线程、OSI vs TCP/IP、三次握手四次挥手、TCP vs UDP、粘包、TCP 可靠性、DHCP、IP/掩码/网关/DNS、网络拓扑 |
+| `04_algo` | Q-2001–2009 | **9** | 插入+希尔、快排+冒泡、堆排+选择、归并、基数排序、链表判环与入口、跳表、缓存聚合策略、LRU 工程级实现（splice/RAII/引用计数） |
+
+### 其他改动
+
+- `validate.py`：`source_type` 允许 `video`；`parse_fm` 修正——**带引号的值不再做行内 `#` 注释剥离**（否则 `title: "# 和 ## ..."` 会被截成「# 和」）
+- 新增字段 `video_src` / `video_bv` / `video_page`，`source_ref` 精确到 P 号与起始时间
+- 新增 `tools/seed_video.py`（骨架）、`tools/cards/v_*.cards`（正文）、`sources/video_questions.md` / `.csv`
+
 ## v1.1.0 — 2026-11-10
 
 题库 739 → **779 道**，新增 **Python 模块 40 道** 与 **公司 / 岗位筛选**。

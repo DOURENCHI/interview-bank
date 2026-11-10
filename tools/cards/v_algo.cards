@@ -1,0 +1,371 @@
+@@ Q-2001
+@STEM
+**题目**：手写直接插入排序，再说明希尔排序在它基础上改了什么。
+
+**问**：直接插入排序和希尔排序的思路与复杂度？
+@ANSWER
+**直接插入**：把第 i 个元素插到前面已排好的序列里的正确位置，像摸扑克牌。最好 O(n)（已有序）、最坏/平均 O(n²)、空间 O(1)、**稳定**。
+
+**希尔排序**：先按较大间隔做插入排序（让元素大步移动），逐步缩小间隔到 1。因为间隔大时每次能跨很远，整体比较次数下降，**平均 O(n^1.3)**，但**不稳定**。
+@DEEP
+```c
+void insertion_sort(int a[], int n) {
+    for (int i = 1; i < n; ++i) {
+        int key = a[i], j = i - 1;
+        while (j >= 0 && a[j] > key) { a[j+1] = a[j]; --j; }
+        a[j+1] = key;
+    }
+}
+void shell_sort(int a[], int n) {
+    for (int gap = n/2; gap > 0; gap /= 2)
+        for (int i = gap; i < n; ++i) {
+            int key = a[i], j = i - gap;
+            while (j >= 0 && a[j] > key) { a[j+gap] = a[j]; j -= gap; }
+            a[j+gap] = key;
+        }
+}
+```
+| 算法 | 最好 | 平均 | 最坏 | 稳定 |
+|---|---|---|---|---|
+| 插入 | O(n) | O(n²) | O(n²) | ✅ |
+| 希尔 | O(n log n) | O(n^1.3) | O(n²) | ❌ |
+@FOLLOW
+1. **插入排序为什么适合小数组？** —— 常数小、无递归、局部性好；`std::sort` 在小区间就切到插入排序。
+2. **希尔排序的间隔怎么选？** —— 常用 `n/2` 折半；Hibbard/Sedgewick 序列更优。
+@TRAPS
+- 说希尔排序稳定（间隔跳跃会破坏稳定性）
+- 插入排序写成每次都交换（退化成 O(n²) 且多两次赋值）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1pdW86SEAo P27（数据结构与算法之一，8:37）
+
+@@ Q-2002
+@STEM
+**题目**：快排和冒泡都是交换排序，为什么快排快那么多？快排什么时候最慢？
+
+**问**：快速排序和冒泡排序的区别？快排最坏情况是什么？
+@ANSWER
+**冒泡**每轮只把最大元素"冒"到末尾，相邻交换，**O(n²) 且交换次数多**。
+**快排**选基准 partition，一趟就把数组分成"小于/大于"两半，然后递归——每层 O(n)，共 O(log n) 层，所以平均 **O(n log n)**。
+
+**最坏情况 O(n²)**：每次选的基准都是极值（数组已有序且取首元素），分区退化成 1 和 n-1。
+@DEEP
+```c
+int partition(int a[], int lo, int hi) {
+    int p = a[hi], i = lo;
+    for (int j = lo; j < hi; ++j)
+        if (a[j] < p) { swap(&a[i++], &a[j]); }
+    swap(&a[i], &a[hi]);
+    return i;
+}
+```
+| 算法 | 平均 | 最坏 | 稳定 | 额外空间 |
+|---|---|---|---|---|
+| 冒泡 | O(n²) | O(n²) | ✅ | O(1) |
+| 快排 | O(n log n) | **O(n²)** | ❌ | O(log n) 栈 |
+- 避免最坏：**随机选基准**、三数取中、小区间切插入排序（introsort）。
+- 快排不稳定：partition 的交换会打乱相等元素的相对顺序。
+@FOLLOW
+1. **为什么快排实际比归并快？** —— 原地、常数小、缓存友好（虽然渐进复杂度相同）。
+2. **已排序数组用快排会怎样？** —— 取首元素做基准就退化成 O(n²)，所以基准要随机化。
+@TRAPS
+- 说快排最坏也是 O(n log n)
+- 忘了快排不稳定
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1pdW86SEAo P28（数据结构与算法之二，8:20）
+
+@@ Q-2003
+@STEM
+**题目**：堆排序和简单选择排序都是"选最值"，为什么堆排序快？
+
+**问**：堆排序和简单选择排序怎么实现？
+@ANSWER
+**简单选择**：每轮线性扫描找最小值放到前面，找一次 O(n)，做 n 轮 → **O(n²)**。
+**堆排序**：把数组建成大顶堆（O(n)），每次把堆顶换到末尾、堆大小减一、向下调整（O(log n)）→ 总 **O(n log n)**。
+
+关键差别：选择排序每轮都重新扫，白白浪费了"前一轮已经比较过的信息"；堆用树结构把这份信息保留下来。
+@DEEP
+```c
+void heapify(int a[], int n, int i) {
+    int largest = i, l = 2*i+1, r = 2*i+2;
+    if (l < n && a[l] > a[largest]) largest = l;
+    if (r < n && a[r] > a[largest]) largest = r;
+    if (largest != i) { swap(&a[i], &a[largest]); heapify(a, n, largest); }
+}
+void heap_sort(int a[], int n) {
+    for (int i = n/2 - 1; i >= 0; --i) heapify(a, n, i);   // 建堆 O(n)
+    for (int i = n-1; i > 0; --i) { swap(&a[0], &a[i]); heapify(a, i, 0); }
+}
+```
+| 算法 | 时间 | 空间 | 稳定 |
+|---|---|---|---|
+| 简单选择 | O(n²) | O(1) | ❌ |
+| 堆排序 | O(n log n) | O(1) | ❌ |
+- 堆排序是**唯一 O(n log n) 且原地**的常用排序，但缓存不友好（跳跃访问）。
+- 建堆只要 O(n)，不是 O(n log n)。
+@FOLLOW
+1. **建堆为什么是 O(n)？** —— 大部分节点在底层，调整高度小，求和收敛到 O(n)。
+2. **堆还能干什么？** —— Top-K、优先队列、定时器（最早到期在堆顶）。
+@TRAPS
+- 以为建堆是 O(n log n)
+- 说堆排序稳定
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1pdW86SEAo P29（数据结构与算法之三，12:30）
+
+@@ Q-2004
+@STEM
+**题目**：要排一个 100 万条记录的日志，且要求相同时间戳的记录保持原顺序。
+
+**问**：归并排序怎么实现？为什么它适合链表？
+@ANSWER
+归并是**分治**：把数组对半切、分别排序、再合并两个有序段。合并只要一次线性扫描，所以总复杂度 **O(n log n)**，且**稳定**。
+
+它天然适合链表，因为合并阶段只需**改指针**，不需要额外数组（数组版要 O(n) 临时空间，链表版可以做到 O(1)）。
+@DEEP
+```c
+void merge(int a[], int lo, int mid, int hi, int tmp[]) {
+    int i = lo, j = mid + 1, k = lo;
+    while (i <= mid && j <= hi) tmp[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];
+    while (i <= mid) tmp[k++] = a[i++];
+    while (j <= hi)  tmp[k++] = a[j++];
+    for (i = lo; i <= hi; ++i) a[i] = tmp[i];
+}
+```
+| 场景 | 更适合 |
+|---|---|
+| 要求稳定 | 归并 |
+| 数据在链表上 | 归并 |
+| 外部排序（内存放不下） | 归并 |
+| 内存紧张 | 快排/堆排 |
+- `std::stable_sort` 通常就是归并（或归并+插入混合）。
+- 外排序：分块排好写临时文件，再多路归并。
+@FOLLOW
+1. **归并的空间能省吗？** —— 数组版可以原地归并但很慢；链表版可以 O(1)。
+2. **为什么外部排序都用归并？** —— 只需顺序读写，适合磁盘。
+@TRAPS
+- 说归并是原地排序
+- 合并时用 `<` 而不是 `<=`（会破坏稳定性）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1pdW86SEAo P30（数据结构与算法之四，8:16）
+
+@@ Q-2005
+@STEM
+**题目**：给 100 万个 0–99999 的整数排序，要求 O(n)。
+
+**问**：基数排序的原理是什么？为什么它不比较元素？
+@ANSWER
+基数排序是**按位分配-收集**：从最低位到最高位，每一轮按当前位的值把元素放进 10 个桶，再按顺序收回。做 d 轮（d = 最大位数）就排好了。
+
+它**不做元素间比较**，靠"位"的信息直接定位桶，所以能突破比较排序的 O(n log n) 下界，复杂度 **O(d(n+k))**，k 是桶数。
+@DEEP
+```c
+void radix_sort(int a[], int n) {
+    int tmp[n], cnt[10];
+    for (int exp = 1; exp <= max_val; exp *= 10) {
+        memset(cnt, 0, sizeof cnt);
+        for (int i = 0; i < n; ++i) cnt[(a[i]/exp) % 10]++;
+        for (int i = 1; i < 10; ++i) cnt[i] += cnt[i-1];     // 前缀和定位置
+        for (int i = n-1; i >= 0; --i) tmp[--cnt[(a[i]/exp)%10]] = a[i];  // 倒序保证稳定
+        memcpy(a, tmp, n*sizeof(int));
+    }
+}
+```
+| 排序 | 比较 | 时间 | 稳定 |
+|---|---|---|---|
+| 比较排序（快/归/堆） | ✅ | ≥ O(n log n) | 部分 |
+| 计数排序 | ❌ | O(n+k) | ✅ |
+| 基数排序 | ❌ | O(d(n+k)) | ✅ |
+- 必须**稳定**才能逐位排序（所以收集时要倒序遍历）。
+- 数据范围大且稀疏时不适合（桶太浪费）。
+@FOLLOW
+1. **为什么收集要倒序？** —— 保证相同位的元素保持上一轮的顺序（稳定性）。
+2. **什么情况比快排慢？** —— 位数多、数据量小，常数开销占主导。
+@TRAPS
+- 收集时正序遍历（破坏稳定性，结果错）
+- 对浮点数直接用（要先转成可比较的整数形式）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1pdW86SEAo P31（数据结构与算法之五，9:50）
+
+@@ Q-2006
+@STEM
+**题目**：链表可能有环，怎么判断？有环的话入口在哪？
+
+**问**：怎么判断链表是否有环？入口怎么找？
+@ANSWER
+**快慢指针**（Floyd 判圈）：慢指针走 1 步、快指针走 2 步，若有环必定相遇，无环则快指针先到 `nullptr`。
+
+找入口：相遇后把**一个指针移回头部**，两个指针都改成每次走 1 步，再次相遇的位置就是入口。
+@DEEP
+```c
+ListNode* detectCycle(ListNode* head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {                 // 相遇
+            slow = head;
+            while (slow != fast) { slow = slow->next; fast = fast->next; }
+            return slow;                    // 入口
+        }
+    }
+    return nullptr;
+}
+```
+**为什么这样能找到入口**：设头到入口距离 a、入口到相遇点距离 b、环长 L。相遇时慢走 a+b、快走 a+b+kL，且快是慢的两倍 → `a+b = kL` → 从头走 a 步到达入口时，从相遇点走 a 步也正好到入口。
+| 方法 | 空间 | 备注 |
+|---|---|---|
+| 哈希表存节点 | O(n) | 简单但费内存 |
+| 快慢指针 | **O(1)** | 首选 |
+@FOLLOW
+1. **快指针走 3 步行不行？** —— 能判环，但可能永远不相遇（取决于环长），2 步是安全选择。
+2. **怎么求环长？** —— 相遇后继续走一圈计数。
+@TRAPS
+- 只判环不找入口（面试常追问入口）
+- 循环条件漏掉 `fast->next` 判空
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV17n6PY7EYB P57（4:01） · 嵌入式八股
+
+@@ Q-2007
+@STEM
+**题目**：面试官让你手写一个跳表，并问"它凭什么能替代平衡树"。
+
+**问**：手写一个跳表：它为什么能替代平衡树？
+@ANSWER
+跳表是**多层链表**：底层是完整有序链表，上面每层是下层的"抽样索引"（每个节点以 1/2 概率晋升）。查找时从最高层开始，能往右就往右，不能就往下一层，期望 **O(log n)**。
+
+相比平衡树：**实现简单得多**（不用旋转/染色）、**并发友好**（局部加锁即可）、**范围查询自然**。Redis 的有序集合就是跳表。
+@DEEP
+```c
+typedef struct Node { int val; struct Node* next[]; } Node;   // 柔性数组
+// 查找
+Node* find(int v) {
+    Node* p = head;
+    for (int i = level - 1; i >= 0; --i)
+        while (p->next[i] && p->next[i]->val < v) p = p->next[i];
+    return p->next[0];
+}
+```
+| 维度 | 跳表 | 红黑树 |
+|---|---|---|
+| 查找 | 期望 O(log n) | O(log n) |
+| 实现难度 | 低 | 高（旋转/染色） |
+| 并发 | 易于局部加锁 | 旋转影响范围大 |
+| 内存 | 每节点平均 2 个指针 | 每节点 3 指针 + 颜色 |
+| 最坏 | O(n)（概率极低） | 严格 O(log n) |
+@FOLLOW
+1. **层高怎么定？** —— 随机 1/2 晋升，最大层通常 log2(n)；也可设上限 32。
+2. **为什么并发友好？** —— 插入只影响局部几个指针，可以分段加锁。
+@TRAPS
+- 说跳表最坏也是 O(log n)（它是概率保证）
+- 不会写"随机层高"这一步
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P14（快手 C++ 二面，14:27）
+
+@@ Q-2008
+@STEM
+**题目**：视频标题是"手撕缓存聚合"，面试官要你设计一个支持多种淘汰策略的缓存。
+
+**问**：手撕缓存聚合：多种淘汰策略的缓存怎么写？
+@ANSWER
+先抽象出**策略接口**，再用组合而不是一堆 if：
+
+- **接口**：`get(key)`、`put(key, value)`、`evict()`（淘汰谁由策略决定）
+- **通用骨架**：哈希表（O(1) 定位）+ 策略维护的"淘汰顺序"结构
+- **策略实现**：LRU 用双向链表、LFU 用"频率桶 + 最小频率指针"、FIFO 用队列
+
+把"存哪里"和"淘汰谁"分开，加新策略只加一个类。
+@DEEP
+```cpp
+struct EvictPolicy {           // 策略接口
+    virtual void onAccess(int key) = 0;
+    virtual void onInsert(int key) = 0;
+    virtual int  pickVictim() = 0;
+    virtual ~EvictPolicy() = default;
+};
+class LRUPolicy : public EvictPolicy { /* 双向链表 */ };
+class LFUPolicy : public EvictPolicy { /* 频率桶 */ };
+```
+| 策略 | 结构 | 淘汰谁 |
+|---|---|---|
+| LRU | 哈希 + 双向链表 | 最久未用 |
+| LFU | 哈希 + 频率桶 | 用得最少 |
+| FIFO | 队列 | 最早进入 |
+| ARC | 两组 LRU | 自适应 |
+- 关键考点其实是**抽象能力**：把"策略"从"存储"里解耦，而不是写 10 个 if-else。
+- 加分项：线程安全（分段锁）、过期时间（时间轮/最小堆）、统计命中率。
+@FOLLOW
+1. **LFU 的难点在哪？** —— 要快速找到"最小频率"的桶，且频率变化时要移动节点。
+2. **怎么做到线程安全又不太慢？** —— 分段锁（每段一把锁）或读写锁。
+@TRAPS
+- 用 if-else 堆所有策略
+- 忽略淘汰时的哈希表同步
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P12（小米 C++ 一面，16:05）
+
+@@ Q-2009
+@STEM
+**题目**：LRU 你写过，但面试官问"工程级实现里 RAII、引用计数、splice 分别解决什么"。
+
+**问**：LRU 的工程级实现要注意什么？
+@ANSWER
+四个工程细节：
+
+1. **用 `std::list` + `splice`**：`splice` 把节点从链表任意位置**剪切**到头部，O(1) 且**迭代器不失效**，比手动删了再插干净得多；
+2. **哈希表存迭代器**（`unordered_map<K, list<pair<K,V>>::iterator>`），才能 O(1) 定位；
+3. **RAII/智能指针**：缓存值可能是大对象或需要释放的资源，用 `unique_ptr`/`shared_ptr` 管理；
+4. **引用计数**：如果返回给调用方的值可能被外部持有，要保证淘汰时不悬垂（返回 `shared_ptr` 或拷贝）。
+@DEEP
+```cpp
+class LRUCache {
+    using Item = std::pair<int, int>;
+    std::list<Item> lst_;                                  // 头部最新
+    std::unordered_map<int, std::list<Item>::iterator> pos_;
+    size_t cap_;
+public:
+    int get(int k) {
+        auto it = pos_.find(k);
+        if (it == pos_.end()) return -1;
+        lst_.splice(lst_.begin(), lst_, it->second);       // O(1) 提到头部
+        return it->second->second;
+    }
+    void put(int k, int v) {
+        auto it = pos_.find(k);
+        if (it != pos_.end()) { it->second->second = v; lst_.splice(lst_.begin(), lst_, it->second); return; }
+        if (lst_.size() == cap_) { pos_.erase(lst_.back().first); lst_.pop_back(); }
+        lst_.emplace_front(k, v);
+        pos_[k] = lst_.begin();
+    }
+};
+```
+| 要点 | 为什么 |
+|---|---|
+| `splice` 而非 erase+insert | 迭代器不失效，哈希表不用改 |
+| 哨兵节点 | 省掉头尾特殊判断 |
+| 淘汰与哈希同步 | 否则哈希表留野迭代器 |
+- `splice` 的三个重载里，`splice(pos, other, it)` 是"把 other 里的 it 剪到 pos 前"——正好是 LRU 的"提到头部"。
+- 多线程下要加锁，或者做分段 LRU。
+@FOLLOW
+1. **`splice` 会让迭代器失效吗？** —— 不会，只是重新链接，被剪的迭代器仍指向原节点。
+2. **为什么不用 `std::map` 存访问时间？** —— 每次访问要更新时间戳（O(log n)），比链表慢。
+@TRAPS
+- 手动 erase + push_front（多一次分配，迭代器失效）
+- 淘汰时只删链表不删哈希
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+B站 BV1Tz9MBTEFi P17（腾讯 C++ 一面，21:14）
