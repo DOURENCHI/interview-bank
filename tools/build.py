@@ -286,6 +286,20 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   border-radius:5px;padding:2px 7px;margin-top:4px;cursor:pointer;background:transparent}
 .wrongmark.on{background:var(--red);color:#fff}
 .empty{text-align:center;color:var(--muted);padding:60px 0}
+#mockov{position:fixed;inset:0;background:rgba(45,42,33,.45);z-index:50;
+  display:flex;align-items:center;justify-content:center}
+.mpanel{width:min(720px,92vw);max-height:86vh;overflow:auto;background:var(--bg);
+  border:1px solid var(--line);border-radius:12px;padding:20px 24px;
+  box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.mhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.mrow{margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mnote{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+.mqtitle{font-size:17px;font-weight:700;margin:14px 0;padding:12px 14px;
+  background:var(--soft);border-left:4px solid var(--accent);border-radius:6px}
+#m_follows{margin:12px 0;padding:10px 14px;background:var(--soft);border-radius:6px}
+#m_follows .gl{font-size:11px;color:var(--muted)}
+#m_follows li{margin:6px 0;font-size:13px;line-height:1.6}
+.mhead b{font-size:15px}
 .ev{font-size:10px;font-weight:700;border-radius:5px;padding:2px 5px;margin-top:5px;
   white-space:nowrap;border:1px solid transparent}
 .evS1{color:#1a7f37;border-color:#1a7f37;background:#eaf5ec}
@@ -324,6 +338,8 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
   <select id="co"><option value="">全部公司</option>__COOPTS__</select>
   <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
+  <select id="prof" title="岗位模板：按真实 JD 归纳的模块权重过滤题目，并可作为模拟面试题源"><option value="">岗位模板…</option>__PROFOPTS__</select>
+  <button id="mock" class="mini" title="按当前筛选/岗位模板抽题，逐题计时作答，高频追问揭示">🎤 模拟面试</button>
   <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
   <select id="sub"><option value="">全部子方向</option></select>
   <select id="pri"><option value="">全部优先级</option>
@@ -350,9 +366,44 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 <div class="empty" id="empty" style="display:none">没有匹配的题目</div>
 </div>
 
+<div id="mockov" style="display:none">
+  <div class="mpanel">
+    <div class="mhead"><b>🎤 模拟面试</b>
+      <span id="m_conf"></span>
+      <button class="mini" id="m_close">退出</button></div>
+    <div id="m_setup">
+      <div class="mrow">题源：<b id="m_src"></b></div>
+      <div class="mrow">题数：
+        <select id="m_n"><option>5</option><option selected>10</option><option>15</option></select>
+        ／ 每题限时：
+        <select id="m_sec"><option value="180">3 分钟</option><option value="300" selected>5 分钟</option><option value="480">8 分钟</option></select>
+        ／ <label class="chk"><input type="checkbox" id="m_follow" checked> 作答后揭示高频追问</label>
+      </div>
+      <div class="mrow"><button id="m_start" style="padding:8px 20px">开始面试</button></div>
+      <div class="mnote">作答方式：对着每道题**先口述完整回答**（自测纪律），再看「高频追问」自检有没有被问倒；每题自评 1~4 分，评分会计入间隔复习。抽题按当前筛选与岗位模板权重进行。</div>
+    </div>
+    <div id="m_run" style="display:none">
+      <div class="mrow"><span id="m_pos"></span> ｜ 剩余 <b id="m_clock"></b>
+        <button class="mini" id="m_skip">跳过本题</button></div>
+      <div class="mqtitle" id="m_title"></div>
+      <div id="m_follows" style="display:none"><div class="gl">高频追问（自检）</div><ol id="m_flist"></ol></div>
+      <div class="mrow"><button class="mini" id="m_reveal">揭示追问</button>
+        <span class="gl">自评：</span>
+        <button class="gbtn" data-v="1">1 不会</button>
+        <button class="gbtn" data-v="2">2 想不起</button>
+        <button class="gbtn" data-v="3">3 掌握</button>
+        <button class="gbtn" data-v="4">4 牢固</button>
+        <button id="m_next" style="margin-left:auto">下一题 →</button></div>
+    </div>
+    <div id="m_end" style="display:none"></div>
+  </div>
+</div>
+
 <script>
 const DATA = __DATA__;
 const TARGETS = __TARGETS__;
+const PROFILES = __PROFILES__;
+const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
 // 间隔复习：自评分 1~4 → 下次复习间隔天数（SM-2 简化版）
@@ -361,6 +412,7 @@ const OPEN_ALL = location.hash === '#all';   // 调试用：全部展开
 let wrong = new Set(JSON.parse(localStorage.getItem(WRONG_KEY) || '[]'));
 let review = JSON.parse(localStorage.getItem(REV_KEY) || '{}');
 let SELFTEST = false;
+let LASTHIT = [];            // 最近一次渲染命中的题，供模拟面试抽题
 function revState(q){
   const r = review[q.id];
   if (!r) return 'never';
@@ -459,6 +511,8 @@ function render(){
     if ($('hidepred').checked && q.evidence === 'S4') return false;
     const rv = $('rev').value;
     if (rv && revState(q) !== rv) return false;
+    const prof = PROF_BY_ID[$('prof').value];
+    if (prof && (prof.weights[q.module] || 0) <= 0) return false;
     if (coDef && !coHit(q, coDef)) return false;
     if (rlDef && !roleHit(q, rlDef)) return false;
     if (!kw) return true;
@@ -472,6 +526,7 @@ function render(){
   });
 
   list.innerHTML = hit.map(card).join('');
+  LASTHIT = hit;
   $('empty').style.display = hit.length ? 'none' : 'block';
   SELFTEST = $('selftest').checked;
   // 搜索/筛选时自动展开，省一次点击；自测模式下不展开，先自己答
@@ -568,8 +623,141 @@ const _p = new URLSearchParams(location.search);
   if (v) $(id).value = v;
 });
 
-['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev'].forEach(id => $(id).addEventListener('input', render));
+['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof'].forEach(id => $(id).addEventListener('input', render));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
+
+// ---- 模拟面试：抽题 → 逐题计时 → 揭示追问 → 自评 → 总结 ----
+const MODNAME = {}; DATA.forEach(q => MODNAME[q.module] = q.moduleName);
+const MOCK = { list: [], i: 0, left: 0, timer: null, secs: 300 };
+
+$('prof').addEventListener('input', () => {
+  // 岗位模板选中时，把权重写进提示行
+  const p = PROF_BY_ID[$('prof').value];
+  if (!p) return;
+  const bars = Object.entries(p.weights).sort((a, b) => b[1] - a[1])
+    .map(([m, w]) => `${MODNAME[m] || m} ${w}%`).join(' ｜ ');
+  $('hint').innerHTML = `岗位模板 <b>${esc(p.name)}</b>（按真实校招 JD 归纳的配比）：${bars}`
+    + `　·　<button class="mini" id="m_quick">🎤 直接开一场</button>`;
+  $('m_quick').addEventListener('click', openMock);
+});
+
+function openMock(){
+  const prof = PROF_BY_ID[$('prof').value];
+  // 面试官不会问"这段代码输出什么"——读程序自测题默认排除，仅当池为空才兜底
+  const real = LASTHIT.filter(q => q.qtype !== 'coding');
+  const pool = real.length ? real
+    : (LASTHIT.length ? LASTHIT : DATA.filter(q => q.status !== 'indexed'));
+  $('m_ov_src') && 0;
+  $('m_src').textContent = (prof ? `岗位模板「${prof.name}」` : '当前筛选结果') + `，池 ${pool.length} 题`;
+  $('m_conf').textContent = '';
+  $('m_setup').style.display = 'block';
+  $('m_run').style.display = 'none';
+  $('m_end').style.display = 'none';
+  $('mockov').style.display = 'block';
+  MOCK.pool = pool;
+}
+$('mock').addEventListener('click', openMock);
+$('m_close').addEventListener('click', () => { clearInterval(MOCK.timer); $('mockov').style.display = 'none'; });
+
+function shuffle(a){ for (let i = a.length - 1; i > 0; --i) {
+  const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function weightedPick(pool, prof, n){
+  // 按模块权重加权抽题：P0 优先入池，权重大的模块概率高
+  let bag = [];
+  pool.forEach(q => {
+    const w = prof ? (prof.weights[q.module] || 0) : (q.priority === 'P0' ? 3 : 1);
+    const bonus = q.priority === 'P0' ? 2 : 1;
+    for (let k = 0; k < Math.max(1, Math.round(w * bonus / 10)); ++k) bag.push(q);
+  });
+  if (!bag.length) bag = pool.slice();
+  const seen = new Set(), out = [];
+  for (const q of shuffle(bag)) {
+    if (seen.has(q.id)) continue;
+    seen.add(q.id); out.push(q);
+    if (out.length >= n) break;
+  }
+  return out;
+}
+
+function followOf(q){
+  // 从卡面 html 里抽「高频追问」节的列表项
+  const i = q.html.indexOf('高频追问');
+  if (i < 0) return [];
+  const seg = q.html.slice(i, q.html.indexOf('<h2', i) > 0 ? q.html.indexOf('<h2', i) : undefined);
+  return [...seg.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m =>
+    m[1].replace(/<[^>]+>/g, '').trim()).filter(x => x && x !== '待补充').slice(0, 6);
+}
+
+$('m_start').addEventListener('click', () => {
+  const prof = PROF_BY_ID[$('prof').value];
+  const n = +$('m_n').value;
+  MOCK.secs = +$('m_sec').value;
+  MOCK.list = weightedPick(MOCK.pool, prof, n);
+  if (!MOCK.list.length) { alert('题池为空：先调整筛选或选择岗位模板'); return; }
+  MOCK.i = 0; MOCK.graded = [];
+  $('m_setup').style.display = 'none';
+  $('m_run').style.display = 'block';
+  showQ();
+});
+
+function showQ(){
+  const q = MOCK.list[MOCK.i];
+  $('m_pos').textContent = `第 ${MOCK.i + 1} / ${MOCK.list.length} 题 ｜ ${q.id} ｜ ${MODNAME[q.module] || q.module}`;
+  $('m_title').textContent = q.title;
+  $('m_follows').style.display = 'none';
+  $('m_clock').textContent = `${MOCK.secs / 60}:00`;
+  MOCK.left = MOCK.secs;
+  clearInterval(MOCK.timer);
+  MOCK.timer = setInterval(() => {
+    MOCK.left--;
+    const m = Math.floor(MOCK.left / 60), s = MOCK.left % 60;
+    $('m_clock').textContent = `${m}:${String(s).padStart(2, '0')}`;
+    if (MOCK.left <= 0) { clearInterval(MOCK.timer); $('m_clock').textContent = '时间到'; }
+  }, 1000);
+}
+
+$('m_reveal').addEventListener('click', () => {
+  const q = MOCK.list[MOCK.i];
+  const fs = followOf(q);
+  $('m_flist').innerHTML = fs.length
+    ? fs.map(x => `<li>${esc(x)}</li>`).join('')
+    : '<li>本题卡未配置高频追问，去题库页面看「讲深一层」自检</li>';
+  $('m_follows').style.display = 'block';
+});
+
+function gradeMock(v){
+  const q = MOCK.list[MOCK.i];
+  review[q.id] = { g: v, ts: Date.now() };
+  localStorage.setItem(REV_KEY, JSON.stringify(review));
+  if (v <= 2 && !wrong.has(q.id)) {
+    wrong.add(q.id);
+    localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+  }
+  MOCK.graded.push(v);
+  nextQ();
+}
+document.querySelectorAll('#m_run .gbtn').forEach(b =>
+  b.addEventListener('click', () => gradeMock(+b.dataset.v)));
+$('m_skip').addEventListener('click', () => { MOCK.graded.push(1); nextQ(); });
+$('m_next').addEventListener('click', () => nextQ());
+
+function nextQ(){
+  clearInterval(MOCK.timer);
+  MOCK.i++;
+  if (MOCK.i < MOCK.list.length) { showQ(); return; }
+  // 总结
+  $('m_run').style.display = 'none';
+  $('m_end').style.display = 'block';
+  const c = [1, 2, 3, 4].map(v => MOCK.graded.filter(x => x === v).length);
+  const weak = MOCK.graded.map((g, i) => g <= 2 ? MOCK.list[i] : null).filter(Boolean);
+  $('m_end').innerHTML = `<b>本场结束</b>：${MOCK.list.length} 题 ｜ 不会 ${c[0]} · 想不起 ${c[1]} · 掌握 ${c[2]} · 牢固 ${c[3]}
+    ${weak.length ? `<div class="mrow">薄弱题（已计入复习与错题本）：${weak.map(q => esc(q.id)).join('、')}</div>` : ''}
+    <div class="mrow"><button class="mini" id="m_again">再来一场</button>
+    <button class="mini" id="m_done">关闭</button></div>`;
+  $('m_again').addEventListener('click', openMock);
+  $('m_done').addEventListener('click', () => { $('mockov').style.display = 'none'; render(); });
+}
 refreshSubs();
 render();
 </script>
@@ -600,10 +788,19 @@ def main() -> int:
                        f'{html.escape(r["name"])}</option>'
                        for r in targets.get("roles", []))
 
+    # 岗位三层体系的中层：具体岗位模板（权重 + JD 依据）
+    pj = ROOT / "companies" / "job_profiles.json"
+    profiles = json.loads(pj.read_text(encoding="utf-8")).get("profiles", []) if pj.exists() else []
+    profopts = "\n".join(f'<option value="{html.escape(p["id"], quote=True)}">'
+                         f'{html.escape(p["name"])}</option>' for p in profiles)
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
                                                  separators=(",", ":")))
+               .replace("__PROFILES__", json.dumps(profiles, ensure_ascii=False,
+                                                  separators=(",", ":")))
+               .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)
                .replace("__MODOPTS__", modopts)

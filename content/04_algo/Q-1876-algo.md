@@ -20,56 +20,54 @@ algo_seed: true
 
 ## 题目
 
-**输入**：`numCourses = 2, prerequisites = [[1,0]]`（学 1 前要先学 0）
-**输出**：能否修完（即图中有无环）
-
-**问**：拓扑排序怎么判断有环？
+**背景**：「课程表 I（207）」判断能否修完所有课；「课程表 II（210）」进一步要求**给出一个可行的修课顺序**。
+**输入**：`numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]`
+**输出**：一个拓扑序，如 `[0,1,2,3]`（答案不唯一）。
+**问**：BFS 拓扑排序的输出顺序就是答案吗？怎么判无解？
 
 ## 口述答案
 
-> 统计每个节点的入度，入度为 0 的先入队；出队时把它指向的节点入度减一，减到 0 就入队。
-> 最后看**出队节点数是否等于总节点数**：少了就说明剩下的节点互相依赖，在环里。
-> 这就是 Kahn 算法。
+> 是。Kahn 算法的 BFS 天然按依赖顺序出队：入度为 0 的课先出队，出队后把它指向的课入度减一，减到 0 的接着入队——**出队序列就是一个合法修课顺序**。判无解和 I 一样：最后出队数小于总课程数，说明剩下的节点互相依赖成环，返回空数组。和 I 的代码只差一行——I 用计数器判环，II 把出队节点存进结果数组直接返回。
+> 另一种做法是 DFS + 三色标记，DFS 的**后序逆序**也是拓扑序，两种都要会。
 
 ## 讲深一层
 
 ```cpp
-bool canFinish(int n, vector<vector<int>>& pre) {
-    vector<vector<int>> g(n);
-    vector<int> indeg(n, 0);
+vector<int> findOrder(int n, vector<vector<int>>& pre) {
+    vector<vector<int>> g(n); vector<int> indeg(n, 0);
     for (auto& p : pre) { g[p[1]].push_back(p[0]); ++indeg[p[0]]; }
     queue<int> q;
     for (int i = 0; i < n; ++i) if (!indeg[i]) q.push(i);
-    int done = 0;
+    vector<int> order;
     while (!q.empty()) {
-        int u = q.front(); q.pop(); ++done;
+        int u = q.front(); q.pop();
+        order.push_back(u);                       // 与 I 的唯一差别：记录顺序
         for (int v : g[u]) if (--indeg[v] == 0) q.push(v);
     }
-    return done == n;
+    if ((int)order.size() != n) return {};        // 有环 → 空数组
+    return order;
 }
 ```
 
-| 方法 | 判断环 |
-|---|---|
-| Kahn（BFS） | 完成数 < n 则有环 |
-| DFS 三色标记 | 遇到「正在访问」的节点则有环 |
+| | 207 课程表 I | 210 课程表 II |
+|---|---|---|
+| 问什么 | 能否修完 | 给出顺序 |
+| 区别 | 计数判环 | 记录出队序列 |
 
 ## 高频追问
 
-1. **DFS 版怎么写？** —— 白/灰/黑三色，灰色表示在当前路径上，遇到灰色即有环。
-2. **为什么入度 0 可以安全移除？** —— 没有前驱依赖了。
-3. **有多个解怎么办？** —— 拓扑序不唯一，Kahn 出队顺序即一个合法解。
+1. 拓扑序唯一吗？——不唯一；只有每步入度为 0 的节点恰有一个时才唯一
+2. DFS 怎么做拓扑排序？——后序逆序； visiting/visited 三色判环
+3. 用邻接矩阵还是邻接表？——稀疏图用邻接表，O(V+E)
 
 ## 易错点
 
-- ❌ 忘了把 `prerequisites` 的方向建对（先学 → 后学）
-- ❌ 用「出队数 == n」判断写成 `<=`
-- ✅ 说清「完成数不足即环」
-
+- 建边方向搞反：先修课指向后修课（prerequisites[i] = [a, b] 表示先 b 后 a）
+- 有环时忘了返回空数组而不是部分序列
 
 ## 关联项目
 
-无（算法题）。刷的时候用 LeetCode 按题名搜，别背题号。
+- 无（算法题）。LeetCode 按题名搜：课程表 II 210
 
 ## 来源
 

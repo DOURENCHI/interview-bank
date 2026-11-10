@@ -7,3 +7,5 @@ dist/_probe.html
 dist/_*.html
 dist/_*.png
 _cache/
+dist/_mock.html
+dist/_m*.png
