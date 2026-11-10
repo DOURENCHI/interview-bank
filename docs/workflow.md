@@ -32,14 +32,33 @@ git add -A && git commit -m "..." && git push origin main
 flowchart TD
     A[radar.yml 每日 09:30 北京时间] --> B[job_radar.py --scan]
     B --> C{读 radar_companies.json<br/>enabled=true 且带 source}
-    C --> D[zhiye 直连 POST / feishu Playwright 监听 XHR]
-    D --> E[reconcile: 合并旧快照 + 状态机]
-    E --> F[classify_job: 招聘性质分类 V1.8]
+    C --> D1[zhiye requests 直连]
+    C --> D2[feishu Playwright 监听 XHR]
+    C --> D3[moka Playwright 抓 DOM]
+    C --> D4[hotjob 大易表单接口直连]
+    D1 --> E[reconcile: 合并旧快照 + 状态机]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    E --> F[classify_job: 招聘性质分类 + 城市标题提取]
     F --> G[jobs_radar.json + radar_report.md]
     G --> H{有 diff?}
     H -->|是| I[Actions 自动提交]
     H -->|否| J[不提交]
     G --> K[build.py 注入 → 网页公司/岗位视图]
+```
+
+入口从哪来：`companies/radar_companies.json` 的 `enabled=true` 且带 `source`（当前 23 源）。
+新增一家公司的标准动作：找到官方招聘入口 → 用 `tools/detect_ats.py` 或页面特征确认 ATS 类型 →
+按对应适配器的 site 字段写配置 → `enabled=true` → 跑 `--scan` 看该源是否 success。
+
+四个适配器的 site 配置示例：
+
+```json
+{"base": "https://bsthr.zhiye.com", "category": "2"}                                  // zhiye
+{"url": "https://nio.jobs.feishu.cn/campus", "label": "27届秋招", "type_label": "校招"}  // feishu
+{"url": "https://app.mokahr.com/campus-recruitment/deeproute/145894", "label": "27届秋招"} // moka
+{"su": "SU62d9...", "base": "https://wecruit.hotjob.cn", "label": "27届秋招"}           // hotjob
 ```
 
 人工介入点：
@@ -55,16 +74,20 @@ flowchart TD
    点「⭐ 收藏转正」写入 `ib_jobs_v1`，点「忽略」写入 `ib_jobs_dismiss_v1`。
    **这些岗位不会消失**：`#comp` 视图仍完整列出，用「岗位状态」chips 可单独筛出已收藏 / 已忽略。
 
-## 三、用户侧使用路径（V1.8 新增）
+## 三、用户侧使用路径（V1.8.2 更新）
 
 1. 打开 `dist/bank.html` → 首页「🛰 岗位雷达」行末尾点「🏢 查看全部公司 / 全部岗位」，
    或直接点顶部「🏢 公司」标签（也可 `#comp` 直达）。
-2. **看全部公司**：公司表默认列出两池去重后的全部 152 家；「公司」chips 可切
+2. **看全部公司**：公司表默认列出两池去重后的全部公司（约 155 家）；「公司」chips 可切
    `雷达池 / 已接入 / 未接入 / 仅目标池`；点任意公司行 → 搜索框自动填该公司名，只看该公司的岗位。
-3. **看分类**：岗位表按 `实习 / 校招 / 社招 / 未标明` 分组，每行带性质徽标、
+3. **按地区看**：「城市」chips（苏南五城 + 实习五城固定优先，其余按岗位数动态生成）同步过滤
+   公司表与岗位表；公司表「主要城市」列按已采集岗位聚合。
+4. **看分类**：岗位表按 `实习 / 校招 / 社招 / 未标明` 分组，每行带性质徽标、
    批次届别、判定依据（标题明确 / 批次标签 / 入口推定）、状态与处理状态、JD 原文链接。
-4. **看已处理的岗位**：「岗位状态」chips 选 `已收藏 / 已忽略 / 待处理`；清空搜索恢复全部。
-5. **投递前核实**：依据是「校园招聘入口推定」的岗位，只说明它挂在校园招聘入口下，
+5. **看已处理的岗位**：「岗位状态」chips 选 `已收藏 / 已忽略 / 待处理`；清空搜索恢复全部。
+6. **牛客同步**：公司表「牛客」小字显示面经数 / 真题卷数 / 最近面经链接；
+   面经与真题卷每周自动增量采集（`nc_collect.py`，自动化任务每周一运行）。
+7. **投递前核实**：依据是「校园招聘入口推定」的岗位，只说明它挂在校园招聘入口下，
    必须点 JD 原文确认是校招还是实习、是否限届别。
 
 ## 四、复习与训练闭环

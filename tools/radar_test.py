@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from job_radar import (classify_change, extract_grad, make_key, reconcile, jd_hash,
-                       classify_job, class_stats_of, site_by_source)  # noqa: E402
+                       classify_job, class_stats_of, site_by_source, city_from_title)  # noqa: E402
 
 ok = []
 
@@ -133,6 +133,22 @@ ok.append(("分类统计", stats["class_stats"] == {"校招": 3, "实习": 1, "�
 pool = [{"company_name": "宇树科技", "ats_type": "zhiye",
          "source": {"base": "https://unitree.zhiye.com", "category": "2"}}]
 ok.append(("公司池→source_id 映射", "宇树科技·" in site_by_source(pool)))
+
+# 11. V1.8.2 新适配器（hotjob 大易 / moka）的入口推定
+cm = classify_job(J("k-moka", title="具身数据工程师", batch="", label="",
+                    links=["https://app.mokahr.com/x#/job/abc"], src="moka"),
+                  {"type_label": "校招"})
+ok.append(("moka入口推定", cm["job_class"] == "校招" and cm["class_conf"] == "low"))
+ch = classify_job(J("k-hotjob", title="嵌入式软件工程师", batch="", label="",
+                    links=["https://wecruit.hotjob.cn/SU1/mc/position/detail/x"], src="hotjob"),
+                  {"type_label": "校招"})
+ok.append(("hotjob入口推定", ch["job_class"] == "校招" and ch["class_conf"] == "low"))
+
+# 12. V1.8.2 城市从标题提取（zhiye 系 LocNames 为空时的兜底）
+ok.append(("城市提取·尾缀", city_from_title("电力电子工程师（大功率方向） - 上海(J19796)") == "上海"))
+ok.append(("城市提取·括号", city_from_title("C++工程师（成都）(J12640)") == "成都"))
+ok.append(("城市提取·不误收批次", city_from_title("嵌入式软件工程师-27届校招(J11525)") == ""))
+ok.append(("城市提取·无城市", city_from_title("AI Infra 工程师") == ""))
 
 fails = [k for k, v in ok if not v]
 for k, v in ok:

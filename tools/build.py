@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import html
+import csv
 import json
 import re
 import sys
@@ -690,6 +691,10 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
         <button class="chip" data-k="st" data-v="todo">待处理</button>
         <button class="chip" data-k="st" data-v="saved">已收藏</button>
         <button class="chip" data-k="st" data-v="dismissed">已忽略</button>
+        <span class="csep"></span>
+        <span class="flab">城市</span>
+        <button class="chip on" data-k="city" data-v="all">全部</button>
+        <span id="city_chips" style="display:contents"></span>
       </div>
     </div>
     <div class="rsec">全部公司（公司池 + 目标公司池，同名合并；只看「公司来源 / 搜索」两类筛选）</div>
@@ -764,6 +769,7 @@ const PROFILES = __PROFILES__;
 const JOBS_SEED = __JOBS__;
 const RADAR = __RADAR__;
 const POOL = __POOL__;          // companies/radar_companies.json：全量公司池（含未接入源）
+const NC = __NC__;              // 牛客面经索引 + 公司真题卷元数据（每周增量同步）
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -1865,7 +1871,17 @@ function handleOf(j, dis, have){
   if (have.has(j.key)) return ['已收藏', 'hs-saved'];
   return ['待处理', 'hs-todo'];
 }
-let compFilter = {cls: 'all', src: 'all', st: 'all', q: ''};
+let compFilter = {cls: 'all', src: 'all', st: 'all', city: 'all', q: ''};
+// 城市归一：岗位 city 串（「北京、苏州、上海」「广东·深圳市」「上海等」）→ 命中的重点城市列表
+const CITY_LIST = ['苏州', '南京', '无锡', '常州', '合肥', '上海', '北京', '深圳', '广州',
+  '杭州', '成都', '西安', '武汉', '宁波', '天津', '重庆', '东莞', '佛山', '珠海',
+  '长沙', '香港', '昆山', '惠州', '济南', '郑州', '厦门', '南通'];
+function citiesOf(s){
+  const t = String(s || '');
+  if (t.indexOf('待核实') >= 0 || !t.trim()) return ['待核实'];
+  const hit = CITY_LIST.filter(c => t.indexOf(c) >= 0);
+  return hit.length ? hit : ['其他'];
+}
 
 function renderCompanies(){
   const all = allRadarJobs(), dis = loadDismiss();
@@ -1876,6 +1892,36 @@ function renderCompanies(){
     const b = ch.querySelector('b');
     if (b) b.textContent = cs[ch.dataset.v] || 0;
   });
+  const cityCnt = {};
+  all.forEach(j => citiesOf(j.city).forEach(c => cityCnt[c] = (cityCnt[c] || 0) + 1));
+  // 城市 chips 动态生成：苏南五城 + 实习五城优先固定，其余按岗位数降序，保证计数全覆盖
+  const CITY_PRI = ['苏州', '南京', '无锡', '常州', '合肥', '上海', '北京', '深圳', '杭州'];
+  const cityOrder = [
+    ...CITY_PRI.filter(c => cityCnt[c]),
+    ...Object.keys(cityCnt).filter(c => !CITY_PRI.includes(c) && c !== '待核实')
+      .sort((a, b) => (cityCnt[b] - cityCnt[a]) || a.localeCompare(b, 'zh')),
+    ...(cityCnt['待核实'] ? ['待核实'] : [])];
+  $('city_chips').innerHTML = cityOrder.map(c =>
+    `<button class="chip ${compFilter.city === c ? 'on' : ''}" data-k="city" data-v="${esc(c)}">${esc(c)} <b>${cityCnt[c]}</b></button>`).join('');
+  // 牛客面经 / 真题卷 → 按公司聚合（公司名做宽松匹配：「华为HUAWEI」↔「华为」）
+  const NC_BY_CO = {};
+  (NC.experiences || []).forEach(x => {
+    const b = NC_BY_CO[x.company] || (NC_BY_CO[x.company] = {exp: 0, papers: 0, last: null});
+    b.exp++;
+    if (!b.last || (x.collected_at || '') > (b.last.collected_at || '')) b.last = x;
+  });
+  (NC.papers || []).forEach(p => {
+    if (p.company) (NC_BY_CO[p.company] = NC_BY_CO[p.company] || {exp: 0, papers: 0, last: null}).papers++;
+  });
+  function ncOf(name){
+    if (NC_BY_CO[name]) return NC_BY_CO[name];
+    let best = null;
+    for (const [k, v] of Object.entries(NC_BY_CO)) {
+      const hit = k.indexOf(name) >= 0 || (name.indexOf(k) >= 0 && k.length >= 2);
+      if (hit && (!best || v.exp + v.papers > best.exp + best.papers)) best = v;
+    }
+    return best;
+  }
   const jobsByCo = {};
   const byCo = {};
   all.forEach(j => {
@@ -1898,6 +1944,10 @@ function renderCompanies(){
     const hay = (e.name + ' ' + e.cat + ' ' + (e.target ? (e.target.main || '') : '') + ' '
                  + e.pool.map(c => (c.ats_type || '') + ' ' + (c.directions || []).join(' ')).join(' ')).toLowerCase();
     if (q && hay.indexOf(q) < 0) return false;
+    if (compFilter.city !== 'all') {
+      const set = new Set((jobsByCo[e.name] || []).flatMap(j => citiesOf(j.city)));
+      if (!set.has(compFilter.city)) return false;
+    }
     const s = compFilter.src;
     if (s === 'pool') return e.pool.length > 0;
     if (s === 'enabled') return enabled > 0;
@@ -1916,21 +1966,32 @@ function renderCompanies(){
     const labels = [...new Set(e.pool.map(x => (x.source || {}).label || (x.source || {}).type_label || ''))]
       .filter(Boolean).join(' / ') || (e.pool.length ? '校园招聘入口' : '—');
     const kinds = [...new Set((jobsByCo[e.name] || []).map(x => x.job_class))].join(' / ') || '—';
+    const cities = {};
+    (jobsByCo[e.name] || []).forEach(j => citiesOf(j.city).forEach(c => cities[c] = (cities[c] || 0) + 1));
+    const cityTxt = Object.entries(cities).sort((a, b) => b[1] - a[1])
+      .slice(0, 5).map(x => `${x[0]}${x[1] > 1 ? ' ' + x[1] : ''}`).join(' · ') || '—（尚未采集）';
+    const nc = ncOf(e.name);
+    const ncTxt = nc
+      ? `牛客：面经 <b>${nc.exp}</b> · 真题卷 <b>${nc.papers}</b>` +
+        (nc.last ? ` <a class="jlink" href="${esc(nc.last.url)}" target="_blank" rel="noopener">最近面经 ↗</a>` : '')
+      : '牛客：暂无命中面经';
     const link = e.pool.find(x => x.enabled && x.source) || e.pool[0] || {};
     const url = link.career_url || (link.source || {}).url || (link.source || {}).base || '';
     return `<tr data-coname="${esc(e.name)}" title="点这行只看该公司的岗位；清空搜索恢复全部">
       <td><b>${esc(e.name)}</b><small>${esc(src)} · 档 ${esc(e.tier)}</small></td>
       <td>${esc(e.cat)}<small>${esc((e.pool[0] && (e.pool[0].directions || []).join(' / ')) || (e.target ? (e.target.roles || []).join(' / ') : ''))}</small></td>
       <td>${acc}<small>${esc(ats)} · 池内 ${e.pool.length} 条</small></td>
+      <td>${esc(cityTxt)}<small>按已采集岗位聚合</small></td>
       <td>${total ? CLASS_ORDER.filter(k => c[k]).map(k => `${k} <b>${c[k]}</b>`).join(' · ') : '—（尚未采集）'}
-          <small>入口性质：${esc(kinds)} · 批次 ${esc(labels)}</small></td>
+          <small>入口性质：${esc(kinds)} · 批次 ${esc(labels)}</small>
+          <small>${ncTxt}</small></td>
       <td>${url ? `<a class="tag jlink" href="${esc(url)}" target="_blank" rel="noopener">招聘入口 ↗</a>` : '—'}
           ${e.target ? '<small>目标公司池有题目/面经索引</small>' : ''}</td>
     </tr>`;
   }).join('');
   $('comp_table').innerHTML = `<table class="rtable ctable"><thead><tr>
-      <th>公司</th><th>方向 / 类别</th><th>接入情况</th><th>在招岗位（按性质）</th><th>入口</th>
-    </tr></thead><tbody>${coRows || '<tr><td colspan="5" class="cempty">没有匹配的公司</td></tr>'}</tbody></table>`;
+      <th>公司</th><th>方向 / 类别</th><th>接入情况</th><th>主要城市</th><th>在招岗位（性质 / 牛客）</th><th>入口</th>
+    </tr></thead><tbody>${coRows || '<tr><td colspan="6" class="cempty">没有匹配的公司</td></tr>'}</tbody></table>`;
 
   // 岗位表：性质 / 状态 / 搜索；含已收藏、已忽略，按性质分组
   const jobs = all.filter(j => {
@@ -1940,6 +2001,7 @@ function renderCompanies(){
     if (st === 'open' && j.status !== 'open') return false;
     if (st === 'suspect' && j.status !== 'suspect') return false;
     if (['todo', 'saved', 'dismissed'].indexOf(st) >= 0 && h !== 'hs-' + st) return false;
+    if (compFilter.city !== 'all' && citiesOf(j.city).indexOf(compFilter.city) < 0) return false;
     if (q) {
       const hay = (j.company + ' ' + j.title + ' ' + (j.city || '') + ' ' + (j.batch || '') + ' '
                    + (j.label || '') + ' ' + (j.families || []).join(' ') + ' '
@@ -1980,6 +2042,7 @@ function renderCompanies(){
     [cs['校招'] || 0, '校招'],
     [cs['实习'] || 0, '实习'],
     [lowN, '入口推定 · 待核实'],
+    [(NC.experiences || []).length + ' / ' + (NC.papers || []).length, '牛客面经 / 真题卷'],
   ].map(x => `<div class="scard"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
   const poolNames = new Set((POOL || []).map(c => coKey(c.company_name)));
   $('comp_note').innerHTML =
@@ -1987,7 +2050,10 @@ function renderCompanies(){
     `公司表当前 ${shownCo.length} 行、岗位表当前 ${jobs.length} 行（其中已收藏 ${savedN} · 已忽略 ${disN}，仍会完整列出并标注）。<br>` +
     `公司口径：公司池 ${poolEntries} 条 / ${poolNames.size} 家 + 目标公司池 ${((TARGETS && TARGETS.companies) || []).length} 家，同名合并后 ${cos.length} 家；` +
     `「未接入」指公司池里有招聘入口但还没写采集适配器，「仅目标池」指题库有公司索引但尚未登记招聘入口。` +
-    `点公司表任意一行可只看该公司的岗位（写入搜索框），清空搜索即恢复全部。<br>` +
+    `点公司表任意一行可只看该公司的岗位（写入搜索框），清空搜索即恢复全部。` +
+    `「城市」chips 同步过滤公司与岗位两表（按已采集岗位的工作地；公司列显示主要城市）。<br>` +
+    `牛客同步：面经索引与公司真题卷每周自动增量采集；按你的合规边界，真题卷只登记「公司 × 卷名 × 题量 × 链接」元数据，<br>` +
+    `题目内容一律从公开面经帖提取（原帖链接保留、不含发帖人信息）。<br>` +
     `分类依据优先级：<b>岗位标题明确 &gt; 来源批次标签 &gt; 校园招聘入口推定</b>；` +
     `「入口推定」只说明岗位挂在校园招聘入口下，<b>不等于官方写明校招批次</b>，投递前点 JD 原文核实。` +
     `实习岗不套用入口批次的届别（原 2027 届推定已清除）；校招 2027 届对 ${USER_GRAD} 届仅作 JD 参考。`;
@@ -2069,6 +2135,17 @@ def main() -> int:
     cp = ROOT / "companies" / "radar_companies.json"
     pool = json.loads(cp.read_text(encoding="utf-8")).get("companies", []) if cp.exists() else []
 
+    # 牛客同步数据：面经索引（公开帖，含题目与原帖链接）+ 公司真题卷元数据（不抓题干）
+    nc = {"experiences": [], "papers": []}
+    ne = ROOT / "sources" / "nowcoder_experiences.jsonl"
+    if ne.exists():
+        nc["experiences"] = [json.loads(x) for x in
+                             ne.read_text(encoding="utf-8").splitlines() if x.strip()]
+    npp = ROOT / "sources" / "nowcoder_papers.csv"
+    if npp.exists():
+        with npp.open(encoding="utf-8-sig", newline="") as f:
+            nc["papers"] = list(csv.DictReader(f))
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -2081,6 +2158,8 @@ def main() -> int:
                                                 separators=(",", ":")))
                .replace("__POOL__", json.dumps(pool, ensure_ascii=False,
                                                separators=(",", ":")))
+               .replace("__NC__", json.dumps(nc, ensure_ascii=False,
+                                             separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)

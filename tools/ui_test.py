@@ -212,6 +212,17 @@ def main() -> int:
         ok.append(("点公司行联动搜索", pg.eval_on_selector('#comp_q', 'el => el.value') != ""
                    and pg.evaluate("document.querySelectorAll('#comp_table tbody tr').length") < n_all_co))
         pg.fill('#comp_q', ""); pg.wait_for_timeout(350)
+        city_sum = pg.evaluate("""() => [...document.querySelectorAll(
+            '#comp_chips .chip[data-k="city"] b')].reduce((a, b) => a + Number(b.textContent), 0)""")
+        expect = pg.evaluate("""() => (RADAR.jobs || []).reduce(
+            (a, j) => a + citiesOf(j.city).length, 0)""")
+        ok.append(("城市计数覆盖全量", city_sum == expect and expect >= n_all_job > 0))
+        pg.click('#comp_chips .chip[data-k="city"][data-v="苏州"]'); pg.wait_for_timeout(250)
+        ok.append(("城市筛选联动两表", pg.evaluate(
+            "document.querySelectorAll('#comp_table tbody tr').length") <= n_all_co))
+        pg.click('#comp_chips .chip[data-k="city"][data-v="all"]'); pg.wait_for_timeout(250)
+        ok.append(("牛客面经列展示", pg.eval_on_selector(
+            '#comp_table', "el => el.innerText.includes('牛客')")))
         tab("home"); pg.click('#h_allco'); pg.wait_for_timeout(200)
         ok.append(("首页入口跳公司总览", pg.eval_on_selector(
             '#view-comp', "el => el.classList.contains('on')")))

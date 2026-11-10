@@ -40,6 +40,11 @@ V1.8 前端纯函数：
 | `class_stats_of(jobs)` | → `{class_stats, class_basis_stats}` | 写入快照供首页与总览显示 |
 | `reclassify()` | 无参数，不联网 | 读快照 → 全量重分类 → 写回并重生成报告分类小节 |
 | `scan_zhiye(site)` / `scan_feishu(site)` | → 岗位列表 | 北森智业云 POST 直连；飞书必须 Playwright 监听 `search/job/posts` 自然响应 |
+| `scan_hotjob(site)` | site 需 `su`（wecruit 的 SUxxx 标识） | 大易公开表单接口：`POST /wecruit/positionInfo/listPosition/{su}`，body `recruitType=1&currentPage=N&pageSize=10`（**form-urlencoded，不是 JSON**）；详情链 `/{su}/mc/position/detail/{postId}` |
+| `scan_moka(site)` | site 需 `url`（campus_apply/campus-recruitment 入口） | Moka `website/jobs/v2` 响应**加密**，改为 Playwright 渲染 `{url}#/jobs` + 滚动后抓 `a[href*="#/job/"]` 卡片 DOM；首行可能是「热招」徽标要跳过 |
+| `city_from_title(title)` | → 城市串 | zhiye 系 LocNames 常为空，城市写在标题尾部（`- 上海(J19796)`、`（成都）`），两个正则兜底提取；key 里 city 随之变化——**改此逻辑后建议清空快照重扫**，否则旧 key 全部 missing 产生 suspect 垃圾 |
+| （build.py）`const NC` | `sources/nowcoder_experiences.jsonl` + `nowcoder_papers.csv` | 面经索引与真题卷元数据注入；前端 `ncOf()` 按公司名宽松匹配（「华为HUAWEI」↔「华为」） |
+| （build.py）`citiesOf(s)` / `CITY_PRI` | city 串 → 重点城市数组 | chips 动态生成：苏南五城 + 实习五城固定优先，其余按岗位数降序，保证计数全覆盖 |
 
 ### classify_job 的证据优先级（V1.8 核心）
 

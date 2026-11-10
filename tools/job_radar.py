@@ -294,6 +294,24 @@ def zhiye_portal_id(base: str, portal_id: str, category: str, s) -> str:
     raise RuntimeError("未能确定 portalId")
 
 
+CITY_WORD = ("北京|上海|天津|重庆|深圳|广州|苏州|南京|无锡|常州|合肥|杭州|成都|西安|武汉|"
+             "宁波|东莞|佛山|珠海|昆山|嘉兴|绍兴|厦门|长沙|郑州|济南|青岛|沈阳|大连|哈尔滨|"
+             "昆明|贵阳|南宁|福州|温州|徐州|扬州|镇江|南通|芜湖")
+
+
+def city_from_title(title: str) -> str:
+    """zhiye 系门户把城市写在标题尾部（「XX工程师 - 上海(J19796)」「XX（成都）(J12640)」），
+    LocNames 常为空数组，这里从标题兜底提取。注意只认城市词表，防止把「-27届校招」当城市。"""
+    t = title or ""
+    m = re.search(r"[-–—]\s*([^-\s()（）]{1,12})\s*[(（][A-Za-z0-9]{2,}[)）]\s*$", t)
+    if m and re.fullmatch(rf"(?:{CITY_WORD})市?", m.group(1)):
+        return m.group(1).strip()
+    m = re.search(rf"[（(]((?:{CITY_WORD})市?)\s*[)）]", t)
+    if m:
+        return m.group(1)
+    return ""
+
+
 def scan_zhiye(site: dict) -> list:
     import requests
     base = site["base"].rstrip("/")
@@ -313,12 +331,13 @@ def scan_zhiye(site: dict) -> list:
             duty, require = it.get("Duty") or "", it.get("Require") or ""
             jd = "\n".join(x for x in (duty, require) if x)
             batch = site.get("label") or extract_grad(it.get("JobAdName", "")) and f"{extract_grad(it.get('JobAdName',''))}届" or ""
+            city = "、".join(it.get("LocNames") or []) or city_from_title(it.get("JobAdName", "")) or "待核实"
             out.append({
                 "key": make_key(site["name"], str(it["JobAdId"]),
-                                "、".join(it.get("LocNames") or []), batch),
+                                city, batch),
                 "company": site["name"],
                 "title": (it.get("JobAdName") or "").strip(),
-                "city": "、".join(it.get("LocNames") or []) or "待核实",
+                "city": city,
                 "type": it.get("Category") or ("校招" if site.get("category") == "2" else "社招"),
                 "batch": batch,
                 "grad_year": extract_grad(it.get("JobAdName", "")) or extract_grad(batch),
@@ -355,14 +374,18 @@ def scan_feishu(site: dict) -> list:
                     pass
         pg.on("response", on_resp)
         # networkidle 在慢门户上易超时；部分门户首个请求 405 后重试（csrf 流程）：
-        # domcontentloaded + 显式等到 200 的岗位响应（最长 25s）+ 兜底等待
+        # domcontentloaded + 显式等到 200 的岗位响应（最长 45s，/s/ 分享短链会先 302）+ 兜底等待
         with pg.expect_response(
                 lambda r: "search/job/posts" in r.url and r.status == 200,
-                timeout=25000) as ri:
+                timeout=45000) as ri:
             pg.goto(site["url"], timeout=60000, wait_until="domcontentloaded")
-            pg.wait_for_timeout(3000)
+            pg.wait_for_timeout(4000)
             try:                      # 营销落地页需点「职位」进入列表路由才发岗位 XHR
                 pg.locator("text=职位").first.click(timeout=4000)
+            except Exception:
+                pass
+            try:                      # /s/xxx 内推分享页需点「查看全部职位/校招内推」类入口
+                pg.locator("text=/查看全部职位|校招内推|社招内推|全部职位|查看更多|校园招聘/").first.click(timeout=5000)
             except Exception:
                 pass
         pg.wait_for_timeout(2500)
@@ -402,7 +425,121 @@ def scan_feishu(site: dict) -> list:
     return out
 
 
-ADAPTERS = {"zhiye": scan_zhiye, "feishu": scan_feishu}
+def scan_hotjob(site: dict) -> list:
+    """大易招聘系统（wecruit.hotjob.cn）：公开分页接口，表单 POST，无需登录。
+
+    site: {name, su, base?, url?, label?, type_label?, recruit_type?}
+    实测（2026-11-10）：POST /wecruit/positionInfo/listPosition/{su}，
+    body=recruitType=1&currentPage=1&pageSize=10&coordinateLat=&coordinateLng=
+    返回 data.pageForm.pageData[{postId, postName, postTypeName, workPlaceStr, ...}]
+    """
+    import requests, time as _t
+    su = site["su"]
+    base = (site.get("base") or "https://wecruit.hotjob.cn").rstrip("/")
+    referer = site.get("url") or f"{base}/{su}/mc/position/campus"
+    s = requests.Session()
+    s.headers.update({"User-Agent": UA, "X-Requested-With": "XMLHttpRequest",
+                      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                      "Referer": referer.split("?")[0]})
+    api = f"{base}/wecruit/positionInfo/listPosition/{su}?iSaJAx=isAjax&request_locale=zh_CN"
+    out, page = [], 1
+    while page <= 20:                      # 上限 20 页 × 10，防失控
+        r = s.post(api, data={"recruitType": site.get("recruit_type", 1),
+                              "currentPage": page, "pageSize": 10,
+                              "coordinateLat": "", "coordinateLng": ""}, timeout=25)
+        pf = ((r.json().get("data") or {}).get("pageForm") or {})
+        data = pf.get("pageData") or []
+        if not data:
+            break
+        for it in data:
+            title = (it.get("postName") or "").strip()
+            pid = str(it.get("postId") or it.get("postCode") or title)
+            city = (it.get("workPlaceStr") or "").strip() or "待核实"
+            kind = (it.get("postTypeName") or "").strip()
+            proj = (it.get("projectName") or "").strip()
+            out.append({
+                "key": make_key(site["name"], pid, city, site.get("label", "")),
+                "company": site["name"], "title": title, "city": city,
+                "type": site.get("type_label", "校招"),
+                "batch": site.get("label", ""),
+                "grad_year": extract_grad(title) or extract_grad(site.get("label", "")),
+                "duty": "、".join(x for x in (kind, proj) if x), "require": "",
+                "jd": "、".join(x for x in (kind, proj) if x),
+                "links": [f"{base}/{su}/mc/position/detail/{pid}", referer.split("?")[0]],
+                "src": "hotjob", "label": site.get("label", "")})
+        if page >= (pf.get("totalPage") or 1):
+            break
+        page += 1
+        _t.sleep(0.8)
+    print(f"  [hotjob] {site['name']}({site.get('label', '')}): {len(out)} 岗")
+    return out
+
+
+def scan_moka(site: dict) -> list:
+    """Moka 招聘门户（app.mokahr.com）：jobs 接口响应加密，改为渲染列表页后
+    从 DOM 抓岗位卡（a[href*="#/job/"]），只读公开列表，不登录。
+
+    site: {name, url, label?, type_label?}  url 为智能表核验过的校招入口
+    实测（2026-11-10，大疆）：卡片文本形如「标题|类别|||广东·深圳市|职位简介：…」
+    """
+    from playwright.sync_api import sync_playwright
+    base_url = site["url"].split("#")[0]
+    out: dict = {}
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception:
+            browser = p.chromium.launch(channel="msedge")
+        pg = browser.new_page(user_agent=UA)
+        pg.goto(base_url + "#/jobs", timeout=60000, wait_until="domcontentloaded")
+        pg.wait_for_timeout(5000)
+        for _ in range(6):                 # 滚动触发懒加载
+            pg.mouse.wheel(0, 4000)
+            pg.wait_for_timeout(1200)
+        cards = pg.evaluate(
+            "() => [...document.querySelectorAll('a[href*=\"#/job/\"]')].map(a => ({"
+            "href: a.getAttribute('href') || '', txt: (a.innerText || '').trim()}))")
+        browser.close()
+    city_pat = re.compile(r"北京|上海|深圳|广州|苏州|南京|杭州|成都|武汉|西安|合肥|常州|"
+                          r"无锡|宁波|天津|重庆|东莞|佛山|珠海|香港|长沙|郑州|济南|厦门")
+    for c in cards:
+        href = (c.get("href") or "").strip()
+        lines = [x.strip() for x in (c.get("txt") or "").split("\n") if x.strip()]
+        if not href or not lines:
+            continue
+        # 首行可能是「热招」徽标，跳过它取真正的岗位名
+        title = ""
+        for x in lines:
+            if len(x) >= 5 and not x.startswith(("职位简介", "投递", "收藏", "分享")):
+                title = re.sub(r"^热招\s*", "", x)[:90]
+                break
+        if not title:
+            continue
+        link = href if href.startswith("http") else base_url + href
+        m = re.search(r"#/job/([0-9a-zA-Z-]{8,})", href)
+        jid = m.group(1) if m else link
+        if jid in out:
+            continue
+        city = next((x for x in lines if x != title and city_pat.search(x)
+                     and len(x) <= 24), "")
+        city = re.sub(r"^[^·]*·", "", city).strip() or city_from_title(title)
+        jd_i = next((i for i, x in enumerate(lines) if x.startswith("职位简介")), None)
+        jd = (lines[jd_i].split("：", 1)[-1] if jd_i is not None
+              and "：" in lines[jd_i] else " ".join(lines[1:4]))[:400]
+        out[jid] = {
+            "key": make_key(site["name"], jid, city, site.get("label", "")),
+            "company": site["name"], "title": title, "city": city or "待核实",
+            "type": site.get("type_label", "校招"),
+            "batch": site.get("label", ""),
+            "grad_year": extract_grad(title) or extract_grad(site.get("label", "")),
+            "duty": jd, "require": "", "jd": jd,
+            "links": [link, base_url], "src": "moka", "label": site.get("label", "")}
+    print(f"  [moka] {site['name']}({site.get('label', '')}): {len(out)} 岗")
+    return list(out.values())
+
+
+ADAPTERS = {"zhiye": scan_zhiye, "feishu": scan_feishu,
+            "hotjob": scan_hotjob, "moka": scan_moka}
 
 
 # ---------------------------------------------------------------- main
@@ -419,7 +556,18 @@ def scan_all() -> int:
         site.setdefault("label", "")
         sid = f"{comp['company_name']}·{site.get('label', '')}"
         try:
-            jobs = ADAPTERS[comp["ats_type"]](site)
+            jobs = None
+            for attempt in (1, 2):          # 渲染类源偶发超时（csrf 流程/慢页面），重试一次
+                try:
+                    jobs = ADAPTERS[comp["ats_type"]](site)
+                    break
+                except Exception as e:
+                    if attempt == 1:
+                        print(f"  [retry] {site['name']}: {type(e).__name__}，重试一次")
+                        import time as _t2
+                        _t2.sleep(3)
+                    else:
+                        raise
             kept = []
             for j in jobs:
                 if EXCLUDE_PAT.search(j.get("title") or ""):

@@ -21,26 +21,39 @@
 
 ```mermaid
 flowchart LR
-    A[content/*.md<br/>913 题卡] --> B[tools/build.py]
+    A[content/*.md<br/>936 题卡] --> B[tools/build.py]
     C[companies/*.json<br/>targets / radar_companies / jobs / profiles] --> B
-    D[sources/jobs_radar.json<br/>岗位快照 351 岗] --> B
+    D[sources/jobs_radar.json<br/>岗位快照 667+ 岗] --> B
+    N[sources/nowcoder_*<br/>面经索引 + 真题卷元数据] --> B
     B --> E[dist/bank.html<br/>单文件离线页]
-    F[companies/radar_companies.json<br/>公司池 47 条] --> G[tools/job_radar.py --scan]
+    F[companies/radar_companies.json<br/>公司池 51 条] --> G[tools/job_radar.py --scan]
     G --> D
+    G2[zhiye·feishu·moka·hotjob<br/>4 种 ATS 适配器] --> G
     H[.github/workflows/radar.yml<br/>每日 09:30] --> G
+    NC[tools/nc_collect.py<br/>每周增量采集] --> N
     I[.github/workflows/ci.yml] --> J[validate / build / audit / radar_test]
     J --> E
 ```
 
 用户浏览器里的自评、错题、收藏、忽略全部写 localStorage，**不回写仓库**；换设备用题库页「备份↓」导出 JSON。
 
+## 二之一、采集适配器（4 种 ATS）
+
+| ATS | 公司样例 | 方式 | 要点 |
+|---|---|---|---|
+| zhiye 智业云 | 宇树/优必选/联影/埃斯顿/黑芝麻/柏楚/普渡 | requests POST 直连 | portalId 缺失时逐候选探测 |
+| feishu 飞书招聘 | 智元/启元/Momenta/小鹏/轻舟/小马/蔚来/禾赛/拓竹 | Playwright 监听 `search/job/posts` | 405-csrf 重试流程；/s/ 分享页需点「查看全部职位/校招内推」；渲染慢，failed 自动重试 1 次 |
+| moka Moka | 元戎/文远知行/大疆/燧原/银河通用 | Playwright 抓 `a[href*="#/job/"]` DOM | jobs 接口响应加密，只能走 DOM；卡片文本含标题/城市/简介 |
+| hotjob 大易 | 地平线（wecruit.hotjob.cn） | requests 表单 POST 分页 | 接口公开明文；`recruitType=1&currentPage=N`；详情链 `/mc/position/detail/{postId}` |
+
 ## 三、三个「池」必须分开理解
 
 | 对象 | 文件 | 数量（2026-11-10） | 含义 |
 |---|---|---|---|
 | 目标公司池 | `companies/targets.json` | 128 家 | 题库公司/岗位族索引口径，按 JD 推导，**不是真实考题** |
-| 雷达公司池 | `companies/radar_companies.json` | 47 条 / 45 家去重 | 招聘入口登记表；`enabled=true` 且带 `source` 的 9 条才实际扫描 |
-| 岗位快照 | `sources/jobs_radar.json` | 351 岗 | 官方门户扫到的岗位，带状态机与招聘性质分类 |
+| 雷达公司池 | `companies/radar_companies.json` | 51 条 / 约 49 家去重 | 招聘入口登记表；`enabled=true` 且带 `source` 的 23 条才实际扫描 |
+| 岗位快照 | `sources/jobs_radar.json` | 667+ 岗 | 官方门户扫到的岗位，带状态机与招聘性质分类 |
+| 牛客同步 | `sources/nowcoder_experiences.jsonl` + `nowcoder_papers.csv` | 面经 22 篇 / 真题卷 124 套 | 每周增量；真题卷只存元数据 |
 
 「公司」视图把前两者按名称合并（别名表 `NAME_ALIAS` 处理「小鹏集团 → 小鹏」），
 同名去重后 152 家，并把第三者的岗位按公司聚合展示。

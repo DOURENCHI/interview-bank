@@ -98,11 +98,15 @@
     "推理部署"
    ],
    "tier": "B",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口待核验"
+   "career_url": "https://app.mokahr.com/m/campus-recruitment/yinhetongyong/165930",
+   "ats_type": "moka",
+   "source": {
+    "url": "https://app.mokahr.com/m/campus-recruitment/yinhetongyong/165930",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：Moka 校招入口（北京/深圳/苏州）"
   },
   {
    "company_id": "星海图",
@@ -279,11 +283,17 @@
     "异构计算"
    ],
    "tier": "A",
-   "career_url": "https://horizon-campus.hotjob.cn/",
+   "career_url": "https://wecruit.hotjob.cn/SU62d915040dcad43c775ec12c/mc/position/campus",
    "ats_type": "hotjob",
-   "source": null,
-   "enabled": false,
-   "note": "入口已核验（hotjob 大易系），适配器待写"
+   "source": {
+    "su": "SU62d915040dcad43c775ec12c",
+    "base": "https://wecruit.hotjob.cn",
+    "url": "https://wecruit.hotjob.cn/SU62d915040dcad43c775ec12c/mc/position/campus",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：大易 wecruit 校招接口明文可用"
   },
   {
    "company_id": "毫末智行",
@@ -309,11 +319,15 @@
     "C++SDK"
    ],
    "tier": "B",
-   "career_url": "https://campus.deeproute.cn",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口已核验，自建站接口待适配"
+   "career_url": "https://app.mokahr.com/campus-recruitment/deeproute/145894",
+   "ats_type": "moka",
+   "source": {
+    "url": "https://app.mokahr.com/campus-recruitment/deeproute/145894",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：Moka 校招入口"
   },
   {
    "company_id": "小马智行",
@@ -324,11 +338,15 @@
     "感知部署"
    ],
    "tier": "B",
-   "career_url": "https://campus.pony.ai",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口已确认，接口待核验"
+   "career_url": "https://ponyai.jobs.feishu.cn/s/9NZJlh4cpL8",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://ponyai.jobs.feishu.cn/s/9NZJlh4cpL8",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：27届秋招，北京/广州/上海"
   },
   {
    "company_id": "文远知行",
@@ -339,11 +357,15 @@
     "推理部署"
    ],
    "tier": "B",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口待核验"
+   "career_url": "https://app.mokahr.com/campus_apply/jingchi/2137",
+   "ats_type": "moka",
+   "source": {
+    "url": "https://app.mokahr.com/campus_apply/jingchi/2137",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：Moka 校招入口"
   },
   {
    "company_id": "轻舟智航",
@@ -354,11 +376,15 @@
     "感知部署"
    ],
    "tier": "C",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "观察"
+   "career_url": "https://qcraft.jobs.feishu.cn/s/yxH8NMS4XGc",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://qcraft.jobs.feishu.cn/s/yxH8NMS4XGc",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表2026-11-10）：27届秋招，北京/苏州"
   },
   {
    "company_id": "百度apollo",
@@ -385,11 +411,14 @@
     "异构计算"
    ],
    "tier": "B",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口待核验"
+   "career_url": "https://bsthr.zhiye.com/campus",
+   "ats_type": "zhiye",
+   "source": {
+    "base": "https://bsthr.zhiye.com",
+    "category": "2"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：27届秋招，zhiye 校招入口"
   },
   {
    "company_id": "芯驰科技",
@@ -445,11 +474,15 @@
     "异构计算"
    ],
    "tier": "C",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "观察"
+   "career_url": "https://app.mokahr.com/campus-recruitment/enflame/168420",
+   "ats_type": "moka",
+   "source": {
+    "url": "https://app.mokahr.com/campus-recruitment/enflame/168420",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：Moka 校招入口"
   },
   {
    "company_id": "埃斯顿自动化",
@@ -652,11 +685,15 @@
     "机器人软件"
    ],
    "tier": "B",
-   "career_url": "https://careers.dji.com/zh-CN/campus",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "入口已确认，接口待核验"
+   "career_url": "https://app.mokahr.com/m/campus-recruitment/dji/143359",
+   "ats_type": "moka",
+   "source": {
+    "url": "https://app.mokahr.com/m/campus-recruitment/dji/143359",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验（智能表）：Moka 校招入口（深圳/北京/上海）"
   },
   {
    "company_id": "小鹏集团_2027届探索者计划",
@@ -710,11 +747,15 @@
    "category": "其他(core池)",
    "directions": [],
    "tier": "B",
-   "career_url": "",
-   "ats_type": "unknown",
-   "source": null,
-   "enabled": false,
-   "note": "targets 核心池；入口待核验"
+   "career_url": "https://nio.jobs.feishu.cn/campus",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://nio.jobs.feishu.cn/campus",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "已核验：标准 campus 列表页（/s/ 分享页仅 10 条）；27届校招，上海/合肥/北京/深圳"
   },
   {
    "company_id": "小鹏",
@@ -739,6 +780,87 @@
    "source": null,
    "enabled": false,
    "note": "targets 核心池；入口待核验"
+  },
+  {
+   "company_id": "禾赛科技",
+   "company_name": "禾赛科技",
+   "category": "自动驾驶/智能驾驶",
+   "directions": [
+    "C++ SDK",
+    "推理部署",
+    "嵌入式"
+   ],
+   "tier": "B",
+   "career_url": "https://kwh0jtf778.jobs.feishu.cn/s/fT1cgIjWdbE",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://kwh0jtf778.jobs.feishu.cn/s/fT1cgIjWdbE",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "新增（智能表核验）：车规激光雷达龙头，上海/杭州"
+  },
+  {
+   "company_id": "拓竹科技",
+   "company_name": "拓竹科技",
+   "category": "智能硬件/消费机器人",
+   "directions": [
+    "嵌入式",
+    "机器人软件",
+    "推理部署"
+   ],
+   "tier": "B",
+   "career_url": "https://bambulab.jobs.feishu.cn/s/bWi9cqMTpyw",
+   "ats_type": "feishu",
+   "source": {
+    "url": "https://bambulab.jobs.feishu.cn/s/bWi9cqMTpyw",
+    "label": "27届秋招",
+    "type_label": "校招"
+   },
+   "enabled": true,
+   "note": "新增（智能表核验）：消费级 3D 打印/智能硬件，深圳/上海/杭州"
+  },
+  {
+   "company_id": "柏楚电子",
+   "company_name": "柏楚电子",
+   "category": "工业自动化/机器人",
+   "directions": [
+    "C++ SDK",
+    "嵌入式",
+    "运动控制"
+   ],
+   "tier": "B",
+   "career_url": "https://fscut.zhiye.com/campus",
+   "ats_type": "zhiye",
+   "source": {
+    "base": "https://fscut.zhiye.com",
+    "category": "2"
+   },
+   "enabled": true,
+   "note": "新增（智能表核验）：激光切割控制系统龙头，上海/南京，C++/运动控制对口"
+  },
+  {
+   "company_id": "普渡机器人",
+   "company_name": "普渡机器人",
+   "category": "移动机器人/AMR",
+   "directions": [
+    "机器人软件",
+    "嵌入式",
+    "系统集成"
+   ],
+   "tier": "C",
+   "career_url": "https://pudutech1.zhiye.com/campus",
+   "ats_type": "zhiye",
+   "source": {
+    "base": "https://pudutech1.zhiye.com",
+    "category": "2"
+   },
+   "enabled": true,
+   "note": "新增（智能表核验）：商用配送机器人，深圳/成都"
   }
+ ],
+ "_sources": [
+  "入口批量核验来源：腾讯文档智能表「2027届秋招内推汇总」DY3pHYkNvb0ZRSHdi（硬件&机器人/智驾&新能源/实习内推，2026-11-10 抓取）；已剥离内推码，只登记官方入口"
  ]
 }
