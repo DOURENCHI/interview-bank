@@ -1,0 +1,945 @@
+@@ Q-5101
+@STEM
+**题目**：
+
+```python
+def add(item, bucket=[]):
+    bucket.append(item)
+    return bucket
+
+add(1)      # [1]
+add(2)      # 你以为是 [2]？
+```
+
+**问**：默认参数 `bucket=[]` 为什么会被"记住"？怎么正确写？
+@ANSWER
+因为**默认值在函数定义时求值一次**，之后每次调用都用同一个对象。所以两次 `add` 操作的是同一个 list，第二次返回 `[1, 2]`。
+
+正确写法是用 `None` 做哨兵，在函数体内创建：
+```python
+def add(item, bucket=None):
+    if bucket is None:
+        bucket = []
+    bucket.append(item)
+    return bucket
+```
+@DEEP
+```python
+def bad(x, acc=[]):
+    acc.append(x)
+    return acc
+
+bad(1)   # [1]
+bad(2)   # [1, 2]   ← 不是 [2]
+bad.__defaults__      # ([1, 2],)   能直接看到被改掉的默认值
+```
+
+| 默认值类型 | 是否安全 | 原因 |
+|---|---|---|
+| `int` / `str` / `tuple` | ✅ | 不可变 |
+| `[]` / `{}` / `set()` | ❌ | 可变，被所有调用共享 |
+| `None` | ✅ | 哨兵，函数内再创建 |
+| 自定义可变对象 | ❌ | 同上 |
+
+**为什么这样设计**：默认值属于**函数对象**的一部分（存在 `__defaults__` 里），不是每次调用重新构造。这样省了重复求值的开销，代价是可变对象会被共享。
+
+**同样的坑在类属性上**：`class A: items = []` 也是所有实例共享一个 list——这是 Python 里最经典的两个"共享可变状态"陷阱。
+@FOLLOW
+1. **怎么发现这类 bug？** —— 看 `func.__defaults__`，或者在默认值里塞个可变对象跑两次。
+2. **`None` 当哨兵有什么问题？** —— 如果 `None` 是合法值，就要用别的哨兵对象（`_sentinel = object()`）。
+3. **类属性怎么避免？** —— 在 `__init__` 里 `self.items = []`，放到实例上。
+@TRAPS
+- 用 `[]` / `{}` 当默认值
+- 以为"每次调用会重新创建"
+- 类属性当实例属性用
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 语言机制（预测题，非真实面经）
+
+@@ Q-5102
+@STEM
+**题目**：
+
+```python
+a = 256;  b = 256;   a is b   # True
+c = 257;  d = 257;   c is d   # False（交互式环境下）
+e = [1];  f = [1];   e == f   # True
+                     e is f   # False
+```
+
+**问**：`is` 和 `==` 有什么区别？为什么 256 是 True 而 257 是 False？
+@ANSWER
+`==` 比较**值**，`is` 比较**是否是同一个对象**（内存地址）。
+
+256 是 True 是因为 CPython 缓存了 **-5 ~ 256** 的小整数，`a` 和 `b` 指向同一个对象；257 超出范围，会新建两个对象，所以 `is` 为 False（同一代码块里编译期常量折叠可能让它变 True，这是实现细节，不能依赖）。
+@DEEP
+```python
+import sys
+a, b = 256, 256
+a is b            # True（小整数缓存）
+sys.getrefcount(a)
+
+c, d = 257, 257
+c is d            # 交互式下 False，同一 .py 文件里可能 True（常量折叠）
+
+# 判断 None 必须用 is
+if x is None: ...        # ✅
+if x == None: ...        # ❌ 慢，且自定义 __eq__ 会让它返回奇怪结果
+```
+
+| 场景 | 用哪个 |
+|---|---|
+| 判 `None` / `True` / `False` | `is` |
+| 判数值、字符串内容 | `==` |
+| 判是否同一对象（缓存、单例） | `is` |
+| 判浮点相等 | `math.isclose` |
+
+**为什么 `is None` 比 `== None` 好**：`None` 是单例，`is` 是 O(1) 的地址比较；而 `==` 会调用 `__eq__`，如果对象重载了它（如 numpy 数组）会返回数组，`if` 判断直接报错。
+
+**字符串驻留（interning）**：短标识符字符串会被复用，所以 `'abc' is 'abc'` 通常 True，但 `'a b' is 'a b'` 不一定——**永远不要用 `is` 比较字符串**。
+@FOLLOW
+1. **numpy 数组为什么不能用 `==`？** —— 返回逐元素布尔数组，`if` 里报 `truth value is ambiguous`。
+2. **`is` 能重载吗？** —— 不能，它比较地址。
+3. **小整数缓存范围能改吗？** —— 不能（编译期常量），但可以自己维护缓存。
+@TRAPS
+- 用 `is` 比较数值或字符串
+- 用 `== None`
+- 依赖 257 的 `is` 结果（实现细节）
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 对象模型（预测题，非真实面经）
+
+@@ Q-5103
+@STEM
+**题目**：
+
+```python
+a = [1, 2, 3, 4, 5]
+a[1:3]      # ?
+a[::-1]     # ?
+a[10:20]    # ?
+b = a[:]    # b 和 a 什么关系？
+```
+
+**问**：切片返回的是拷贝还是视图？负步长和越界切片怎么处理？
+@ANSWER
+Python 的切片**返回新列表（浅拷贝）**，不是视图。所以 `b = a[:]` 之后改 `b` 不影响 `a`（但元素是同一批对象，改元素内部属性会互相影响）。
+
+越界切片**不报错**，会自动截断到边界。负步长表示反向，`a[::-1]` 是反转。
+@DEEP
+```python
+a = [1, 2, 3, 4, 5]
+a[1:3]      # [2, 3]        左闭右开
+a[::-1]     # [5, 4, 3, 2, 1]
+a[10:20]    # []            越界不报错
+a[-2:]      # [4, 5]
+a[::2]      # [1, 3, 5]
+
+b = a[:]                 # 浅拷贝
+b.append(6)              # a 不受影响
+c = a                    # 别名，改 c 就是改 a
+```
+
+| 表达式 | 结果 | 说明 |
+|---|---|---|
+| `a[1:3]` | 新列表 | 浅拷贝 |
+| `a[:]` | 新列表 | 常用浅拷贝写法 |
+| `a[10:20]` | `[]` | 越界截断 |
+| `a[::-1]` | 反转副本 | 不是原地 |
+| `a.reverse()` | `None` | **原地**，返回 None |
+
+**对比 numpy**：numpy 的切片是**视图**（`a[1:3]` 不复制），改视图会影响原数组。所以"Python 切片是拷贝"这个结论**只对内置序列成立**，套到 numpy 上会出 bug——这是数据科学代码里最常见的误判之一。
+
+**切片赋值能改长度**：`a[1:3] = [9]` 会把两个元素换成一个。
+@FOLLOW
+1. **怎么原地反转？** —— `a.reverse()` 或 `a[:] = a[::-1]`。
+2. **切片能用在字符串上吗？** —— 能，返回新字符串。
+3. **`a[:]` 和 `copy.copy(a)` 有区别吗？** —— 对 list 等价；对自定义对象语义相同。
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 序列操作（预测题，非真实面经）
+
+@@ Q-5104
+@STEM
+**题目**：
+
+```python
+funcs = [lambda: i for i in range(3)]
+[f() for f in funcs]     # 你以为 [0,1,2]？
+```
+
+**问**：输出是什么？为什么？闭包捕获的是值还是变量？
+@ANSWER
+输出 `[2, 2, 2]`。因为 lambda 捕获的是**变量 `i` 本身**（延迟绑定），不是当时的值；等 lambda 被调用时，循环已结束，`i` 是 2。
+
+修复方法是把值绑成默认参数：`lambda i=i: i`，或者用 `functools.partial`。
+@DEEP
+```python
+# ❌ 延迟绑定
+funcs = [lambda: i for i in range(3)]
+[f() for f in funcs]        # [2, 2, 2]
+
+# ✅ 默认参数立即绑定
+funcs = [lambda i=i: i for i in range(3)]
+[f() for f in funcs]        # [0, 1, 2]
+
+# ✅ partial
+from functools import partial
+funcs = [partial(lambda x: x, i) for i in range(3)]
+```
+
+**LEGB 规则**（查找顺序）：Local → Enclosing → Global → Built-in。
+
+```python
+x = 'global'
+def outer():
+    x = 'enclosing'
+    def inner():
+        nonlocal x       # 不加这行，x = ... 会创建局部变量
+        x = 'changed'
+    inner()
+    return x             # 'changed'
+```
+
+| 关键字 | 作用 |
+|---|---|
+| `global` | 声明后面用的是全局变量 |
+| `nonlocal` | 声明用的是外层函数的变量 |
+| 都没有 | 赋值即创建局部变量 |
+
+**`nonlocal` 的必要性**：函数内对变量**赋值**就会让它变成局部变量，读外层变量不报错但改不了——想改必须 `nonlocal`。
+@FOLLOW
+1. **为什么 lambda 会延迟绑定？** —— 闭包保存的是作用域引用，不是值快照。
+2. **循环变量在 Python 3 里泄漏吗？** —— 不泄漏（Python 3 有独立作用域），Python 2 会。
+3. **装饰器里的闭包有什么坑？** —— 同理，装饰器工厂的参数要立即绑定。
+@TRAPS
+- 在循环里创建 lambda 并用循环变量
+- 想改外层变量却忘了 `nonlocal`
+- 以为 Python 3 的循环变量会泄漏
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 作用域与闭包（预测题，非真实面经）
+
+@@ Q-5105
+@STEM
+**题目**：写一个计时装饰器，要求保留原函数的名字和文档字符串。
+
+**问**：装饰器的本质是什么？为什么必须加 `functools.wraps`？
+@ANSWER
+本质是**接收函数、返回函数的高阶函数**，`@dec` 只是 `f = dec(f)` 的语法糖。
+
+不加 `functools.wraps` 的话，包装后的函数 `__name__` 变成 `wrapper`、`__doc__` 丢失、签名也变了——这会让日志、调试、框架（如 Flask 路由、pytest）全部失灵。
+@DEEP
+```python
+from functools import wraps
+import time
+
+def timer(fn):
+    @wraps(fn)                      # ← 关键：复制 __name__/__doc__/__wrapped__
+    def wrapper(*args, **kwargs):
+        t0 = time.perf_counter()
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            print(f"{fn.__name__}: {time.perf_counter()-t0:.3f}s")
+    return wrapper
+
+@timer
+def work(n): 
+    """干活"""
+    return sum(range(n))
+
+work.__name__     # 'work'（没有 wraps 会是 'wrapper'）
+```
+
+| 写法 | 用途 |
+|---|---|
+| 函数装饰器 | 最常用 |
+| 带参数的装饰器 | 需要三层（工厂 → 装饰器 → wrapper） |
+| 类装饰器 | 用 `__call__`，适合需要状态的场景 |
+| `functools.wraps` | **必加**，保留元数据 |
+
+**带参数的装饰器要三层**：
+```python
+def retry(times=3):
+    def deco(fn):
+        @wraps(fn)
+        def wrapper(*a, **kw): ...
+        return wrapper
+    return deco
+
+@retry(times=5)
+def f(): ...
+```
+
+**顺序**：多个装饰器**从下往上**应用（离函数最近的先生效）。
+@FOLLOW
+1. **装饰器能拦住异常吗？** —— 能，在 wrapper 里 try/except。
+2. **怎么拿到原函数？** —— `wrapper.__wrapped__`（`wraps` 自动设的）。
+3. **类方法和静态方法能装饰吗？** —— 能，注意 `@classmethod` 要放最外层。
+@TRAPS
+- 不加 `functools.wraps`，调试时全是 wrapper
+- 带参数的装饰器少写一层
+- 装饰器顺序搞反
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 装饰器（预测题，非真实面经）
+
+@@ Q-5106
+@STEM
+**题目**：
+
+```python
+import copy
+a = [[1, 2], [3, 4]]
+b = a[:]              # 或 copy.copy(a)
+b[0][0] = 99
+print(a)              # ?
+```
+
+**问**：输出是什么？浅拷贝和深拷贝的区别在哪？
+@ANSWER
+输出 `[[99, 2], [3, 4]]`——`a` 被改了。因为浅拷贝只复制**外层容器**，内层列表仍是同一批对象，改内层会互相影响。
+
+深拷贝（`copy.deepcopy`）会递归复制所有层级，彻底独立，代价是更慢、更深。
+@DEEP
+```python
+import copy
+a = [[1, 2], [3, 4]]
+
+b = a[:]              # 浅拷贝：外层新建，内层共享
+b[0][0] = 99          # a 也变了
+
+c = copy.deepcopy(a)  # 深拷贝：完全独立
+c[0][0] = 0           # a 不受影响
+```
+
+| 方式 | 外层 | 内层 | 速度 |
+|---|---|---|---|
+| `b = a` | 共享 | 共享 | 最快（别名） |
+| `a[:]` / `copy.copy` | 新建 | **共享** | 快 |
+| `copy.deepcopy` | 新建 | 新建 | 慢 |
+
+**deepcopy 怎么处理循环引用**：内部用 `memo` 字典记录已复制的对象，遇到环就复用，所以 `a.append(a)` 也能正确深拷贝。
+
+**不可变对象不用深拷贝**：`int`、`str`、`tuple`（元素都不可变）深拷贝会直接返回原对象。
+
+**工程建议**：能用不可变结构（tuple、frozenset、namedtuple）就别用嵌套 list——避免整个拷贝语义的问题。
+@FOLLOW
+1. **`deepcopy` 能复制函数/类吗？** —— 类实例可以，模块/函数返回原对象。
+2. **numpy 数组拷贝？** —— `arr.copy()`，切片是视图不是拷贝。
+3. **怎么判断两个对象是否共享？** —— `id(a[0]) == id(b[0])`。
+@TRAPS
+- 用 `a[:]` 以为得到完全独立的副本
+- 对 numpy 切片误以为是拷贝
+- 深拷贝大对象导致性能问题
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 拷贝语义（预测题，非真实面经）
+
+@@ Q-5107
+@STEM
+**题目**：`s = "abc"; s[0] = 'x'` 报错；但 `lst = [1,2]; lst[0] = 9` 可以。
+
+**问**：可变与不可变对象有什么区别？这个区别对工程有什么实际影响？
+@ANSWER
+不可变对象的**值不能改**，任何"修改"都会创建新对象（`s = s + 'd'` 是新字符串）；可变对象的**内容可以原地改**。
+
+实际影响有三处：**能否当 dict key**（必须可哈希，通常要求不可变）、**函数传参行为**（可变对象会被函数改掉）、**多线程安全性**（不可变对象天然线程安全）。
+@DEEP
+| 类型 | 可变 | 可哈希（可当 key） |
+|---|---|---|
+| `int` `float` `str` `bool` | ❌ | ✅ |
+| `tuple` | ❌ | ✅（元素都可哈希时） |
+| `None` | ❌ | ✅ |
+| `list` `dict` `set` | ✅ | ❌ |
+| `frozenset` | ❌ | ✅ |
+
+```python
+def f(lst):
+    lst.append(1)      # 会改到调用方的 list
+
+def g(s):
+    s += "x"           # 只改局部名，调用方不受影响
+```
+
+**"传参是值传递还是引用传递"**：Python 是**传对象引用**（call by object reference）——函数拿到的是同一个对象的引用，但重新赋值只是让局部名指向新对象。
+
+**不可变的代价**：字符串拼接会产生新对象，循环里 `+=` 可能退化成 O(n²)（见字符串拼接那题）。
+
+**tuple 不总是不可哈希**：`(1, [2])` 含可变元素就不能当 key。
+@FOLLOW
+1. **为什么 dict 的 key 必须可哈希？** —— 要靠哈希值定位，值变了哈希就变了，找不到。
+2. **自定义对象能当 key 吗？** —— 实现 `__hash__` 和 `__eq__`，且参与哈希的字段不能变。
+3. **`tuple` 比 `list` 快多少？** —— 创建快、内存小（约 40 vs 56 字节起），遍历差异不大。
+@TRAPS
+- 用 list 当 dict key（报 unhashable）
+- 以为函数传参是纯值传递
+- 用含 list 的 tuple 当 key
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 数据类型（预测题，非真实面经）
+
+@@ Q-5108
+@STEM
+**题目**：存一组固定不变的坐标，用 `list` 还是 `tuple`？
+
+**问**：`list` 和 `tuple` 该怎么选？除了"能不能改"，还有什么差别？
+@ANSWER
+除了可变性，还有三条实际差别：**tuple 更省内存、创建更快**、**可哈希（能当 dict key / set 元素）**、**语义上表达"结构固定"**。
+
+所以"固定的一组值"（坐标、RGB、函数返回多值）用 tuple；"会增删改的集合"用 list。
+@DEEP
+```python
+import sys
+sys.getsizeof((1,2,3))     # 64
+sys.getsizeof([1,2,3])     # 88（多一个容量字段和指针数组）
+
+# tuple 可哈希
+d = {(1, 2): "point"}      # ✅
+# d = {[1, 2]: "point"}    # ❌ unhashable
+
+# 函数返回多值本质是 tuple
+def f(): return 1, 2
+x, y = f()                 # 解包
+```
+
+| 维度 | list | tuple |
+|---|---|---|
+| 可变 | ✅ | ❌ |
+| 内存（3 元素） | 88 B | 64 B |
+| 可哈希 | ❌ | ✅（元素可哈希时） |
+| 方法 | 多（append/sort…） | 少（count/index） |
+| 语义 | 同质集合 | 异构记录 |
+
+**性能提示**：tuple 的常量会被编译器缓存复用，`a = (1,2,3)` 两次可能指向同一对象；list 每次都要新建。
+
+**用 tuple 表达"记录"更清晰**：`(x, y)` 是坐标，`[x, y]` 是"一个列表"。虽然 Python 不强制，但语义清楚能减少 bug（比如误 append）。
+@FOLLOW
+1. **namedtuple 有什么用？** —— 带字段名的 tuple，可读性更好且仍是 tuple。
+2. **tuple 里有 list 能改吗？** —— 能改 list 内容，但不能换掉那个 list 引用。
+3. **`tuple()` 转换有开销吗？** —— 有，会复制。
+@TRAPS
+- 用 list 当 dict key
+- 以为 tuple 里面的可变元素也被冻结
+- 为省内存滥用 tuple 导致需要改时很别扭
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 容器选型（预测题，非真实面经）
+
+@@ Q-5109
+@STEM
+**题目**：面试官问"dict 查找为什么是 O(1)"，接着追问"那最坏情况呢"。
+
+**问**：Python 的 dict 底层是怎么实现的？为什么 3.7 起"有序"？
+@ANSWER
+dict 是**哈希表**：key 先算哈希值定位到槽位，冲突用**开放寻址**（探测下一个空槽），所以平均 O(1)。
+
+3.6 起 CPython 改成了 **compact dict**：用一个稀疏的索引数组 + 一个紧凑的 entries 数组，entries 按插入顺序追加，所以**遍历顺序等于插入顺序**；3.7 起这个行为写进了语言规范。
+@DEEP
+```
+3.5 之前：稀疏的哈希槽，每个槽存 (hash, key, value)
+3.6 之后：
+  indices: [None, 0, None, 1, ...]     ← 稀疏，只存 entries 的下标
+  entries: [(h, k1, v1), (h, k2, v2)]  ← 紧凑，按插入顺序
+```
+
+| 维度 | 说明 |
+|---|---|
+| 平均查找 | O(1) |
+| **最坏查找** | **O(n)**（所有 key 哈希冲突，退化） |
+| 插入顺序 | 3.7 起保证 |
+| 内存 | compact 布局比旧版省约 20–25% |
+| 扩容 | 装载因子约 2/3 时扩容，重新哈希 |
+
+**最坏情况怎么发生**：构造大量哈希值相同的 key。Python 的字符串哈希是随机化的（`PYTHONHASHSEED`），所以外部很难构造；但自定义类如果 `__hash__` 返回常数，就会全部冲突。
+
+**dict 有序 ≠ 可以排序**：有序是"插入顺序"，不是"按 key 大小"。要排序得 `sorted(d.items())`。
+
+**3.7 之前的写法要避免**：依赖 dict 顺序的代码在老版本上会随机出错。
+@FOLLOW
+1. **能一边遍历一边删吗？** —— 不能，报 `RuntimeError: dictionary changed size during iteration`；用 `list(d)` 或 `list(d.items())` 做副本。
+2. **`dict.get` 和 `d[k]` 区别？** —— 前者缺 key 返回默认值，后者抛 `KeyError`。
+3. **`defaultdict` 什么时候用？** —— 需要"缺 key 自动初始化"时，比 `setdefault` 快。
+@TRAPS
+- 说 dict 查找永远是 O(1)
+- 遍历中删除元素
+- 依赖旧版本的 dict 无序行为（或反过来依赖新版本行为却部署在老环境）
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python dict 实现（预测题，非真实面经）
+
+@@ Q-5110
+@STEM
+**题目**：`lst = [1,1,2,3,3]; list(set(lst))` 能去重，但结果顺序变了。
+
+**问**：set 去重的原理是什么？为什么结果无序？有什么代价？
+@ANSWER
+set 是**哈希表**（和 dict 同源，只存 key），插入时算哈希定位，重复的哈希+相等就丢弃，所以去重是 O(n)。
+
+无序是因为**遍历顺序由哈希值决定**，和插入顺序无关。代价是：元素必须**可哈希**（list 不行），且**丢失原始顺序**。
+@DEEP
+```python
+lst = [3, 1, 2, 1]
+list(set(lst))                  # 顺序不确定，常见 [1, 2, 3]
+
+# 保序去重（3.7+ 利用 dict 有序）
+list(dict.fromkeys(lst))        # [3, 1, 2]  ✅
+```
+
+| 需求 | 写法 | 复杂度 |
+|---|---|---|
+| 只要去重 | `set(lst)` | O(n) |
+| 去重且保序 | `dict.fromkeys(lst)` | O(n) |
+| 判存在 | `x in s` | O(1)（list 是 O(n)） |
+| 集合运算 | `& | - ^` | O(n) |
+
+**`in` 的性能差异最值得记住**：`x in list` 是 O(n)，`x in set` 是 O(1)。在循环里判断存在性时，把 list 换成 set 是最高性价比的优化之一。
+
+```python
+# ❌ O(n²)
+for x in big_list:
+    if x in another_list: ...
+
+# ✅ O(n)
+s = set(another_list)
+for x in big_list:
+    if x in s: ...
+```
+
+**frozenset**：不可变版本，可哈希，能当 dict key 或放进另一个 set。
+@FOLLOW
+1. **set 能存自定义对象吗？** —— 能，需要 `__hash__` 和 `__eq__`。
+2. **set 的元素顺序稳定吗？** —— 同一进程内稳定，跨进程可能不同（字符串哈希随机化）。
+3. **怎么求交集并保留顺序？** —— `[x for x in a if x in set_b]`。
+@TRAPS
+- 用 `list(set())` 去重后依赖顺序
+- 在循环里用 list 做存在性判断
+- 试图把 list 放进 set
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 集合（预测题，非真实面经）
+
+@@ Q-5111
+@STEM
+**题目**：按第二个字段排序一个元组列表，要求相同值时保持原顺序。
+
+**问**：Python 的排序稳定吗？`key` 函数会被调用几次？
+@ANSWER
+**稳定**。Python 用 Timsort，相等元素的相对顺序不变。`key` 函数**每个元素只调用一次**（先把 key 算出来存成临时数组，再排），所以 key 里放耗时计算也不会重复执行。
+
+代价是额外内存（要存 key 数组）。
+@DEEP
+```python
+rows = [("b", 2), ("a", 1), ("c", 2)]
+sorted(rows, key=lambda r: r[1])
+# [('a', 1), ('b', 2), ('c', 2)]   ← b 在 c 前，保持原序
+
+# 多级排序：先按第 2 字段升序，再按第 1 字段降序
+sorted(rows, key=lambda r: (r[1], r[0]))
+```
+
+| 特性 | 值 |
+|---|---|
+| 算法 | Timsort（归并 + 插入的混合） |
+| 稳定性 | ✅ 稳定 |
+| 复杂度 | 最好 O(n)，平均/最坏 O(n log n) |
+| key 调用次数 | **每元素 1 次** |
+| 额外空间 | O(n) |
+
+**`sorted` 和 `list.sort` 的区别**：前者返回新列表（任意可迭代对象），后者原地排序、返回 `None`。所以 `a = a.sort()` 会让 `a` 变成 `None`——高频错误。
+
+**多级排序的技巧**：key 返回元组即可；需要"升序+降序混合"时，对数值可以取负，或用两次 `sorted`（稳定排序保证第二次不破坏第一次的顺序）。
+@FOLLOW
+1. **怎么降序？** —— `reverse=True`，或 key 里取负。
+2. **能按多个 key 不同方向排吗？** —— 数值取负；字符串可以分两次稳定排序。
+3. **`sort` 里能用 `cmp` 吗？** —— Python 3 移除了 `cmp`，用 `functools.cmp_to_key` 转换。
+@TRAPS
+- `a = a.sort()` 得到 None
+- 以为排序不稳定
+- 在 key 里写有副作用的函数（虽然只调一次，但语义混乱）
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 排序（预测题，非真实面经）
+
+@@ Q-5112
+@STEM
+**题目**：用 list 实现队列，`pop(0)` 取出头部，数据量上万后明显变慢。
+
+**问**：为什么 `list.pop(0)` 慢？该用什么替代？
+@ANSWER
+因为 list 是**连续数组**，`pop(0)` 要把它后面所有元素**前移一位**，O(n)。循环 n 次就是 O(n²)。
+
+用 `collections.deque`（双端队列），两端插入删除都是 **O(1)**。
+@DEEP
+```python
+from collections import deque
+import timeit
+
+q = deque()
+q.append(1)          # 右端入，O(1)
+q.popleft()          # 左端出，O(1)
+
+# 性能差距
+timeit.timeit(lambda: [].pop(0), number=1)   # 示意，实际要预填充
+```
+
+| 操作 | list | deque |
+|---|---|---|
+| 尾部 append/pop | O(1) | O(1) |
+| **头部插入/删除** | **O(n)** | **O(1)** |
+| 随机访问 `q[i]` | O(1) | O(n) |
+| 中间插入 | O(n) | O(n) |
+| 内存 | 紧凑 | 分块，略大 |
+
+**为什么 deque 能 O(1) 头部操作**：内部是**分块的双向链表**（每块是一个数组），头尾各有一个指针，不需要整体搬移。
+
+**`deque(maxlen=N)` 的妙用**：自动丢弃旧元素，适合"最近 N 条日志/最近 N 帧"这类滑动窗口，不用手动 pop。
+
+**什么时候还是用 list**：需要频繁随机访问、需要切片。deque 不支持切片。
+@FOLLOW
+1. **deque 能排序吗？** —— 不能直接 `sort`，要转 list。
+2. **队列在多线程里用哪个？** —— `queue.Queue`（线程安全），不是 deque。
+3. **优先级队列？** —— `heapq`（基于 list 的堆）。
+@TRAPS
+- 用 `list.pop(0)` 做队列
+- 用 deque 做随机访问
+- 用 deque 做线程间通信（应该用 queue.Queue）
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 容器性能（预测题，非真实面经）
+
+@@ Q-5113
+@STEM
+**题目**：循环里 `s += str(i)` 拼 10 万个字符串，跑了十几秒。
+
+**问**：为什么循环里 `+=` 拼接字符串慢？正确写法是什么？
+@ANSWER
+因为字符串**不可变**，每次 `+=` 都要创建新字符串并把旧内容复制过去，第 i 次复制 i 个字符，总共 O(n²)。
+
+正确写法是 `''.join(parts)`：先收集到 list，最后一次性拼接，O(n)。
+@DEEP
+```python
+# ❌ O(n²)
+s = ""
+for i in range(100000):
+    s += str(i)
+
+# ✅ O(n)
+parts = []
+for i in range(100000):
+    parts.append(str(i))
+s = ''.join(parts)
+
+# ✅ 更简洁
+s = ''.join(str(i) for i in range(100000))
+```
+
+| 写法 | 复杂度 | 说明 |
+|---|---|---|
+| `s += x` | O(n²) | 每次复制 |
+| `''.join(list)` | O(n) | **推荐** |
+| `f"{a}{b}"` | O(n) | 少量拼接够用 |
+| `io.StringIO` | O(n) | 流式写入，适合边生成边拼 |
+
+**CPython 有个优化**：如果字符串引用计数为 1，`+=` 会尝试原地扩容（类似 list）。但这是**实现细节**，一旦有别的引用就失效，**不能依赖**。
+
+**什么时候用 StringIO**：需要"边算边写、最后取整体"时，比如生成大段报表，避免维护一个巨大的 list。
+@FOLLOW
+1. **`join` 对非字符串元素怎么办？** —— 先 `map(str, ...)`。
+2. **f-string 比 `%` 和 `format` 快吗？** —— 快，编译期就优化成字节码拼接。
+3. **list 的 `+=` 也慢吗？** —— 不慢，list 可变，`+=` 是原地扩展（`extend`）。
+@TRAPS
+- 循环里 `+=` 拼字符串
+- 依赖 CPython 的原地优化
+- 用 `%` 做大量拼接
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 字符串性能（预测题，非真实面经）
+
+@@ Q-5114
+@STEM
+**题目**：
+
+```python
+it = iter([1, 2])
+next(it)      # 1
+next(it)      # 2
+next(it)      # ?
+list(it)      # ?
+```
+
+**问**：迭代器协议是什么？为什么迭代器"用完就废"？
+@ANSWER
+协议是：对象实现 `__iter__()` 返回自身，实现 `__next__()` 返回下一个元素，耗尽时抛 `StopIteration`。
+
+第三次 `next` 抛 `StopIteration`；`list(it)` 返回 `[]`——因为迭代器**有状态**，一旦耗尽（或部分消费），就不能重置。
+@DEEP
+```python
+class Counter:
+    def __init__(self, n): self.i, self.n = 0, n
+    def __iter__(self): return self
+    def __next__(self):
+        if self.i >= self.n: raise StopIteration
+        self.i += 1
+        return self.i - 1
+
+c = Counter(3)
+list(c)      # [0, 1, 2]
+list(c)      # []      ← 已耗尽
+```
+
+| 概念 | 定义 |
+|---|---|
+| 可迭代（Iterable） | 有 `__iter__`，如 list、dict |
+| 迭代器（Iterator） | 有 `__iter__` + `__next__`，**一次性** |
+| `for` 的本质 | 调 `iter()`，然后反复 `next()`，捕获 `StopIteration` |
+
+**这个特性会导致真实 bug**：
+
+```python
+nums = iter([1,2,3])
+total = sum(nums)        # 6
+print(max(nums))         # ValueError: max() arg is an empty sequence
+```
+
+所以**不要把迭代器传给多个消费者**，需要多次遍历就传 list。
+
+**`zip`、`map`、`filter` 在 Python 3 里返回迭代器**（Python 2 返回 list），这也是 2→3 迁移的常见坑。
+@FOLLOW
+1. **怎么重置迭代器？** —— 不能，重新调用 `iter(原可迭代对象)`。
+2. **`for` 循环为什么不会抛 StopIteration？** —— 它内部捕获了。
+3. **生成器也是迭代器吗？** —— 是，`__iter__` 返回自身。
+@TRAPS
+- 把同一个迭代器传给两个函数
+- 以为 `map`/`zip` 返回 list
+- 在循环外手动 `next` 后又 `for` 遍历
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 迭代器协议（预测题，非真实面经）
+
+@@ Q-5115
+@STEM
+**题目**：读一个 10 GB 的日志文件，要逐行处理，不能一次读进内存。
+
+**问**：生成器是怎么做到"惰性求值"的？`yield` 和 `return` 有什么不同？
+@ANSWER
+`yield` 会把函数**暂停**在这一行，保存局部变量和指令指针，返回一个值；下次 `next()` 从暂停处继续。所以内存里只有一个元素的量级。
+
+`return` 是结束函数并返回值；`yield` 是**产出一个值后继续活着**。
+@DEEP
+```python
+def read_lines(path):
+    with open(path, encoding='utf-8', errors='ignore') as f:
+        for line in f:            # 文件对象本身也是迭代器，天然流式
+            yield line.rstrip('\n')
+
+for line in read_lines("huge.log"):
+    if "ERROR" in line:
+        print(line)
+```
+
+| 对比 | 生成器 | 列表 |
+|---|---|---|
+| 内存 | O(1) | O(n) |
+| 首次结果 | 立刻 | 要等全部算完 |
+| 可重复遍历 | ❌ 只能一次 | ✅ |
+| 支持索引/切片 | ❌ | ✅ |
+| 适用 | 大数据流、无限序列 | 需要多次访问 |
+
+**生成器函数的识别**：函数体里有 `yield`，调用它**不会执行任何代码**，只返回生成器对象——这是新手最容易误判的一点（以为调用了就开始跑）。
+
+**`send()` 可以给生成器传值**，让它在暂停处接收：
+```python
+def acc():
+    total = 0
+    while True:
+        x = yield total
+        total += x
+```
+@FOLLOW
+1. **生成器能提前关闭吗？** —— `gen.close()`，会触发 `GeneratorExit`。
+2. **生成器里的异常怎么抛进去？** —— `gen.throw(ValueError)`。
+3. **`yield` 能出现在 try/finally 里吗？** —— 能，`close()` 时 finally 会执行。
+@TRAPS
+- 以为调用生成器函数会立即执行
+- 把生成器遍历两次（第二次为空）
+- 生成器里持有大对象引用导致内存不释放
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 生成器（预测题，非真实面经）
+
+@@ Q-5116
+@STEM
+**追问**：`yield from` 和"for 循环里 yield"有什么区别？
+
+**问**：`yield from` 做了什么？什么时候必须用它？
+@ANSWER
+`yield from sub` 把迭代**完全委托**给子生成器：不仅转发产出的值，还转发 `send()`、`throw()`、`close()`，并且能拿到子生成器的**返回值**。
+
+只写 `for x in sub: yield x` 就只能转发值，双向通信和返回值都会丢——写协程/任务调度时必须用 `yield from`。
+@DEEP
+```python
+def inner():
+    x = yield 1
+    yield x * 2
+    return "done"
+
+def outer_ok():
+    r = yield from inner()      # ✅ 能收到 send 的值，能拿到返回值
+    print(r)                    # "done"
+
+def outer_bad():
+    for v in inner():           # ❌ send 的数据不会传进 inner
+        yield v
+```
+
+| 能力 | `for + yield` | `yield from` |
+|---|---|---|
+| 转发产出值 | ✅ | ✅ |
+| 转发 `send()` | ❌ | ✅ |
+| 转发 `throw()`/`close()` | ❌ | ✅ |
+| 获取子生成器 return | ❌ | ✅ |
+| 性能 | 多次进出解释器 | 更少的帧切换 |
+
+**`yield from` 的典型用途**：把一棵树的遍历拆成多个生成器递归组合。
+
+```python
+def walk(node):
+    yield node.value
+    for child in node.children:
+        yield from walk(child)     # 递归摊平
+```
+
+**asyncio 的 `await` 就是 `yield from` 的进化版**（Python 3.5 后），理解 `yield from` 就理解了协程调度的雏形。
+@FOLLOW
+1. **递归用 `yield from` 会爆栈吗？** —— 深递归会，考虑显式栈。
+2. **`yield from` 后面能跟列表吗？** —— 能，任何可迭代对象。
+3. **和 `await` 什么关系？** —— `await` 语义上类似 `yield from`，但只用于 awaitable。
+@TRAPS
+- 用 `for + yield` 写协程委托
+- 以为 `yield from` 只是语法糖
+- 递归深度过大
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 生成器进阶（预测题，非真实面经）
+
+@@ Q-5117
+@STEM
+**题目**：`sum([x*x for x in range(10**7)])` 和 `sum(x*x for x in range(10**7))` 有什么区别？
+
+**问**：生成器表达式和列表推导式该怎么选？
+@ANSWER
+后者是**生成器表达式**（没有方括号），惰性求值，内存 O(1)；前者是**列表推导式**，会先在内存里建一个 1000 万元素的列表。
+
+除了 `sum`/`max`/`any` 这类"聚合消费"场景，生成器表达式更省内存；但如果要**多次遍历或索引**，必须用列表。
+@DEEP
+```python
+# 列表推导：立刻算完，占内存
+nums = [x*x for x in range(10**7)]        # 约 400 MB
+
+# 生成器表达式：惰性，O(1)
+total = sum(x*x for x in range(10**7))    # 几乎不占额外内存
+
+# 需要多次用就必须落成 list
+squares = [x*x for x in range(100)]
+len(squares); squares[5]                  # 生成器都做不到
+```
+
+| 形式 | 类型 | 内存 | 可重复 |
+|---|---|---|---|
+| `[f(x) for x in it]` | list | O(n) | ✅ |
+| `(f(x) for x in it)` | 生成器 | O(1) | ❌ |
+| `{f(x) for x in it}` | set | O(n) | ✅（无序） |
+| `{k: v for ...}` | dict | O(n) | ✅ |
+
+**性能上的反直觉**：列表推导比 `for + append` 快（C 层优化），但**生成器表达式不一定更快**——它省内存，代价是每次 `next` 有额外开销。数据量小的时候列表推导反而更快。
+
+**嵌套顺序**：`[(i,j) for i in A for j in B]` 等价于两层 for，外层在前。
+@FOLLOW
+1. **推导式里能用 `if` 吗？** —— 能，`[x for x in it if cond]`。
+2. **能写 `if/else` 吗？** —— 能，但要放前面：`[a if c else b for x in it]`。
+3. **推导式有作用域吗？** —— 有，Python 3 里循环变量不泄漏到外面。
+@TRAPS
+- 大数据用列表推导导致 OOM
+- 生成器表达式遍历两次
+- 把 `if/else` 写到 for 后面（语法错误）
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 推导式（预测题，非真实面经）
+
+@@ Q-5118
+@STEM
+**题目**：
+
+```python
+a = [1, 2, 2, 3, 4]
+for x in a:
+    if x == 2:
+        a.remove(x)
+print(a)      # ?
+```
+
+**问**：输出是什么？为什么？正确写法是什么？
+@ANSWER
+输出 `[1, 2, 3, 4]`——只删掉了一个 2。因为遍历时内部索引在前进，删除元素导致后面的元素整体前移，跳过了一个。
+
+正确写法有三种：遍历副本、倒序遍历、或用列表推导重建。
+@DEEP
+```python
+a = [1, 2, 2, 3, 4]
+
+# ❌ 遍历中删除，漏删
+for x in a:
+    if x == 2: a.remove(x)        # [1, 2, 3, 4]
+
+# ✅ 遍历副本
+for x in a[:]:
+    if x == 2: a.remove(x)        # [1, 3, 4]
+
+# ✅ 倒序删（索引不受影响）
+for i in range(len(a) - 1, -1, -1):
+    if a[i] == 2: del a[i]
+
+# ✅ 重建（最 Pythonic）
+a = [x for x in a if x != 2]
+```
+
+| 做法 | 复杂度 | 注意 |
+|---|---|---|
+| 遍历副本 | O(n²) | `remove` 本身 O(n) |
+| 倒序删除 | O(n²) | 同样有 remove 开销 |
+| 列表推导重建 | **O(n)** | 创建新列表 |
+
+**dict/set 更严格**：遍历中增删会直接抛 `RuntimeError: dictionary changed size during iteration`，不会静默出错。
+
+**这个问题的本质**：**迭代器依赖容器的结构**，结构一变迭代器的内部索引就失效了。所有语言都有类似问题（Java 的 `ConcurrentModificationException`）。
+@FOLLOW
+1. **为什么 dict 报错而 list 不报？** —— dict 有大小检查，list 只能靠索引，不检测。
+2. **`while` 循环删安全吗？** —— 用 `while i < len(a)` 并手动控制 `i`，是安全的但要小心。
+3. **删多个条件怎么写？** —— 列表推导最清晰。
+@TRAPS
+- 遍历中 `remove`/`del`
+- 遍历中往 list 里 append（可能死循环）
+- 以为 dict 也会静默出错
+@RELATED
+- 教学文档/Python实验台（读程序写结果题目）
+@SOURCE
+Python 容器遍历陷阱（预测题，非真实面经）

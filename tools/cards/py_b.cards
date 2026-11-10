@@ -1,0 +1,1089 @@
+@@ Q-5119
+@STEM
+**题目**：面试官问"Python 多线程是假的多线程吗"，你会怎么回答？
+
+**问**：GIL 是什么？它限制了 Python 的什么能力？
+@ANSWER
+GIL 是 **CPython 解释器的全局锁**：保证同一时刻只有一个线程在执行 Python 字节码。所以多线程**不能并行跑 Python 计算**。
+
+但它是**实现细节，不是语言规范**——Jython、IronPython 没有 GIL；CPython 3.13 起还提供了 free-threaded 的实验构建（PEP 703）。
+
+关键在于：**GIL 在执行 I/O 和调用 C 扩展时会释放**，所以多线程对 I/O 密集任务依然有效。
+@DEEP
+| 场景 | 多线程有效吗 | 原因 |
+|---|---|---|
+| 网络请求、读写文件 | ✅ | I/O 时释放 GIL |
+| 调用 numpy / OpenCV | ✅（部分） | C 扩展内部释放 GIL |
+| 纯 Python 计算 | ❌ | 抢同一把锁，还有切换开销 |
+| 需要真正并行 | 用多进程 | 各自独立解释器 |
+
+```python
+import sys
+sys.getswitchinterval()      # 默认 0.005 秒，线程切换间隔
+```
+
+**为什么要有 GIL**：CPython 用引用计数管理内存，多线程同时改计数会崩溃；加锁最省事，也保护了大量 C 扩展的线程安全假设。
+
+**代价**：多核机器上 CPU 密集任务无法加速，这是 Python 在高性能计算上的主要短板（靠 numpy/Cython/C 扩展绕过）。
+@FOLLOW
+1. **GIL 会取消吗？** —— 3.13 起有 free-threaded 构建，但生态兼容需要时间，主流仍是带 GIL。
+2. **多线程一定比单线程快吗？** —— 不一定，切换有开销；I/O 密集才有明显收益。
+3. **GIL 能手动释放吗？** —— C 扩展里可以 `Py_BEGIN_ALLOW_THREADS`，纯 Python 不行。
+@TRAPS
+- 说"Python 多线程是假的"（I/O 场景是真的有用）
+- 认为 GIL 是语言特性
+- 用多线程做 CPU 密集计算
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 并发模型（预测题，非真实面经）
+
+@@ Q-5120
+@STEM
+**题目**：一个程序要同时请求 100 个 URL，用多线程 8 个线程跑；另一个程序要算 100 个矩阵乘法，也开 8 个线程。
+
+**问**：哪个会变快？CPU 密集为什么加了线程反而更慢？
+@ANSWER
+**请求 URL 会快很多**，因为等网络时线程会释放 GIL，其他线程能继续跑；**矩阵乘法不会变快甚至更慢**，因为纯 Python 计算抢同一把 GIL，还要付线程切换的代价。
+
+判断标准只有一条：**这段时间里 CPU 在算还是在等**。
+@DEEP
+| 任务类型 | 特征 | 方案 |
+|---|---|---|
+| I/O 密集 | 等网络/磁盘/数据库 | 多线程 / asyncio |
+| CPU 密集 | 一直在算 | **多进程** / C 扩展 / numpy |
+| 混合 | 两者都有 | 多进程 + 每进程内多线程 |
+
+```python
+# I/O 密集：线程池
+from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(max_workers=16) as ex:
+    results = list(ex.map(fetch, urls))
+
+# CPU 密集：进程池
+from concurrent.futures import ProcessPoolExecutor
+with ProcessPoolExecutor() as ex:
+    results = list(ex.map(heavy, data))
+```
+
+**CPU 密集为什么更慢**：8 个线程轮流持有 GIL，上下文切换（保存/恢复状态、缓存失效）是纯开销；而且切换间隔 5 ms 意味着单次计算可能被频繁打断。
+
+**线程数怎么定**：I/O 密集可以远大于核数（16–100 都常见）；CPU 密集设成核数，且应该直接用多进程。
+@FOLLOW
+1. **怎么判断是 I/O 还是 CPU 密集？** —— 看 CPU 占用：跑满就是 CPU 密集，低就是 I/O 密集。
+2. **线程数开太多有坏处吗？** —— 有，内存和切换开销，还可能打爆对方服务。
+3. **asyncio 比线程池好吗？** —— 高并发 I/O 更省资源，但要全链路异步。
+@TRAPS
+- 用多线程做数值计算
+- 线程数开到几百
+- 不区分任务类型就套线程池
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 并发选型（预测题，非真实面经）
+
+@@ Q-5121
+@STEM
+**追问**：既然 GIL 挡住了并行，那 `multiprocessing` 是怎么绕过去的？有什么代价？
+
+**问**：multiprocessing 怎么绕过 GIL？代价是什么？
+@ANSWER
+因为它**开的是进程不是线程**：每个进程有独立的解释器和独立的 GIL，操作系统可以把它们调度到不同核心上，真正并行。
+
+代价有四条：**启动开销大**（fork/spawn 一个进程要几十到几百毫秒）、**内存不共享**（数据要用 pickle 传，大对象很贵）、**进程间通信受限**（Queue/Pipe/共享内存）、**平台差异**（Windows 用 spawn，Linux 默认 fork）。
+@DEEP
+```python
+from multiprocessing import Pool
+
+def heavy(x):
+    return sum(i*i for i in range(x))
+
+if __name__ == "__main__":          # Windows 必须
+    with Pool(processes=4) as p:
+        print(p.map(heavy, [10**6] * 8))
+```
+
+| 维度 | 线程 | 进程 |
+|---|---|---|
+| 内存 | 共享 | 独立（要拷贝/pickle） |
+| 启动成本 | 微秒级 | 几十~几百毫秒 |
+| 真正并行 | ❌（GIL） | ✅ |
+| 通信 | 直接共享 | Queue / Pipe / 共享内存 |
+| 崩溃影响 | 全进程挂 | 只挂子进程 |
+
+**`if __name__ == "__main__"` 不是可选项**：Windows/macOS 用 spawn 启动，子进程会重新 import 主模块，没有这个保护会无限递归创建进程。
+
+**大数据的替代方案**：`shared_memory`（3.8+）或 `numpy.memmap`，避免 pickle 开销。
+
+**池化很重要**：池复用进程，别每次任务都 `Process()` 新建。
+@FOLLOW
+1. **fork 和 spawn 有什么区别？** —— fork 复制父进程内存（快但可能复制锁状态）；spawn 重新启动解释器（干净但慢）。
+2. **子进程能改父进程的变量吗？** —— 不能，各是各的内存。
+3. **进程池数量怎么定？** —— CPU 核数，或核数 ±1。
+@TRAPS
+- Windows 上不加 `if __name__ == "__main__"`，无限创建进程
+- 传递大对象导致 pickle 开销爆炸
+- 每次任务都新建进程
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 多进程（预测题，非真实面经）
+
+@@ Q-5122
+@STEM
+**题目**：要写一个服务同时处理 1 万个长连接，每个连接偶尔有数据。线程池撑不住，怎么办？
+
+**问**：asyncio 和线程池有什么区别？什么时候该用协程？
+@ANSWER
+线程池是**抢占式 + 每线程一份栈**，1 万线程光栈就吃几个 GB，调度也撑不住；asyncio 是**单线程事件循环 + 协作式切换**，每个协程只占几百字节，1 万连接很轻松。
+
+但协程要求**全链路非阻塞**：中间插一个 `time.sleep` 或同步 `requests`，整个事件循环就卡死。
+@DEEP
+```python
+import asyncio, aiohttp
+
+async def fetch(session, url):
+    async with session.get(url) as r:      # await 处让出控制权
+        return await r.text()
+
+async def main():
+    async with aiohttp.ClientSession() as s:
+        return await asyncio.gather(*[fetch(s, u) for u in urls])
+
+asyncio.run(main())
+```
+
+| 维度 | 线程池 | asyncio |
+|---|---|---|
+| 切换 | 抢占（OS 调度） | 协作（await 处） |
+| 单任务开销 | 8 MB 栈（虚拟） | 几百字节 |
+| 并发上限 | 几百~几千 | 几万 |
+| 编程模型 | 同步写法 | 全链路 async |
+| 阻塞调用的影响 | 只卡一个线程 | **卡死整个循环** |
+| CPU 并行 | ❌ | ❌ |
+
+**最容易踩的坑**：在协程里调同步库（`requests`、`time.sleep`、阻塞的文件 IO），事件循环直接停摆。要么换异步库，要么 `await asyncio.to_thread(...)` 丢到线程池。
+
+**别混用**：`asyncio.run()` 里再调 `loop.run_until_complete` 会报错；在已有循环里要用 `await`。
+@FOLLOW
+1. **asyncio 能加速 CPU 计算吗？** —— 不能，它是并发不是并行。
+2. **怎么在协程里跑阻塞函数？** —— `asyncio.to_thread()` 或 `run_in_executor`。
+3. **Jupyter 里为什么 `asyncio.run` 报错？** —— 已有运行中的事件循环，要用 `await` 直接调用。
+@TRAPS
+- 协程里用 `time.sleep` / `requests`
+- 以为 asyncio 能加速计算
+- 在已有事件循环里调 `asyncio.run`
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 异步编程（预测题，非真实面经）
+
+@@ Q-5123
+@STEM
+**题目**：
+
+```python
+counter = 0
+def worker():
+    global counter
+    for _ in range(100000):
+        counter += 1
+# 开 4 个线程跑完，counter 是多少？
+```
+
+**问**：两个线程同时 `i += 1` 会丢更新吗？怎么保证线程安全？
+@ANSWER
+**会丢**。`counter += 1` 在字节码层面是三步：`LOAD`（读）→ `ADD`（加）→ `STORE`（写）。线程可能在任意一步之间被切换，两个线程都读到旧值，写回时只加了一次。
+
+GIL 只保证**单条字节码原子**，不保证"读-改-写"这个序列原子。解决方法是加锁，或改用 `queue`/原子操作。
+@DEEP
+```python
+import threading
+lock = threading.Lock()
+counter = 0
+
+def worker():
+    global counter
+    for _ in range(100000):
+        with lock:            # ✅ 保护整个读-改-写
+            counter += 1
+```
+
+| 操作 | 线程安全 | 原因 |
+|---|---|---|
+| `lst.append(x)` | ✅ | 单条字节码 + C 实现 |
+| `d[k] = v` | ✅（单个赋值） | 单条字节码 |
+| `i += 1` | ❌ | 三步，可被打断 |
+| `d[k] += 1` | ❌ | 读-改-写 |
+| `if k not in d: d[k] = 1` | ❌ | 检查与设置之间有窗口 |
+
+**更推荐的做法：不共享**。用 `queue.Queue` 传消息，或者用 `concurrent.futures` 收集结果——共享状态是 bug 的源头。
+
+**`threading.local()`**：需要每线程独立状态时用它，避免加锁。
+@FOLLOW
+1. **加锁会让程序变慢很多吗？** —— 临界区短的话影响很小；锁竞争激烈时会退化。
+2. **有原子计数器吗？** —— 没有内置的，用 `Lock` 或 `itertools.count`（C 实现，`next` 是原子的）。
+3. **多进程还需要锁吗？** —— 需要，但要用 `multiprocessing.Lock`。
+@TRAPS
+- 以为 GIL 保证一切线程安全
+- 只锁写不锁读
+- 用 `+=` 在多个线程改同一个计数
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 线程安全（预测题，非真实面经）
+
+@@ Q-5124
+@STEM
+**追问**：多进程里子进程改了全局字典，父进程看不到，为什么？
+
+**问**：多进程之间怎么传数据？为什么不能用全局变量？
+@ANSWER
+因为每个进程有**独立的内存空间**，全局变量在 fork/spawn 时被复制一份，之后各改各的，互不可见。
+
+传数据要用显式的 IPC：`Queue`（最常用）、`Pipe`（点对点）、`Manager`（代理对象）、`shared_memory`（大数组）。
+@DEEP
+```python
+from multiprocessing import Process, Queue
+
+def worker(q):
+    q.put({"result": 42})
+
+if __name__ == "__main__":
+    q = Queue()
+    p = Process(target=worker, args=(q,))
+    p.start()
+    print(q.get())          # {'result': 42}
+    p.join()
+```
+
+| 方式 | 速度 | 适合 |
+|---|---|---|
+| `Queue` | 中 | 通用，多生产者多消费者 |
+| `Pipe` | 快 | 两个进程点对点 |
+| `Manager().dict()` | 慢（走代理） | 需要共享复杂结构 |
+| `shared_memory` | 最快 | 大数组/图像 |
+| 文件/socket | 慢 | 跨机器 |
+
+**注意 pickle 限制**：进程间传的对象必须可序列化——lambda、打开的文件、数据库连接都不行。
+
+**`Manager` 为什么慢**：它起了一个服务进程，所有操作都是 RPC，每次访问都有往返开销。别在循环里频繁访问。
+
+**一个常被忽略的点**：`Queue` 里的数据在子进程退出前要 flush，否则可能丢；`join()` 前先 `q.close()` 更稳。
+@FOLLOW
+1. **能用全局 list 累积结果吗？** —— 不能，子进程的修改不会回传。
+2. **`Pool` 和 `Process` 怎么选？** —— 池化复用进程，适合大量小任务。
+3. **共享 numpy 数组怎么做？** —— `multiprocessing.shared_memory` + `np.frombuffer`。
+@TRAPS
+- 用全局变量收集子进程结果
+- 传 lambda 或数据库连接给子进程
+- 循环里用 Manager 频繁读写
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 进程间通信（预测题，非真实面经）
+
+@@ Q-5125
+@STEM
+**题目**：一个 Python 服务偶尔整个卡住，日志停在"acquiring lock"，重启就好。
+
+**问**：Python 里死锁是怎么产生的？怎么避免？
+@ANSWER
+最常见的是**加锁顺序不一致**：线程 A 先锁 1 再锁 2，线程 B 先锁 2 再锁 1，各持一把等对方，永久阻塞。
+
+避免方法：**固定全局加锁顺序**、**用一个锁而不是两个**、**加超时**（`acquire(timeout=)`），以及**尽量不共享状态**。
+@DEEP
+```python
+# ❌ 两个锁，顺序不一致
+def a():
+    with lock1:
+        with lock2: ...
+def b():
+    with lock2:
+        with lock1: ...     # 与 a 相反 → 可能死锁
+
+# ✅ 加超时，至少不会永久挂住
+if not lock.acquire(timeout=2):
+    log.warning("lock timeout, skip")
+    return
+try:
+    ...
+finally:
+    lock.release()
+```
+
+| 死锁成因 | 表现 | 解法 |
+|---|---|---|
+| 加锁顺序不一致 | 双方互等 | 统一顺序 |
+| 忘记释放（异常路径） | 后续全阻塞 | `with` 或 try/finally |
+| 递归获取非递归锁 | 自己等自己 | `RLock` |
+| 持锁调用外部阻塞操作 | 长时间占用 | 缩小临界区 |
+| 线程池里等待同一池的任务 | 池被占满 | 拆池或改异步 |
+
+**`RLock`（可重入锁）**：同一线程可以重复获取，但**不能解决跨线程死锁**，只是防"自己锁自己"。
+
+**排查手段**：`faulthandler.dump_traceback_later(30, exit=True)` 能在卡住时打印所有线程栈；或 `py-spy dump --pid`。
+@FOLLOW
+1. **`with lock` 比手动 acquire 好在哪？** —— 异常时也会释放。
+2. **死锁能被检测到吗？** —— Python 不主动检测，只能靠超时和栈转储。
+3. **GIL 会导致死锁吗？** —— 会，C 扩展里释放/获取 GIL 不当会。
+@TRAPS
+- 多层锁不加顺序约定
+- 异常路径忘记 release
+- 持锁做网络请求
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 并发调试（预测题，非真实面经）
+
+@@ Q-5126
+@STEM
+**题目**：
+
+```python
+def f():
+    try:
+        return 1
+    finally:
+        print("finally")
+        return 2
+print(f())
+```
+
+**问**：输出是什么？`else` 什么时候执行？`finally` 会覆盖 `return` 吗？
+@ANSWER
+输出 `finally` 然后 `2`——**`finally` 里的 `return` 会覆盖 `try` 里的返回值**。这是"finally 一定执行"的副作用，也是写代码时要避免的模式。
+
+`else` 在**没有异常时**执行，`finally` **无论如何都执行**。
+@DEEP
+```python
+try:
+    x = int(s)
+except ValueError:
+    print("转换失败")
+else:
+    print("成功了才执行这里")     # 无异常
+finally:
+    print("一定执行")             # 即使 return / 抛异常
+```
+
+| 子句 | 执行条件 |
+|---|---|
+| `try` | 总是 |
+| `except X` | 匹配到异常 |
+| `else` | **没有异常**（且没被 except 捕获） |
+| `finally` | **总是**（含 return、break、未捕获异常） |
+
+**`else` 的价值**：把"成功路径"和"异常处理"分开，避免把不该被 `except` 捕获的代码放进去。
+
+**`return` 与 `finally` 的细节**：
+1. `finally` 里有 `return` → 覆盖前面的返回值（且吞掉异常）；
+2. `finally` 里改了可变对象，值会生效；
+3. `finally` 里抛异常 → 覆盖原异常。
+
+**什么时候必须用 `finally`**：释放锁、关闭文件/连接、恢复状态。但能用 `with` 就别手写 `finally`。
+@FOLLOW
+1. **`except Exception` 能捕获所有异常吗？** —— 不能捕获 `SystemExit`/`KeyboardInterrupt`（它们是 `BaseException`）。
+2. **`except (A, B) as e` 是什么语法？** —— 同时捕获多种异常并绑定变量。
+3. **异常没被捕获会怎样？** —— 向上传播，最终由解释器打印栈并退出。
+@TRAPS
+- 在 `finally` 里 `return`
+- 用 `except: pass` 吞掉所有异常
+- 把大段逻辑塞进 `try`，误捕获不该捕获的
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 异常处理（预测题，非真实面经）
+
+@@ Q-5127
+@STEM
+**题目**：
+
+```python
+with open("f.txt") as f:
+    data = f.read()
+```
+
+**问**：`with` 是怎么实现的？为什么它能保证文件一定被关闭？
+@ANSWER
+因为文件对象实现了**上下文管理协议**：`__enter__` 在进入时调用（返回 `f`），`__exit__` 在**离开时一定调用**——包括正常结束、`return`、抛异常。
+
+所以关闭动作写在 `__exit__` 里，就保证了"无论怎么离开 this block，资源都会释放"。
+@DEEP
+```python
+class Timer:
+    def __enter__(self):
+        self.t0 = time.perf_counter()
+        return self                     # as 后面拿到的东西
+    def __exit__(self, exc_type, exc, tb):
+        print(f"耗时 {time.perf_counter()-self.t0:.3f}s")
+        return False                    # False: 不吞异常；True: 吞掉
+
+with Timer():
+    do_work()
+```
+
+| `__exit__` 返回值 | 效果 |
+|---|---|
+| `False` / `None` | 异常继续传播 |
+| `True` | **吞掉异常**（要非常谨慎） |
+
+**参数含义**：`exc_type, exc, tb` 分别是异常类型、实例、traceback；没异常时都是 `None`。
+
+**更简洁的写法：`contextlib.contextmanager`**
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def timer():
+    t0 = time.perf_counter()
+    try:
+        yield
+    finally:
+        print(time.perf_counter() - t0)
+
+with timer():
+    do_work()
+```
+
+**标准库里的例子**：`open`、`threading.Lock`、`tempfile.TemporaryDirectory`、`socket` 包装。
+@FOLLOW
+1. **一个 with 能管多个资源吗？** —— 能，`with open(a) as f, open(b) as g:`。
+2. **`__exit__` 里能抛异常吗？** —— 能，会替代原异常传播。
+3. **`with` 能用在异步里吗？** —— 用 `async with`，对应 `__aenter__`/`__aexit__`。
+@TRAPS
+- 用 `try/finally` 手写而不封装上下文管理器
+- `__exit__` 返回 True 吞掉所有异常
+- 忘记 `yield`（`contextmanager` 里）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 上下文管理器（预测题，非真实面经）
+
+@@ Q-5128
+@STEM
+**题目**：调用第三方库报错，堆栈里出现两段：`During handling of the above exception, another exception occurred`。
+
+**问**：`raise from` 是干什么的？异常链有什么用？
+@ANSWER
+`raise NewError() from e` 会**显式建立异常链**：把原异常存进 `__cause__`，堆栈显示为
+`The above exception was the direct cause of the following exception`。
+
+不写 `from` 也会有隐式链（`__context__`），显示为 "During handling..."。`from None` 则**切断链**，隐藏原异常。
+@DEEP
+```python
+try:
+    data = json.loads(text)
+except json.JSONDecodeError as e:
+    raise ConfigError("配置文件不是合法 JSON") from e   # 显式链
+
+# 堆栈会同时显示两个异常，定位更快
+```
+
+| 写法 | `__cause__` | 显示 |
+|---|---|---|
+| `raise X` | None | 只有 X |
+| `raise X from e` | e | 两段，**"direct cause"** |
+| `raise X from None` | None（链被切断） | 只有 X |
+| 在 except 里 `raise X` | 隐式设 `__context__` | "During handling" |
+
+**为什么要包一层**：底层异常（如 `ConnectionResetError`）对调用方没意义，包成业务异常（`FetchFailed`）更清晰，同时用 `from` 保留根因——**既不丢信息，也不暴露实现细节**。
+
+**什么时候 `from None`**：底层细节会误导用户时（比如把内部的重试失败包装成"服务不可用"）。
+@FOLLOW
+1. **`except ... raise` 和 `raise e` 有什么区别？** —— 前者保留原 traceback，后者重置到当前行。
+2. **怎么打印完整链？** —— `traceback.format_exception()` 会自动包含。
+3. **`__context__` 和 `__cause__` 区别？** —— 前者隐式（处理中又抛），后者显式（`from`）。
+@TRAPS
+- 包装异常时不写 `from`，根因被埋
+- 用 `raise e` 丢失原始 traceback
+- 到处 `from None`，出问题查不到根因
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 异常链（预测题，非真实面经）
+
+@@ Q-5129
+@STEM
+**题目**：自定义了一个异常，有人建议继承 `Exception`，有人说继承 `BaseException` 也行。
+
+**问**：自定义异常该继承什么？为什么不该继承 `BaseException`？
+@ANSWER
+**必须继承 `Exception`**。`BaseException` 是给 `SystemExit`、`KeyboardInterrupt`、`GeneratorExit` 用的——它们不该被普通业务代码捕获。
+
+如果自定义异常继承 `BaseException`，`except Exception` 捕获不到它，很多框架的兜底逻辑会失效；反过来如果你写 `except BaseException`，会把 Ctrl+C 也吞掉。
+@DEEP
+```python
+class ConfigError(Exception):
+    """配置错误"""
+
+class RetryableError(Exception):
+    def __init__(self, msg, retries=0):
+        super().__init__(msg)
+        self.retries = retries
+```
+
+| 基类 | 用途 | 能否被 `except Exception` 捕获 |
+|---|---|---|
+| `BaseException` | 系统级退出信号 | ❌ |
+| `Exception` | 业务异常 | ✅ |
+| `ValueError` / `KeyError` 等 | 语义化细分 | ✅ |
+
+**异常层次设计建议**：
+1. 一个库定义**一个根异常**（如 `class MyLibError(Exception)`），所有子异常继承它；
+2. 调用方可以只捕获根异常，也可以精确捕获子类；
+3. 不要从 `ValueError` 这类内置异常派生出跨语义的异常（会误捕）。
+
+**`except Exception` 已经足够宽**：它捕获了所有"正常"异常，唯独放过 `KeyboardInterrupt` 和 `SystemExit`——这正是你想要的。
+@FOLLOW
+1. **能捕获 `KeyboardInterrupt` 吗？** —— 能，但要 `except KeyboardInterrupt` 显式处理。
+2. **异常类能有状态吗？** —— 能，在 `__init__` 里存额外信息（如重试次数）。
+3. **异常类要加 `__str__` 吗？** —— 可选，默认打印参数。
+@TRAPS
+- 继承 `BaseException`
+- 用 `except BaseException` 兜底
+- 所有异常都直接继承 `Exception` 不加层次（无法分类处理）
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 异常设计（预测题，非真实面经）
+
+@@ Q-5130
+@STEM
+**题目**：读文件前先 `os.path.exists` 判断，还是直接 `open` 再 `except FileNotFoundError`？
+
+**问**：EAFP 和 LBYL 两种风格该怎么选？
+@ANSWER
+Python 社区**偏好 EAFP**（Easier to Ask Forgiveness than Permission）：直接做，出错再处理。因为 Python 的异常开销相对小，而且 `exists` 之后文件仍可能被删——**检查和使用之间有竞态**。
+
+LBYL（Look Before You Leap）适合**检查成本低、失败代价高**的场景，比如参数校验。
+@DEEP
+```python
+# EAFP
+try:
+    with open(path) as f:
+        data = f.read()
+except FileNotFoundError:
+    data = default
+
+# LBYL
+if os.path.exists(path):     # 检查完可能被删（TOCTOU）
+    with open(path) as f:
+        data = f.read()
+```
+
+| 风格 | 优点 | 缺点 |
+|---|---|---|
+| EAFP | 无竞态、代码短 | 异常有开销（尤其在热路径） |
+| LBYL | 流程清晰、无异常开销 | 有 TOCTOU 竞态、代码冗长 |
+
+**什么时候 EAFP 不合适**：
+1. **热循环里**——异常构造和栈展开很贵（比一次判断贵几个数量级）；
+2. **异常是常态**——比如用 `KeyError` 控制流程；
+3. **需要原子性**——检查和使用必须一起完成。
+
+**`dict.get` 是折中**：`d.get(k, default)` 既避免了异常，也不用两次查找。
+
+**TOCTOU 是什么**：Time-of-check to time-of-use，检查时成立、使用时已变——安全漏洞的经典来源。
+@FOLLOW
+1. **异常有多贵？** —— 无异常时不贵（try 本身近乎零成本），抛出时才贵。
+2. **`try` 块会影响性能吗？** —— Python 3.11 起零成本异常表，无异常时没有额外开销。
+3. **多线程下 `exists` 有什么用？** —— 基本没用，建议直接 EAFP。
+@TRAPS
+- 在热循环里用异常做流程控制
+- 用 `exists` 判断后再打开（竞态）
+- 以为 `try` 本身有性能开销
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 编程风格（预测题，非真实面经）
+
+@@ Q-5131
+@STEM
+**题目**：一个脚本跑 30 秒，只知道"慢"，不知道慢在哪。
+
+**问**：怎么定位 Python 程序的性能瓶颈？工具怎么选？
+@ANSWER
+先用 **`cProfile`** 找"哪个函数占大头"，再用 **`line_profiler`** 看"函数里哪一行慢"，微基准用 **`timeit`**，线上不侵入用 **`py-spy`**。
+
+顺序很重要：**先定位到函数，再定位到行**，别一上来就猜。
+@DEEP
+```bash
+python -m cProfile -s cumulative script.py | head -20
+```
+
+```python
+import cProfile, pstats
+cProfile.run("main()", "prof.out")
+pstats.Stats("prof.out").sort_stats("cumulative").print_stats(15)
+```
+
+| 工具 | 粒度 | 用途 |
+|---|---|---|
+| `cProfile` | 函数级 | 找热点函数 |
+| `line_profiler` | 行级 | 找热点行 |
+| `timeit` | 代码片段 | 微基准（多次取最小） |
+| `py-spy` | 采样 | **线上/生产**，无需改代码 |
+| `memory_profiler` | 行级内存 | 找内存增长点 |
+
+**看哪个列**：`cumulative`（含子调用）找"整体耗时大户"，`tottime`（不含子调用）找"自己耗时长"的函数。两者要一起看。
+
+**cProfile 的局限**：对每个函数调用都有开销，会**放大函数调用密集的代码**的耗时；纯 C 扩展内部的耗时它看不到。
+
+**线上排查用 py-spy**：`py-spy top --pid 1234` 直接看实时火焰，不需要重启服务、不需要装依赖。
+@FOLLOW
+1. **cProfile 会让程序变慢多少？** —— 明显变慢（2–5 倍），但相对比例仍有效。
+2. **为什么用 `timeit` 不用 `time.time()`？** —— `timeit` 多次重复取最小值，抵消系统噪声。
+3. **火焰图怎么生成？** —— `py-spy record -o prof.svg --pid`。
+@TRAPS
+- 凭直觉优化
+- 只看 total 不看 cumulative/tottime
+- 用 `time.time()` 单次测量下结论
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 性能分析（预测题，非真实面经）
+
+@@ Q-5132
+@STEM
+**追问**：同一个循环，写在函数里比写在模块顶层快 20%，为什么？
+
+**问**：为什么把变量放局部能变快？`LOAD_FAST` 是什么？
+@ANSWER
+因为**变量查找的成本不同**：局部变量用 `LOAD_FAST`（按数组下标取，O(1) 且无哈希），全局变量用 `LOAD_GLOBAL`（字典查找 + 检查内建）。
+
+Python 3.11 起 `LOAD_GLOBAL` 加了缓存，差距缩小，但局部仍更快。所以**把热循环里的全局变量赋给局部变量**是经典微优化。
+@DEEP
+```python
+import dis
+x = 1
+def f():
+    y = 1
+    return y
+dis.dis(f)
+# LOAD_FAST   0 (y)      ← 快
+
+def g():
+    return x
+dis.dis(g)
+# LOAD_GLOBAL 0 (x)      ← 慢（新版有缓存）
+```
+
+| 字节码 | 查找方式 | 相对成本 |
+|---|---|---|
+| `LOAD_FAST` | 局部数组下标 | 最低 |
+| `LOAD_DEREF` | 闭包单元 | 低 |
+| `LOAD_GLOBAL` | 字典 + 缓存 | 中 |
+| `LOAD_ATTR` | 属性查找（`__dict__`） | 高 |
+
+**热循环里的三步优化**：
+```python
+def hot(data):
+    append = data.append          # 1. 方法提到局部
+    local_len = len              # 2. 内建提到局部
+    for i in range(local_len(data)):
+        append(i)                 # 3. 避免重复属性查找
+```
+
+**更大收益来自"减少工作"而不是"加速查找"**：用 numpy 向量化、用内置函数（`sum`/`any`/`map` 都是 C 实现），收益远超这类微优化。
+@FOLLOW
+1. **`LOAD_ATTR` 为什么慢？** —— 要查实例 `__dict__`、类、MRO，还可能触发 `__getattr__`。
+2. **这些微优化值得做吗？** —— 95% 的场景不值得，先 profile。
+3. **`for i in range(len(x))` 有什么替代？** —— `enumerate` 或直接迭代元素。
+@TRAPS
+- 一上来就做微优化
+- 在热循环里反复 `.append`、`.attr`
+- 忽略算法复杂度
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 字节码与性能（预测题，非真实面经）
+
+@@ Q-5133
+@STEM
+**题目**：两个 100 万元素的数组相加，Python 循环要 0.3 秒，numpy 只要 2 毫秒。
+
+**问**：numpy 向量化为什么比 for 循环快几十倍？
+@ANSWER
+四个原因叠加：**循环在 C 层执行**（没有解释器开销）、**连续内存 + 相同 dtype**（缓存友好、无需装箱拆箱）、**SIMD 指令**（一次算多个）、**释放 GIL**（可以多线程）。
+
+而 Python 的 `for` 每次迭代都要创建 int 对象、查类型、调字节码——差了两个数量级。
+@DEEP
+```python
+import numpy as np, timeit
+
+n = 1_000_000
+a = list(range(n)); b = list(range(n))
+timeit.timeit(lambda: [x+y for x,y in zip(a,b)], number=1)   # ~0.06 s
+
+aa = np.arange(n); bb = np.arange(n)
+timeit.timeit(lambda: aa+bb, number=1)                        # ~0.002 s
+```
+
+| 层面 | Python list | numpy array |
+|---|---|---|
+| 元素存储 | PyObject 指针（分散） | 连续原始字节 |
+| 元素类型 | 逐个装箱 | 统一 dtype |
+| 循环 | 解释器逐条 | C 循环 + SIMD |
+| 内存占用 | 28 字节/int | 8 字节/int64 |
+
+**向量化的关键写法**：
+1. **避免 Python 层循环**：用 `np.where`、布尔索引、`np.dot` 替代 `for`；
+2. **避免 `append`**：预分配数组或一次构造；
+3. **利用广播**：`a[:, None] - b[None, :]` 代替双重循环；
+4. **注意 dtype**：`float32` 比 `float64` 省一半内存和带宽。
+
+**常见误区**：`for i in range(len(arr)): arr[i] = ...` 比 list 还慢，因为每次索引都要创建 numpy 标量对象。
+@FOLLOW
+1. **numpy 什么时候反而不快？** —— 小数组（<1000 元素）时，调用开销占主导。
+2. **`np.vectorize` 会加速吗？** —— 不会，它只是语法糖，内部还是 Python 循环。
+3. **能真正并行吗？** —— 部分操作释放 GIL，但多数单线程；多进程或 numba 才行。
+@TRAPS
+- 用 `np.vectorize` 以为能加速
+- 循环里逐元素索引赋值
+- 混用 dtype 导致隐式转换和复制
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+numpy 向量化（预测题，非真实面经）
+
+@@ Q-5134
+@STEM
+**题目**：`pip freeze > requirements.txt` 之后换台机器装，版本冲突了。
+
+**问**：依赖管理怎么做？`requirements.txt` 有什么坑？
+@ANSWER
+`pip freeze` 导出的是**当前环境的全部包（含传递依赖）**，会把无关的包也带上，而且不区分"直接依赖"和"间接依赖"，导致环境臃肿、难以维护。
+
+现代做法：`pyproject.toml` 里只写**直接依赖**，再用锁文件（`uv.lock` / `poetry.lock` / `pip-tools` 生成的 `requirements.lock`）固定全部版本。
+@DEEP
+```toml
+# pyproject.toml
+[project]
+name = "mytool"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26,<3",
+  "requests~=2.31",
+]
+```
+
+| 文件 | 内容 | 用途 |
+|---|---|---|
+| `requirements.txt` | 手写的直接依赖 | 简单项目够用 |
+| `pip freeze` 输出 | 全部包（含传递） | 复现环境，但脏 |
+| `pyproject.toml` | 直接依赖 + 元数据 | 现代标准 |
+| lock 文件 | 精确版本 + 哈希 | **可复现构建** |
+
+**版本约束符号**：
+- `==1.2.3` 精确
+- `~=1.2.3` 兼容（允许 1.2.x）
+- `>=1.2,<2` 范围
+- `*` 任意（危险）
+
+**必做的三件事**：**用虚拟环境**（`python -m venv .venv`）、**锁定版本**、**区分开发依赖**（`pytest`、`black` 不该进生产镜像）。
+
+**一个实际教训**：不加约束的 `numpy` 会在某次发布后引入不兼容变更，CI 突然全红——锁文件就是为了防这个。
+@FOLLOW
+1. **pip 和 conda 能混用吗？** —— 能但容易冲突，同一环境尽量只用一种。
+2. **`pip install -e .` 是什么？** —— 可编辑安装，改代码立即生效。
+3. **怎么减小镜像体积？** —— 多阶段构建 + 只装运行时依赖 + `--no-cache-dir`。
+@TRAPS
+- 直接把 `pip freeze` 当依赖清单
+- 不锁版本，构建不可复现
+- 全局安装不建虚拟环境
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 依赖管理（预测题，非真实面经）
+
+@@ Q-5135
+@STEM
+**题目**：给函数加了类型注解，运行速度会变慢吗？
+
+**问**：类型注解会影响运行速度吗？它到底解决什么问题？
+@ANSWER
+**基本不影响**。注解在函数定义时求值一次、存进 `__annotations__`，函数体执行时完全不检查类型（除非用 `beartype`/`pydantic` 这类库强制校验）。
+
+它解决的是**可读性和静态检查**：让 IDE 能补全、让 mypy 能在提交前发现类型错误，而不是运行时提速。
+@DEEP
+```python
+def greet(name: str, times: int = 1) -> str:
+    return ("hi " + name + "\n") * times
+
+greet.__annotations__
+# {'name': str, 'times': int, 'return': str}
+
+greet(123)          # 照样能跑，不报类型错误
+```
+
+| 用途 | 谁在用 | 时机 |
+|---|---|---|
+| IDE 补全/跳转 | 编辑器 | 编辑时 |
+| 静态检查 | mypy / pyright | CI |
+| 文档生成 | Sphinx | 构建时 |
+| 运行时校验 | pydantic / beartype | 运行时（**有开销**） |
+
+**`from __future__ import annotations`**：让注解变成字符串（延迟求值），避免前向引用问题，也略微减少启动开销。3.11 起默认行为改成了字符串化（PEP 563 的方向）。
+
+**`typing` 常用**：`Optional[X]`（= `X | None`）、`Union`、`List`/`Dict`（3.9 起可直接 `list[int]`）、`Callable`、`TypedDict`、`Protocol`。
+
+**代价**：注解写得不对会误导人，比没有更糟；复杂泛型注解可读性差。
+@FOLLOW
+1. **注解会在运行时被检查吗？** —— 不会，除非显式校验。
+2. **`list[int]` 在 3.8 能用吗？** —— 不能，要 `List[int]`（或在 3.7+ 用 `from __future__ import annotations`）。
+3. **怎么强制校验？** —— `pydantic` 模型或 `beartype` 装饰器。
+@TRAPS
+- 以为注解能提速或强制类型
+- 在 3.8 用 `list[int]` 语法
+- 注解与实现不一致，误导调用方
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 类型注解（预测题，非真实面经）
+
+@@ Q-5136
+@STEM
+**题目**：面试官问"你这个模块为什么用 Python 写，而不是 C++？"
+
+**问**：什么时候用 Python，什么时候必须换 C++？
+@ANSWER
+按三个维度判断：**性能要求**（毫秒级循环、大批量数值计算 → C++/numpy）、**部署环境**（无解释器、内存受限的嵌入式 → C++）、**开发迭代速度**（原型、脚本、胶水 → Python）。
+
+实际上多数系统是**混合**的：Python 做编排和 IO，热点用 C++ 扩展或 numpy。
+@DEEP
+| 维度 | Python | C++ |
+|---|---|---|
+| 开发速度 | 快 | 慢 |
+| 运行性能 | 慢 10–100 倍 | 快 |
+| 内存占用 | 高 | 低（可控） |
+| 部署 | 需要解释器/打包 | 单二进制 |
+| 生态 | 数据处理/AI 最强 | 系统/实时/底层 |
+| 并发 | GIL 限制 | 真并行 |
+
+**典型的 Python 不该管的场景**：
+1. **实时控制环**（1 kHz 以上，抖动要求严格）；
+2. **嵌入式/无 OS 环境**；
+3. **单机高吞吐服务**（GIL 是瓶颈）；
+4. **需要精确内存布局**（与硬件/协议对接）。
+
+**典型的 Python 最合适的场景**：训练脚本、数据预处理、测试与工具链、服务编排、快速验证算法。
+
+**混合方案**：C++ 写核心库 → pybind11 暴露 → Python 调用。我们项目里 YOLO 推理就是 C++（ONNX Runtime/TensorRT），上层调度用 Python/ROS2。
+@FOLLOW
+1. **pybind11 和 ctypes 怎么选？** —— pybind11 类型安全、易用；ctypes 无依赖但只适合 C 接口。
+2. **Cython 呢？** —— 折中方案，改 Python 代码加类型声明即可编译。
+3. **numba 呢？** —— JIT 编译热点函数，无需换语言，但只支持数值代码。
+@TRAPS
+- 用 Python 写实时控制环
+- 为了"性能"全面重写成 C++（可能收益不抵成本）
+- 不知道 pybind11 / numpy 这类折中方案
+@RELATED
+- 方向与规划/项目/YOLO_Road_Detection
+@SOURCE
+语言选型（预测题，非真实面经）
+
+@@ Q-5137
+@STEM
+**现象**：Windows 上跑 PyTorch 训练，`DataLoader(num_workers=4)` 直接卡死或报
+`RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase`。
+
+**问**：为什么会卡死？怎么解决？
+@ANSWER
+因为 Windows/macOS 用 **spawn** 启动子进程：子进程会重新 import 主模块。如果创建 DataLoader 的代码在模块顶层，子进程 import 时又会创建 DataLoader → 无限递归 → 卡死/报错。
+
+解决：**把训练入口包进 `if __name__ == "__main__":`**。
+@DEEP
+```python
+# ❌ Windows 下卡死
+loader = DataLoader(ds, num_workers=4)   # 顶层执行
+
+# ✅
+def main():
+    loader = DataLoader(ds, num_workers=4)
+    train(loader)
+
+if __name__ == "__main__":
+    main()
+```
+
+| 平台 | 启动方式 | 注意 |
+|---|---|---|
+| Linux | fork（默认） | 一般没问题，但 fork 后 CUDA 状态不可靠 |
+| Windows | spawn | **必须** `if __name__ == "__main__"` |
+| macOS | spawn（3.8+） | 同上 |
+| Jupyter/Colab | 无 `__main__` 概念 | `num_workers>0` 常出问题，设 0 |
+
+**另一个坑：CUDA + fork**：父进程初始化了 CUDA 再 fork，子进程用 CUDA 会崩。所以 DataLoader 的 worker 只做 CPU 侧的加载/增强，不要在里面碰 GPU。
+
+**worker 里的随机种子**：每个 worker 默认种子不同（否则数据顺序会重复）。`worker_init_fn` 可以显式设置。
+
+**笔记本环境**：Jupyter 里 `num_workers>0` 经常直接卡住，设 0 最稳（性能靠预取和 batch 调）。
+@FOLLOW
+1. **num_workers 设多少？** —— 通常 4–8；超过 CPU 核数无益，还可能拖慢。
+2. **worker 里能用 CUDA 吗？** —— 不要，会崩或极慢。
+3. **为什么第一个 epoch 慢？** —— worker 启动 + 数据预热。
+@TRAPS
+- Windows 上不加 `if __name__ == "__main__"`
+- 在 worker 里创建 CUDA tensor
+- Jupyter 里开多 worker
+@RELATED
+- 方向与规划/项目/跟骨
+@SOURCE
+PyTorch 工程实践（预测题，非真实面经）
+
+@@ Q-5138
+@STEM
+**现象**：一个常驻的 Python 服务，内存每小时涨 20 MB，几天后 OOM。
+
+**问**：Python 进程内存一直涨，怎么排查？
+@ANSWER
+先分清是**真泄漏**（对象没释放）还是**假泄漏**（缓存/arena 不归还）。用 `tracemalloc` 拍两次快照做差集，能直接定位到分配的代码行；再用 `gc.get_objects()` 看哪类对象在涨。
+
+常见真凶：**全局缓存无上限**、**循环引用 + `__del__`**、**闭包持有大对象**、**matplotlib 图未 close**、**日志 handler 重复添加**。
+@DEEP
+```python
+import tracemalloc, gc
+
+tracemalloc.start(25)                    # 保留 25 帧
+snap1 = tracemalloc.take_snapshot()
+# ... 跑一段时间 ...
+snap2 = tracemalloc.take_snapshot()
+
+for stat in snap2.compare_to(snap1, 'lineno')[:10]:
+    print(stat)                          # 涨得最多的代码行
+
+print(len(gc.get_objects()))             # 对象总数是否持续增长
+```
+
+| 现象 | 可能原因 |
+|---|---|
+| 对象数持续涨 | 真泄漏（引用未释放） |
+| 对象数稳定但 RSS 涨 | 内存碎片/arena 不归还（假泄漏） |
+| 只在某接口后涨 | 该接口的缓存或临时对象 |
+| 涨到某个值就稳 | 缓存达到上限，正常 |
+
+**常见修复**：
+1. `functools.lru_cache(maxsize=N)` 一定要设上限；
+2. 用 `weakref.WeakValueDictionary` 做缓存，让对象可被回收；
+3. `del` 掉不再用的大对象，并避免闭包意外持有；
+4. 绘图后 `plt.close(fig)`。
+
+**假泄漏的处理**：`MALLOC_ARENA_MAX=2` 限制 arena 数量，或定期重启 worker。
+@FOLLOW
+1. **`gc.collect()` 能解决吗？** —— 只对循环引用有效，对"还有引用"的泄漏无效。
+2. **`__del__` 有什么问题？** —— 有 `__del__` 的对象在循环引用里可能不被回收（3.4 起已改善）。
+3. **怎么监控？** —— `psutil` 定期打 RSS，配告警。
+@TRAPS
+- 无上限的 `lru_cache` / 全局 dict
+- 用 `gc.collect()` 掩盖真实引用泄漏
+- 只看 RSS 不看对象数
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 内存排查（预测题，非真实面经）
+
+@@ Q-5139
+@STEM
+**题目**：用 PyInstaller 打一个只读 Excel 的小工具，产物 400 MB。
+
+**问**：为什么打包体积这么大？怎么减小？
+@ANSWER
+因为 PyInstaller 会把**整个 Python 解释器 + 用到的标准库 + 所有依赖的二进制**打进去。如果环境里装了 numpy/pandas/torch，即使只 import 了一小部分，也可能被整体带上。
+
+减体积靠：**干净的虚拟环境重新装**、**排除不需要的模块**、**用 onefile 之外的目录模式**、**必要时换 Nuitka**。
+@DEEP
+```bash
+pyinstaller --onefile --noconfirm ^
+  --exclude-module tkinter ^
+  --exclude-module matplotlib ^
+  --exclude-module PyQt5 ^
+  app.py
+```
+
+| 体积来源 | 典型占比 | 处理 |
+|---|---|---|
+| Python 解释器 + 标准库 | 15–30 MB | 无法避免 |
+| numpy/scipy | 50–100 MB | 用 `--exclude` 或改算法 |
+| PyTorch | 500 MB–2 GB | **考虑不打包**，改服务化 |
+| Qt/GUI 框架 | 50–150 MB | 排除未用的 |
+| 重复的 DLL | 不定 | 清理环境重打 |
+
+**最有效的办法：在干净 venv 里打包**。开发环境里装了几十个包，PyInstaller 会尽量都带上。
+
+**`--onefile` 的代价**：每次启动要把自身解压到临时目录，慢且占磁盘；目录模式（onedir）启动快，但文件多。
+
+**替代方案**：Nuitka（编译成 C，体积小、启动快、但编译慢）；或把重依赖放服务端，客户端只做轻量交互。
+@FOLLOW
+1. **为什么 onefile 启动慢？** —— 要解压到 `%TEMP%`。
+2. **能打包成单文件且快吗？** —— 用 Nuitka 或 onedir + 启动器。
+3. **杀毒软件误报？** —— 常见，签名或换打包器可缓解。
+@TRAPS
+- 在开发环境直接打包
+- 打包 torch 却只用了一个小功能
+- 用 onefile 做频繁启动的 CLI
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 打包分发（预测题，非真实面经）
+
+@@ Q-5140
+@STEM
+**题目**：要给自己写的工具加测试，`unittest` 和 `pytest` 怎么选？
+
+**问**：单元测试该怎么写？pytest 和 unittest 怎么选？
+@ANSWER
+**选 pytest**：语法更简洁（裸 `assert`）、fixture 管理依赖、参数化方便、失败信息可读。`unittest` 是标准库、无依赖，适合不能装第三方包的场景。
+
+写测试的要点是：**一个测试只测一件事**、**用参数化覆盖边界**、**测试要快且可重复**。
+@DEEP
+```python
+# pytest 风格
+import pytest
+
+def test_parse_ok():
+    assert parse("1,2,3") == [1, 2, 3]
+
+@pytest.mark.parametrize("raw,expect", [
+    ("", []),
+    ("1", [1]),
+    ("1,,2", [1, 2]),
+    ("x", ValueError),
+])
+def test_parse_edge(raw, expect):
+    if expect is ValueError:
+        with pytest.raises(ValueError):
+            parse(raw)
+    else:
+        assert parse(raw) == expect
+
+@pytest.fixture
+def tmp_db(tmp_path):
+    db = make_db(tmp_path / "t.db")
+    yield db
+    db.close()
+```
+
+| 对比 | pytest | unittest |
+|---|---|---|
+| 断言 | 裸 `assert` | `self.assertEqual` |
+| 依赖注入 | `fixture` | `setUp/tearDown` |
+| 参数化 | `@parametrize` | 手写循环 |
+| 插件生态 | 丰富（覆盖率、并行） | 少 |
+| 依赖 | 需安装 | 标准库 |
+
+**好测试的三个特征**：**快**（毫秒级）、**独立**（不依赖执行顺序）、**确定**（不依赖时间/随机/网络）。
+
+**怎么测依赖外部硬件/网络的代码**：抽接口 + mock，或者用依赖注入传入假的实现——这也是为什么"业务逻辑要和 IO 分离"。
+@FOLLOW
+1. **覆盖率多少够？** —— 核心逻辑 80% 以上，别追求 100%（性价比低）。
+2. **怎么测随机性？** —— 固定种子。
+3. **集成测试和单元测试比例？** —— 金字塔：单元多、集成少。
+@TRAPS
+- 测试之间共享状态、依赖执行顺序
+- 测试里用真实网络/数据库
+- 只测正常路径不测边界
+@RELATED
+- 无（通用八股，不绑定具体项目）
+@SOURCE
+Python 测试（预测题，非真实面经）

@@ -49,6 +49,7 @@
 | 硬件嵌入式 | `content/09_hardware` | **P1** | 本科护城河；**含汽车电子**（CAN / CAN FD / ECU / 实时系统） |
 | 医学影像 | `content/07_imaging` | **P1** | 科研主线，也是医疗设备方向（联影 / 迈瑞 / 西门子医疗）的落点 |
 | 深度学习 | `content/10_cv_pytorch` | **P1** | 靠 UNet 项目本身练，不单独学 |
+| Python | `content/11_python` | **P1** | 训练脚本、数据处理、工具链的日常语言。**子方向**：语言机制 / 数据结构 / 迭代器与生成器 / 并发与 GIL / 异常与资源 / 性能与工程。机考里的 Python 读程序题在 `04_algo`，这里只讲语言与工程机制 |
 | 端侧大模型 / VLA | — | **P2** | 2028 年再看，只有推理侧岗位需要 |
 
 ## 三、三个核心项目（简历竞争力）
@@ -70,6 +71,7 @@ python tools/import_lab.py
 
 # 3. 给没有本地文档的模块补索引题（幂等，各管一摊，互不覆盖）
 python tools/seed.py            # 算法机考 / 医学影像 / 机器人学 / 深度学习
+python tools/seed_python.py     # Python 模块 40 道（骨架，正文在 tools/cards/）
 python tools/seed_algo.py       # 算法题（40/20/20/20 分布）
 python tools/seed_acm.py        # ACM 输入输出专项
 python tools/seed_cpp_sdk.py    # C++ 工程化与 SDK 子方向
@@ -79,7 +81,10 @@ python tools/seed_sie.py        # 项目深挖：西门子杯 MRP 环网（15 �
 python tools/seed_log.py        # 项目深挖：Linux 日志分析（15 道）
 python tools/seed_bone.py       # 项目深挖：跟骨分割科研（10 道，答案待填）
 
-# 4. 校验字段、号段、小节完整性
+# 4. 写答案：正文写 tools/cards/*.cards（纯文本，免转义），再灌进题卡
+python tools/apply_cards.py tools/cards/py_a.cards
+
+# 5. 校验字段、号段、小节完整性
 python tools/validate.py
 
 # 5. 生成单文件题库网页 dist/bank.html（双击即开，手机可用）
@@ -97,7 +102,11 @@ python tools/gh.py push                            # 推送
 
 令牌从系统凭据管理器（GCM）读取，**不落盘、不写进任何文件**。SSH 只负责推代码，创建仓库必须走 REST API，所以两者都需要。
 
-网页支持：全文搜索、多维筛选（模块 / **子方向** / 优先级 / 状态）、答案折叠、错题标记（存 localStorage）。
+网页支持：全文搜索、多维筛选（**公司** / **岗位** / 模块 / 子方向 / 优先级 / 状态）、答案折叠、错题标记（存 localStorage）。
+
+**按公司 / 岗位找题**：筛选栏有两个下拉——选「公司」或「岗位族」后，只留这家这个方向真正要对口的模块。在搜索框直接输 `Momenta`、`推理部署`、`SDK` 也能识别（命中公司名或岗位名就自动套那套口径）。
+口径来自 `companies/targets.json`，**全部是按 JD 推导的，不是该公司的真实考题**；算法机考 317 道是所有人的门槛项，不参与这个口径（页面上会注明）。
+链接可分享：`bank.html?co=Momenta`、`bank.html?rl=C`、`bank.html?q=推理部署`。
 
 **按公司找题**：题目卡片上会出现红色标签，显示这道题**真实**出现在哪家公司哪个岗位（`appearances` 字段）。一个都没有就留空——不填预测，只填面经。填写规范见 `docs/schema.md`。
 
@@ -105,7 +114,7 @@ python tools/gh.py push                            # 推送
 
 ```
 面试题库/
-├── content/          一题一 md，唯一内容源（10 个技术模块）
+├── content/          一题一 md，唯一内容源（11 个技术模块）
 ├── companies/        公司 × 岗位索引：查"这家这个岗考什么"
 ├── sources/          开源复用台账、候选池、抽取报告
 ├── tools/            extract / import_lab / seed* / build / validate / gh

@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.1.0 — 2026-11-10
+
+题库 739 → **779 道**，新增 **Python 模块 40 道** 与 **公司 / 岗位筛选**。
+
+### 新增模块 `11_python`（40 道，号段 5101–5599）
+
+与 `04_algo` 里的 115 道「Python 读程序写结果」分工不同：那里考语法细节，这里考语言机制与工程。
+
+| 子方向 | 题数 | 覆盖 |
+|---|---|---|
+| 语言机制 | 7 | 可变默认参数、`is` vs `==` 与小整数缓存、切片是拷贝（numpy 是视图）、延迟绑定闭包、装饰器与 `functools.wraps`、浅拷贝 vs 深拷贝、可变/不可变与可哈希 |
+| 数据结构 | 6 | `list` vs `tuple` 的内存与语义、dict 的 compact 布局与最坏 O(n)、set 去重丢序、Timsort 稳定性与 key 调用次数、`list.pop(0)` 的 O(n)、字符串 `+=` 的 O(n²) |
+| 迭代器与生成器 | 5 | 迭代器协议与"一次性"、`yield` 的暂停/恢复、`yield from` 的双向委托、生成器表达式 vs 列表推导、遍历中删除为什么漏删 |
+| 并发与 GIL | 7 | GIL 是 CPython 实现而非语言规范、I/O 密集 vs CPU 密集、多进程绕过 GIL 的代价、asyncio 协作式与阻塞陷阱、`i += 1` 非原子、进程间通信、死锁与 `RLock` |
+| 异常与资源 | 5 | `else`/`finally` 执行时机与 finally 覆盖 return、上下文管理协议与 `__exit__` 返回值、`raise from` 异常链、自定义异常该继承 `Exception`、EAFP vs LBYL |
+| 性能与工程 | 10 | cProfile/line_profiler/py-spy 分工、`LOAD_FAST` vs `LOAD_GLOBAL`、numpy 向量化的四个原因、依赖锁定与虚拟环境、类型注解不影响运行、Python vs C++ 选型、DataLoader 在 Windows 卡死、内存泄漏排查（tracemalloc）、PyInstaller 体积、pytest vs unittest |
+
+### 新增公司 / 岗位筛选
+
+- 新增 `companies/targets.json`：把 `companies/README.md` 里的岗位族划分做成机器可读映射
+  （6 个岗位族 × 10 家公司 × 模块/子方向）。**全部标注为 inferred，不是真实考题。**
+- 网页筛选栏加两个下拉：**全部公司**、**全部岗位**；选中后只保留对口模块/子方向。
+- 搜索框可直接输 `Momenta`、`推理部署`、`SDK`——命中公司名或岗位名就自动套那套口径，并在下方写清「为什么这些题被算进来」。
+- 算法机考 317 道是所有人的门槛项，**不参与**该口径，页面上注明。
+- 支持 URL 参数，链接可分享：`bank.html?co=Momenta`、`?rl=C`、`?q=推理部署`。
+
+命中数（实测）：
+
+| 公司 | 题数 | 占比 | | 岗位族 | 题数 |
+|---|---|---|---|---|---|
+| 华为 | 450 | 58% | | A · SDK | 284 |
+| 西门子医疗 | 425 | 55% | | E · 嵌入式 | 195 |
+| 联影医疗 | 424 | 54% | | B · 系统集成 | 145 |
+| 迈瑞医疗 | 401 | 51% | | C · 推理部署 | 132 |
+| 小鹏汽车 | 334 | 43% | | F · 机器人软件 | 111 |
+| Momenta / 蔚来 | 322 | 41% | | D · 感知算法 | 101 |
+| 地平线 | 304 | 39% | | | |
+| 追觅科技 | 278 | 36% | | | |
+| ABB | 156 | 20% | | | |
+
+### 工具
+
+- 新增 `tools/seed_python.py`（生成 40 张骨架）、`tools/cards/py_a.cards`、`tools/cards/py_b.cards`
+- `build.py`：读 `targets.json`、注入 `TARGETS`、新增 `__COOPTS__`/`__RLOPTS__` 占位、URL 参数
+- `validate.py`：`ID_BASE` 补 `11_python: 5100`
+
 ## v1.0.0 — 2026-11-10
 
 **题库填完：739 道，答案 739 道（100%）**。本轮补 195 道。

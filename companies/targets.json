@@ -1,0 +1,332 @@
+{
+  "_comment": "公司 / 岗位筛选的机器可读映射。source_type 一律是 inferred：按 JD 与技术方向推导，不代表该公司真实考过。真实面经请写进题卡的 appearances 字段。",
+  "always": [
+    "01_project"
+  ],
+  "roles": [
+    {
+      "key": "A",
+      "name": "A · SDK / 基础软件",
+      "aliases": [
+        "sdk",
+        "基础软件",
+        "基础架构",
+        "c++ 开发"
+      ],
+      "mods": [
+        "02_cpp",
+        "03_linux",
+        "11_python"
+      ],
+      "subs": [
+        "工程化与 SDK",
+        "对象模型",
+        "STL 容器",
+        "时间与算法",
+        "Linux 系统",
+        "Linux 日志分析"
+      ],
+      "focus": "C++ 深度、内存与生命周期、并发、接口与 ABI、动态库"
+    },
+    {
+      "key": "B",
+      "name": "B · 系统集成",
+      "aliases": [
+        "系统集成",
+        "中间件",
+        "平台软件"
+      ],
+      "mods": [
+        "06_ros2",
+        "03_linux"
+      ],
+      "subs": [
+        "工程化与 SDK",
+        "多传感器",
+        "仿真与建图",
+        "YOLO 部署",
+        "Linux 日志分析"
+      ],
+      "focus": "ROS2/DDS、进程间通信、构建系统、链路调试"
+    },
+    {
+      "key": "C",
+      "name": "C · 推理部署",
+      "aliases": [
+        "推理",
+        "部署",
+        "边缘",
+        "tensorrt",
+        "onnx"
+      ],
+      "mods": [
+        "05_deploy",
+        "10_cv_pytorch"
+      ],
+      "subs": [
+        "端侧部署",
+        "YOLO 部署",
+        "工程化与 SDK",
+        "训练",
+        "优化",
+        "仿真与建图"
+      ],
+      "focus": "ONNX/TensorRT、量化、性能分析、CUDA 基础"
+    },
+    {
+      "key": "D",
+      "name": "D · 感知算法",
+      "aliases": [
+        "感知",
+        "算法",
+        "cv",
+        "vlm"
+      ],
+      "mods": [
+        "10_cv_pytorch",
+        "07_imaging"
+      ],
+      "subs": [
+        "跟骨分割（科研）",
+        "DICOM",
+        "UNet",
+        "评价指标",
+        "数据问题",
+        "训练",
+        "数据",
+        "优化"
+      ],
+      "focus": "检测/分割、指标、数据处理、模型评估"
+    },
+    {
+      "key": "E",
+      "name": "E · 嵌入式",
+      "aliases": [
+        "嵌入式",
+        "mcu",
+        "设备软件",
+        "固件"
+      ],
+      "mods": [
+        "09_hardware"
+      ],
+      "subs": [
+        "二维云台",
+        "本科毕设·4G 测温",
+        "西门子项目"
+      ],
+      "focus": "STM32 外设、通信总线、实时性、C 语言"
+    },
+    {
+      "key": "F",
+      "name": "F · 机器人软件",
+      "aliases": [
+        "机器人",
+        "运动控制",
+        "标定",
+        "具身"
+      ],
+      "mods": [
+        "08_robot",
+        "06_ros2"
+      ],
+      "subs": [
+        "跟骨分割（科研）",
+        "二维云台",
+        "多传感器",
+        "仿真与建图"
+      ],
+      "focus": "运动学、控制、ROS2、传感器融合"
+    }
+  ],
+  "companies": [
+    {
+      "name": "Momenta",
+      "aliases": [
+        "moment",
+        "魔门塔"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "B"
+      ],
+      "main": "A SDK / 基础软件",
+      "extra": [
+        "工程化与 SDK",
+        "对象模型",
+        "YOLO 部署"
+      ]
+    },
+    {
+      "name": "华为",
+      "aliases": [
+        "huawei",
+        "海思",
+        "2012",
+        "车BU",
+        "车 bu"
+      ],
+      "roles": [
+        "A",
+        "C",
+        "F",
+        "E"
+      ],
+      "main": "A · C 推理部署",
+      "extra": [
+        "时间与算法",
+        "端侧部署",
+        "多传感器"
+      ]
+    },
+    {
+      "name": "地平线",
+      "aliases": [
+        "horizon",
+        "征程"
+      ],
+      "roles": [
+        "C",
+        "A"
+      ],
+      "main": "C 推理部署",
+      "extra": [
+        "端侧部署",
+        "工程化与 SDK",
+        "优化"
+      ]
+    },
+    {
+      "name": "蔚来",
+      "aliases": [
+        "nio"
+      ],
+      "roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "main": "A · B",
+      "extra": [
+        "多传感器",
+        "仿真与建图"
+      ]
+    },
+    {
+      "name": "小鹏汽车",
+      "aliases": [
+        "xpeng",
+        "小鹏"
+      ],
+      "roles": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "main": "A · B",
+      "extra": [
+        "多传感器",
+        "YOLO 部署",
+        "训练"
+      ]
+    },
+    {
+      "name": "ABB",
+      "aliases": [
+        "abb",
+        "工业机器人"
+      ],
+      "roles": [
+        "F",
+        "B"
+      ],
+      "main": "F 机器人软件",
+      "extra": [
+        "运动学",
+        "力控",
+        "控制",
+        "标定"
+      ]
+    },
+    {
+      "name": "西门子医疗",
+      "aliases": [
+        "siemens",
+        "西门子"
+      ],
+      "roles": [
+        "E",
+        "A",
+        "D"
+      ],
+      "main": "E · A",
+      "extra": [
+        "DICOM",
+        "工具链",
+        "评价指标",
+        "STM32"
+      ]
+    },
+    {
+      "name": "联影医疗",
+      "aliases": [
+        "united imaging",
+        "联影"
+      ],
+      "roles": [
+        "D",
+        "A",
+        "E"
+      ],
+      "main": "D · A",
+      "extra": [
+        "UNet",
+        "DICOM",
+        "跟骨分割（科研）",
+        "训练"
+      ]
+    },
+    {
+      "name": "迈瑞医疗",
+      "aliases": [
+        "mindray",
+        "迈瑞"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E 嵌入式",
+      "extra": [
+        "FreeRTOS",
+        "STM32",
+        "总线协议",
+        "模拟电路"
+      ]
+    },
+    {
+      "name": "追觅科技",
+      "aliases": [
+        "dreame",
+        "追觅"
+      ],
+      "roles": [
+        "E",
+        "F",
+        "C"
+      ],
+      "main": "E · F",
+      "extra": [
+        "FreeRTOS",
+        "控制",
+        "端侧部署",
+        "多传感器"
+      ]
+    }
+  ],
+  "universal": [
+    "04_algo"
+  ]
+}

@@ -23,6 +23,7 @@ MODULE_NAME = {
     "04_algo": "算法机考", "05_deploy": "模型部署", "06_ros2": "ROS2",
     "07_imaging": "医学影像", "08_robot": "机器人学",
     "09_hardware": "硬件嵌入式", "10_cv_pytorch": "深度学习",
+    "11_python": "Python",
 }
 MODULE_ORDER = list(MODULE_NAME)
 PRI_ORDER = {"P0": 0, "P1": 1, "P2": 2}
@@ -273,6 +274,9 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   border-radius:5px;padding:2px 7px;margin-top:4px;cursor:pointer;background:transparent}
 .wrongmark.on{background:var(--red);color:#fff}
 .empty{text-align:center;color:var(--muted);padding:60px 0}
+.hint{font-size:12.5px;color:var(--muted);padding:8px 0 0}
+.hint b{color:var(--blue)}
+.hint .warn{color:var(--red)}
 @media(max-width:640px){
   h1{font-size:20px}.qt{flex:1 1 100%}.wrap{padding:0 12px 60px}
   .bar{gap:6px}input[type=search]{flex:1 1 100%}
@@ -287,7 +291,9 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 </header>
 
 <div class="bar">
-  <input type="search" id="q" placeholder="搜索题目、标签、答案正文…">
+  <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
+  <select id="co"><option value="">全部公司</option>__COOPTS__</select>
+  <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
   <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
   <select id="sub"><option value="">全部子方向</option></select>
   <select id="pri"><option value="">全部优先级</option>
@@ -296,6 +302,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <option value="answered">已答</option><option value="indexed">待补充</option></select>
   <label class="chk"><input type="checkbox" id="wrong"> 只看错题</label>
 </div>
+<div class="hint" id="hint"></div>
 
 <div id="list"></div>
 <div class="empty" id="empty" style="display:none">没有匹配的题目</div>
@@ -303,9 +310,27 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 
 <script>
 const DATA = __DATA__;
+const TARGETS = __TARGETS__;
 const WRONG_KEY = 'ib_wrong_v1';
 const OPEN_ALL = location.hash === '#all';   // 调试用：全部展开
 let wrong = new Set(JSON.parse(localStorage.getItem(WRONG_KEY) || '[]'));
+
+const ROLE_BY_KEY = {};
+TARGETS.roles.forEach(r => ROLE_BY_KEY[r.key] = r);
+const ALWAYS = new Set(TARGETS.always || []);
+
+// 岗位口径：命中模块或子方向即算对口；算法机考与项目深挖所有岗位都要
+function roleHit(q, r){
+  if (!r) return false;
+  if (ALWAYS.has(q.module)) return true;
+  return (r.mods || []).includes(q.module) || (r.subs || []).includes(q.sub);
+}
+// 公司口径：主投岗位族 + 该公司额外列出的子方向
+function coHit(q, c){
+  if (!c) return false;
+  if ((c.extra || []).includes(q.sub)) return true;
+  return (c.roles || []).some(k => roleHit(q, ROLE_BY_KEY[k]));
+}
 
 const $ = id => document.getElementById(id);
 const list = $('list');
@@ -345,27 +370,60 @@ function render(){
   const mod = $('mod').value, pri = $('pri').value, st = $('st').value;
   const sub = $('sub').value;
   const onlyW = $('wrong').checked;
+  const coDef = TARGETS.companies.find(c => c.name === $('co').value);
+  const rlDef = ROLE_BY_KEY[$('rl').value];
+
+  // 关键词命中公司名/岗位名时，按那套口径过滤（这样直接搜 "Momenta" 也能用）
+  let kwCo = null, kwRl = null, kwPlain = false;
+  if (kw) {
+    kwCo = TARGETS.companies.find(c =>
+      c.name.toLowerCase().includes(kw) ||
+      (c.aliases || []).some(a => a.toLowerCase().includes(kw)));
+    kwRl = TARGETS.roles.find(r =>
+      r.name.toLowerCase().includes(kw) ||
+      (r.aliases || []).some(a => a.toLowerCase().includes(kw)));
+  }
+
   const hit = DATA.filter(q => {
     if (mod && q.module !== mod) return false;
     if (sub && q.sub !== sub) return false;
     if (pri && q.priority !== pri) return false;
     if (st && q.status !== st) return false;
     if (onlyW && !wrong.has(q.id)) return false;
+    if (coDef && !coHit(q, coDef)) return false;
+    if (rlDef && !roleHit(q, rlDef)) return false;
     if (!kw) return true;
     const hay = (q.title + ' ' + q.id + ' ' + q.tags.join(' ') +
                  ' ' + (q.sub || '') + ' ' + (q.appearances || []).join(' ') +
                  ' ' + q.plain).toLowerCase();
-    return hay.includes(kw);
+    if (hay.includes(kw)) return true;
+    if (kwCo && coHit(q, kwCo)) return true;
+    if (kwRl && roleHit(q, kwRl)) return true;
+    return false;
   });
+
   list.innerHTML = hit.map(card).join('');
   $('empty').style.display = hit.length ? 'none' : 'block';
   // 搜索/筛选时自动展开，省一次点击
-  if (kw || mod || pri || st || sub || onlyW || OPEN_ALL) {
+  if (kw || mod || pri || st || sub || onlyW || coDef || rlDef || OPEN_ALL) {
     list.querySelectorAll('.q').forEach(el => el.classList.add('open'));
   }
   $('stat').textContent = `共 ${DATA.length} 题 ｜ 当前 ${hit.length} 题 ｜ `
     + `已答 ${DATA.filter(q=>q.status!=='indexed').length} ｜ 错题 ${wrong.size} ｜ `
     + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length}`;
+
+  // 口径说明：让人知道"为什么这些题被算进来"
+  const tips = [];
+  const tCo = coDef || kwCo, tRl = rlDef || kwRl;
+  if (tCo) tips.push(`公司 <b>${esc(tCo.name)}</b>（主投 ${esc(tCo.main || '—')}）`);
+  if (tRl) tips.push(`岗位族 <b>${esc(tRl.name)}</b>：${esc(tRl.focus || '')}`);
+  if (tips.length) {
+    const uni = (TARGETS.universal || [])
+      .map(m => DATA.filter(q => q.module === m).length).reduce((a, b) => a + b, 0);
+    tips.push(`另有 <b>${uni}</b> 道算法机考为所有人的门槛项，不参与上面的口径`);
+    tips.push('口径按 JD 推导，<span class="warn">不是该公司真实考题</span>');
+  }
+  $('hint').innerHTML = tips.join('　·　');
 }
 
 list.addEventListener('click', e => {
@@ -383,7 +441,14 @@ list.addEventListener('click', e => {
   if (head) head.parentElement.classList.toggle('open');
 });
 
-['q','mod','pri','st','sub','wrong'].forEach(id => $(id).addEventListener('input', render));
+// 支持 ?co=Momenta&rl=C&q=关键字，链接可直接分享
+const _p = new URLSearchParams(location.search);
+[['co','co'],['rl','rl'],['mod','mod'],['q','q']].forEach(([k, id]) => {
+  const v = _p.get(k);
+  if (v) $(id).value = v;
+});
+
+['q','mod','pri','st','sub','co','rl','wrong'].forEach(id => $(id).addEventListener('input', render));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 refreshSubs();
 render();
@@ -403,8 +468,24 @@ def main() -> int:
     modopts = "\n".join(
         f'<option value="{m}">{MODULE_NAME[m]}</option>'
         for m in MODULE_ORDER if any(q["module"] == m for q in qs))
+
+    # 公司 / 岗位口径：companies/targets.json，缺失时降级为空，不影响构建
+    tj = ROOT / "companies" / "targets.json"
+    targets = json.loads(tj.read_text(encoding="utf-8")) if tj.exists() else {
+        "always": [], "roles": [], "companies": []}
+    coopts = "\n".join(f'<option value="{html.escape(c["name"], quote=True)}">'
+                       f'{html.escape(c["name"])}</option>'
+                       for c in targets.get("companies", []))
+    rlopts = "\n".join(f'<option value="{html.escape(r["key"], quote=True)}">'
+                       f'{html.escape(r["name"])}</option>'
+                       for r in targets.get("roles", []))
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
+               .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
+                                                 separators=(",", ":")))
+               .replace("__COOPTS__", coopts)
+               .replace("__RLOPTS__", rlopts)
                .replace("__MODOPTS__", modopts)
                .replace("__COUNT__", str(len(qs))))
     target = DIST / "bank.html"
