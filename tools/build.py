@@ -231,6 +231,7 @@ PAGE = r"""<!DOCTYPE html>
   --bg:#faf3e2; --soft:#f3e9d2; --paper:#fffcf3; --line:#dbcba5;
   --tx:#2d2a21; --muted:#665c49; --blue:#1b5e8c; --green:#2e6b3e;
   --red:#a63a2e; --orange:#9a5a12; --purple:#6b4fa8; --yellow:#6f5520;
+  --accent:#1b5e8c;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);
@@ -321,6 +322,50 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .hint{font-size:12.5px;color:var(--muted);padding:8px 0 0}
 .hint b{color:var(--blue)}
 .hint .warn{color:var(--red)}
+/* ---- 学习报告 ---- */
+#repov{position:fixed;inset:0;background:rgba(45,42,33,.45);z-index:50;
+  display:flex;align-items:center;justify-content:center}
+.rpanel{width:min(900px,94vw);max-height:88vh;overflow:auto;background:var(--bg);
+  border:1px solid var(--line);border-radius:12px;padding:22px 26px;
+  box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.rhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.rhead b{font-size:17px}
+.rsec{font-size:13px;font-weight:700;color:var(--muted);margin:18px 0 6px;
+  letter-spacing:.5px}
+.rcards{display:flex;gap:10px;flex-wrap:wrap}
+.rcard{flex:1 1 160px;background:var(--paper);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s}
+.rcard:hover{border-color:var(--accent)}
+.rcard b{display:block;font-size:26px;line-height:1.25}
+.rcard small{font-size:12px;color:var(--muted)}
+.rcard.warn b{color:var(--red)}
+.rcard.good b{color:var(--green)}
+.rchart{display:flex;align-items:flex-end;gap:7px;height:96px;
+  padding:8px 4px 0;background:var(--paper);border:1px solid var(--line);border-radius:10px}
+.rbar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;
+  text-align:center;min-width:0}
+.rbar i{display:block;background:var(--accent);border-radius:3px 3px 0 0;min-height:2px}
+.rbar.zero i{background:var(--line)}
+.rbar em{font-style:normal;font-size:11px;color:var(--muted)}
+.rbar u{text-decoration:none;font-size:12px;color:var(--tx);font-weight:600}
+.rtable{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--paper);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rtable th,.rtable td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+.rtable th{background:var(--soft);font-size:12px;color:var(--muted)}
+.rtable tr:last-child td{border-bottom:0}
+.rtable tbody tr{cursor:pointer}
+.rtable tbody tr:hover{background:#fdf8ea}
+.rbar2{position:relative;background:var(--soft);border-radius:4px;height:12px;
+  width:110px;display:inline-block;vertical-align:middle;overflow:hidden}
+.rbar2 i{position:absolute;inset:0;right:auto;background:var(--green);border-radius:4px}
+.rnum{font:12px ui-monospace,Consolas,monospace;color:var(--muted)}
+.rscore{font-weight:700;padding:1px 8px;border-radius:5px;font-size:12.5px}
+.rscore.hi{color:#1a7f37;background:#eaf5ec}
+.rscore.mid{color:#9a6700;background:#fdf6e0}
+.rscore.lo{color:#a63a2e;background:#fdf1ee}
+.radv{margin:8px 0 0;padding-left:22px;font-size:14px;line-height:1.9}
+.radv li{margin:2px 0}
+.rfoot{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
 @media(max-width:640px){
   h1{font-size:20px}.qt{flex:1 1 100%}.wrap{padding:0 12px 60px}
   .bar{gap:6px}input[type=search]{flex:1 1 100%}
@@ -358,6 +403,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   </select>
   <button id="exp" class="mini" title="导出错题与自评记录（JSON）">备份↓</button>
   <button id="impb" class="mini" title="从 JSON 恢复复习数据">恢复↑</button>
+  <button id="rep" class="mini" title="自测覆盖、掌握度、复习节奏、错题本健康度">📊 学习报告</button>
   <input type="file" id="imp" accept=".json" hidden>
 </div>
 <div class="hint" id="hint"></div>
@@ -396,6 +442,30 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
         <button id="m_next" style="margin-left:auto">下一题 →</button></div>
     </div>
     <div id="m_end" style="display:none"></div>
+  </div>
+</div>
+
+<div id="repov" style="display:none">
+  <div class="rpanel">
+    <div class="rhead"><b>📊 学习报告</b>
+      <span id="r_gen" class="rnum"></span>
+      <button class="mini" id="r_close" style="margin-left:auto">关闭</button></div>
+    <div class="mnote">全部数据来自本机浏览器（自评记录 + 错题本），换设备请先用「备份↓」导出。点数字卡或模块行可跳到对应筛选。</div>
+    <div class="rsec">总览</div>
+    <div class="rcards" id="r_cards"></div>
+    <div class="rsec">近 8 周自测节奏（每周自评次数）</div>
+    <div class="rchart" id="r_weeks"></div>
+    <div class="rsec">模块掌握度（按平均分升序，最弱的排最前）</div>
+    <table class="rtable"><thead><tr>
+      <th>模块</th><th>已自测 / 总数</th><th>覆盖</th><th>平均分</th><th>薄弱</th><th>到期</th>
+    </tr></thead><tbody id="r_mods"></tbody></table>
+    <div class="rsec">下一步建议</div>
+    <ul class="radv" id="r_adv"></ul>
+    <div class="rfoot">
+      <button class="mini" id="r_due">📋 今日该复习</button>
+      <button class="mini" id="r_weak">🩹 薄弱题清单</button>
+      <button class="mini" id="r_clean" title="把已自评 ≥3 且未到期的题移出错题本">🧹 清理错题本</button>
+    </div>
   </div>
 </div>
 
@@ -758,6 +828,123 @@ function nextQ(){
   $('m_again').addEventListener('click', openMock);
   $('m_done').addEventListener('click', () => { $('mockov').style.display = 'none'; render(); });
 }
+// ---- 学习报告：自测覆盖 / 节奏 / 模块掌握度 / 错题本健康度 ----
+function weekStart(ts){
+  const d = new Date(ts); d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - (d.getDay() + 6) % 7);   // 回到本周一 0 点
+  return d.getTime();
+}
+const MODQ = {}; DATA.forEach(q => (MODQ[q.module] = MODQ[q.module] || []).push(q));
+const QBY = {}; DATA.forEach(q => QBY[q.id] = q);
+const isDue = r => r && r.g > 2 && (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
+
+function openRep(){
+  const now = Date.now();
+  const valid = new Set(DATA.map(q => q.id));
+  const tested = Object.keys(review).filter(id => valid.has(id));
+  const weakIds = tested.filter(id => review[id].g <= 2);
+  const dueIds  = tested.filter(id => isDue(review[id]));
+  const strongIds = tested.filter(id => review[id].g === 4);
+  const cov = Math.round(tested.length / DATA.length * 100);
+  $('r_gen').textContent = '生成于 ' + new Date(now).toLocaleString();
+
+  // 总览卡：点卡跳对应筛选
+  $('r_cards').innerHTML = `
+    <div class="rcard ${cov >= 80 ? 'good' : ''}" data-act="none">
+      <b>${tested.length}<small> / ${DATA.length}</small></b><small>已自测 · 覆盖 ${cov}%</small></div>
+    <div class="rcard ${wrong.size ? 'warn' : ''}" data-act="wrong">
+      <b>${wrong.size}</b><small>错题本</small></div>
+    <div class="rcard ${dueIds.length ? 'warn' : ''}" data-act="due">
+      <b>${dueIds.length}</b><small>今日该复习</small></div>
+    <div class="rcard ${weakIds.length ? 'warn' : ''}" data-act="weak">
+      <b>${weakIds.length}</b><small>薄弱（自评≤2）</small></div>
+    <div class="rcard ${strongIds.length ? 'good' : ''}" data-act="none">
+      <b>${strongIds.length}</b><small>牢固掌握（自评4）</small></div>`;
+
+  // 近 8 周节奏：review 每题只存最新一次自评，按 ts 归周
+  const ws0 = weekStart(now);
+  const wk = [];
+  for (let i = 7; i >= 0; --i) {
+    const s = ws0 - i * 7 * 864e5;
+    const c = tested.filter(id => { const t = review[id].ts; return t >= s && t < s + 7 * 864e5; }).length;
+    wk.push([`${new Date(s).getMonth() + 1}/${new Date(s).getDate()}`, c]);
+  }
+  const mx = Math.max(1, ...wk.map(x => x[1]));
+  $('r_weeks').innerHTML = wk.map(([l, c]) =>
+    `<div class="rbar ${c ? '' : 'zero'}"><u>${c || ''}</u>` +
+    `<i style="height:${Math.round(c / mx * 56)}px"></i><em>${l}</em></div>`).join('');
+
+  // 模块掌握度：平均分升序，最弱排最前；从未自测的模块垫底
+  const rows = Object.keys(MODQ).map(m => {
+    const qs = MODQ[m];
+    const done = qs.filter(q => review[q.id]);
+    const avg = done.length ? done.reduce((a, q) => a + review[q.id].g, 0) / done.length : null;
+    return { m, name: MODNAME[m] || m, total: qs.length, tested: done.length, avg,
+      weak: done.filter(q => review[q.id].g <= 2).length,
+      due: done.filter(q => isDue(review[q.id])).length };
+  }).sort((a, b) => (a.avg == null ? 9 : a.avg) - (b.avg == null ? 9 : b.avg));
+  $('r_mods').innerHTML = rows.map(r => {
+    const pct = Math.round(r.tested / r.total * 100);
+    const cls = r.avg == null ? '' : (r.avg >= 3.3 ? 'hi' : r.avg >= 2.5 ? 'mid' : 'lo');
+    return `<tr data-mod="${esc(r.m)}">
+      <td>${esc(r.name)}</td>
+      <td class="rnum">${r.tested} / ${r.total}</td>
+      <td><span class="rbar2"><i style="width:${pct}%"></i></span> <span class="rnum">${pct}%</span></td>
+      <td><span class="rscore ${cls}">${r.avg == null ? '未测' : r.avg.toFixed(1)}</span></td>
+      <td>${r.weak || '—'}</td><td>${r.due || '—'}</td></tr>`;
+  }).join('');
+
+  // 行动建议
+  const adv = [];
+  const pri0 = ids => ids.filter(id => QBY[id] && QBY[id].priority === 'P0').length;
+  if (dueIds.length)
+    adv.push(`今天有 <b>${dueIds.length}</b> 题到期复习（P0 ${pri0(dueIds)} 道），点下方「今日该复习」开始，约 ${Math.max(5, dueIds.length * 2)} 分钟`);
+  if (weakIds.length)
+    adv.push(`薄弱题 <b>${weakIds.length}</b> 道（P0 ${pri0(weakIds)}）：重口述一遍再自评 3 分以上，才能移出薄弱区`);
+  const worst = rows.find(r => r.avg != null);
+  if (worst && worst.avg < 3)
+    adv.push(`最弱模块是 <b>${esc(worst.name)}</b>（平均 ${worst.avg.toFixed(1)}、薄弱 ${worst.weak} 道），面试前优先补它的 P0/P1`);
+  if (cov < 60)
+    adv.push(`还有 <b>${DATA.length - tested.length}</b> 道从未自测（覆盖 ${cov}%）：每天开一场 10 题模拟面试，一周可新增约 70 题覆盖`);
+  const healed = [...wrong].filter(id => review[id] && review[id].g >= 3).length;
+  if (healed >= 3)
+    adv.push(`错题本里有 <b>${healed}</b> 道已自评 ≥3，点「清理错题本」移出，让它只装真不会的`);
+  if (!adv.length)
+    adv.push('状态良好：无到期、无薄弱。保持每天一场模拟面试的节奏即可。');
+  $('r_adv').innerHTML = adv.map(x => `<li>${x}</li>`).join('');
+  $('repov').style.display = 'flex';
+}
+
+$('rep').addEventListener('click', openRep);
+$('r_close').addEventListener('click', () => $('repov').style.display = 'none');
+$('r_cards').addEventListener('click', e => {
+  const c = e.target.closest('.rcard'); if (!c) return;
+  const act = c.dataset.act;
+  if (act === 'wrong') $('wrong').checked = true;
+  else if (act === 'due' || act === 'weak') $('rev').value = act;
+  else return;
+  $('repov').style.display = 'none'; render();
+});
+$('r_mods').addEventListener('click', e => {
+  const tr = e.target.closest('tr[data-mod]'); if (!tr) return;
+  $('mod').value = tr.dataset.mod; refreshSubs();
+  $('repov').style.display = 'none'; window.scrollTo(0, 0); render();
+});
+$('r_due').addEventListener('click', () => {
+  $('rev').value = 'due'; $('repov').style.display = 'none'; render();
+});
+$('r_weak').addEventListener('click', () => {
+  $('rev').value = 'weak'; $('repov').style.display = 'none'; render();
+});
+$('r_clean').addEventListener('click', () => {
+  const healed = [...wrong].filter(id => review[id] && review[id].g >= 3);
+  if (!healed.length) { alert('错题本没有「自评≥3」的题，无需清理'); return; }
+  if (!confirm(`把 ${healed.length} 道已自评 ≥3 的题移出错题本？\n（只影响错题标记，复习计划保留）`)) return;
+  healed.forEach(id => wrong.delete(id));
+  localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
+  openRep();
+});
+
 refreshSubs();
 render();
 </script>
