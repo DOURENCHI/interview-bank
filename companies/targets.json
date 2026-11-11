@@ -1285,6 +1285,20 @@
       "extra": []
     },
     {
+      "name": "联友科技",
+      "tier": "watch",
+      "nc_keywords": [
+        "联友科技",
+        "联友"
+      ],
+      "roles": [
+        "A",
+        "E"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
       "name": "字节跳动",
       "tier": "watch",
       "nc_keywords": [
