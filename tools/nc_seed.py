@@ -144,12 +144,29 @@ def clean_title(q: str) -> str:
 def next_ids(modules: list[str]) -> dict:
     """各模块下一个可用编号 = 现有最大 id + 1。"""
     import collections
-    mx = collections.defaultdict(int)
+    # 号段与 tools/validate.py 的 ID_BASE 保持一致（硬件 4101~4599，CV 4601~5099…）
+    ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
+               "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
+               "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
+               "11_python": 5100}
+    SPAN = 500
+    used = collections.defaultdict(set)
     for f in (ROOT / "content").rglob("Q-*.md"):
         m = re.match(r"Q-(\d{4})", f.name)
         if m:
-            mx[f.parent.name] = max(mx[f.parent.name], int(m.group(1)))
-    return {m: mx.get(m, 0) + 1 for m in modules}
+            used[f.parent.name].add(int(m.group(1)))
+    out = {}
+    for m in modules:
+        base = ID_BASE.get(m, 0)
+        lo, hi = base + 1, base + SPAN - 1
+        n = (max(used[m]) + 1) if used[m] else lo
+        if n > hi:                       # 顶部越出号段 → 回退到号段内最小空位
+            free = [i for i in range(lo, hi + 1) if i not in used[m]]
+            if not free:
+                raise SystemExit(f"模块 {m} 号段 {lo}~{hi} 已满，无法再入库（需扩号段）")
+            n = free[0]
+        out[m] = n
+    return out
 
 
 def skeleton(qid, title, mod, sub, comp, role, url, rnd) -> str:

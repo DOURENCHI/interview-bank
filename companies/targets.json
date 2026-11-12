@@ -1918,6 +1918,20 @@
       "extra": []
     },
     {
+      "name": "伊顿",
+      "tier": "watch",
+      "nc_keywords": [
+        "伊顿",
+        "Eaton"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
       "name": "中兴通讯",
       "tier": "watch",
       "nc_keywords": [

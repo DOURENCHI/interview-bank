@@ -7,5 +7,6 @@ dist/_probe.html
 dist/_*.html
 dist/_*.png
 _cache/
+.workbuddy/
 dist/_mock.html
 dist/_m*.png
