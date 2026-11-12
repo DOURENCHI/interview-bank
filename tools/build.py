@@ -296,6 +296,51 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .mhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .mrow{margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .mnote{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+/* —— 牛客宝典考点地图 —— */
+.tutpanel{margin:12px 0 14px}
+.tutpanel .rhead{flex-wrap:wrap}
+.tuttabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.tuttabs .tchip{font:13px/1.6 inherit;border:1px solid var(--line);background:var(--soft);
+  color:var(--tx);border-radius:999px;padding:5px 12px;cursor:pointer}
+.tuttabs .tchip.on{background:linear-gradient(180deg,#fffdf7,#eaf1fb);border-color:var(--campus);
+  color:var(--campus);font-weight:700;box-shadow:inset 0 -2px 0 var(--campus)}
+.tlist{display:flex;flex-direction:column;gap:8px}
+.tch{border:1px solid var(--line);border-left:4px solid var(--unknown-line);border-radius:10px;
+  background:var(--paper);padding:9px 12px}
+.tch.w3{border-left-color:var(--red)}
+.tch.w2{border-left-color:var(--orange)}
+.tch.w1{border-left-color:var(--unknown)}
+.tch.na{background:var(--soft)}
+.tch-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tch-name{font-weight:700;font-size:15px}
+.tch-no{font-size:11px;color:var(--muted)}
+.tch-em{font-size:12px;color:var(--muted)}
+.tch-w{margin-left:auto;color:var(--red);letter-spacing:1px;font-size:12px;white-space:nowrap}
+.tch-mid{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.tch-mid b{color:var(--tx)}
+.tch-mid .rbar2{width:90px}
+.tch-act{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tbadge{font-size:11px;border-radius:999px;padding:2px 8px;border:1px solid var(--line);
+  color:var(--muted);background:var(--soft);white-space:nowrap}
+.tbadge.gap{color:var(--red);border-color:#e0b4a8;background:#fdeeea}
+.tbadge.zero{color:var(--orange);border-color:#e3c98a;background:var(--social-bg)}
+.tbadge.mid{color:var(--blue);border-color:var(--campus-line);background:var(--campus-bg)}
+.tbadge.ok{color:var(--green);border-color:var(--intern-line);background:var(--intern-bg)}
+.tsec{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.tsec .schip{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+  padding:2px 7px;background:var(--soft)}
+.tsec .schip b{color:var(--tx)}
+.tsec .schip[data-tids]{cursor:pointer}
+.tsec .schip[data-tids]:hover{border-color:var(--campus);color:var(--campus)}
+.tsec .schip.zero{color:var(--red);border-color:#e0b4a8;background:#fdeeea}
+.tutfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:10px;
+  border-top:1px solid var(--line)}
+.tutbanner{display:flex;align-items:center;gap:8px;background:var(--campus-bg);
+  border:1px solid var(--campus-line);color:var(--campus);border-radius:8px;padding:6px 10px;
+  font-size:13px;margin-top:8px}
+.tutbanner[hidden]{display:none}
+.tutbanner button{border:0;background:transparent;color:inherit;font-size:17px;cursor:pointer;
+  line-height:1;padding:0 2px}
 .mqtitle{font-size:17px;font-weight:700;margin:14px 0;padding:12px 14px;
   background:var(--soft);border-left:4px solid var(--accent);border-radius:6px}
 #m_follows{margin:12px 0;padding:10px 14px;background:var(--soft);border-radius:6px}
@@ -551,6 +596,12 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 @media(max-width:640px){
   h1{font-size:20px}.qt{flex:1 1 100%}.wrap{padding:0 12px 60px}
   .bar{gap:6px}input[type=search]{flex:1 1 100%}
+  /* 考点地图：窄屏去掉进度条，操作按钮整行换行，避免挤成一条 */
+  .tutpanel{padding:12px 12px 10px}
+  .tch-mid .rbar2{display:none}
+  .tch-act{margin-left:0;flex:1 1 100%;margin-top:5px}
+  .tch-w{font-size:11px}
+  .tuttabs .tchip{font-size:12px;padding:4px 10px}
 }
 /* ---- V1.9 视觉层次：类别色 / 卡片质感 / 过渡 ---- */
 :root{
@@ -645,7 +696,9 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <input type="search" id="q" placeholder="搜题目 / 正文 / 公司 / 岗位，如 Momenta、推理部署">
     <button id="mock" class="mini" title="按当前筛选/岗位模板抽题，逐题作答，高频追问揭示">🎤 模拟面试</button>
     <button id="rep" class="mini" title="自测覆盖、掌握度、复习节奏、错题本健康度">📊 学习报告</button>
+    <button id="rep_tut" class="mini" title="按牛客面试宝典的章节目录刷题（分析视图顶部）">📚 考点地图</button>
   </div>
+  <div class="tutbanner" id="tutbanner" hidden></div>
   <div class="chips" id="chips">
     <button class="chip on" data-c="all" title="清除快捷筛选（详细筛选保留）">全部</button>
     <button class="chip" data-c="p0">P0 必答</button>
@@ -811,6 +864,22 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
 </section>
 
 <section id="view-rep" class="view">
+  <div class="panel tutpanel" id="tutbox">
+    <div class="rhead"><b>📚 牛客面试宝典 · 考点地图</b>
+      <span class="rnum" id="tut_meta"></span></div>
+    <div class="mnote" id="tut_lead"></div>
+    <div class="tuttabs" id="tut_tabs"></div>
+    <div id="tut_body"></div>
+    <div class="tutfoot">
+      <span class="flab">刷题入口</span>
+      <span id="tut_practice" style="display:contents"></span>
+      <span class="mnote" style="flex:1 1 100%;margin:4px 0 0">
+        宝典目录与「学习说明」抓自牛客公开页（未登录可读）；<b>权重 ★</b> 是按原文强调程度的人工标注
+        （原文：必考且占比最大的是 C++ 基础与算法；决定 sp offer / 名企的是项目与算法），不是官方分值。
+        题干与参考答案在牛客站内需登录且有版权限制，这里只做目录对齐与进度统计，不转载内容。
+      </span>
+    </div>
+  </div>
   <div class="rpanel">
     <div class="rhead"><b>📈 学习分析</b>
       <span id="r_gen" class="rnum"></span></div>
@@ -876,6 +945,7 @@ const JOBS_SEED = __JOBS__;
 const RADAR = __RADAR__;
 const POOL = __POOL__;          // companies/radar_companies.json：全量公司池（含未接入源）
 const NC = __NC__;              // 牛客面经索引 + 公司真题卷元数据（每周增量同步）
+const TUT = __TUT__;            // 牛客面试宝典目录 + 每章命中题号（构建期统计，点进去结果一致）
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -886,6 +956,8 @@ let wrong = new Set(JSON.parse(localStorage.getItem(WRONG_KEY) || '[]'));
 let review = JSON.parse(localStorage.getItem(REV_KEY) || '{}');
 let SELFTEST = false;
 let LASTHIT = [];            // 最近一次渲染命中的题，供模拟面试抽题
+let tutFilter = null;        // 宝典章节筛选：{ids:Set, label}（点「练这一章」写入）
+let tutTab = ((TUT.tutorials || [])[0] || {}).id;
 function revState(q){
   const r = review[q.id];
   if (!r) return 'never';
@@ -1013,6 +1085,7 @@ function render(){
     if (dif && q.difficulty !== +dif) return false;
     if (st && q.status !== st) return false;
     if (onlyW && !wrong.has(q.id)) return false;
+    if (tutFilter && !tutFilter.ids.has(q.id)) return false;
     if ($('hidepred').checked && q.evidence === 'S4') return false;
     const rv = $('rev').value;
     if (rv && revState(q) !== rv) return false;
@@ -1044,6 +1117,16 @@ function render(){
     + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length} ｜ `
     + `已自测 ${Object.keys(review).length} ｜ 今日该复习 ${dueCnt}`;
   syncChips(); syncPills(); renderScards();
+
+  // 宝典章节筛选提示条（从「分析 → 考点地图」跳进来时显示）
+  const tb = $('tutbanner');
+  if (tutFilter) {
+    tb.hidden = false;
+    tb.innerHTML = `📚 宝典章节：<b>${esc(tutFilter.label)}</b> · ${tutFilter.ids.size} 题`
+      + ` <button id="tutclear" title="取消章节筛选，回到全部题目">×</button>`;
+  } else {
+    tb.hidden = true;
+  }
 
   // 口径说明：让人知道"为什么这些题被算进来"
   const tips = [];
@@ -1146,6 +1229,7 @@ $('chips').addEventListener('click', e => {
   if (c === 'all') {
     $('pri').value = ''; $('rev').value = '';
     $('wrong').checked = $('hidepred').checked = $('selftest').checked = false;
+    tutFilter = null;
   } else if (c === 'p0') $('pri').value = $('pri').value === 'P0' ? '' : 'P0';
   else if (c === 'due' || c === 'weak') $('rev').value = $('rev').value === c ? '' : c;
   else if (c === 'wrong') $('wrong').checked = !$('wrong').checked;
@@ -1528,7 +1612,150 @@ function renderRep(){
   $('r_adv').innerHTML = adv.map(x => `<li>${x}</li>`).join('');
 }
 
+// ---------------- 牛客宝典考点地图（sources/tutorial_map.json） ----------------
+function tutOf(id){ return (TUT.tutorials || []).find(t => t.id === id) || {}; }
+function tutStat(ids){
+  const arr = ids || [];
+  const done = arr.filter(id => review[id]);
+  const avg = done.length ? done.reduce((a, id) => a + review[id].g, 0) / done.length : null;
+  return {n: arr.length, done: done.length, avg};
+}
+function tutBadge(s, tech){
+  if (tech === false) return ['非技术章', 'na'];
+  if (!s.n) return ['题库空', 'gap'];
+  if (s.n < 5) return ['题库缺口', 'gap'];
+  if (!s.done) return ['未自测', 'zero'];
+  if (s.avg != null && s.avg < 2.5) return ['均分偏低', 'zero'];
+  if (s.done / s.n >= 0.6) return ['已覆盖', 'ok'];
+  return ['进行中', 'mid'];
+}
+// 加权准备度：Σ 权重×(0.4×自测覆盖 + 0.6×均分/4) ÷ Σ 权重，只算技术章
+function tutScore(t){
+  let w = 0, acc = 0;
+  (t.chapters || []).forEach(ch => {
+    if (!ch.weight) return;
+    const s = tutStat(ch.ids);
+    const cov = s.n ? Math.min(1, s.done / s.n) : 0;
+    const avg = s.avg == null ? 0 : s.avg / 4;
+    w += ch.weight;
+    acc += ch.weight * (0.4 * cov + 0.6 * avg);
+  });
+  return w ? Math.round(acc / w * 100) : 0;
+}
+function tutDone(t){
+  const s = new Set();
+  (t.chapters || []).forEach(ch => (ch.ids || []).forEach(id => { if (review[id]) s.add(id); }));
+  return s.size;
+}
+function renderTut(){
+  const tabs = TUT.tutorials || [];
+  if (!tabs.length) { $('tut_meta').textContent = '考点地图数据缺失（sources/tutorial_map.json）'; return; }
+  const t = tutOf(tutTab) || tabs[0];
+  $('tut_tabs').innerHTML = tabs.map(x =>
+    `<button class="tchip ${x.id === t.id ? 'on' : ''}" data-tut="${x.id}">` +
+    `${esc(x.short)} · ${x.articles} 篇 <b>${tutDone(x) ? tutScore(x) + '%' : '未开始'}</b></button>`).join('')
+    + `<span class="mnote" style="margin:0">${esc(t.fit || '')}</span>`;
+
+  // 各章有重叠（网络⊂操作系统、设计模式⊂C++基础），总量按题号去重
+  const uni = new Set();
+  (t.chapters || []).forEach(ch => (ch.ids || []).forEach(id => uni.add(id)));
+  let done = 0;
+  uni.forEach(id => { if (review[id]) done += 1; });
+  const tot = uni.size;
+  const score = tutScore(t);
+  const gaps = (t.chapters || []).filter(ch => ch.weight && (ch.ids || []).length < 5).map(ch => ch.name);
+  const noTest = (t.chapters || []).filter(ch => ch.weight && (ch.ids || []).length >= 5
+    && !tutStat(ch.ids).done).map(ch => ch.name);
+
+  $('tut_meta').textContent = `${t.title} · ${t.articles} 篇 · ${t.learners} 人学习`;
+  $('tut_lead').innerHTML =
+    (done
+      ? `按这套目录加权，你的准备度是 <b>${score}%</b>（Σ 权重 ×（0.4×自测覆盖 + 0.6×均分/4）÷ Σ 权重，只算技术章）；`
+      : `还没开始自测，所以准备度暂不算分（公式：Σ 权重 ×（0.4×自测覆盖 + 0.6×均分/4）÷ Σ 权重，只算技术章）；`)
+    + `本书映射到题库 <b>${tot}</b> 题，已自测 <b>${done}</b> 题。<br>`
+    + (gaps.length
+        ? `⚠ <b>题库明显缺口</b>：${gaps.map(esc).join('、')}（题量 &lt; 5）—— 这几章别指望题库，直接读宝典 + 面经原文补。`
+        : '✅ 题库对本书各章都有基础覆盖，重心转向自测与口述。')
+    + (noTest.length
+        ? `<br>🕳 <b>有题但一次没自测</b>：${noTest.map(esc).join('、')} —— 各抽 5 题口述一遍再自评，才知道真会不会。`
+        : '');
+
+  $('tut_body').innerHTML = `<div class="tlist">` + (t.chapters || []).map(ch => {
+    const s = tutStat(ch.ids);
+    const [bt, bc] = tutBadge(s, ch.tech);
+    const pct = s.n ? Math.round(s.done / s.n * 100) : 0;
+    const stars = ch.weight ? '★'.repeat(ch.weight) + '☆'.repeat(3 - ch.weight) : '—';
+    const secs = (ch.sections || []).map(sec => {
+      const has = sec.ids && sec.ids.length;
+      const attr = has ? ` data-tids="${sec.ids.join(',')}" data-tname="${esc(ch.name + ' · ' + sec.n)}"`
+                       : '';
+      const cnt = sec.ids ? ` <b>${sec.ids.length}</b>` : '';
+      const zc = (sec.ids && !sec.ids.length) ? ' zero' : '';
+      return `<span class="schip${zc}"${attr} title="${has ? '点这一节筛出这 ' + sec.ids.length + ' 题'
+        : (sec.ids === null ? '这一节暂无可映射题号' : '这一节题库没有对应题')}">${esc(sec.n)}${cnt}</span>`;
+    }).join('');
+    const act = (s.n ? `<button class="mini" data-tids="${ch.ids.join(',')}" `
+      + `data-tname="${esc(ch.name)}">练这一章 ${s.n} 题</button>` : '')
+      + (ch.name === '项目相关' ? '<button class="mini" data-drill="1">项目连环问</button>' : '');
+    return `<div class="tch w${ch.weight || 0}${ch.tech === false ? ' na' : ''}">
+      <div class="tch-top">
+        <span class="tch-no">${esc(ch.no)}</span>
+        <span class="tch-name">${esc(ch.name)}</span>
+        <span class="tch-em">${esc(ch.emphasis || '')}</span>
+        <span class="tch-w" title="按原文强调程度标注，非官方分值">${stars}</span>
+      </div>
+      ${ch.tech === false ? '' : `<div class="tch-mid">
+        <span class="tbadge ${bc}">${bt}</span>
+        <span>题库 <b>${s.n}</b> 题${ch.weak ? `（P0 ${ch.weak}）` : ''}</span>
+        <span>已自测 <b>${s.done}</b></span>
+        <span class="rbar2"><i style="width:${pct}%"></i></span>
+        <span>均分 <b>${s.avg == null ? '未测' : s.avg.toFixed(1)}</b></span>
+        <span class="tch-act">${act}<a class="mini" href="${esc(t.url)}" target="_blank"
+          rel="noopener">读宝典 ↗</a></span>
+      </div>`}
+      <div class="tsec">${secs}</div>
+    </div>`;
+  }).join('') + `</div>`;
+
+  $('tut_practice').innerHTML = (TUT.practice || []).map(p =>
+    `<a class="chip" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.label)} <b>${esc(p.n)}</b> ↗</a>`).join('');
+}
+function tutOpen(ids, label){
+  if (!ids || !ids.length) return;
+  tutFilter = {ids: new Set(ids), label: label || '宝典章节'};
+  ['q', 'co', 'rl', 'prof', 'mod', 'sub', 'pri', 'st', 'rev', 'dif'].forEach(k => {
+    const el = $(k); if (el) el.value = '';
+  });
+  if ($('wrong')) $('wrong').checked = false;
+  if ($('hidepred')) $('hidepred').checked = false;
+  document.querySelectorAll('#chips .chip').forEach(c =>
+    c.classList.toggle('on', c.dataset.c === 'all'));
+  showView('bank'); render(); window.scrollTo(0, 0);
+}
+$('tut_tabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tut]'); if (!b) return;
+  tutTab = +b.dataset.tut; renderTut();
+});
+$('tut_body').addEventListener('click', e => {
+  if (e.target.closest('[data-drill]')) {
+    showView('train');
+    const h = [...document.querySelectorAll('#view-train h3')]
+      .find(x => x.innerText.includes('项目连环问'));
+    if (h) h.scrollIntoView({block: 'start'});
+    return;
+  }
+  const el = e.target.closest('[data-tids]'); if (!el) return;
+  tutOpen(el.dataset.tids.split(',').filter(Boolean), el.dataset.tname || '宝典章节');
+});
+$('tutbanner').addEventListener('click', e => {
+  if (!e.target.closest('#tutclear')) return;
+  tutFilter = null; render();
+});
 $('rep').addEventListener('click', () => showView('rep'));
+$('rep_tut').addEventListener('click', () => {
+  showView('rep'); renderTut();
+  const el = $('tutbox'); if (el) el.scrollIntoView({block: 'start'});
+});
 $('r_cards').addEventListener('click', e => {
   const c = e.target.closest('.rcard'); if (!c) return;
   const act = c.dataset.act;
@@ -1569,7 +1796,7 @@ function showView(v){
   if (v === 'train') renderTrain();
   if (v === 'jobs') { renderJobs(); renderRadar(); }
   if (v === 'comp') renderCompanies();
-  if (v === 'rep') renderRep();
+  if (v === 'rep') { renderRep(); renderTut(); }
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
 
@@ -1625,6 +1852,7 @@ function renderHome(){
     <div class="qcard" data-a="due"><b>📋 今日复习</b><small>处理间隔复习到期的题目</small></div>
     <div class="qcard" data-a="drill"><b>🎯 岗位专项训练</b><small>按真实 JD 模板选题训练</small></div>
     <div class="qcard" data-a="mock"><b>🎤 模拟面试</b><small>连续答题、追问揭示、训练总结</small></div>
+    <div class="qcard" data-a="tut"><b>📚 宝典考点地图</b><small>牛客 C++ / 算法两套宝典 × 题库覆盖与缺口</small></div>
     <div class="qcard" data-a="bank"><b>📚 全部题库</b><small>搜索与筛选全部 ${DATA.length} 题</small></div>`;
   // 今日任务：need 为今日目标量，done 从训练历史统计
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -1695,6 +1923,10 @@ $('h_quick').addEventListener('click', e => {
   const c = e.target.closest('.qcard'); if (!c) return;
   const a = c.dataset.a;
   if (a === 'bank') { showView('bank'); window.scrollTo(0, 0); }
+  else if (a === 'tut') {
+    showView('rep'); renderTut();
+    const el = $('tutbox'); if (el) el.scrollIntoView({block: 'start'});
+  }
   else runAct(a);
 });
 $('h_tasks').addEventListener('click', e => {
@@ -2418,6 +2650,37 @@ def main() -> int:
         with npp.open(encoding="utf-8-sig", newline="") as f:
             nc["papers"] = list(csv.DictReader(f))
 
+    # 牛客面试宝典考点地图（sources/tutorial_map.json）：章/节 → 命中题号，
+    # 在构建期算好，页面「章题数」与点进去的筛选结果完全一致
+    def _rule_hit(q, rule):
+        if not rule:
+            return False
+        if "modules" in rule and q["module"] not in rule["modules"]:
+            return False
+        if "subs" in rule and (q.get("sub") or "") not in rule["subs"]:
+            return False
+        if "terms" in rule:
+            # 只匹配 标题 + 标签 + 子方向：正文里「加锁/梯度/期望」这类词太泛，
+            # 会把无关题全卷进来（曾把数据库算成 113 题）
+            hay = " ".join([q.get("title") or "", q.get("sub") or "",
+                            " ".join(q.get("tags") or [])]).lower()
+            if not any(t.lower() in hay for t in rule["terms"]):
+                return False
+        return True
+
+    tut = {"note": "", "tutorials": [], "practice": []}
+    tp = ROOT / "sources" / "tutorial_map.json"
+    if tp.exists():
+        tut = json.loads(tp.read_text(encoding="utf-8"))
+        for t in tut["tutorials"]:
+            for ch in t["chapters"]:
+                ch["ids"] = [q["id"] for q in qs if _rule_hit(q, ch.get("rule"))]
+                for sec in ch.get("sections", []):
+                    r = sec.get("rule")
+                    sec["ids"] = [q["id"] for q in qs if _rule_hit(q, r)] if r else None
+                ch["weak"] = sum(1 for q in qs
+                                 if q["id"] in set(ch["ids"]) and q["priority"] == "P0")
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -2432,6 +2695,8 @@ def main() -> int:
                                                separators=(",", ":")))
                .replace("__NC__", json.dumps(nc, ensure_ascii=False,
                                              separators=(",", ":")))
+               .replace("__TUT__", json.dumps(tut, ensure_ascii=False,
+                                              separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)

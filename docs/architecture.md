@@ -21,10 +21,11 @@
 
 ```mermaid
 flowchart LR
-    A[content/*.md<br/>936 题卡] --> B[tools/build.py]
+    A[content/*.md<br/>1026 题卡] --> B[tools/build.py]
     C[companies/*.json<br/>targets / radar_companies / jobs / profiles] --> B
     D[sources/jobs_radar.json<br/>岗位快照 667+ 岗] --> B
     N[sources/nowcoder_*<br/>面经索引 + 真题卷元数据] --> B
+    T[sources/tutorial_map.json<br/>牛客宝典 16 章 40 节 + 映射规则] --> B
     B --> E[dist/bank.html<br/>单文件离线页]
     F[companies/radar_companies.json<br/>公司池 51 条] --> G[tools/job_radar.py --scan]
     G --> D
@@ -50,10 +51,11 @@ flowchart LR
 
 | 对象 | 文件 | 数量（2026-11-10） | 含义 |
 |---|---|---|---|
-| 目标公司池 | `companies/targets.json` | 128 家 | 题库公司/岗位族索引口径，按 JD 推导，**不是真实考题** |
-| 雷达公司池 | `companies/radar_companies.json` | 51 条 / 约 49 家去重 | 招聘入口登记表；`enabled=true` 且带 `source` 的 23 条才实际扫描 |
-| 岗位快照 | `sources/jobs_radar.json` | 667+ 岗 | 官方门户扫到的岗位，带状态机与招聘性质分类 |
-| 牛客同步 | `sources/nowcoder_experiences.jsonl` + `nowcoder_papers.csv` | 面经 22 篇 / 真题卷 124 套 | 每周增量；真题卷只存元数据 |
+| 目标公司池 | `companies/targets.json` | 130 家 | 题库公司/岗位族索引口径，按 JD 推导，**不是真实考题** |
+| 雷达公司池 | `companies/radar_companies.json` | 52 条 / 启用 24 源 | 招聘入口登记表；`enabled=true` 且带 `source` 的 23 条才实际扫描 |
+| 岗位快照 | `sources/jobs_radar.json` | 775 岗 | 官方门户扫到的岗位，带状态机与招聘性质分类 |
+| 牛客同步 | `sources/nowcoder_experiences.jsonl` + `nowcoder_papers.csv` | 面经 80 篇 / 真题卷 124 套 | 每周增量；真题卷只存元数据 |
+| 宝典考点地图 | `sources/tutorial_map.json` | 2 套宝典 / 16 章 / 40 节 | 牛客公开目录 + 章节→题库映射规则；构建期算命中题号 |
 
 「公司」视图把前两者按名称合并（别名表 `NAME_ALIAS` 处理「小鹏集团 → 小鹏」），
 同名去重后 152 家，并把第三者的岗位按公司聚合展示。
@@ -67,7 +69,7 @@ flowchart LR
 | `#train` | 训练 | 模拟面试、项目连环问、专项训练入口 |
 | `#jobs` | 岗位 | 收藏岗位 + JD 技能匹配三维度 + 雷达待处理新发现（最多 40 条） |
 | `#comp` | 公司（V1.8） | **全部公司 + 全部岗位**，按校招/实习/社招分组，含已收藏/已忽略 |
-| `#rep` | 分析 | 近 8 周节奏、模块掌握度、薄弱题、下一步建议 |
+| `#rep` | 分析 | **牛客宝典考点地图（V1.9.1）**、近 8 周节奏、模块掌握度、薄弱题、下一步建议 |
 
 localStorage 键：`ib_review_v1`（自评→间隔复习）、`ib_wrong_v1`、`ib_hist_v1`（训练历史）、
 `ib_jobs_v1`（人工登记 + 雷达收藏转正）、`ib_jobs_dismiss_v1`（忽略，按 job_key）。

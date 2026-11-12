@@ -17,6 +17,10 @@
 | `renderCompanies()` | V1.8 全量公司 + 全量岗位，按性质分组 |
 | `REV_DAYS` | SM-2 简化：自评 1/2/3/4 → 1/3/7/21 天 |
 | `USER_GRAD = 2029` | 资格判断唯一依据；改届别只改这里 |
+| `_rule_hit(q, rule)`（build.py 内） | → bool | 宝典章节映射判据：`modules`/`subs`/`terms` 三者 AND；**terms 只匹配标题+子方向+标签**，不匹配正文 |
+| `renderTut()` | 无参数 | 渲染考点地图：tab、章卡片、节 chips、加权准备度、缺口提示 |
+| `tutStat(ids)` / `tutScore(t)` / `tutDone(t)` | → `{n,done,avg}` / 0~100 / 已自测题数 | 准备度 = Σ 权重×(0.4×覆盖 + 0.6×均分/4) ÷ Σ 权重，只算 `weight>0` 的技术章 |
+| `tutOpen(ids, label)` | 无返回值 | 写入 `tutFilter`（Set），清空其他筛选 → 切题库 → 渲染；题库顶部出提示条 |
 
 V1.8 前端纯函数：
 
@@ -84,6 +88,32 @@ V1.8 前端纯函数：
             "change_log": []}]
 }
 ```
+
+`sources/tutorial_map.json`（V1.9.1 宝典目录 → 题库映射）：
+
+```json
+{
+  "tutorials": [{
+    "id": 93, "short": "C++ 工程师", "title": "【C++工程师面试宝典】",
+    "url": "https://www.nowcoder.com/issue/tutorial?tutorialId=93&uuid=...",
+    "articles": 30, "learners": "840.5W", "fit": "主线 · C++/嵌入式/机器人/智驾岗直接对口",
+    "chapters": [{
+      "no": "第2章", "name": "C/C++基础", "weight": 3,
+      "emphasis": "原文：必考、且占比非常大",
+      "rule": {"modules": ["02_cpp"]},
+      "sections": [{"n": "语言基础", "rule": {"modules": ["02_cpp"], "subs": ["语言基础"]}},
+                   {"n": "STL", "rule": {"modules": ["02_cpp"], "subs": ["STL 容器"]}},
+                   {"n": "面向对象(二)"}]
+    }]
+  }],
+  "practice": [{"label": "算法篇 · 面试高频 TOP 榜", "n": "600+", "url": "..."}]
+}
+```
+
+构建期在 `build.py` 里为每章/每节补 `ids`（命中题号，`sections[].rule` 缺省时 `ids=null`），
+再整体注入 `const TUT = ...`。因此页面上的「N 题」= 点进去实际筛选的题数，不存在估算偏差。
+`rule` 三个键是 **AND** 关系：`modules`（模块）→ `subs`（子方向）→ `terms`（标题+子方向+标签关键词）。
+改规则后必须重跑 `build.py`；只改 JSON 不会自动生效。
 
 `companies/radar_companies.json` 的每条：`company_id / company_name / category / directions /
 tier(A|B|C) / career_url / ats_type(zhiye|feishu|hotjob|self-built|unknown) /

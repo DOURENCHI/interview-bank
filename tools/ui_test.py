@@ -28,7 +28,7 @@ def main() -> int:
         n_tasks = pg.evaluate("document.querySelectorAll('#h_tasks .titem').length")
         n_profs = pg.evaluate("document.querySelectorAll('#h_profs .prow').length")
         ok.append(("首页默认视图", pg.eval_on_selector("#view-home", "el => el.classList.contains('on')")))
-        ok.append(("数据卡/快速入口/任务/岗位进度", n_cards == 4 and n_quick == 4 and n_tasks == 4 and n_profs == 8))
+        ok.append(("数据卡/快速入口/任务/岗位进度", n_cards == 4 and n_quick == 5 and n_tasks == 4 and n_profs == 8))
 
         # 2. 最近记录兜底（无 hist 无 review → 引导文案）
         empty_hist = pg.eval_on_selector("#h_hist", "el => el.innerText.includes('还没有训练记录')")
@@ -268,7 +268,32 @@ def main() -> int:
         ok.append(("首页入口跳公司总览", pg.eval_on_selector(
             '#view-comp', "el => el.classList.contains('on')")))
 
-        # 12. hash 记忆：刷新后仍在当前 tab
+        # 12. V1.9.1 宝典考点地图：双教程 / 章计数 / 练这一章题数一致 / 清除 / 首页入口
+        tab("rep")
+        ok.append(("宝典章节渲染", pg.evaluate(
+            "document.querySelectorAll('#tut_body .tch').length") == 8
+            and pg.evaluate("(TUT.tutorials||[]).length") == 2))
+        n_target = int(pg.evaluate(
+            """() => { const b = document.querySelector('#tut_body .tch:nth-child(2) button[data-tids]');
+                       return b ? b.innerText.match(/(\\d+)/)[1] : '-1'; }"""))
+        pg.click('#tut_body .tch:nth-child(2) button[data-tids]'); pg.wait_for_timeout(400)
+        ok.append(("练这一章题数一致", n_target > 0
+                   and pg.evaluate("document.querySelectorAll('#list .q').length") == n_target
+                   and pg.eval_on_selector('#tutbanner', "el => !el.hidden")))
+        pg.click('#tutclear'); pg.wait_for_timeout(300)
+        ok.append(("清除章节筛选", pg.evaluate("document.querySelectorAll('#list .q').length")
+                   == pg.evaluate("DATA.length")))
+        tab("rep")
+        pg.click('#tut_tabs .tchip[data-tut="95"]'); pg.wait_for_timeout(300)
+        ok.append(("宝典切 tab", pg.eval_on_selector(
+            '#tut_meta', "el => el.innerText.includes('机器学习')")))
+        ok.append(("宝典缺口提示", pg.eval_on_selector(
+            '#tut_lead', "el => el.innerText.includes('缺口')")))
+        tab("home"); pg.click('#h_quick .qcard[data-a="tut"]'); pg.wait_for_timeout(300)
+        ok.append(("首页进考点地图", pg.eval_on_selector(
+            '#view-rep', "el => el.classList.contains('on')")))
+
+        # 13. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
         ok.append(("刷新保持视图", pg.eval_on_selector("#view-train", "el => el.classList.contains('on')")))
