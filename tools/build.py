@@ -464,6 +464,24 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .chip.rst.act{background:var(--red);color:#fff;border-color:var(--red)}
 #comp_more summary{cursor:pointer;user-select:none;color:var(--muted);font-size:13px;padding:4px 0}
 #comp_more[open] summary{color:var(--accent)}
+.ncfilter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 10px}
+.ncfilter .chips{flex:1 1 100%}
+.ncfilter select{font:13px/1.6 inherit;color:var(--tx);background:var(--paper);
+  border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.nccard{background:var(--paper);border:1px solid var(--line);border-radius:8px;margin:6px 0;padding:8px 12px}
+.nccard summary{cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap;list-style:none}
+.nccard summary::-webkit-details-marker{display:none}
+.nccard .nct{flex:1 1 100%;font-size:13.5px;font-weight:600;margin-top:3px}
+.nccard[open] summary .nct{color:var(--accent)}
+.ncb{padding:6px 0 2px 8px;border-top:1px dashed var(--line);margin-top:6px}
+.nclist{margin:6px 0;padding-left:20px}
+.nch{display:flex;gap:8px;align-items:flex-start;margin:4px 0;font-size:13px;line-height:1.6}
+.nchq{flex:1}
+.qref{font:11px ui-monospace,Consolas,monospace;color:#fff;background:var(--blue);
+  border-radius:4px;padding:1px 6px;white-space:nowrap;text-decoration:none;margin-top:2px}
+.qref:hover{background:#14486b}
+.qref.near{background:#9a6700}
+.qref.none{background:var(--soft);color:var(--muted)}
 .ctable tbody tr{vertical-align:top}
 .ncq{max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cfilter .flab{font-size:12px;color:var(--muted);white-space:nowrap}
@@ -713,7 +731,14 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <div id="comp_jobs"></div>
     <details class="panel" id="ncbox" open style="margin-top:14px">
       <summary style="cursor:pointer;font-weight:700">📰 真实面经（牛客，每周自动同步）<span class="rnum" id="nc_meta"></span></summary>
-      <div class="cnote">面经帖来自牛客公开版块，只保留「公司 × 岗位 × 轮次 × 题目摘要 × 原帖链接」，不含发帖人信息；点「原帖」看完整正文。当前搜索词同时过滤下表。</div>
+      <div class="cnote">面经帖来自牛客公开版块，只保留「公司 × 岗位 × 轮次 × 题目原文摘录 × 原帖链接」，不含发帖人信息。
+        题目右侧 <b>Q-xxxx</b> 是题库里的同考点题号，点它直接跳到题库复习；标「未入库」的题说明题库还没有，可点原帖看完整正文。</div>
+      <div class="ncfilter">
+        <div class="chips" id="nc_chips"><span class="flab">公司</span><span id="nc_co_chips" style="display:contents"></span></div>
+        <select id="nc_round"><option value="all">全部轮次</option></select>
+        <select id="nc_role"><option value="all">全部方向</option></select>
+        <label class="chk"><input type="checkbox" id="nc_onlyref"> 只看有题号</label>
+      </div>
       <div id="nc_exp"></div>
       <div class="rsec">📄 公司真题卷（牛客企业真题，仅登记元数据；题干有平台版权限制，点链接去牛客在线作答）</div>
       <div id="nc_papers"></div>
@@ -2073,25 +2098,73 @@ function renderCompanies(){
   updateReset();
 }
 
-// 真实面经 + 公司真题卷面板（牛客同步数据，随搜索词联动）
+// 真实面经 + 公司真题卷面板（牛客同步数据，随搜索词与自身筛选联动）
+let ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false};
 function renderNC(q){
-  const exps = (NC.experiences || []).filter(x => !q ||
-    (x.company + ' ' + (x.role || '') + ' ' + x.title + ' ' + (x.round || '')).toLowerCase().indexOf(q) >= 0);
+  const all = NC.experiences || [];
+  const cos = {};
+  all.forEach(x => cos[x.company] = (cos[x.company] || 0) + 1);
+  // 公司 chips：目标池公司优先，其余按篇数；避免只显示篇数最多的互联网大厂
+  const isTargetCo = c => (POOL || []).some(p => p.company_name === c)
+    || ((TARGETS && TARGETS.companies) || []).some(t => t.name === c);
+  const topCo = Object.entries(cos)
+    .sort((a, b) => (isTargetCo(b[0]) - isTargetCo(a[0])) || (b[1] - a[1]))
+    .slice(0, 10);
+  $('nc_co_chips').innerHTML =
+    `<button class="chip ${ncFilter.co === 'all' ? 'on' : ''}" data-nk="co" data-v="all">全部</button>` +
+    topCo.map(([c, n]) => `<button class="chip ${ncFilter.co === c ? 'on' : ''}" data-nk="co" data-v="${esc(c)}">${esc(c)} <b>${n}</b></button>`).join('');
+  const rSel = $('nc_round'), dSel = $('nc_role');
+  if (rSel.options.length <= 1) {
+    [...new Set(all.map(x => x.round).filter(Boolean))].forEach(r => rSel.add(new Option(r, r)));
+  }
+  if (dSel.options.length <= 1) {
+    [...new Set(all.map(x => x.role).filter(Boolean))].forEach(r => dSel.add(new Option(r, r)));
+  }
+  const exps = all.filter(x => {
+    if (ncFilter.co !== 'all' && x.company !== ncFilter.co) return false;
+    if (ncFilter.round !== 'all' && (x.round || '') !== ncFilter.round) return false;
+    if (ncFilter.role !== 'all' && (x.role || '') !== ncFilter.role) return false;
+    if (ncFilter.onlyRef && !(x.highlights || []).some(h => h.ref)) return false;
+    if (q) {
+      const hay = (x.company + ' ' + x.title + ' ' + (x.role || '') + ' ' + (x.round || '') + ' '
+                   + (x.highlights || []).map(h => h.q + ' ' + (h.ref || '')).join(' ')).toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
   const papers = (NC.papers || []).filter(p => !q ||
     (p.company + ' ' + p.paperName).toLowerCase().indexOf(q) >= 0);
-  const last = (NC.experiences || []).reduce((a, x) => (x.collected_at || '') > a ? x.collected_at : a, '');
-  $('nc_meta').textContent = `命中面经 ${exps.length} / ${(NC.experiences || []).length} 篇 · 真题卷 ${papers.length} / ${(NC.papers || []).length} 套 · 最近同步 ${(last || '—').slice(0, 10)}`;
-  $('nc_exp').innerHTML = exps.length ? `<table class="rtable ctable"><thead><tr>
-      <th>公司</th><th>面经标题 / 岗位方向</th><th>轮次</th><th>题目</th><th>日期</th><th>原帖</th>
-    </tr></thead><tbody>${exps.map(x => `<tr>
-      <td><b>${esc(x.company)}</b></td>
-      <td><div class="jt" title="${esc(x.title)}">${esc(x.title)}</div><small>${esc(x.role || '—')}</small></td>
-      <td>${esc(x.round || '—')}</td>
-      <td class="rnum">${x.n_questions || 0} 题${x.n_reverses ? ' · 反问 ' + x.n_reverses : ''}</td>
-      <td class="rnum">${esc((x.date_raw || x.collected_at || '').slice(0, 10))}</td>
-      <td><a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖 ↗</a></td>
-    </tr>`).join('')}</tbody></table>`
-    : '<div class="cempty">暂无命中的面经（每周一自动增量采集，命中目标公司的帖子会入库）。</div>';
+  const last = all.reduce((a, x) => (x.collected_at || '') > a ? x.collected_at : a, '');
+  const refN = exps.filter(x => (x.highlights || []).some(h => h.ref)).length;
+  $('nc_meta').textContent = `面经 ${exps.length} / ${all.length} 篇（含题号 ${refN}）· 真题卷 ${papers.length} / ${(NC.papers || []).length} 套 · 最近同步 ${(last || '—').slice(0, 10)}`;
+  const roundTxt = x => esc(x.round || '轮次未标注');
+  $('nc_exp').innerHTML = exps.length ? exps.map(x => {
+    const hs = x.highlights || [];
+    const rows = hs.map(h => `<li class="nch">
+        ${h.ref ? `<a class="qref" href="#bank" data-q="${h.ref}" title="跳到题库做这道题">${h.ref}</a>`
+                : h.near ? `<span class="qref near" title="近似题号：考点相近但题干不同">~${h.near}</span>`
+                         : '<span class="qref none">未入库</span>'}
+        <span class="nchq">${esc(h.q)}</span>
+        <span class="rnum">${h.sim ? h.sim.toFixed(2) : ''}</span>
+      </li>`).join('');
+    return `<details class="nccard">
+      <summary>
+        <b>${esc(x.company)}</b>
+        <span class="tag">${roundTxt(x)}</span>
+        <span class="tag">${x.n_questions || 0} 题</span>
+        ${x.role ? `<span class="tag">${esc(x.role)}</span>` : ''}
+        <span class="rnum">${esc((x.date_raw || x.collected_at || '').slice(0, 10))}</span>
+        <div class="nct">${esc(x.title)}</div>
+      </summary>
+      <div class="ncb">
+        ${rows ? `<ol class="nclist">${rows}</ol>` : '<div class="cempty">这篇没有提取到可用题目，点原帖看完整正文。</div>'}
+        <div class="mrow" style="display:flex;gap:10px;align-items:center">
+          <a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖全文 ↗</a>
+          <span class="rnum">共 ${x.n_questions || 0} 题${x.n_reverses ? ' · 反问 ' + x.n_reverses : ''}；上面是前 ${hs.length} 道原文摘录</span>
+        </div>
+      </div>
+    </details>`;
+  }).join('') : '<div class="cempty">当前筛选下没有面经（换个公司/轮次，或清空搜索）。</div>';
   $('nc_papers').innerHTML = papers.length ? `<table class="rtable ctable"><thead><tr>
       <th>公司</th><th>卷名</th><th>题量</th><th>练习人数</th><th>在线作答</th>
     </tr></thead><tbody>${papers.map(p => `<tr>
@@ -2103,6 +2176,22 @@ function renderNC(q){
     </tr>`).join('')}</tbody></table>`
     : '<div class="cempty">暂无命中的真题卷。</div>';
 }
+$('nc_chips').addEventListener('click', e => {
+  const ch = e.target.closest('.chip[data-nk]'); if (!ch) return;
+  ncFilter[ch.dataset.nk] = ch.dataset.v;
+  renderNC(compFilter.q);
+});
+$('nc_round').addEventListener('change', e => { ncFilter.round = e.target.value; renderNC(compFilter.q); });
+$('nc_role').addEventListener('change', e => { ncFilter.role = e.target.value; renderNC(compFilter.q); });
+$('nc_onlyref').addEventListener('change', e => { ncFilter.onlyRef = e.target.checked; renderNC(compFilter.q); });
+document.addEventListener('click', e => {
+  const a = e.target.closest('a.qref[data-q]'); if (!a) return;
+  e.preventDefault();
+  showView('bank');
+  $('q').value = a.dataset.q;
+  window.scrollTo(0, 0);
+  render();
+});
 $('comp_table').addEventListener('click', e => {
   if (e.target.closest('a')) return;
   const tr = e.target.closest('tr[data-coname]'); if (!tr) return;
@@ -2132,7 +2221,11 @@ function updateReset(){
 }
 $('comp_reset').addEventListener('click', () => {
   compFilter = {cls: 'all', src: 'all', st: 'all', city: 'all', q: ''};
+  ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false};
   $('comp_q').value = '';
+  if ($('nc_round')) $('nc_round').value = 'all';
+  if ($('nc_role')) $('nc_role').value = 'all';
+  if ($('nc_onlyref')) $('nc_onlyref').checked = false;
   document.querySelectorAll('#view-comp .chip[data-k]').forEach(x =>
     x.classList.toggle('on', x.dataset.v === 'all'));
   renderCompanies();

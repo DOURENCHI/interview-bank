@@ -381,7 +381,17 @@ def cmd_build() -> int:
     posts = sorted(POSTS.glob("*.json")) if POSTS.exists() else []
     sys.path.insert(0, str(ROOT / "tools"))
     from build import load_questions
-    bank = [q["title"] for q in load_questions()]
+    bank = load_questions()
+    bank_titles = [(q["id"], q["title"]) for q in bank]
+
+    def best_ref(text: str) -> tuple[str, float]:
+        """题目原文 → 题库题号（Dice 最高分）。≥0.62 视为同一考点，0.45~0.62 标近似。"""
+        best_id, best_sim = "", 0.0
+        for qid, t in bank_titles:
+            s = dice(text, t)
+            if s > best_sim:
+                best_id, best_sim = qid, s
+        return best_id, round(best_sim, 2)
 
     exp_path = ROOT / "sources" / "nowcoder_experiences.jsonl"
     exp_path.parent.mkdir(parents=True, exist_ok=True)
@@ -389,6 +399,7 @@ def cmd_build() -> int:
     posts.sort(key=lambda p: p.stat().st_mtime)
     seen_titles: set[str] = set()
     dup_posts = 0
+    ref_hit = 0
     with exp_path.open("w", encoding="utf-8") as f:
         for p in posts:
             d = json.loads(p.read_text(encoding="utf-8"))
@@ -399,11 +410,21 @@ def cmd_build() -> int:
             qs, revs = d.get("questions") or [], d.get("reverses") or []
             role = next((w for w in ROLE_WORDS if w.lower() in (d["title"] + " " +
                          " ".join(x["q"] for x in qs)).lower()), "")
+            # 原文摘录：前 6 道题 + 与题库的题号关联（页面「面经」面板直接展示）
+            highlights = []
+            for x in qs[:6]:
+                qid, sim = best_ref(x["q"])
+                highlights.append({"q": x["q"][:80], "ref": qid if sim >= 0.62 else "",
+                                   "near": qid if 0.45 <= sim < 0.62 else "",
+                                   "sim": sim, "round": x.get("round") or ""})
+                if sim >= 0.62:
+                    ref_hit += 1
             rec = {"id": d["id"], "url": d["url"], "company": d["company"],
                    "role": role, "round": d.get("round") or "",
                    "date_raw": d.get("date_raw") or "", "title": d["title"][:60],
                    "n_questions": len(qs), "n_reverses": len(revs),
-                   "collected_at": d.get("collected_at")}
+                   "collected_at": d.get("collected_at"),
+                   "highlights": highlights}
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
             for x in qs:
                 kind = "written" if "笔试" in d["title"] else "question"
@@ -433,7 +454,7 @@ def cmd_build() -> int:
     # 与库内比对
     for c in clusters:
         best, bs = "", 0.0
-        for t in bank:
+        for _, t in bank_titles:
             s = dice(c["q"], t)
             if s > bs:
                 best, bs = t, s

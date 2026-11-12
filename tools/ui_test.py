@@ -233,7 +233,7 @@ def main() -> int:
                    and pg.evaluate("document.querySelectorAll('#comp_jobs tbody tr').length") == n_all_job
                    and pg.eval_on_selector('#comp_q', 'el => el.value') == ''))
         ok.append(("面经面板全量", pg.evaluate(
-            "document.querySelectorAll('#nc_exp tbody tr').length") == pg.evaluate("(NC.experiences||[]).length")))
+            "document.querySelectorAll('#nc_exp .nccard').length") == pg.evaluate("(NC.experiences||[]).length")))
         ok.append(("真题卷面板全量", pg.evaluate(
             "document.querySelectorAll('#nc_papers tbody tr').length") == pg.evaluate("(NC.papers||[]).length")))
         pg.fill('#comp_q', '华为'); pg.wait_for_timeout(350)
@@ -241,6 +241,28 @@ def main() -> int:
             "document.querySelectorAll('#nc_papers tbody tr').length") < pg.evaluate("(NC.papers||[]).length")
             and pg.eval_on_selector('#nc_exp', 'el => el.innerText.includes("华为")')))
         pg.fill('#comp_q', ''); pg.wait_for_timeout(350)
+        # V1.8.4：面经筛选（公司/轮次/只看有题号）+ 原文展开 + 题号跳题库
+        n_cards = pg.evaluate("document.querySelectorAll('#nc_exp .nccard').length")
+        pg.click('#nc_co_chips .chip[data-nk="co"]:nth-child(2)'); pg.wait_for_timeout(250)
+        ok.append(("面经公司筛选", pg.evaluate(
+            "document.querySelectorAll('#nc_exp .nccard').length") < n_cards))
+        pg.click('#nc_co_chips .chip[data-nk="co"][data-v="all"]'); pg.wait_for_timeout(200)
+        pg.check('#nc_onlyref'); pg.wait_for_timeout(250)
+        n_ref = pg.evaluate("document.querySelectorAll('#nc_exp .nccard').length")
+        ok.append(("只看有题号", 0 < n_ref <= n_cards))
+        pg.uncheck('#nc_onlyref'); pg.wait_for_timeout(200)
+        pg.click('#nc_exp .nccard summary'); pg.wait_for_timeout(250)
+        ok.append(("面经展开原文", pg.evaluate(
+            "document.querySelectorAll('#nc_exp .nccard[open] .nch').length") >= 1))
+        has_ref = pg.evaluate("!!document.querySelector('#nc_exp a.qref[data-q]')")
+        if has_ref:
+            pg.evaluate("document.querySelector('#nc_exp a.qref[data-q]').click()")
+            pg.wait_for_timeout(350)
+            ok.append(("题号跳题库", pg.eval_on_selector('#view-bank', "el => el.classList.contains('on')")
+                       and pg.eval_on_selector('#q', "el => el.value.indexOf('Q-') === 0")))
+            tab("comp")
+        else:
+            ok.append(("题号跳题库", False))
         tab("home"); pg.click('#h_allco'); pg.wait_for_timeout(200)
         ok.append(("首页入口跳公司总览", pg.eval_on_selector(
             '#view-comp', "el => el.classList.contains('on')")))
