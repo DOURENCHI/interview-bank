@@ -21,6 +21,9 @@
 | `jobMatch(job)` | → `{hits,relevance,cover,mastery,evidence,eligibility,gaps}` | 五维各自独立，**不合成百分比** |
 | `renderTut()` / `renderProj()` / `renderHealth()` | 无参数 | 考点地图 / 项目证据链 / 系统健康三个面板 |
 | `backupPayload()` / `parseBackup()` / `planImport()` | → 对象 | 备份 v2：导出、校验归一化、合并计划（新增/更新/跳过） |
+| `decideOf(job, m)` | → `{k,label,cls,why}` | 决策四类：资格出局 → 高相关+证据/掌握 → 相关 → 仅供学习 |
+| `famStats()` | → 5 行 | 五大岗位族「在招/高相关/覆盖/掌握」，按 `Object.keys(review).length` 缓存 |
+| `loopStats()` / `todayPlan(n)` | → 指标对象 / 题目数组 | 训练闭环：7 天均值、P0 掌握率、连续两次低分、跨 7 天复测；今日训练按优先级抽题 |
 | `REV_DAYS` | SM-2 简化：自评 1/2/3/4 → 1/3/7/21 天 |
 | `USER_GRAD = 2029` | 资格判断唯一依据；改届别只改这里 |
 | `_rule_hit(q, rule)`（build.py 内） | → bool | 宝典章节映射判据：`modules`/`subs`/`terms` 三者 AND；**terms 只匹配标题+子方向+标签**，不匹配正文 |

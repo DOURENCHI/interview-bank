@@ -342,6 +342,15 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .tutbanner button{border:0;background:transparent;color:inherit;font-size:17px;cursor:pointer;
   line-height:1;padding:0 2px}
 /* —— 岗位适配度五维（V2.0） —— */
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:4px 0 10px}
+.dgrid .scard{cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s}
+.dgrid .scard:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
+.dgrid .scard.on{border-color:var(--campus);box-shadow:inset 0 -3px 0 var(--campus)}
+.dgrid .scard small{display:block}
+.dgrid .scard em{font-style:normal;font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.dtag.hi{background:var(--intern-bg);border-color:var(--intern-line);color:var(--green)}
+.dtag.mid{background:var(--campus-bg);border-color:var(--campus-line);color:var(--campus)}
+.dtag.lo{background:var(--soft);color:var(--muted)}
 .jfilter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .jfilter .rnum{margin-left:auto}
 .jdsnip{max-width:360px;font-size:12px;color:var(--muted);line-height:1.65}
@@ -808,6 +817,13 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <summary>🛰 岗位雷达 <span class="rnum" id="radar_meta"></span> — 自动监控官方招聘门户（每日低频增量），收藏后进入下方列表</summary>
     <div class="rgrid2" id="radarlist" style="margin-top:10px"></div>
   </details>
+  <div class="panel" id="decidebox" style="margin-bottom:14px">
+    <div class="rhead"><b>🎯 投递决策</b><span class="rnum" id="decide_meta"></span></div>
+    <div class="mnote">资格先出局 → 再看相关度 → 最后看证据，不做「匹配度 75%」这种加权。
+      四类卡片只统计<b>已收藏岗位</b>（想去投的才值得决策）；点卡片筛下方列表。下面是五大岗位族的市场供给与我的准备对比。</div>
+    <div class="dgrid" id="decide_cards"></div>
+    <div id="decide_fams"></div>
+  </div>
   <div class="jfilter" id="jobfilter">
     <span class="flab">范围</span>
     <button class="chip on" data-jf="scope" data-v="tech">只看技术岗</button>
@@ -924,6 +940,17 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
       <button class="mini" id="r_due">📋 今日该复习</button>
       <button class="mini" id="r_weak">🩹 薄弱题清单</button>
       <button class="mini" id="r_clean" title="把已自评 ≥3 且未到期的题移出错题本">🧹 清理错题本</button>
+    </div>
+  </div>
+
+  <div class="panel" id="loopbox" style="margin-top:14px">
+    <div class="rhead"><b>🔁 训练闭环</b><span class="rnum" id="loop_meta"></span></div>
+    <div class="mnote">不看「做了多少题」，看「有没有变强」：7 天均值变化 / P0 掌握率 / 连续两次低分 /
+      跨 7 天复测通过率 / 卡点模块。复测指同一题间隔 ≥7 天再自评，第一次 4 分不代表长期掌握。</div>
+    <div id="loop_body"></div>
+    <div class="mrow" style="margin-top:8px">
+      <button class="mini" id="loop_drill">🎯 生成今日训练（12 题）</button>
+      <span class="rnum">顺序：到期 P0 → 未自测 P0 → 连续两次低分 → 薄弱 → 其他到期</span>
     </div>
   </div>
 
@@ -1186,7 +1213,8 @@ function render(){
   const tb = $('tutbanner');
   if (tutFilter) {
     tb.hidden = false;
-    tb.innerHTML = `📚 宝典章节：<b>${esc(tutFilter.label)}</b> · ${tutFilter.ids.size} 题`
+    const kindTxt = tutFilter.kind === 'today' ? '🎯 今日训练' : '📚 宝典章节';
+    tb.innerHTML = `${kindTxt}：<b>${esc(tutFilter.label || '')}</b> · ${tutFilter.ids.size} 题`
       + ` <button id="tutclear" title="取消章节筛选，回到全部题目">×</button>`;
   } else {
     tb.hidden = true;
@@ -1769,6 +1797,86 @@ function renderRep(){
 
 // ---------------- 牛客宝典考点地图（sources/tutorial_map.json） ----------------
 const EV_LABEL = {code: '代码', metric: '指标', test: '测试', doc: '文档'};
+
+// 训练闭环：只看变化与复测，不看刷题量
+function histById(){
+  const m = {};
+  hist.forEach(h => { (m[h.i] = m[h.i] || []).push(h); });
+  Object.keys(m).forEach(k => m[k].sort((a, b) => a.t - b.t));
+  return m;
+}
+function loopStats(){
+  const now = Date.now(), D7 = 7 * 864e5;
+  const avg = a => a.length ? a.reduce((x, h) => x + h.g, 0) / a.length : null;
+  const recent = hist.filter(h => h.t >= now - D7);
+  const prev = hist.filter(h => h.t >= now - 2 * D7 && h.t < now - D7);
+  const a1 = avg(recent), a0 = avg(prev);
+  const by = histById();
+  const p0 = DATA.filter(q => q.priority === 'P0');
+  const p0ok = p0.filter(q => review[q.id] && review[q.id].g >= 3).length;
+  const twice = DATA.filter(q => {
+    const hs = by[q.id] || [];
+    if (hs.length < 2) return false;
+    const [x, y] = hs.slice(-2);
+    return x.g < 3 && y.g < 3;
+  });
+  let tests = 0, pass = 0;
+  DATA.forEach(q => {
+    const hs = by[q.id] || [];
+    for (let i = 1; i < hs.length; i++) {
+      if (hs[i].t - hs[i - 1].t >= D7) { tests++; if (hs[i].g >= 3) pass++; }
+    }
+  });
+  const lowByMod = {};
+  hist.filter(h => h.g <= 2).forEach(h => {
+    const q = QBY[h.i]; if (q) lowByMod[q.module] = (lowByMod[q.module] || 0) + 1;
+  });
+  const hotMods = Object.entries(lowByMod).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return {a0, a1, delta: (a1 != null && a0 != null) ? a1 - a0 : null,
+    nRecent: recent.length, p0, p0ok, twice, tests, pass, hotMods};
+}
+function renderLoop(){
+  const st = loopStats();
+  const deltaTxt = st.delta == null ? '样本不足（需要两周记录）'
+    : (st.delta >= 0.2 ? '↑ +' + st.delta.toFixed(2) : st.delta <= -0.2 ? '↓ ' + st.delta.toFixed(2) : '→ 持平');
+  const dCls = st.delta == null ? 'mid' : st.delta >= 0.2 ? 'hi' : st.delta <= -0.2 ? 'lo' : 'mid';
+  const rate = st.tests ? Math.round(st.pass / st.tests * 100) : null;
+  const rows = [
+    ['近 7 天均值', st.a1 == null ? '无记录' : st.a1.toFixed(2) + ' / 4',
+      `前 7 天 ${st.a0 == null ? '—' : st.a0.toFixed(2)} · ${deltaTxt}`, dCls],
+    ['P0 掌握率', st.p0ok + ' / ' + st.p0.length,
+      Math.round(st.p0ok / Math.max(1, st.p0.length) * 100) + '%（自评 ≥3 算掌握）',
+      st.p0ok / Math.max(1, st.p0.length) >= 0.6 ? 'hi' : 'mid'],
+    ['连续两次低分', st.twice.length + ' 题',
+      st.twice.length ? '同一题最近两次都 <3，属于「讲了还是不会」' : '没有反复卡住的题', st.twice.length ? 'lo' : 'hi'],
+    ['跨 7 天复测', rate == null ? '还没有复测' : rate + '%',
+      st.tests ? `${st.pass} / ${st.tests} 次复测仍 ≥3 分` : '隔 7 天再自评一次，才能验证长期掌握', rate == null ? 'mid' : rate >= 70 ? 'hi' : 'lo'],
+  ];
+  $('loop_meta').textContent = `近 7 天 ${st.nRecent} 次自评 · 历史 ${hist.length} 条`;
+  $('loop_body').innerHTML = `<table class="rtable"><thead><tr>
+      <th>指标</th><th>当前</th><th>说明</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td><b>${r[0]}</b></td>
+      <td><span class="rscore ${r[3]}">${esc(r[1])}</span></td>
+      <td>${esc(r[2])}</td></tr>`).join('') +
+    (st.hotMods.length ? `<tr><td><b>卡点模块</b></td><td>${st.hotMods.length} 个</td>
+      <td>${st.hotMods.map(([m, n]) => esc(MODNAME[m] || m) + ' ' + n + ' 次低分').join('；')}</td></tr>` : '') +
+    `</tbody></table>`;
+}
+function todayPlan(n){
+  n = n || 12;
+  const by = histById(), picked = [], seen = new Set();
+  const add = q => { if (q && !seen.has(q.id) && picked.length < n) { seen.add(q.id); picked.push(q); } };
+  const p0 = DATA.filter(q => q.priority === 'P0');
+  p0.filter(q => revState(q) === 'due').forEach(add);
+  p0.filter(q => !review[q.id]).forEach(add);
+  DATA.filter(q => {
+    const hs = by[q.id] || [];
+    return hs.length >= 2 && hs[hs.length - 1].g < 3 && hs[hs.length - 2].g < 3;
+  }).forEach(add);
+  p0.filter(q => review[q.id] && review[q.id].g <= 2).forEach(add);
+  DATA.filter(q => revState(q) === 'due').forEach(add);
+  return picked.slice(0, n);
+}
 function renderProj(){
   const ps = PROJD.projects || [];
   if (!ps.length) { $('proj_meta').textContent = '未配置 companies/projects.json'; return; }
@@ -1935,7 +2043,7 @@ function renderTut(){
 }
 function tutOpen(ids, label){
   if (!ids || !ids.length) return;
-  tutFilter = {ids: new Set(ids), label: label || '宝典章节'};
+  tutFilter = {ids: new Set(ids), label: label || '宝典章节', kind: 'tut'};
   ['q', 'co', 'rl', 'prof', 'mod', 'sub', 'pri', 'st', 'rev', 'dif'].forEach(k => {
     const el = $(k); if (el) el.value = '';
   });
@@ -1945,6 +2053,13 @@ function tutOpen(ids, label){
     c.classList.toggle('on', c.dataset.c === 'all'));
   showView('bank'); render(); window.scrollTo(0, 0);
 }
+$('loop_drill').addEventListener('click', () => {
+  const list = todayPlan(12);
+  if (!list.length) { alert('题库里没有需要补的题：要么已全部掌握，要么还没自测记录。'); return; }
+  tutFilter = {ids: new Set(list.map(q => q.id)), label: `${list.length} 题`, kind: 'today'};
+  showView('bank'); render(); window.scrollTo(0, 0);
+});
+
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-pdrill]'); if (!b) return;
   showView('train');
@@ -2016,7 +2131,7 @@ function showView(v){
   if (v === 'train') renderTrain();
   if (v === 'jobs') { renderJobs(); renderRadar(); }
   if (v === 'comp') renderCompanies();
-  if (v === 'rep') { renderRep(); renderTut(); renderProj(); renderHealth(); }
+  if (v === 'rep') { renderRep(); renderTut(); renderLoop(); renderProj(); renderHealth(); }
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
 
@@ -2326,13 +2441,85 @@ function jobMatch(job){
   return {hits, relevance, cover, mastery, evidence, eligibility: eligibilityOf(job), gaps};
 }
 function masteryCls(m){ return m.pct == null ? 'mid' : m.pct >= 80 ? 'hi' : m.pct >= 60 ? 'mid' : 'lo'; }
-let jobFilter = {scope: 'tech', rel: 'all'};
+let jobFilter = {scope: 'tech', rel: 'all', decide: 'all'};
 let radarLimit = 18;
+const DECIDE_ORDER = ['apply', 'watch', 'ref', 'no'];
+const DECIDE_META = {
+  apply: ['优先投递', '高相关 + 有证据或掌握≥3', 'hi'],
+  watch: ['持续关注', '相关，但资格或证据待补', 'mid'],
+  ref: ['仅供学习', '弱相关 / 不在五大目标方向', 'lo'],
+  no: ['不符合', '届别/学历硬性冲突', 'lo'],
+};
+
+// 决策规则：资格先出局 → 相关度 → 证据/掌握。顺序固定，避免「总分高但根本不能投」
+function decideOf(job, m){
+  if (m.eligibility.cls === 'lo')
+    return {k: 'no', label: '不符合', cls: 'lo', why: m.eligibility.bad[0] || '硬性条件不符'};
+  const fams = (job.families || []).filter(f => TARGET_FAMS.indexOf(f) >= 0);
+  const strong = m.relevance.lvl === '高相关' &&
+    (m.evidence.covered >= 1 || (m.mastery.pct != null && m.mastery.pct >= 60));
+  if (strong && fams.length)
+    return {k: 'apply', label: '优先投递', cls: 'hi',
+      why: '高相关 + ' + (m.evidence.covered ? `有 ${m.evidence.covered} 项工程证据` : `掌握 ${m.mastery.txt}/4`)};
+  if (m.relevance.lvl === '高相关' || (m.relevance.lvl === '中相关' && fams.length))
+    return {k: 'watch', label: '持续关注', cls: 'mid',
+      why: m.eligibility.cls === 'mid' ? '资格待确认，先核实 JD' : '相关，但证据或掌握不足'};
+  return {k: 'ref', label: '仅供学习', cls: 'lo', why: '弱相关或不在五大目标方向'};
+}
+
+// 五大岗位族：市场供给（雷达）vs 我的准备（题库覆盖/自评），按自评数量缓存
+let famCache = {key: -1, rows: []};
+function famStats(){
+  const key = Object.keys(review).length;
+  if (famCache.key === key) return famCache.rows;
+  const jobs = (RADAR.jobs || []).filter(j => j.tech_relevant !== false);
+  const rows = TARGET_FAMS.map(f => {
+    const js = jobs.filter(j => (j.families || []).indexOf(f) >= 0);
+    const ms = js.map(j => jobMatch(j));
+    const high = ms.filter(m => m.relevance.lvl === '高相关').length;
+    const cov = ms.length ? Math.round(ms.reduce((a, m) => a + m.cover, 0) / ms.length) : 0;
+    const tested = ms.filter(m => m.mastery.pct != null);
+    const mastery = tested.length
+      ? (tested.reduce((a, m) => a + m.mastery.pct, 0) / tested.length / 25).toFixed(1) : null;
+    return {f, n: js.length, high, cov, mastery};
+  });
+  famCache = {key, rows};
+  return rows;
+}
+
+function renderDecide(){
+  const jobs = loadJobs();
+  const cnt = {apply: 0, watch: 0, ref: 0, no: 0};
+  jobs.forEach(j => { cnt[decideOf(j, jobMatch(j)).k] += 1; });
+  $('decide_cards').innerHTML = DECIDE_ORDER.map(k =>
+    `<div class="scard ${jobFilter.decide === k ? 'on' : ''}" data-decide="${k}" title="${DECIDE_META[k][1]}">
+      <b>${cnt[k]}</b><small>${DECIDE_META[k][0]}</small><em>${DECIDE_META[k][1]}</em></div>`).join('');
+  $('decide_meta').textContent = `已收藏 ${jobs.length} 岗 · 点卡片筛下方列表`;
+  const rows = famStats();
+  const total = rows.reduce((a, r) => a + r.n, 0) || 1;
+  $('decide_fams').innerHTML = `<div class="rsec">五大岗位族 · 市场供给 vs 我的准备（雷达 ${(RADAR.jobs || []).filter(j => j.tech_relevant !== false).length} 个技术岗）</div>
+    <table class="rtable"><thead><tr>
+      <th>岗位族</th><th>在招</th><th>高相关</th><th>我的知识覆盖</th><th>我的掌握</th><th>判断</th>
+    </tr></thead><tbody>` + rows.map(r => {
+      const share = Math.round(r.n / total * 100);
+      const advice = r.mastery == null ? '还没自测，覆盖再高也不算会'
+        : (Number(r.mastery) < 2.5 ? '掌握偏低，优先补'
+          : (r.high >= 30 ? '供给多且能对上，主投' : '能对上，但岗位偏少'));
+      return `<tr><td><b>${esc(r.f)}</b></td>
+        <td class="rnum">${r.n} <small>(${share}%)</small></td>
+        <td class="rnum">${r.high}</td>
+        <td><span class="rbar2"><i style="width:${r.cov}%"></i></span> <span class="rnum">${r.cov}%</span></td>
+        <td>${r.mastery == null ? '<span class="muted">数据不足</span>' : r.mastery + '/4'}</td>
+        <td>${advice}</td></tr>`;
+    }).join('') + `</tbody></table>`;
+}
 
 function renderJobs(){
+  renderDecide();
   const all = loadJobs();
   const scoped = all.filter(j => jobFilter.scope === 'all' || j.tech_relevant !== false);
   const jobs = scoped.filter(j => {
+    if (jobFilter.decide !== 'all' && decideOf(j, jobMatch(j)).k !== jobFilter.decide) return false;
     if (jobFilter.rel === 'all') return true;
     const m = jobMatch(j);
     if (jobFilter.rel === 'high') return m.relevance.lvl === '高相关';
@@ -2362,6 +2549,7 @@ function renderJobs(){
     return `<article class="q jcard" data-ji="${idx}">
       <div class="qh">
         <span class="pid">${esc(job.company)}</span>
+        <span class="tag dtag ${decideOf(job, m).cls}" title="${esc(decideOf(job, m).why)}">🎯 ${esc(decideOf(job, m).label)}</span>
         <span class="rscore ${rel.cls}" title="${esc(rel.why)}">相关度 ${esc(rel.lvl)}</span>
         <span class="rscore ${m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo'}" title="知识覆盖：命中技能里题库有对应题目的比例，只代表「有资料」">知识覆盖 ${m.cover}%</span>
         <span class="rscore ${masteryCls(m.mastery)}" title="理论掌握：自评均值，仅统计已自测技能；无数据如实显示「数据不足」">掌握 ${esc(m.mastery.txt)}</span>
@@ -2392,6 +2580,13 @@ function renderJobs(){
     </article>`;
   }).join('') : '<div class="hempty">当前筛选下没有岗位。切到「含非技术岗」或放宽适配度筛选。</div>';
 }
+
+$('decide_cards').addEventListener('click', e => {
+  const c = e.target.closest('[data-decide]'); if (!c) return;
+  jobFilter.decide = jobFilter.decide === c.dataset.decide ? 'all' : c.dataset.decide;
+  renderJobs();
+  const el = $('joblist'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+});
 
 $('jobfilter').addEventListener('click', e => {
   const ch = e.target.closest('.chip'); if (!ch) return;

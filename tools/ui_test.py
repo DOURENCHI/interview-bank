@@ -334,7 +334,30 @@ def main() -> int:
             "document.querySelectorAll('#proj_body .tch').length") == 6
             and pg.eval_on_selector('#proj_meta', "el => el.innerText.includes('代码证据')")))
 
-        # 14. hash 记忆：刷新后仍在当前 tab
+        # 14. V2.1 投递决策 + 训练闭环
+        tab("jobs")
+        ok.append(("决策四类卡片", pg.evaluate(
+            "document.querySelectorAll('#decide_cards .scard').length") == 4
+            and "优先投递" in pg.eval_on_selector('#decide_cards', "el => el.innerText")))
+        ok.append(("决策徽标", pg.evaluate(
+            "document.querySelectorAll('#joblist .dtag').length") > 0))
+        ok.append(("五大岗位族", pg.evaluate(
+            "document.querySelectorAll('#decide_fams tbody tr').length") == 5))
+        meta_before = pg.eval_on_selector('#job_meta', "el => el.innerText")
+        pg.click('#decide_cards .scard[data-decide="no"]'); pg.wait_for_timeout(350)
+        meta_after = pg.eval_on_selector('#job_meta', "el => el.innerText")
+        ok.append(("决策卡筛选", meta_before != meta_after))
+        pg.click('#decide_cards .scard[data-decide="no"]'); pg.wait_for_timeout(250)
+        tab("rep")
+        ok.append(("训练闭环指标", pg.evaluate(
+            "document.querySelectorAll('#loop_body tbody tr').length") >= 4
+            and "跨 7 天复测" in pg.eval_on_selector('#loop_body', "el => el.innerText")))
+        pg.click('#loop_drill'); pg.wait_for_timeout(500)
+        ok.append(("今日训练生成", pg.eval_on_selector('#view-bank', "el => el.classList.contains('on')")
+                   and pg.eval_on_selector('#tutbanner', "el => el.innerText.includes('今日训练')")
+                   and 0 < pg.eval_on_selector_all('#list .q', "els => els.length") <= 12))
+
+        # 15. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
         ok.append(("刷新保持视图", pg.eval_on_selector("#view-train", "el => el.classList.contains('on')")))
