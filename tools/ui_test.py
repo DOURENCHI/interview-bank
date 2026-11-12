@@ -135,10 +135,12 @@ def main() -> int:
         ok.append(("缺口判断徽标", grade_badge))
         # V1.6：匹配三维度徽标（覆盖/掌握/资格）+ 技能四态 + 结论行
         badges = pg.evaluate("[...document.querySelector('#joblist .jcard').querySelectorAll('.qh .rscore')].map(x => x.innerText)")
-        ok.append(("三维度徽标", any('覆盖' in t for t in badges) and any('掌握' in t for t in badges) and any('届' in t for t in badges)))
+        ok.append(("维徽标齐全", any('相关度' in t for t in badges) and any('覆盖' in t for t in badges)
+                   and any('掌握' in t for t in badges) and any('工程证据' in t for t in badges)
+                   and any('资格' in t for t in badges)))
         state_col = pg.evaluate("!!document.querySelector('#joblist .jcard .rtable th:nth-child(3)') && document.querySelector('#joblist .jcard .rtable th:nth-child(3)').innerText.includes('证据')")
         ok.append(("技能四态列", state_col))
-        concl = pg.evaluate("[...document.querySelectorAll('#joblist .qmeta')].some(x => x.innerText.includes('结论'))")
+        concl = pg.evaluate("[...document.querySelectorAll('#joblist .qmeta')].some(x => x.innerText.includes('相关度依据') || x.innerText.includes('缺口'))")
         ok.append(("结论行", concl))
         # 首页雷达可信行（真实扫描时间）
         tab("home")
@@ -293,7 +295,46 @@ def main() -> int:
         ok.append(("首页进考点地图", pg.eval_on_selector(
             '#view-rep', "el => el.classList.contains('on')")))
 
-        # 13. hash 记忆：刷新后仍在当前 tab
+        # 13. V2.0：岗位适配度五维 / 非技术岗隔离 / 雷达分页 / 备份 v2 / 系统健康
+        tab("jobs")
+        pg.click('#joblist .jcard .qh'); pg.wait_for_timeout(300)
+        head = pg.eval_on_selector('#joblist .jcard .qh', "el => el.innerText")
+        ok.append(("岗位五维 chips", all(k in head for k in ["相关度", "知识覆盖", "掌握", "工程证据", "资格"])))
+        ok.append(("JD 原文依据列", pg.eval_on_selector(
+            '#joblist .jcard .jbody', "el => el.innerText.includes('JD 原文依据')")))
+        ok.append(("资格字段三态", pg.evaluate(
+            "document.querySelectorAll('#joblist .elc.ok, #joblist .elc.unknown, #joblist .elc.warn').length") >= 3))
+        ok.append(("工程证据可追溯", pg.eval_on_selector(
+            '#joblist .jcard .jbody', "el => el.innerText.includes('项目证据')")))
+        pg.evaluate("document.getElementById('radarbox').open = true")
+        pg.wait_for_timeout(400)
+        meta0 = pg.eval_on_selector('#radar_meta', "el => el.innerText")
+        ok.append(("雷达提示非技术岗", "隐藏非技术岗" in meta0))
+        n_cards0 = pg.evaluate("document.querySelectorAll('#radarlist .rcard2').length")
+        has_more = pg.evaluate("!!document.querySelector('[data-rmore]')")
+        if has_more:
+            pg.click('[data-rmore]'); pg.wait_for_timeout(400)
+        ok.append(("雷达分页加载", not has_more or pg.evaluate(
+            "document.querySelectorAll('#radarlist .rcard2').length") > n_cards0))
+        pg.click('#jobfilter .chip[data-jf="scope"][data-v="all"]'); pg.wait_for_timeout(400)
+        ok.append(("切含非技术岗", "隐藏非技术岗" not in pg.eval_on_selector('#radar_meta', "el => el.innerText")))
+        pg.click('#jobfilter .chip[data-jf="scope"][data-v="tech"]'); pg.wait_for_timeout(300)
+        ok.append(("备份版本 v2", pg.evaluate("backupPayload().schema_version === 2")))
+        ok.append(("备份拒绝非法 JSON", pg.evaluate("parseBackup('{oops').errs.length > 0")))
+        ok.append(("备份跳过无效题号", pg.evaluate("""() => {
+            const good = DATA[0].id;
+            return parseBackup(JSON.stringify({schema_version: 2, data: {review: {
+                [good]: {g: 3, ts: 1}, 'Q-9999': {g: 3, ts: 1}}}})).warns.length === 1;
+        }""")))
+        tab("rep")
+        ok.append(("系统健康面板", pg.evaluate(
+            "document.querySelectorAll('#health_body tbody tr').length") >= 12
+            and pg.eval_on_selector('#health_body', "el => el.innerText.includes('题库 ID 唯一')")))
+        ok.append(("项目证据链面板", pg.evaluate(
+            "document.querySelectorAll('#proj_body .tch').length") == 6
+            and pg.eval_on_selector('#proj_meta', "el => el.innerText.includes('代码证据')")))
+
+        # 14. hash 记忆：刷新后仍在当前 tab
         tab("train")
         pg.reload(); pg.wait_for_timeout(300)
         ok.append(("刷新保持视图", pg.eval_on_selector("#view-train", "el => el.classList.contains('on')")))

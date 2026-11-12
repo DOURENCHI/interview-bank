@@ -341,6 +341,21 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .tutbanner[hidden]{display:none}
 .tutbanner button{border:0;background:transparent;color:inherit;font-size:17px;cursor:pointer;
   line-height:1;padding:0 2px}
+/* —— 岗位适配度五维（V2.0） —— */
+.jfilter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.jfilter .rnum{margin-left:auto}
+.jdsnip{max-width:360px;font-size:12px;color:var(--muted);line-height:1.65}
+.jdsnip span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jcard .rtable th{white-space:nowrap}
+.jcard .rtable td:nth-child(5),.jcard .rtable td:nth-child(6),.jcard .rtable td:nth-child(7){white-space:nowrap}
+.elc{display:inline-flex;gap:4px;font-size:11px;border:1px solid var(--line);border-radius:6px;
+  padding:1px 6px;margin:2px 4px 2px 0;background:var(--soft);color:var(--muted)}
+.elc b{color:var(--tx)}
+.elc.ok{border-color:var(--intern-line);background:var(--intern-bg);color:var(--green)}
+.elc.bad{border-color:#e0b4a8;background:#fdeeea;color:var(--red)}
+.elc.warn{border-color:var(--social-line);background:var(--social-bg);color:var(--orange)}
+.elc.unknown{border-style:dashed;color:var(--muted)}
+.tag.warn{background:var(--social-bg);border-color:var(--social-line);color:var(--orange)}
 .mqtitle{font-size:17px;font-weight:700;margin:14px 0;padding:12px 14px;
   background:var(--soft);border-left:4px solid var(--accent);border-radius:6px}
 #m_follows{margin:12px 0;padding:10px 14px;background:var(--soft);border-radius:6px}
@@ -793,6 +808,17 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <summary>🛰 岗位雷达 <span class="rnum" id="radar_meta"></span> — 自动监控官方招聘门户（每日低频增量），收藏后进入下方列表</summary>
     <div class="rgrid2" id="radarlist" style="margin-top:10px"></div>
   </details>
+  <div class="jfilter" id="jobfilter">
+    <span class="flab">范围</span>
+    <button class="chip on" data-jf="scope" data-v="tech">只看技术岗</button>
+    <button class="chip" data-jf="scope" data-v="all">含非技术岗</button>
+    <span class="csep"></span>
+    <span class="flab">适配</span>
+    <button class="chip on" data-jf="rel" data-v="all">全部</button>
+    <button class="chip" data-jf="rel" data-v="high">高相关</button>
+    <button class="chip" data-jf="rel" data-v="gap">有缺口 / 资格不符</button>
+    <span class="rnum" id="job_meta"></span>
+  </div>
   <div class="trgrid" id="joblist"></div>
 </section>
 
@@ -900,6 +926,19 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
       <button class="mini" id="r_clean" title="把已自评 ≥3 且未到期的题移出错题本">🧹 清理错题本</button>
     </div>
   </div>
+
+  <div class="panel" id="projbox" style="margin-top:14px">
+    <div class="rhead"><b>🧩 项目证据链</b><span class="rnum" id="proj_meta"></span></div>
+    <div class="mnote">每项技能都要能回答「凭什么说我会」：代码 → 指标 → 测试 → 面试表达。
+      仓库/测试为空的项目按「证据不完整」处理，<b>不计入岗位卡的工程证据</b>。数据源：<code>companies/projects.json</code>。</div>
+    <div id="proj_body"></div>
+  </div>
+
+  <div class="panel" id="healthbox" style="margin-top:14px">
+    <div class="rhead"><b>🩺 系统健康</b><span class="rnum" id="health_meta"></span></div>
+    <div class="mnote">数据质量比数量重要：红色 = 必须处理，黄色 = 需要人工看一眼。构建期指标在 <code>build.py</code> 里算，本地数据在浏览器里现算。</div>
+    <div id="health_body"></div>
+  </div>
 </section>
 </div>
 
@@ -946,14 +985,39 @@ const RADAR = __RADAR__;
 const POOL = __POOL__;          // companies/radar_companies.json：全量公司池（含未接入源）
 const NC = __NC__;              // 牛客面经索引 + 公司真题卷元数据（每周增量同步）
 const TUT = __TUT__;            // 牛客面试宝典目录 + 每章命中题号（构建期统计，点进去结果一致）
+const PROJD = __PROJ__;         // companies/projects.json：项目证据档案（技能栈 + 证据三态）；PROJ 是项目题池，勿混
+const HEALTH = __HEALTH__;      // 构建期数据质量指标（系统健康面板）
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
 // 间隔复习：自评分 1~4 → 下次复习间隔天数（SM-2 简化版）
 const REV_DAYS = {1: 1, 2: 3, 3: 7, 4: 21};
 const OPEN_ALL = location.hash === '#all';   // 调试用：全部展开
-let wrong = new Set(JSON.parse(localStorage.getItem(WRONG_KEY) || '[]'));
-let review = JSON.parse(localStorage.getItem(REV_KEY) || '{}');
+const SCHEMA_VERSION = 2;                     // 本地数据/备份格式版本，导入时校验与迁移
+
+// 统一封装浏览器存储：读失败降级为空，写失败必须让用户知道（不能假装已保存）
+// 外链白名单：只允许 http/https，挡住 javascript:/data: 这类注入
+function safeUrl(u){
+  if (!u) return '';
+  try {
+    const x = new URL(u, location.href);
+    return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : '';
+  } catch (e) { return ''; }
+}
+function lsGet(k, dflt){
+  try { const v = localStorage.getItem(k); return v == null ? dflt : JSON.parse(v); }
+  catch (e) { console.warn('localStorage 读取失败', k, e); return dflt; }
+}
+function lsSet(k, v){
+  try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); return true; }
+  catch (e) {
+    alert('本地存储写入失败：' + (e && e.message ? e.message : e) +
+      '\n常见原因：隐私/无痕模式、存储空间已满、浏览器禁用了站点数据。\n本次修改没有保存，请先「备份↓」再换浏览器。');
+    return false;
+  }
+}
+let wrong = new Set(lsGet(WRONG_KEY, []));
+let review = lsGet(REV_KEY, {});
 let SELFTEST = false;
 let LASTHIT = [];            // 最近一次渲染命中的题，供模拟面试抽题
 let tutFilter = null;        // 宝典章节筛选：{ids:Set, label}（点「练这一章」写入）
@@ -1145,11 +1209,11 @@ function render(){
 // 自评 1~4 写入复习计划；不会/想不起自动进错题本（卡片按钮与快捷键共用）
 // 每次自评同时追加训练历史（首页「最近训练记录」与「今日任务」的完成度来源）
 const HIST_KEY = 'ib_hist_v1';
-let hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
+let hist = lsGet(HIST_KEY, []);
 function pushHist(qid, v){
   hist.push({ i: qid, g: v, t: Date.now(), m: MOCK.live ? 1 : 0 });
   if (hist.length > 600) hist = hist.slice(-500);
-  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+  lsSet(HIST_KEY, hist);
 }
 function setGrade(qid, v){
   review[qid] = { g: v, ts: Date.now() };
@@ -1328,32 +1392,123 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// 复习数据备份：导出/导入 JSON（跨设备迁移用）
+// 复习数据备份：导出/导入（schema_version=2；导入前校验 → 预览 → 默认合并）
+function backupPayload(){
+  const jobs = lsGet(LOCAL_JOBS_KEY, []);
+  return {
+    app: 'CareerOS', schema_version: SCHEMA_VERSION,
+    exported_at: new Date().toISOString(),
+    counts: {review: Object.keys(review).length, wrong: wrong.size,
+             hist: hist.length, jobs: jobs.length, dismiss: [...loadDismiss()].length},
+    data: {wrong: [...wrong], review, hist, jobs, dismiss: [...loadDismiss()]}
+  };
+}
 $('exp').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify({ wrong: [...wrong], review,
-    jobs: JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]') }, null, 1)],
-    { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(backupPayload(), null, 1)], {type: 'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'interview-bank-progress.json';
+  a.download = `careeros-backup-v${SCHEMA_VERSION}-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
 });
+
+// 校验 + 归一化：返回 {errs, warns, review, wrong, hist, jobs, dismiss, ver}
+function parseBackup(text){
+  const out = {errs: [], warns: [], review: {}, wrong: [], hist: [], jobs: [], dismiss: [], ver: 0};
+  let d;
+  try { d = JSON.parse(text); } catch { out.errs.push('不是合法 JSON'); return out; }
+  if (!d || typeof d !== 'object' || Array.isArray(d)) { out.errs.push('顶层不是对象'); return out; }
+  out.ver = Number(d.schema_version || ((d.wrong || d.review) ? 1 : 0));
+  if (!out.ver) { out.errs.push('缺少 schema_version，也不是 v1 备份（无 wrong/review）'); return out; }
+  if (out.ver > SCHEMA_VERSION) {
+    out.errs.push(`备份版本 v${out.ver} 高于当前页面 v${SCHEMA_VERSION}，请先更新页面再导入`);
+    return out;
+  }
+  const data = (d.data && typeof d.data === 'object') ? d.data : d;   // v1 兼容
+  const valid = new Set(DATA.map(q => q.id));
+  if (data.review != null) {
+    if (typeof data.review !== 'object' || Array.isArray(data.review)) out.errs.push('review 应为对象');
+    else Object.entries(data.review).forEach(([id, v]) => {
+      if (!v || typeof v !== 'object' || [1, 2, 3, 4].indexOf(v.g) < 0 || typeof v.ts !== 'number') {
+        out.warns.push('跳过格式异常的自测记录'); return;
+      }
+      if (!valid.has(id)) { out.warns.push('跳过题库里不存在的题号'); return; }
+      out.review[id] = {g: v.g, ts: v.ts};
+    });
+  }
+  if (data.wrong != null) {
+    if (!Array.isArray(data.wrong)) out.errs.push('wrong 应为数组');
+    else out.wrong = data.wrong.filter(id => typeof id === 'string' && valid.has(id));
+  }
+  if (data.hist != null && Array.isArray(data.hist)) out.hist = data.hist.filter(x => x && typeof x === 'object');
+  if (data.jobs != null) {
+    if (!Array.isArray(data.jobs)) out.errs.push('jobs 应为数组');
+    else out.jobs = data.jobs.filter(j => j && typeof j === 'object' && (j.company || j.title));
+  }
+  if (data.dismiss != null && Array.isArray(data.dismiss)) {
+    out.dismiss = data.dismiss.filter(k => typeof k === 'string');
+  }
+  return out;
+}
+
+const jobKeyOf = j => j.id || j.key || ((j.company || '') + '|' + (j.title || ''));
+
+function planImport(p){
+  const revAdd = [], revUpd = [];
+  Object.entries(p.review).forEach(([id, v]) => {
+    if (!review[id]) revAdd.push(id);
+    else if (v.ts > (review[id].ts || 0)) revUpd.push(id);
+  });
+  const wrongAdd = p.wrong.filter(id => !wrong.has(id));
+  const curJobs = lsGet(LOCAL_JOBS_KEY, []);
+  const curKeys = new Set(curJobs.map(jobKeyOf));
+  const jobsAdd = p.jobs.filter(j => !curKeys.has(jobKeyOf(j)));
+  const histKeys = new Set(hist.map(x => JSON.stringify(x)));
+  const histAdd = p.hist.filter(x => !histKeys.has(JSON.stringify(x)));
+  const dis = loadDismiss();
+  const disAdd = p.dismiss.filter(k => !dis.has(k));
+  return {revAdd, revUpd, wrongAdd, jobsAdd, histAdd, disAdd};
+}
+
 $('impb').addEventListener('click', () => $('imp').click());
 $('imp').addEventListener('change', e => {
   const f = e.target.files[0];
+  e.target.value = '';                       // 允许重复选同一个文件
   if (!f) return;
   const rd = new FileReader();
   rd.onload = () => {
-    try {
-      const d = JSON.parse(rd.result);
-      if (d.wrong) wrong = new Set(d.wrong);
-      if (d.review) review = d.review;
-      if (d.jobs) localStorage.setItem(LOCAL_JOBS_KEY, JSON.stringify(d.jobs));
-      localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
-      localStorage.setItem(REV_KEY, JSON.stringify(review));
-      render();
-      alert(`已导入：错题 ${wrong.size}，自测记录 ${Object.keys(review).length}`);
-    } catch { alert('导入失败：不是有效的备份文件'); }
+    const p = parseBackup(rd.result);
+    if (p.errs.length) { alert('导入失败：\n· ' + p.errs.join('\n· ')); return; }
+    const plan = planImport(p);
+    const warn = p.warns.length ? `\n\n已忽略 ${p.warns.length} 条（${[...new Set(p.warns)].join('、')}）` : '';
+    const msg = `备份版本 v${p.ver}，共 ${Object.keys(p.review).length} 条自测、${p.wrong.length} 条错题、${p.jobs.length} 个岗位、${p.hist.length} 条训练记录。\n\n`
+      + `将合并到本机（不覆盖较新的记录）：\n`
+      + `· 自测：新增 ${plan.revAdd.length} 条，更新 ${plan.revUpd.length} 条\n`
+      + `· 错题：新增 ${plan.wrongAdd.length} 条\n`
+      + `· 岗位：新增 ${plan.jobsAdd.length} 个\n`
+      + `· 训练记录：新增 ${plan.histAdd.length} 条\n`
+      + `· 忽略清单：新增 ${plan.disAdd.length} 条`
+      + warn + `\n\n确定导入？`;
+    if (!confirm(msg)) return;
+    // 合并：自测按 ts 取新，其余取并集
+    const merged = Object.assign({}, review);
+    Object.entries(p.review).forEach(([id, v]) => {
+      if (!merged[id] || v.ts > (merged[id].ts || 0)) merged[id] = v;
+    });
+    review = merged;
+    p.wrong.forEach(id => wrong.add(id));
+    const histSeen = new Set(hist.map(x => JSON.stringify(x)));
+    p.hist.forEach(x => { const k = JSON.stringify(x); if (!histSeen.has(k)) { histSeen.add(k); hist.push(x); } });
+    const curJobs = lsGet(LOCAL_JOBS_KEY, []);
+    const curKeys = new Set(curJobs.map(jobKeyOf));
+    p.jobs.forEach(j => { if (!curKeys.has(jobKeyOf(j))) { curJobs.push(j); curKeys.add(jobKeyOf(j)); } });
+    const dis = loadDismiss();
+    p.dismiss.forEach(k => dis.add(k));
+
+    const okAll = lsSet(REV_KEY, review) & lsSet(WRONG_KEY, [...wrong]) &
+      lsSet(HIST_KEY, hist) & lsSet(LOCAL_JOBS_KEY, curJobs) & lsSet(DISMISS_KEY, [...dis]);
+    render();
+    alert(okAll ? `已导入：自测 ${Object.keys(review).length} 条（新增 ${plan.revAdd.length}）｜错题 ${wrong.size}｜岗位 ${curJobs.length}｜训练记录 ${hist.length}`
+                : '部分数据写入失败，见上方提示；建议先导出备份再换浏览器');
   };
   rd.readAsText(f);
 });
@@ -1613,6 +1768,64 @@ function renderRep(){
 }
 
 // ---------------- 牛客宝典考点地图（sources/tutorial_map.json） ----------------
+const EV_LABEL = {code: '代码', metric: '指标', test: '测试', doc: '文档'};
+function renderProj(){
+  const ps = PROJD.projects || [];
+  if (!ps.length) { $('proj_meta').textContent = '未配置 companies/projects.json'; return; }
+  const cnt = st => ps.filter(p => ((p.evidence || {}).code || {}).status === st).length;
+  $('proj_meta').textContent = `${ps.length} 个项目 · 代码证据 完整 ${cnt('present')} / 部分 ${cnt('partial')} / 缺 ${cnt('missing')}`
+    + ` · 仓库已登记 ${ps.filter(p => p.repo).length} 个`;
+  $('proj_body').innerHTML = `<div class="tlist">` + ps.map(p => {
+    const ev = p.evidence || {};
+    const chips = Object.keys(EV_LABEL).map(k => {
+      const v = ev[k] || {};
+      const cls = v.status === 'present' ? 'ok' : v.status === 'partial' ? 'warn' : 'unknown';
+      const txt = v.status === 'present' ? '有' : v.status === 'partial' ? '部分' : '缺';
+      return `<span class="elc ${cls}" title="${esc(v.note || '')}">${EV_LABEL[k]} ${txt}</span>`;
+    }).join('');
+    return `<div class="tch w1">
+      <div class="tch-top">
+        <span class="tch-name">${esc(p.name)}</span>
+        <span class="tag">${esc(p.tier || '')}</span>
+        <span class="tch-em">${esc((p.stack || []).join(' / '))}</span>
+        <span class="tch-w">${esc(p.repo ? '仓库已登记' : '仓库未登记')}</span>
+      </div>
+      <div class="tch-mid">
+        ${chips}
+        <span>项目深挖 <b>${p.interview_count || 0}</b> 题</span>
+        <span class="tch-act">
+          ${p.repo ? `<a class="mini" href="${esc(safeUrl(p.repo))}" target="_blank" rel="noopener">仓库 ↗</a>` : ''}
+          <button class="mini" data-pdrill="${esc(p.sub || '')}">过题 ${p.interview_count || 0}</button>
+        </span>
+      </div>
+      <div class="tsec">${(p.gaps || []).map(g => `<span class="schip zero">缺口 ${esc(g)}</span>`).join('') || '<span class="schip">无明显缺口</span>'}</div>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+function renderHealth(){
+  const H = HEALTH;
+  let bytes = 0, keys = 0;
+  try {
+    Object.keys(localStorage).forEach(k => {
+      if (k.indexOf('ib_') === 0) { keys++; bytes += (localStorage.getItem(k) || '').length; }
+    });
+  } catch (e) { /* 隐私模式读不到就不显示体积 */ }
+  const rows = (H.checks || []).slice();
+  rows.push({name: '本地数据', status: bytes > 3.5e6 ? 'warn' : 'ok',
+             detail: `${keys} 个键 · ${Math.round(bytes / 1024)} KB · 备份格式 v${SCHEMA_VERSION}`});
+  rows.push({name: '你的自测', status: Object.keys(review).length ? 'ok' : 'warn',
+             detail: `${Object.keys(review).length} 题已自测 · 错题 ${wrong.size} · 训练记录 ${hist.length} 条`});
+  const bad = rows.filter(r => r.status === 'bad').length;
+  const warn = rows.filter(r => r.status === 'warn').length;
+  $('health_meta').textContent = `生成于 ${H.built_at} · ${bad ? bad + ' 项必须处理' : '无阻断项'} · ${warn} 项待观察`;
+  $('health_body').innerHTML = `<table class="rtable"><thead><tr>
+      <th>检查项</th><th>状态</th><th>明细</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${esc(r.name)}</td>
+      <td><span class="elc ${r.status}">${r.status === 'ok' ? '正常' : r.status === 'warn' ? '待观察' : '需处理'}</span></td>
+      <td style="text-align:left">${esc(r.detail)}</td></tr>`).join('') + `</tbody></table>`;
+}
+
 function tutOf(id){ return (TUT.tutorials || []).find(t => t.id === id) || {}; }
 function tutStat(ids){
   const arr = ids || [];
@@ -1732,6 +1945,13 @@ function tutOpen(ids, label){
     c.classList.toggle('on', c.dataset.c === 'all'));
   showView('bank'); render(); window.scrollTo(0, 0);
 }
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-pdrill]'); if (!b) return;
+  showView('train');
+  const h = [...document.querySelectorAll('#view-train h3')].find(x => x.innerText.includes('项目连环问'));
+  if (h) h.scrollIntoView({block: 'start'});
+});
+
 $('tut_tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tut]'); if (!b) return;
   tutTab = +b.dataset.tut; renderTut();
@@ -1796,7 +2016,7 @@ function showView(v){
   if (v === 'train') renderTrain();
   if (v === 'jobs') { renderJobs(); renderRadar(); }
   if (v === 'comp') renderCompanies();
-  if (v === 'rep') { renderRep(); renderTut(); }
+  if (v === 'rep') { renderRep(); renderTut(); renderProj(); renderHealth(); }
   try { history.replaceState(null, '', '#' + v); } catch {}
 }
 
@@ -1844,7 +2064,7 @@ function renderHome(){
       <span class="pid">${esc(x.company)}</span>
       <b title="${esc(x.title)}">${esc(x.title)}</b>
       <span class="rnum">${x.n_questions || 0} 题</span>
-      <a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖 ↗</a>
+      ${safeUrl(x.url) ? `<a class="tag jlink" href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">原帖 ↗</a>` : '—'}
     </div>`).join('') +
     `<div class="mrow" style="margin-top:8px"><button class="mini" id="h_nc_more">查看全部面经 / 按公司筛选 →</button></div>`;
   renderScards();
@@ -1972,20 +2192,39 @@ function loadJobs(){
 }
 // 技能规则表：JD 关键词 → 题库模块。匹配分析的核心映射，随题库方向扩展
 const SKILLS = [
-  {name: 'C++', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['02_cpp']},
-  {name: 'Linux', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['03_linux']},
-  {name: '算法机考', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['04_algo']},
-  {name: '模型部署', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['05_deploy']},
-  {name: 'ROS2/中间件', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['06_ros2']},
-  {name: '深度学习/感知', kws: ['pytorch', '目标检测', '分割', 'yolo', 'opencv', '感知', '融合', '深度学习', '视觉'], mods: ['10_cv_pytorch', '07_imaging']},
-  {name: 'Python', kws: ['python'], mods: ['11_python']},
-  {name: '硬件/嵌入式', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['09_hardware']},
-  {name: '机器人学', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['08_robot']},
+  {name: 'C++', tier: 'core', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['02_cpp']},
+  {name: 'Linux', tier: 'core', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['03_linux']},
+  {name: '算法机考', tier: 'eng', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['04_algo']},
+  {name: '模型部署', tier: 'core', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['05_deploy']},
+  {name: 'ROS2/中间件', tier: 'core', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['06_ros2']},
+  {name: '深度学习/感知', tier: 'domain', kws: ['pytorch', '目标检测', '分割', 'yolo', 'opencv', '感知', '融合', '深度学习', '视觉'], mods: ['10_cv_pytorch', '07_imaging']},
+  {name: 'Python', tier: 'eng', kws: ['python'], mods: ['11_python']},
+  {name: '硬件/嵌入式', tier: 'core', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['09_hardware']},
+  {name: '机器人学', tier: 'domain', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['08_robot']},
+  {name: '工业通信/现场总线', tier: 'eng', kws: ['profinet', 'mrp', 'plc', 'modbus', 'canopen', '现场总线', '工业以太网', 'opc ua'], mods: ['06_ros2', '09_hardware']},
 ];
+const TIER_LABEL = {core: '核心', eng: '工程', domain: '场景'};
+const TARGET_FAMS = ['AI推理部署', '机器人软件/ROS2', 'C++ SDK/系统软件', 'VLM/VLA/视觉算法', '嵌入式/控制'];
 
+// 取 JD 里第一处命中词的前后原文，作为「为什么判它命中」的证据
+function jdSnippet(jd, kws){
+  const t = jd || '';
+  if (!t) return '';
+  const low = t.toLowerCase();
+  let best = -1, hit = '';
+  kws.forEach(k => {
+    const i = low.indexOf(k.toLowerCase());
+    if (i >= 0 && (best < 0 || i < best)) { best = i; hit = k; }
+  });
+  if (best < 0) return '';
+  const a = Math.max(0, best - 30), b = Math.min(t.length, best + hit.length + 42);
+  return (a > 0 ? '…' : '') + t.slice(a, b).replace(/\s+/g, ' ').trim() + (b < t.length ? '…' : '');
+}
+
+// 只产出「命中事实」，不再算总分：无自评就是 null，不拿 50 分充数
 function jobScore(job){
-  // JD 原文 + 关键词 → 命中技能 → 关联模块的自评掌握度 → 缺口判断
-  const text = ((job.jd || '') + ' ' + (job.skills || []).join(' ')).toLowerCase();
+  const jd = job.jd || '';
+  const text = (jd + ' ' + (job.skills || []).join(' ')).toLowerCase();
   const hits = [];
   SKILLS.forEach(s => {
     const kws = s.kws.filter(k => text.includes(k));
@@ -1994,92 +2233,174 @@ function jobScore(job){
     s.mods.forEach(m => (MODQ[m] || []).forEach(q => pool.push(q)));
     const done = pool.filter(q => review[q.id]);
     const avg = done.length ? done.reduce((a, q) => a + review[q.id].g, 0) / done.length : null;
-    const cov = pool.length ? Math.round(done.length / pool.length * 100) : 0;
-    let grade, score;
-    if (avg == null) { grade = '待评估'; score = 50; }
-    else {
-      score = Math.round(avg / 4 * 100);
-      grade = avg >= 3.3 ? '较强' : avg >= 2.5 ? '一般' : '待加强';
-    }
-    hits.push({name: s.name, kws, pool: pool.length, done: done.length,
-               cov, avg, grade, score, mods: s.mods});
+    hits.push({name: s.name, tier: s.tier, kws, mods: s.mods, snip: jdSnippet(jd, kws),
+      pool: pool.length, done: done.length,
+      cov: pool.length ? Math.round(done.length / pool.length * 100) : 0, avg});
   });
-  hits.sort((a, b) => a.score - b.score);   // 最弱的排最前
-  const total = hits.length
-    ? Math.round(hits.reduce((a, h) => a + h.score, 0) / hits.length) : 50;
-  return {total, hits};
+  return hits;
 }
 
-// 你的硕士毕业届别（换届别时改这里）：招聘资格判断的唯一依据
-const USER_GRAD = 2029;
+// 招聘资格：多字段独立判断；抽不到的字段一律「未说明」，不算符合
+const USER_INFO = {grad: 2029, degree: '硕士'};
+const USER_GRAD = USER_INFO.grad;          // 兼容旧引用
 
-// V1.6 匹配三维度：覆盖（题库有没有）/ 掌握（自评数据，无则数据不足）/ 资格（届别硬性条件）
-// 三者独立展示、不互相抵消——届别不符时不给「推荐投递」类结论
+function eligibilityOf(job){
+  const r = job.req || {};
+  const gr = (r.grad_range && r.grad_range.length) ? r.grad_range
+           : (job.grad_year ? [job.grad_year, job.grad_year] : null);
+  const fields = [], bad = [], unknown = [];
+  if (r.education){
+    const needDoc = r.education.indexOf('博士') === 0;
+    fields.push(['学历要求', r.education, needDoc ? 'bad' : 'ok']);
+    if (needDoc) bad.push(`要求${r.education}（你是${USER_INFO.degree}）`);
+  } else { fields.push(['学历要求', '未说明', 'unknown']); unknown.push('学历'); }
+  if (gr){
+    const ok = gr[0] <= USER_INFO.grad && USER_INFO.grad <= gr[1];
+    const txt = gr[0] === gr[1] ? gr[0] + ' 届' : gr[0] + '–' + gr[1] + ' 届';
+    fields.push(['毕业届别', txt, ok ? 'ok' : 'bad']);
+    if (!ok) bad.push(`限 ${txt}（你是 ${USER_INFO.grad} 届）`);
+  } else { fields.push(['毕业届别', '未说明', 'unknown']); unknown.push('届别'); }
+  if (r.student_status){
+    fields.push(['在校身份', r.student_status, r.student_status === '在校生' ? 'warn' : 'ok']);
+    if (r.student_status === '在校生') unknown.push('在校/注册证明');
+  } else { fields.push(['在校身份', '未说明', 'unknown']); unknown.push('在校身份'); }
+  if (r.intern_duration){
+    fields.push(['实习时长', '≥ ' + r.intern_duration + ' 个月', 'warn']);
+    unknown.push('可投入时长');
+  } else fields.push(['实习时长', '未说明', 'unknown']);
+  if (r.weekly_days){
+    fields.push(['每周到岗', r.weekly_days + ' 天', 'warn']);
+    unknown.push('每周可到岗');
+  } else fields.push(['每周到岗', '未说明', 'unknown']);
+
+  if (bad.length) return {cls: 'lo', txt: '不符合', fields, bad, unknown};
+  const keyUnknown = unknown.filter(x => x === '学历' || x === '届别');
+  if (keyUnknown.length) return {cls: 'mid', txt: '资格未说明', fields, bad: [], unknown};
+  if (unknown.length) return {cls: 'mid', txt: '待确认 ' + unknown.length + ' 项', fields, bad: [], unknown};
+  return {cls: 'hi', txt: '条件齐备', fields, bad: [], unknown: []};
+}
+
+// 岗位适配度：相关度 / 知识覆盖 / 理论掌握 / 工程证据 / 招聘资格 —— 五个维度独立，不合成单一百分比
 function jobMatch(job){
-  const hits = jobScore(job).hits;
-  const cover = hits.length
-    ? Math.round(hits.filter(h => h.pool > 0).length / hits.length * 100) : 0;
+  const hits = jobScore(job);
+  const core = hits.filter(h => h.tier === 'core').length;
+  const eng = hits.filter(h => h.tier === 'eng').length;
+  const fams = (job.families || []).filter(f => TARGET_FAMS.indexOf(f) >= 0);
+  let relevance;
+  if (core >= 2) relevance = {lvl: '高相关', cls: 'hi', why: `命中 ${core} 项核心技能` + (fams.length ? '，方向属 ' + fams.join('/') : '')};
+  else if (core === 1 && (eng >= 1 || fams.length)) relevance = {lvl: '中相关', cls: 'mid', why: `1 项核心 + ${eng} 项工程技能`};
+  else if (core === 1) relevance = {lvl: '弱相关', cls: 'mid', why: '仅 1 项核心技能，工程侧证据少'};
+  else if (eng >= 2) relevance = {lvl: '弱相关', cls: 'mid', why: '只命中工程技能，未命中核心技术栈'};
+  else relevance = {lvl: '不相关', cls: 'lo', why: '未命中核心技术栈'};
+
+  const cover = hits.length ? Math.round(hits.filter(h => h.pool > 0).length / hits.length * 100) : 0;
   const tested = hits.filter(h => h.avg != null);
   const mastery = tested.length
-    ? { pct: Math.round(tested.reduce((a, h) => a + h.avg, 0) / tested.length / 4 * 100),
-        txt: (tested.reduce((a, h) => a + h.avg, 0) / tested.length).toFixed(1) }
-    : { pct: null, txt: '数据不足' };
-  const gy = job.grad_year;
-  let eli;
-  if (!gy) eli = { cls: 'mid', txt: '届别未标注' };
-  else if (gy === USER_GRAD) eli = { cls: 'hi', txt: gy + '届匹配' };
-  else if ((job.type || '').indexOf('实习') >= 0) eli = { cls: 'mid', txt: '实习可关注' };
-  else eli = { cls: 'lo', txt: '面向' + gy + '届·仅作JD参考' };
-  hits.forEach(h => {                     // 证据四态：题库储备≠掌握
-    if (h.mods.indexOf('01_project') >= 0 && h.done > 0) h.state = ['已有项目证据', 'done'];
-    else if (h.done > 0) h.state = ['已有学习记录', 'doing'];
-    else if (h.pool > 0) h.state = ['仅有题库储备', 'todo'];
-    else h.state = ['尚无证据', 'todo'];
+    ? {pct: Math.round(tested.reduce((a, h) => a + h.avg, 0) / tested.length / 4 * 100),
+       txt: (tested.reduce((a, h) => a + h.avg, 0) / tested.length).toFixed(1)}
+    : {pct: null, txt: '数据不足'};
+
+  const evRows = hits.map(h => {
+    const ps = (PROJD.projects || []).filter(p => (p.stack || []).indexOf(h.name) >= 0);
+    const codeOk = ps.some(p => ['present', 'partial'].indexOf(((p.evidence || {}).code || {}).status) >= 0);
+    return {name: h.name, projects: ps.map(p => p.name), codeOk};
   });
-  return {hits, cover, mastery, eli};
+  const evidence = {rows: evRows, covered: evRows.filter(r => r.codeOk).length, total: hits.length};
+
+  hits.forEach((h, i) => {
+    const ev = evRows[i];
+    if (ev.codeOk) h.state = ['项目证据', 'done'];
+    else if (ev.projects.length) h.state = ['项目提到·证据待补', 'doing'];
+    else if (h.done > 0) h.state = ['仅自测·无项目', 'doing'];
+    else if (h.pool > 0) h.state = ['仅题库储备', 'todo'];
+    else h.state = ['尚无证据', 'todo'];
+    h.projects = ev.projects;
+  });
+
+  const gaps = [];
+  hits.forEach(h => {
+    if (!h.pool && !h.projects.length) gaps.push(`${h.name}：题库与项目都没有`);
+    else if (h.avg != null && h.avg < 2.5) gaps.push(`${h.name}：自测均分 ${h.avg.toFixed(1)}，需重练`);
+    else if (!h.projects.length) gaps.push(`${h.name}：缺项目证据`);
+  });
+  return {hits, relevance, cover, mastery, evidence, eligibility: eligibilityOf(job), gaps};
 }
 function masteryCls(m){ return m.pct == null ? 'mid' : m.pct >= 80 ? 'hi' : m.pct >= 60 ? 'mid' : 'lo'; }
+let jobFilter = {scope: 'tech', rel: 'all'};
+let radarLimit = 18;
 
 function renderJobs(){
-  const jobs = loadJobs();
-  $('joblist').innerHTML = jobs.map((job, idx) => {
-    const m = jobMatch(job);
-    const isLocal = job.src === 'local';
-    const concl = `${m.cover >= 60 ? '技术方向匹配' : '技术覆盖有限'} · ${m.mastery.pct == null ? '实际掌握数据不足，去题库自测' : '掌握均分 ' + m.mastery.txt + '/4'} · ${m.eli.txt}`;
+  const all = loadJobs();
+  const scoped = all.filter(j => jobFilter.scope === 'all' || j.tech_relevant !== false);
+  const jobs = scoped.filter(j => {
+    if (jobFilter.rel === 'all') return true;
+    const m = jobMatch(j);
+    if (jobFilter.rel === 'high') return m.relevance.lvl === '高相关';
+    if (jobFilter.rel === 'gap') return m.gaps.length > 0 || m.eligibility.cls === 'lo';
+    return true;
+  });
+  const hidden = all.length - scoped.length;
+  $('job_meta').textContent = `${jobs.length} / ${all.length} 岗` +
+    (hidden ? `（已隐藏非技术岗 ${hidden}）` : '') +
+    (jobFilter.rel !== 'all' ? ` ｜ 筛选：${jobFilter.rel === 'high' ? '高相关' : '有缺口/资格不符'}` : '');
+
+  $('joblist').innerHTML = jobs.length ? jobs.map((job) => {
+    const m = jobMatch(job), el = m.eligibility, rel = m.relevance, isLocal = job.src === 'local';
+    const idx = all.indexOf(job);
     const rows = m.hits.map((h, hi) => `<tr>
-      <td><b>${esc(h.name)}</b></td>
-      <td class="rnum">${esc(h.kws.slice(0, 4).join('、'))}</td>
+      <td><b>${esc(h.name)}</b><small>${TIER_LABEL[h.tier] ? ' · ' + TIER_LABEL[h.tier] : ''}</small></td>
+      <td class="jdsnip">${h.snip ? `<span title="${esc(h.kws.join('、'))}">${esc(h.snip)}</span>`
+        : `<span class="muted">JD 无原文，仅按技能标签命中（${esc(h.kws.slice(0, 3).join('、'))}）</span>`}</td>
+      <td>${h.projects.length ? esc(h.projects.join('、')) : '—'}</td>
       <td><span class="tstat ${h.state[1]}">${h.state[0]}</span></td>
       <td class="rnum">${h.done} / ${h.pool}</td>
       <td><span class="rscore ${h.avg == null ? '' : h.avg >= 3.3 ? 'hi' : h.avg >= 2.5 ? 'mid' : 'lo'}">${h.avg == null ? '未自测' : h.avg.toFixed(1)}</span></td>
-      <td><span class="tstat ${h.grade === '较强' ? 'done' : h.grade === '一般' ? 'doing' : 'todo'}">${h.grade}</span></td>
       <td><button class="mini" data-jtrain="${hi}">训练</button></td>
     </tr>`).join('');
+    const elChips = el.fields.map(([k, v, st]) =>
+      `<span class="elc ${st}" title="${st === 'unknown' ? 'JD 未写，不能默认符合' : ''}">${esc(k)} <b>${esc(v)}</b></span>`).join('');
     return `<article class="q jcard" data-ji="${idx}">
       <div class="qh">
         <span class="pid">${esc(job.company)}</span>
-        <span class="rscore ${m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo'}" title="技能覆盖度：题库有对应知识点的技能占比">覆盖 ${m.cover}%</span>
-        <span class="rscore ${masteryCls(m.mastery)}" title="能力掌握度：自评均值；没有自测数据时如实显示数据不足">掌握 ${m.mastery.txt}</span>
-        <span class="rscore ${m.eli.cls}" title="招聘资格：毕业届别与岗位类型硬性条件">${m.eli.txt}</span>
+        <span class="rscore ${rel.cls}" title="${esc(rel.why)}">相关度 ${esc(rel.lvl)}</span>
+        <span class="rscore ${m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo'}" title="知识覆盖：命中技能里题库有对应题目的比例，只代表「有资料」">知识覆盖 ${m.cover}%</span>
+        <span class="rscore ${masteryCls(m.mastery)}" title="理论掌握：自评均值，仅统计已自测技能；无数据如实显示「数据不足」">掌握 ${esc(m.mastery.txt)}</span>
+        <span class="rscore ${m.evidence.total && m.evidence.covered / m.evidence.total >= 0.5 ? 'hi' : 'mid'}" title="工程证据：命中技能中，有项目档案（含代码证据）覆盖的项数">工程证据 ${m.evidence.covered}/${m.evidence.total}</span>
+        <span class="rscore ${el.cls}" title="${esc(el.fields.map(f => f[0] + ':' + f[1]).join(' ｜ '))}">资格 ${esc(el.txt)}</span>
         <div class="qt">${esc(job.title)}</div>
         <span class="tag">${esc(job.city || '待核实')}</span>
         <span class="tag">${esc(job.type || '')}</span>
+        ${job.family_conf === 'low' ? '<span class="tag warn" title="未归入五大目标岗位族，需人工复核">岗位族待复核</span>' : ''}
         <span class="tag" title="招聘状态（采集/核实后更新）">${esc(job.status || '待核实')}</span>
-        ${(job.links || []).length ? `<a class="tag jlink" href="${esc(job.links[0])}" target="_blank" rel="noopener">JD 原文 ↗</a>` : ''}
+        ${(job.links || []).length && safeUrl(job.links[0]) ? `<a class="tag jlink" href="${esc(safeUrl(job.links[0]))}" target="_blank" rel="noopener">JD 原文 ↗</a>` : ''}
         ${isLocal ? `<button class="wrongmark" data-jdel="${esc(job.id)}" title="删除本地岗位">删除</button>` : ''}
       </div>
       <div class="jbody" style="display:none">
+        <div class="qmeta" style="margin-top:0"><span><b>相关度依据：</b>${esc(rel.why)}</span></div>
         ${m.hits.length
           ? `<table class="rtable"><thead><tr>
-              <th>技能要求</th><th>JD 依据</th><th>证据状态</th><th>题库储备（自测/总数）</th><th>掌握</th><th>判断</th><th></th>
+              <th>技能要求</th><th>JD 原文依据</th><th>项目证据</th><th>证据状态</th>
+              <th>题库（自测/总数）</th><th>掌握</th><th></th>
             </tr></thead><tbody>${rows}</tbody></table>
-            <div class="qmeta"><span><b>结论：</b>${concl}</span></div>`
-          : `<div class="hempty" style="padding:6px 0 2px">JD 未命中内置技能表（C++/Linux/部署/ROS2/感知/嵌入式/机器人学…），先人工判断；粘贴完整 JD 原文能提高命中率。</div>`}
+            <div class="qmeta"><span><b>缺口：</b>${m.gaps.length ? esc(m.gaps.slice(0, 4).join('；')) : '无结构性缺口（仍需按 JD 原文复核）'}</span></div>`
+          : `<div class="hempty" style="padding:6px 0 2px">JD 未命中内置技能表（C++/Linux/模型部署/ROS2/感知/嵌入式/机器人学/工业通信…），先人工判断；粘贴完整 JD 原文能提高命中率。</div>`}
+        <div class="qmeta"><span><b>招聘资格：</b>${elChips}</span></div>
+        ${el.bad.length ? `<div class="qmeta"><span class="lo">硬性不符：${esc(el.bad.join('；'))}</span></div>` : ''}
+        ${el.unknown.length ? `<div class="qmeta"><span class="muted">待你确认：${esc(el.unknown.join('、'))}</span></div>` : ''}
         ${job.jd ? `<div class="qmeta"><span title="${esc(job.jd)}">JD 摘要：${esc(job.jd.slice(0, 130))}${job.jd.length > 130 ? '…' : ''}</span></div>` : ''}
       </div>
     </article>`;
-  }).join('');
+  }).join('') : '<div class="hempty">当前筛选下没有岗位。切到「含非技术岗」或放宽适配度筛选。</div>';
 }
+
+$('jobfilter').addEventListener('click', e => {
+  const ch = e.target.closest('.chip'); if (!ch) return;
+  jobFilter[ch.dataset.jf] = ch.dataset.v;
+  document.querySelectorAll(`#jobfilter .chip[data-jf="${ch.dataset.jf}"]`)
+    .forEach(x => x.classList.toggle('on', x === ch));
+  renderJobs();
+  renderRadar();
+});
 
 $('joblist').addEventListener('click', e => {
   if (e.target.closest('a')) return;               // 链接不触发展开
@@ -2094,7 +2415,7 @@ $('joblist').addEventListener('click', e => {
   const tr = e.target.closest('[data-jtrain]');
   if (tr) {
     const job = loadJobs()[+tr.closest('.jcard').dataset.ji];
-    const h = jobScore(job).hits[+tr.dataset.jtrain];
+    const h = jobMatch(job).hits[+tr.dataset.jtrain];
     if (h && h.mods) {
       $('mod').value = h.mods[0]; refreshSubs();
       showView('bank'); window.scrollTo(0, 0); render();
@@ -2139,10 +2460,15 @@ function renderRadar(){
   const dis = loadDismiss();
   const have = new Set(loadJobs().map(j => j.key).filter(Boolean));
   const pending = jobs.filter(j => !dis.has(j.key) && !have.has(j.key));
-  const show = pending.slice(0, 40);
+  const scopeAll = (typeof jobFilter !== 'undefined') && jobFilter.scope === 'all';
+  const hiddenNonTech = scopeAll ? 0 : pending.filter(j => j.tech_relevant === false).length;
+  const pendingTech = scopeAll ? pending : pending.filter(j => j.tech_relevant !== false);
+  const show = pendingTech.slice(0, radarLimit);
   const savedN = jobs.length - pending.length;
-  const restN = pending.length - show.length;
-  $('radar_meta').textContent = `全部 ${jobs.length} 岗 · 待处理 ${pending.length} · 快照 ${(RADAR.updated || '').slice(0, 10)}`;
+  const restN = pendingTech.length - show.length;
+  $('radar_meta').textContent = `全部 ${jobs.length} 岗 · 待处理 ${pendingTech.length}`
+    + (hiddenNonTech ? `（另隐藏非技术岗 ${hiddenNonTech}）` : '')
+    + ` · 快照 ${(RADAR.updated || '').slice(0, 10)}`;
   $('radarlist').innerHTML = show.length
     ? show.map(j => {
         const idx = jobs.indexOf(j);
@@ -2151,22 +2477,25 @@ function renderRadar(){
         return `<div class="rcard2">
           <div class="rh"><b>${esc(j.company)}</b>
             ${cbadge(jobClass(j))}
-            <span class="rscore ${gcls}" title="技能覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ ${m.eli.txt}">覆盖 ${m.cover}%</span></div>
+            <span class="rscore ${m.relevance.cls}" title="${esc(m.relevance.why)}">${esc(m.relevance.lvl)}</span>
+            <span class="rscore ${gcls}" title="知识覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ 工程证据 ${m.evidence.covered}/${m.evidence.total}">覆盖 ${m.cover}%</span></div>
           <div class="rt">${esc(j.title)}</div>
-          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))} ｜ ${m.eli.txt} ｜ ${esc(j.class_basis || '分类待重算')} ｜ 发现 ${esc(j.found || j.first_seen || '')}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
+          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))}${j.family_conf === 'low' ? '（待复核）' : ''} ｜ 资格 ${esc(m.eligibility.txt)} ｜ ${esc(j.class_basis || '分类待重算')} ｜ 发现 ${esc(j.found || j.first_seen || '')}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
           <div class="mrow">
             <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
             <button class="mini" data-rdismiss="${idx}">忽略</button>
-            ${(j.links || []).length ? `<a class="tag jlink" href="${esc(j.links[0])}" target="_blank" rel="noopener">投递入口 ↗</a>` : ''}
+            ${(j.links || []).length && safeUrl(j.links[0]) ? `<a class="tag jlink" href="${esc(safeUrl(j.links[0]))}" target="_blank" rel="noopener">投递入口 ↗</a>` : ''}
           </div>
         </div>`;
       }).join('') +
       (jobs.length > show.length
-        ? `<div class="hempty" style="grid-column:1/-1">本区只列<b>待处理的新发现</b>（显示 ${show.length} / ${pending.length} 条）：已收藏或已忽略 ${savedN} 条、未展开 ${restN} 条。<b>全部 ${jobs.length} 岗</b>（含已收藏 / 已忽略）都在「🏢 公司」视图按校招 / 实习 / 社招分类完整列出，不再重复显示在这里。
+        ? `<div class="hempty" style="grid-column:1/-1">本区只列<b>待处理的新发现</b>（显示 ${show.length} / ${pendingTech.length} 条）：已收藏或已忽略 ${savedN} 条${hiddenNonTech ? `、非技术岗 ${hiddenNonTech} 条（切「含非技术岗」可见）` : ''}${restN ? `、未展开 ${restN} 条` : ''}。
+           ${restN ? `<button class="mini" data-rmore="1" style="margin-left:8px">再看 ${Math.min(restN, 18)} 条 →</button>` : ''}
            <button class="mini" data-rall="1" style="margin-left:8px">查看全部公司 / 岗位 →</button></div>` : '')
     : '<div class="hempty">没有待处理的新发现（已收藏或已忽略的不再显示在这里）。全部公司、全部岗位（含已处理）请到「🏢 公司」视图查看；雷达由 GitHub Actions 每日 09:30 自动扫描。</div>';
 }
 $('radarlist').addEventListener('click', e => {
+  if (e.target.closest('[data-rmore]')) { radarLimit += 18; renderRadar(); return; }
   const c = e.target.closest('[data-rcollect], [data-rdismiss]'); if (!c) return;
   const j = (RADAR.jobs || [])[+(c.dataset.rcollect ?? c.dataset.rdismiss)];
   if (!j) return;
@@ -2341,7 +2670,7 @@ function renderCompanies(){
       <td>${total ? CLASS_ORDER.filter(k => c[k]).map(k => `${k} <b>${c[k]}</b>`).join(' · ') : '—（尚未采集）'}
           <small>入口性质：${esc(kinds)} · 批次 ${esc(labels)}</small>
           <small>${ncTxt}</small></td>
-      <td>${url ? `<a class="tag jlink" href="${esc(url)}" target="_blank" rel="noopener">招聘入口 ↗</a>` : '—'}
+      <td>${url && safeUrl(url) ? `<a class="tag jlink" href="${esc(safeUrl(url))}" target="_blank" rel="noopener">招聘入口 ↗</a>` : '—'}
           ${e.target ? '<small>目标公司池有题目/面经索引</small>' : ''}</td>
     </tr>`;
   }).join('');
@@ -2507,7 +2836,7 @@ function renderNC(q){
       <td>${esc(p.paperName)}</td>
       <td class="rnum">${esc(p.questionCount || '—')}</td>
       <td class="rnum">${esc(p.practiceCnt || '—')}</td>
-      <td><a class="tag jlink" href="${esc(p.summaryUrl)}" target="_blank" rel="noopener">牛客 ↗</a></td>
+      <td>${safeUrl(p.summaryUrl) ? `<a class="tag jlink" href="${esc(safeUrl(p.summaryUrl))}" target="_blank" rel="noopener">牛客 ↗</a>` : '—'}</td>
     </tr>`).join('')}</tbody></table>`
     : '<div class="cempty">暂无命中的真题卷。</div>';
 }
@@ -2681,6 +3010,76 @@ def main() -> int:
                 ch["weak"] = sum(1 for q in qs
                                  if q["id"] in set(ch["ids"]) and q["priority"] == "P0")
 
+    # 项目证据档案：技能栈 → 题库项目深挖题量，供「工程证据」维度使用
+    proj = {"projects": []}
+    pp = ROOT / "companies" / "projects.json"
+    if pp.exists():
+        proj = json.loads(pp.read_text(encoding="utf-8"))
+        sub_n = {}
+        for q in qs:
+            if q["module"] == "01_project":
+                sub_n[q.get("sub") or ""] = sub_n.get(q.get("sub") or "", 0) + 1
+        for pr in proj.get("projects", []):
+            pr["interview_count"] = sub_n.get(pr.get("sub") or "", 0)
+
+    # 系统健康：数据质量指标（构建期），页面只负责展示 + 补运行时项
+    from datetime import date as _date
+    jl = radar.get("jobs", []) if isinstance(radar, dict) else []
+    hq = {"total": len(qs),
+          "dup_id": len(qs) - len({q["id"] for q in qs}),
+          "no_answer": sum(1 for q in qs if q.get("status") not in ("answered", "verified")),
+          "no_source": sum(1 for q in qs if not (q.get("sourceRef") or q.get("sourceType"))),
+          "p0": sum(1 for q in qs if q.get("priority") == "P0")}
+    hjob = {"total": len(jl),
+            "jd": sum(1 for j in jl if (j.get("jd") or "").strip()),
+            "city_unknown": sum(1 for j in jl if "待核实" in (j.get("city") or "")),
+            "class_low": sum(1 for j in jl if j.get("class_conf") == "low"),
+            "family_low": sum(1 for j in jl if j.get("family_conf") == "low"),
+            "non_tech": sum(1 for j in jl if j.get("tech_relevant") is False),
+            "req_known": sum(1 for j in jl if (j.get("req") or {}).get("education")
+                             or (j.get("req") or {}).get("grad_range")),
+            "suspect": sum(1 for j in jl if j.get("status") == "suspect"),
+            "sources_ok": sum(1 for x in radar.get("sources", []) if x.get("status") == "success"),
+            "sources": len(radar.get("sources", [])),
+            "updated": (radar.get("updated") or "")[:19]}
+    hco = {"entries": len(pool),
+           "enabled": sum(1 for c in pool if c.get("enabled")),
+           "no_url": sum(1 for c in pool
+                         if not (c.get("career_url") or (c.get("source") or {}).get("url")))}
+    _exps = nc.get("experiences") or []
+    hnc = {"exps": len(_exps), "papers": len(nc.get("papers") or []),
+           "quotes": sum(len(e.get("highlights") or []) for e in _exps),
+           "refs": sum(1 for e in _exps for h in (e.get("highlights") or []) if h.get("ref")),
+           "last": max([(e.get("collected_at") or "")[:10] for e in _exps] or [""])}
+    checks = []
+    def _chk(name, status, detail):
+        checks.append({"name": name, "status": status, "detail": detail})
+    _chk("题库 ID 唯一", "ok" if hq["dup_id"] == 0 else "bad", f"重复 {hq['dup_id']} 个")
+    _chk("题卡全部有答案", "ok" if hq["no_answer"] == 0 else "bad",
+         f"{hq['total'] - hq['no_answer']} / {hq['total']} 已答")
+    _chk("每题有来源", "ok" if hq["no_source"] == 0 else "warn", f"缺来源 {hq['no_source']} 题")
+    _chk("采集源成功率", "ok" if hjob["sources_ok"] >= hjob["sources"] * 0.9 else "warn",
+         f"{hjob['sources_ok']} / {hjob['sources']} 成功")
+    try:
+        _age = (_date.today() - _date.fromisoformat(hjob["updated"][:10])).days
+    except Exception:
+        _age = 999
+    _chk("岗位快照新鲜度", "ok" if _age <= 2 else ("warn" if _age <= 7 else "bad"),
+         f"{hjob['updated'][:10] or '无快照'}（{_age} 天前）")
+    _chk("JD 原文完整率", "ok" if hjob["total"] and hjob["jd"] / hjob["total"] >= 0.9 else "warn",
+         f"{hjob['jd']} / {hjob['total']}（{round(hjob['jd'] / max(1, hjob['total']) * 100)}%）")
+    _chk("招聘条件可抽取", "ok" if hjob["total"] and hjob["req_known"] / hjob["total"] >= 0.6 else "warn",
+         f"{hjob['req_known']} / {hjob['total']}（其余「未说明」，不当成符合）")
+    _chk("岗位族待复核", "ok" if hjob["family_low"] <= hjob["total"] * 0.3 else "warn",
+         f"{hjob['family_low']} 岗未归入五大目标族")
+    _chk("非技术岗隔离", "ok", f"{hjob['non_tech']} 岗默认隐藏（可切「含非技术岗」）")
+    _chk("公司入口完整", "ok" if hco["no_url"] == 0 else "warn",
+         f"{hco['entries']} 条 / 启用 {hco['enabled']} 源 / 缺入口 {hco['no_url']}")
+    _chk("面经题号关联", "ok" if hnc["refs"] else "warn",
+         f"{hnc['exps']} 篇 · {hnc['quotes']} 条原文 · 命中题号 {hnc['refs']} 条")
+    health = {"built_at": __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M"),
+              "q": hq, "job": hjob, "co": hco, "nc": hnc, "checks": checks}
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -2697,6 +3096,10 @@ def main() -> int:
                                              separators=(",", ":")))
                .replace("__TUT__", json.dumps(tut, ensure_ascii=False,
                                               separators=(",", ":")))
+               .replace("__PROJ__", json.dumps(proj, ensure_ascii=False,
+                                               separators=(",", ":")))
+               .replace("__HEALTH__", json.dumps(health, ensure_ascii=False,
+                                                 separators=(",", ":")))
                .replace("__PROFOPTS__", profopts)
                .replace("__COOPTS__", coopts)
                .replace("__RLOPTS__", rlopts)

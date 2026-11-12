@@ -59,21 +59,101 @@ SOCIAL_PAT = re.compile(r"社招|社会招聘|experienced|资深工程师", re.I
 
 # 四层岗位族关键词（V1.7）：很多公司不用新词，传统岗位名也要命中
 JOB_FAMILIES = [
-    ("AI推理部署", ["模型部署", "推理优化", "推理", "inference", "tensorrt", "onnx",
-                    "边缘计算", "异构计算", "ai runtime", "部署工程师", "量化", "编译优化"]),
-    ("机器人软件/ROS2", ["机器人软件", "ros", "机器人中间件", "运动控制", "导航",
-                        "规划控制", "系统集成", "机器人系统", "机器人算法"]),
-    ("C++ SDK/系统软件", ["c++", "sdk", "平台软件", "基础软件", "车载软件",
-                          "基础组件", "系统软件", "中间件"]),
+    ("AI推理部署", ["模型部署", "推理优化", "推理引擎", "推理框架", "inference", "tensorrt",
+                    "onnx", "边缘计算", "异构计算", "ai runtime", "模型压缩", "量化", "编译优化",
+                    "算子", "kernel", "图优化", "高性能计算"]),
+    ("机器人软件/ROS2", ["机器人软件", "ros", "机器人中间件", "运动控制", "导航", "运动规划",
+                        "规划控制", "系统集成", "机器人系统", "机器人算法", "具身", "功能安全"]),
+    ("C++ SDK/系统软件", ["c++", "sdk", "平台软件", "基础软件", "车载软件", "基础组件",
+                          "系统软件", "中间件", "平台开发", "训练平台", "数据闭环", "基础架构",
+                          "分布式", "存储", "数据库", "后端", "服务端", "infra", "agent",
+                          "信息安全", "安全工程师"]),
     ("VLM/VLA/视觉算法", ["视觉算法", "感知算法", "vlm", "vla", "多模态", "世界模型",
-                          "端到端", "强化学习", "图像算法", "具身智能"]),
-    ("嵌入式/控制", ["嵌入式", "固件", "bsp", "驱动", "单片机", "mcu",
-                    "电机驱动", "硬件工程师"]),
+                          "端到端", "强化学习", "模仿学习", "图像算法", "具身智能", "大模型",
+                          "算法工程师"]),
+    ("嵌入式/控制", ["嵌入式", "固件", "bsp", "驱动", "单片机", "mcu", "autosar",
+                    "电机驱动", "电机控制", "电源", "硬件工程师", "pcb", "电气"]),
 ]
 # 轻排除：只排明确无关岗，不排算法岗（视觉/VLA 是第二优先级方向）
 EXCLUDE_PAT = re.compile(
     r"销售|售前|实施顾问|产品经理|市场(?!营销算法)|行政|人事|hr|h r|财务|会计|法务|"
     r"商务|运营专员|客服|采购|行政专员|设计师|视觉设计|平面|品牌|文案|直播|电商运营")
+
+
+# ---------------------------------------------------------------- 招聘硬性条件（V2.0）
+# 只做保守规则：宁可抽不到（页面显示「未说明」），也不猜。抽不到 ≠ 符合。
+NON_TECH_PAT = re.compile(
+    r"物流|供应链|制造支持|工艺|生产计划|管培|培训生|采购|财务|会计|人力|招聘|行政|"
+    r"法务|市场|营销|销售|品牌|运营|客服|商务|售后")
+TECH_TITLE_PAT = re.compile(
+    r"c\+\+|c/c\+\+|python|java|golang|linux|算法|嵌入式|驱动|固件|bsp|mcu|单片机|"
+    r"推理|部署|模型|算子|编译|cuda|tensorrt|onnx|ros|slam|导航|感知|视觉|图像|"
+    r"机器人|控制|电机|硬件|电子|fpga|dsp|通信|软件|开发|研发|测试|数据|平台|"
+    r"系统|架构|sdk|引擎|ai|infra|工程师|科学家|研究员", re.I)
+
+
+def tech_relevant(title: str, jd: str = "") -> bool:
+    """岗位是否属于技术岗。职能/制造/供应链类即使 JD 里出现「系统」也不算。"""
+    t = title or ""
+    if NON_TECH_PAT.search(t) and not re.search(
+            r"算法|开发|工程师|研发|软件|嵌入式|推理|模型|数据|测试", t):
+        return False
+    return bool(TECH_TITLE_PAT.search(t))
+
+
+def extract_requirements(jd: str) -> dict:
+    """从 JD 原文抽硬性条件。返回 None 表示「未说明」，页面不得当成符合。"""
+    t = (jd or "").replace("／", "/")
+    out = {"education": None, "grad_range": None, "student_status": None,
+           "intern_duration": None, "weekly_days": None}
+    if not t:
+        return out
+    for e in ("博士", "硕士", "本科", "大专"):
+        i = t.find(e)
+        if i >= 0:
+            tail = t[i:i + 10]
+            out["education"] = e + ("及以上" if "及以上" in tail else "")
+            break
+    ys = {int(y) for y in re.findall(r"(20\d{2})\s*届", t)}
+    ys |= {int(y) for y in re.findall(r"(20\d{2})\s*年(?:毕业|应届)", t)}
+    if ys:
+        out["grad_range"] = [min(ys), max(ys)]
+    if re.search(r"在校生|在读|全日制在读", t):
+        out["student_status"] = "在校生"
+    elif re.search(r"(?:应届|20\d{2}\s*届)\s*(?:毕业生|生)", t):
+        out["student_status"] = "应届毕业生"
+    if re.search(r"实习|intern", t, re.I):
+        m = re.search(r"(?:至少|不少于|连续|实习期?)\s*(\d{1,2})\s*个月", t)
+        if m:
+            out["intern_duration"] = int(m.group(1))
+    m = re.search(r"(?:每周|一周)\s*(?:到岗|出勤)?\s*(\d)\s*天", t)
+    if m:
+        out["weekly_days"] = int(m.group(1))
+    return out
+
+
+def annotate_job(j: dict) -> dict:
+    """离线补 V2.0 字段：硬性条件 / 技术相关度 / 岗位族置信度（幂等，不联网）。"""
+    j = dict(j)
+    j["families"] = families_of(j.get("title") or "", j.get("jd") or "")
+    j["req"] = extract_requirements(j.get("jd") or "")
+    j["tech_relevant"] = tech_relevant(j.get("title") or "", j.get("jd") or "")
+    fams = j.get("families") or []
+    j["family_conf"] = "high" if fams and fams != ["其他"] else "low"
+    return j
+
+
+def annotate_stats(jobs: list) -> dict:
+    n = len(jobs) or 1
+    req = [j for j in jobs if (j.get("req") or {}).get("education") or (j.get("req") or {}).get("grad_range")]
+    return {
+        "jobs": len(jobs),
+        "tech_relevant": sum(1 for j in jobs if j.get("tech_relevant")),
+        "non_tech": sum(1 for j in jobs if j.get("tech_relevant") is False),
+        "family_low": sum(1 for j in jobs if j.get("family_conf") == "low"),
+        "req_known": len(req),
+        "req_known_pct": round(len(req) / n * 100),
+    }
 
 
 def families_of(title: str, jd: str) -> list:
@@ -593,7 +673,7 @@ def scan_all() -> int:
                         continue
                     j["source_id"] = sid
                     j["families"] = families_of(j.get("title"), j.get("jd"))
-                    kept.append(classify_job(j, site))   # V1.8 新扫岗位先打招聘性质
+                    kept.append(annotate_job(classify_job(j, site)))   # V1.8 分类 + V2.0 条件/相关度
                 scans[sid] = {"status": "success", "jobs": kept, "error": None}
             except Exception as e:
                 scans[sid] = {"status": "failed", "jobs": [], "error": f"{type(e).__name__} {str(e)[:100]}"}
@@ -705,16 +785,34 @@ def reclassify() -> int:
     return 0
 
 
+def annotate_snapshot() -> int:
+    """读快照 → 逐岗补 V2.0 字段 → 写回 + 统计。不联网、幂等。"""
+    d = json.loads(RADAR.read_text(encoding="utf-8"))
+    jobs = [annotate_job(j) for j in d.get("jobs", [])]
+    d["jobs"] = jobs
+    d["tech_stats"] = annotate_stats(jobs)
+    RADAR.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    st = d["tech_stats"]
+    print(f"已补标 {st['jobs']} 岗：技术岗 {st['tech_relevant']} / 非技术 {st['non_tech']}，"
+          f"岗位族低置信 {st['family_low']}，硬性条件可抽取 {st['req_known']}"
+          f"（{st['req_known_pct']}%）")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scan", action="store_true", help="扫描全部监控源")
     ap.add_argument("--reclassify", action="store_true",
                     help="离线重算招聘性质分类（校招/实习/社招），不联网")
+    ap.add_argument("--annotate", action="store_true",
+                    help="离线补 V2.0 字段（硬性条件/技术相关度/岗位族置信度），不联网")
     args = ap.parse_args()
     if args.scan:
         return scan_all()
     if args.reclassify:
         return reclassify()
+    if args.annotate:
+        return annotate_snapshot()
     ap.print_help()
     return 1
 

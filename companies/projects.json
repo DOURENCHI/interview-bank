@@ -1,0 +1,96 @@
+{
+  "updated": "2026-11-12",
+  "note": "项目证据档案。stack 必须用技能表里的名字（C++ / Linux / 模型部署 / ROS2·中间件 / 深度学习·感知 / Python / 硬件·嵌入式 / 机器人学 / 工业通信·现场总线 / 算法机考），页面据此把 JD 要求映射到项目。repo 为空 = 公开仓库未登记，页面按「证据不完整」处理，不当作已具备。evidence 的 status 只有 present（有实物）/ partial（有但缺链接或数据）/ missing（没有）三态。",
+  "projects": [
+    {
+      "id": "yolo_deploy",
+      "name": "YOLO AI 推理部署",
+      "sub": "YOLO 部署",
+      "tier": "核心",
+      "stack": ["C++", "Linux", "模型部署", "Python", "深度学习/感知"],
+      "evidence": {
+        "code": {"status": "partial", "note": "C++ 推理链路已实现（preprocess→infer→NMS→后处理）；公开仓库链接待填"},
+        "metric": {"status": "present", "note": "端到端 7.94ms / 纯推理 3.22ms；FP32/FP16/INT8 三档对比"},
+        "test": {"status": "present", "note": "p99 延迟、精度差异、fuse 前后对比"},
+        "doc": {"status": "present", "note": "题库项目深挖 16 题，覆盖链路/性能/精度/踩坑"}
+      },
+      "repo": "",
+      "gaps": ["CUDA Kernel 自研（目前用现成算子）", "Docker + CI 一键复现", "多 batch / 多流并发压测"]
+    },
+    {
+      "id": "gimbal",
+      "name": "STM32 二维云台",
+      "sub": "二维云台",
+      "tier": "核心",
+      "stack": ["硬件/嵌入式", "C++"],
+      "evidence": {
+        "code": {"status": "partial", "note": "定时器 PWM + 角度换算 + 三层限位保护已实现；仓库链接待填"},
+        "metric": {"status": "partial", "note": "PSC/ARR 推导与脉宽范围有记录；缺实测角度误差曲线"},
+        "test": {"status": "missing", "note": "没有系统性的重复定位精度测试"},
+        "doc": {"status": "present", "note": "题库项目深挖 12 题"}
+      },
+      "repo": "",
+      "gaps": ["闭环 PID 与开环对比实测", "重复定位精度/温漂数据", "CAN 总线版本（当前是单机 PWM）"]
+    },
+    {
+      "id": "iot_4g",
+      "name": "本科毕设 · 4G 测温",
+      "sub": "本科毕设·4G 测温",
+      "tier": "基础",
+      "stack": ["硬件/嵌入式"],
+      "evidence": {
+        "code": {"status": "partial", "note": "DHT11 单总线 + STM32 + 4G 上传四层链路；仓库链接待填"},
+        "metric": {"status": "missing", "note": "缺长期稳定性/丢包率统计"},
+        "test": {"status": "partial", "note": "校验和与异常帧处理有验证"},
+        "doc": {"status": "present", "note": "题库项目深挖 10 题"}
+      },
+      "repo": "",
+      "gaps": ["4G 弱网重连策略实测", "7×24 稳定性数据"]
+    },
+    {
+      "id": "siemens",
+      "name": "西门子杯 · 工业环网",
+      "sub": "西门子项目",
+      "tier": "基础",
+      "stack": ["工业通信/现场总线", "硬件/嵌入式"],
+      "evidence": {
+        "code": {"status": "missing", "note": "以组态与调试为主，无可展示代码"},
+        "metric": {"status": "present", "note": "MRP 恢复时间档位、环网断线切换行为有实测记录"},
+        "test": {"status": "present", "note": "拔线/混入非管理交换机等故障注入"},
+        "doc": {"status": "present", "note": "题库项目深挖 15 题"}
+      },
+      "repo": "",
+      "gaps": ["缺可复现的实验报告（拓扑图 + 抓包）", "与 EtherCAT/CANopen 的横向对比"]
+    },
+    {
+      "id": "logtool",
+      "name": "Linux 日志分析工具",
+      "sub": "Linux 日志分析",
+      "tier": "核心",
+      "stack": ["C++", "Linux"],
+      "evidence": {
+        "code": {"status": "partial", "note": "流式逐行读 + 过滤统计 + 命令行参数解析；仓库链接待填"},
+        "metric": {"status": "partial", "note": "有大文件内存占用对比；缺吞吐量基准"},
+        "test": {"status": "partial", "note": "边界用例（空行/超长行/时间跨年）有覆盖"},
+        "doc": {"status": "present", "note": "题库项目深挖 15 题"}
+      },
+      "repo": "",
+      "gaps": ["吞吐量对比（grep/awk 基线）", "单元测试与 CI"]
+    },
+    {
+      "id": "calcaneus",
+      "name": "跟骨分割（科研）",
+      "sub": "跟骨分割（科研）",
+      "tier": "科研",
+      "stack": ["Python", "深度学习/感知"],
+      "evidence": {
+        "code": {"status": "partial", "note": "PyTorch + U-Net 训练/评估脚本；仓库暂不公开"},
+        "metric": {"status": "present", "note": "Dice / IoU / HD95 三指标；类别不平衡处理有对照"},
+        "test": {"status": "partial", "note": "小样本交叉验证；缺外部数据集验证"},
+        "doc": {"status": "partial", "note": "题库项目深挖 10 题；论文未投稿"}
+      },
+      "repo": "",
+      "gaps": ["外部数据集泛化验证", "论文/预印本（一作）", "推理时延与显存（临床可用性）"]
+    }
+  ]
+}

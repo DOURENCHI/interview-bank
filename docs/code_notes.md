@@ -15,6 +15,12 @@
 | `renderJobs()` / `jobMatch()` | 收藏岗位卡；匹配三维度 `cover / mastery / eli` + 技能四态 |
 | `renderRadar()` | 只渲染 `pending.slice(0, 40)`；`pending = 非忽略 且 非收藏` |
 | `renderCompanies()` | V1.8 全量公司 + 全量岗位，按性质分组 |
+| `jobScore(job)` | → 命中数组 | 只产出事实：技能、层级、JD 片段、题库储备、自测均值（无自测=`avg:null`，**不再有 score=50**） |
+| `jdSnippet(jd, kws)` | → 字符串 | 取 JD 里第一处命中词前后 30/42 字，作为「为什么判命中」的证据 |
+| `eligibilityOf(job)` | → `{cls,txt,fields,bad,unknown}` | 五字段独立判定；抽不到=`未说明`；只对硬性不符判 `不符合` |
+| `jobMatch(job)` | → `{hits,relevance,cover,mastery,evidence,eligibility,gaps}` | 五维各自独立，**不合成百分比** |
+| `renderTut()` / `renderProj()` / `renderHealth()` | 无参数 | 考点地图 / 项目证据链 / 系统健康三个面板 |
+| `backupPayload()` / `parseBackup()` / `planImport()` | → 对象 | 备份 v2：导出、校验归一化、合并计划（新增/更新/跳过） |
 | `REV_DAYS` | SM-2 简化：自评 1/2/3/4 → 1/3/7/21 天 |
 | `USER_GRAD = 2029` | 资格判断唯一依据；改届别只改这里 |
 | `_rule_hit(q, rule)`（build.py 内） | → bool | 宝典章节映射判据：`modules`/`subs`/`terms` 三者 AND；**terms 只匹配标题+子方向+标签**，不匹配正文 |
@@ -80,6 +86,10 @@ V1.8 前端纯函数：
   "jobs": [{"key": "...", "company": "...", "title": "...", "city": "...",
             "type": "校招", "batch": "2027届校招", "grad_year": 2027,
             "job_class": "校招", "class_basis": "岗位标题明确",
+            "tech_relevant": true, "family_conf": "high",
+            "req": {"education": "硕士及以上", "grad_range": [2027, 2027],
+                    "student_status": "应届毕业生", "intern_duration": null,
+                    "weekly_days": 4},
             "class_conf": "high", "class_evidence": "2027届",
             "jd": "...", "links": ["..."], "src": "feishu", "label": "...",
             "source_id": "...", "families": ["..."],
@@ -114,6 +124,23 @@ V1.8 前端纯函数：
 再整体注入 `const TUT = ...`。因此页面上的「N 题」= 点进去实际筛选的题数，不存在估算偏差。
 `rule` 三个键是 **AND** 关系：`modules`（模块）→ `subs`（子方向）→ `terms`（标题+子方向+标签关键词）。
 改规则后必须重跑 `build.py`；只改 JSON 不会自动生效。
+
+`companies/projects.json`（V2.0 项目证据）：
+
+```json
+{"projects": [{
+  "id": "yolo_deploy", "name": "YOLO AI 推理部署", "sub": "YOLO 部署", "tier": "核心",
+  "stack": ["C++", "Linux", "模型部署", "Python", "深度学习/感知"],
+  "evidence": {"code": {"status": "partial", "note": "..."},
+               "metric": {"status": "present", "note": "..."},
+               "test": {"status": "partial", "note": "..."},
+               "doc": {"status": "present", "note": "..."}},
+  "repo": "", "gaps": ["CUDA Kernel 自研"]
+}]}
+```
+
+`stack` 必须与页面 `SKILLS[].name` 完全一致，否则岗位卡的「工程证据」匹配不到；
+`evidence.*.status` 只有 `present / partial / missing`，构建期会给每个项目补 `interview_count`（项目深挖题数）。
 
 `companies/radar_companies.json` 的每条：`company_id / company_name / category / directions /
 tier(A|B|C) / career_url / ats_type(zhiye|feishu|hotjob|self-built|unknown) /

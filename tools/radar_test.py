@@ -15,7 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from job_radar import (classify_change, extract_grad, make_key, reconcile, jd_hash,
-                       classify_job, class_stats_of, site_by_source, city_from_title)  # noqa: E402
+                       classify_job, class_stats_of, site_by_source, city_from_title,
+                       extract_requirements, tech_relevant, annotate_job)  # noqa: E402
 
 ok = []
 
@@ -149,6 +150,35 @@ ok.append(("城市提取·尾缀", city_from_title("电力电子工程师（大�
 ok.append(("城市提取·括号", city_from_title("C++工程师（成都）(J12640)") == "成都"))
 ok.append(("城市提取·不误收批次", city_from_title("嵌入式软件工程师-27届校招(J11525)") == ""))
 ok.append(("城市提取·无城市", city_from_title("AI Infra 工程师") == ""))
+
+# 13. V2.0 招聘硬性条件抽取（抽不到必须是 None，不能默认符合）
+r1 = extract_requirements("硕士及以上学历，2027届毕业生，每周到岗4天，实习至少3个月")
+ok.append(("条件抽取·全字段", r1["education"] == "硕士及以上" and r1["grad_range"] == [2027, 2027]
+           and r1["student_status"] == "应届毕业生"
+           and r1["intern_duration"] == 3 and r1["weekly_days"] == 4))
+r2 = extract_requirements("负责机器人软件平台开发，熟悉 C++")
+ok.append(("条件抽取·未说明即 None", all(r2[k] is None for k in
+           ("education", "grad_range", "student_status", "intern_duration", "weekly_days"))))
+ok.append(("条件抽取·空 JD", all(extract_requirements("")[k] is None for k in
+           ("education", "grad_range", "student_status"))))
+
+# 14. V2.0 技术相关度：职能/制造/供应链岗要挡住
+ok.append(("非技术岗识别", tech_relevant("【27届校招】海外制造支持培训生") is False
+           and tech_relevant("招聘实习生") is False
+           and tech_relevant("海外物流管理培训生") is False))
+ok.append(("技术岗保留", tech_relevant("嵌入式软件工程师（CAN）") is True
+           and tech_relevant("AI Infra 工程师") is True
+           and tech_relevant("机器人软件工程师") is True))
+
+# 15. V2.0 标注幂等：req / tech_relevant / family_conf
+a1 = annotate_job(J("k-anno", title="机器人软件工程师", duty="熟悉 ROS2 与 C++",
+                    require="硕士，2027 届"))
+a2 = annotate_job(a1)
+ok.append(("标注幂等", a1["req"] == a2["req"] and a1["tech_relevant"] is True
+           and a1["family_conf"] == "high"))
+ok.append(("标注·族命中", "机器人软件/ROS2" in a1["families"]))
+ok.append(("标注·低置信", annotate_job(J("k-low", title="前端开发工程师", duty="React",
+                                         require="本科"))["family_conf"] == "low"))
 
 fails = [k for k, v in ok if not v]
 for k, v in ok:
