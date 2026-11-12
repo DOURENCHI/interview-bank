@@ -468,6 +468,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .ncfilter .chips{flex:1 1 100%}
 .ncfilter select{font:13px/1.6 inherit;color:var(--tx);background:var(--paper);
   border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.ncfilter select.ncsel{max-width:132px}
 .nccard{background:var(--paper);border:1px solid var(--line);border-radius:8px;margin:6px 0;padding:8px 12px}
 .nccard summary{cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap;list-style:none}
 .nccard summary::-webkit-details-marker{display:none}
@@ -551,6 +552,63 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   h1{font-size:20px}.qt{flex:1 1 100%}.wrap{padding:0 12px 60px}
   .bar{gap:6px}input[type=search]{flex:1 1 100%}
 }
+/* ---- V1.9 视觉层次：类别色 / 卡片质感 / 过渡 ---- */
+:root{
+  --campus:#1b5e8c; --campus-bg:#eaf1fb; --campus-line:#b9cfe8;
+  --intern:#2e6b3e; --intern-bg:#eaf5ec; --intern-line:#b6d8bd;
+  --social:#9a5a12; --social-bg:#fdf6e0; --social-line:#e3c98a;
+  --unknown:#6b6250; --unknown-bg:#f2ece0; --unknown-line:#d8cdb4;
+  --shadow:0 1px 2px rgba(90,70,30,.05);
+  --shadow-h:0 8px 22px rgba(90,70,30,.10);
+}
+.panel{box-shadow:var(--shadow)}
+.panel h3{padding-left:9px;border-left:3px solid var(--accent)}
+#ncbox>summary{padding-left:9px;border-left:3px solid var(--campus)}
+#ncbox b{color:var(--campus)}
+.scard{position:relative;overflow:hidden;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.scard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+.scard.sc-pool::before{background:var(--unknown)}
+.scard.sc-job::before{background:var(--campus)}
+.scard.sc-campus::before{background:var(--campus)}
+.scard.sc-intern::before{background:var(--intern)}
+.scard.sc-intern b{color:var(--intern)}
+.scard.sc-campus b{color:var(--campus)}
+.scard.sc-low::before{background:var(--social)}
+.scard.sc-low b{color:var(--social)}
+.scard.sc-nc::before{background:var(--purple)}
+.scard.sc-nc b{color:var(--purple)}
+.rtable th{background:linear-gradient(180deg,#f6eeda,#f1e6cd);letter-spacing:.3px}
+.rtable tbody tr{transition:background .12s}
+.rtable tbody tr:hover{background:#fbf4e2}
+.cbadge.campus{color:#fff;background:var(--campus);border-color:var(--campus)}
+.cbadge.intern{color:#fff;background:var(--intern);border-color:var(--intern)}
+.cbadge.social{color:#fff;background:var(--social);border-color:var(--social)}
+.cbadge.unknown{color:var(--unknown);background:var(--unknown-bg);border-color:var(--unknown-line)}
+.jt{transition:color .12s}
+.rtable tbody tr:hover .jt{color:var(--accent)}
+.chip{transition:all .15s}
+.chip:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.chip.on{background:linear-gradient(135deg,#1b5e8c,#2a7ab3);box-shadow:0 2px 8px rgba(27,94,140,.28)}
+.chip.rst.act{background:linear-gradient(135deg,#a63a2e,#c0503f);box-shadow:0 2px 8px rgba(166,58,46,.28)}
+.nccard{transition:box-shadow .15s,transform .15s;border-left:3px solid transparent}
+.nccard:hover{box-shadow:var(--shadow-h);transform:translateY(-1px)}
+.nccard[open]{border-left-color:var(--campus);background:#fffef8}
+.nccard summary b{color:var(--campus)}
+.qref{transition:background .12s,transform .12s}
+.qref:hover{transform:translateY(-1px);background:#123f5e}
+.qcard{box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,border-color .15s}
+.qcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+.prow:hover{background:#fbf4e2;border-radius:6px}
+.tabs .tab{transition:all .15s}
+.tab.on{background:linear-gradient(135deg,#1b5e8c,#2a7ab3);box-shadow:0 3px 10px rgba(27,94,140,.22)}
+#h_nc{border-left:3px solid var(--purple)}
+#h_nc .hitem b{font-weight:600}
+#h_nc .hitem:hover{background:#fbf4e2;border-radius:6px}
+.hitem a.tag{margin-top:0}
+.ncfilter select.ncsel{color:var(--campus);border-color:var(--campus-line);background:var(--campus-bg)}
+a.chip{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+a.chip:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -572,6 +630,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   <div class="hdate" id="h_date"></div>
   <div class="scards" id="scards"></div>
   <div class="hempty" id="h_radar" style="margin:8px 2px"></div>
+  <div class="panel" id="h_nc" style="margin:10px 0"></div>
   <div class="quick" id="h_quick"></div>
   <div class="hgrid">
     <div class="panel"><h3>今日训练任务</h3><div id="h_tasks"></div></div>
@@ -593,34 +652,33 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <button class="chip" data-c="due" title="间隔复习到期，该过一遍了">今日复习</button>
     <button class="chip" data-c="weak" title="自评≤2 的薄弱题">薄弱</button>
     <button class="chip" data-c="wrong">错题</button>
-    <span class="csep"></span>
     <button class="chip" data-c="real" title="只看真实面经与一手题，隐藏 S4 预测题">真实面经</button>
-    <button class="chip" data-c="selftest" title="搜索不再自动展开答案，先自己答">自测模式</button>
   </div>
   <details class="moref" id="moref">
     <summary>更多筛选 <span class="fc" id="fcount" style="display:none">0</span></summary>
     <div class="fgrid">
       <select id="co"><option value="">全部公司</option>__COOPTS__</select>
-      <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
       <select id="prof" title="岗位模板：按真实 JD 归纳的模块权重过滤题目，并可作为模拟面试题源"><option value="">岗位模板…</option>__PROFOPTS__</select>
       <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
       <select id="sub"><option value="">全部子方向</option></select>
-      <select id="pri"><option value="">全部优先级</option>
-        <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
       <select id="dif" title="难度"><option value="">全部难度</option>
         <option value="1">★ 简单</option><option value="2">★★ 中等</option><option value="3">★★★ 困难</option></select>
-      <select id="st"><option value="">全部状态</option>
-        <option value="answered">已答</option><option value="draft">草稿</option>
-        <option value="indexed">待补充</option></select>
-      <select id="rev" title="间隔复习：按自评分安排">
-        <option value="">全部复习状态</option>
-        <option value="due">今日该复习</option>
-        <option value="weak">薄弱（自评≤2）</option>
-        <option value="never">从未自测</option>
-      </select>
+      <label class="chk" title="搜索不再自动展开答案，先自己答"><input type="checkbox" id="selftest_v"> 自测模式</label>
       <button id="exp" class="mini" title="导出错题与自评记录（JSON）">备份↓</button>
       <button id="impb" class="mini" title="从 JSON 恢复复习数据">恢复↑</button>
       <input type="file" id="imp" accept=".json" hidden>
+      <!-- 已合并/隐藏的旧筛选（保留元素与选项避免逻辑回归）：岗位族 rl 与岗位模板 prof 重复；优先级 pri 与 P0 chip 重复；状态 st 全库已答；复习状态 rev 与上方 chips 重复 -->
+      <span hidden>
+        <select id="rl"><option value="">全部岗位</option>__RLOPTS__</select>
+        <select id="pri"><option value="">全部优先级</option>
+          <option value="P0">P0 必答</option><option value="P1">P1 进阶</option><option value="P2">P2 长期</option></select>
+        <select id="st"><option value="">全部状态</option>
+          <option value="answered">已答</option><option value="draft">草稿</option>
+          <option value="indexed">待补充</option></select>
+        <select id="rev"><option value="">全部复习状态</option>
+          <option value="due">今日该复习</option><option value="weak">薄弱（自评≤2）</option>
+          <option value="never">从未自测</option></select>
+      </span>
     </div>
   </details>
   <div class="fpills" id="fpills"></div>
@@ -689,6 +747,26 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   <div class="panel">
     <h3>🏢 全部公司 & 全部岗位 · 招聘性质分类（校招 / 实习 / 社招 / 未标明）</h3>
     <div class="cnote" id="comp_note"></div>
+    <details class="panel" id="ncbox" open style="margin:12px 0 14px">
+      <summary style="cursor:pointer;font-weight:700">📰 真实面经（牛客，每周自动同步）<span class="rnum" id="nc_meta"></span></summary>
+      <div class="cnote">面经帖来自牛客公开版块，只保留「公司 × 岗位 × 轮次 × 题目原文摘录 × 原帖链接」，不含发帖人信息。
+        题目右侧 <b>Q-xxxx</b> 是题库里的同考点题号，点它直接跳到题库复习；「近似」是同考点不同措辞，「未入库」可点原帖看正文。</div>
+      <div class="ncfilter">
+        <div class="chips" id="nc_chips">
+          <span class="flab">公司</span>
+          <span id="nc_co_chips" style="display:contents"></span>
+          <select id="nc_co_all" title="全部面经公司（含未显示的）"><option value="all">更多公司…</option></select>
+        </div>
+        <select id="nc_round"><option value="all">全部轮次</option></select>
+        <select id="nc_role"><option value="all">全部方向</option></select>
+        <label class="chk"><input type="checkbox" id="nc_onlyref"> 只看有题号</label>
+      </div>
+      <div id="nc_exp"></div>
+      <div class="rsec">📄 公司真题卷（牛客企业真题，仅登记元数据；题干有平台版权限制，点链接去牛客在线作答）</div>
+      <div id="nc_papers"></div>
+      <div class="rsec">🎯 牛客专项题库（选择题，站内练习；题干与答案需登录且有版权限制，这里只做导航）</div>
+      <div class="chips" id="nc_topics" style="gap:6px"></div>
+    </details>
     <div class="cstat" id="comp_stat"></div>
     <div class="cbar">
       <input type="search" id="comp_q" placeholder="搜公司 / 岗位 / 城市 / 批次 / 岗位族（同时过滤面经与真题卷）">
@@ -729,20 +807,6 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
     <div id="comp_table"></div>
     <div class="rsec">全部岗位（含已收藏 / 已忽略；按性质、岗位状态与搜索筛选）</div>
     <div id="comp_jobs"></div>
-    <details class="panel" id="ncbox" open style="margin-top:14px">
-      <summary style="cursor:pointer;font-weight:700">📰 真实面经（牛客，每周自动同步）<span class="rnum" id="nc_meta"></span></summary>
-      <div class="cnote">面经帖来自牛客公开版块，只保留「公司 × 岗位 × 轮次 × 题目原文摘录 × 原帖链接」，不含发帖人信息。
-        题目右侧 <b>Q-xxxx</b> 是题库里的同考点题号，点它直接跳到题库复习；标「未入库」的题说明题库还没有，可点原帖看完整正文。</div>
-      <div class="ncfilter">
-        <div class="chips" id="nc_chips"><span class="flab">公司</span><span id="nc_co_chips" style="display:contents"></span></div>
-        <select id="nc_round"><option value="all">全部轮次</option></select>
-        <select id="nc_role"><option value="all">全部方向</option></select>
-        <label class="chk"><input type="checkbox" id="nc_onlyref"> 只看有题号</label>
-      </div>
-      <div id="nc_exp"></div>
-      <div class="rsec">📄 公司真题卷（牛客企业真题，仅登记元数据；题干有平台版权限制，点链接去牛客在线作答）</div>
-      <div id="nc_papers"></div>
-    </details>
   </div>
 </section>
 
@@ -1070,6 +1134,7 @@ function syncChips(){
     due: $('rev').value === 'due', weak: $('rev').value === 'weak',
     wrong: $('wrong').checked, real: $('hidepred').checked,
     selftest: $('selftest').checked };
+  $('selftest_v').checked = $('selftest').checked;
   document.querySelectorAll('#chips .chip').forEach(ch => {
     const c = ch.dataset.c;
     ch.classList.toggle('on', c === 'all' ? !Object.values(on).some(Boolean) : !!on[c]);
@@ -1086,6 +1151,11 @@ $('chips').addEventListener('click', e => {
   else if (c === 'wrong') $('wrong').checked = !$('wrong').checked;
   else if (c === 'real') $('hidepred').checked = !$('hidepred').checked;
   else if (c === 'selftest') $('selftest').checked = !$('selftest').checked;
+  render();
+});
+// 更多筛选里的「自测模式」开关：与内部隐藏 checkbox 双向同步
+$('selftest_v').addEventListener('change', e => {
+  $('selftest').checked = e.target.checked;
   render();
 });
 
@@ -1538,6 +1608,18 @@ function renderHome(){
       `公司池 <b>${ps.pool_total || '—'}</b> 家（启用 ${ps.enabled || 0} · 本次成功 ${ps.scanned_ok || 0} · ATS：${Object.entries(ps.ats_dist || {}).map(([k, v]) => k + ' ' + v).join('、') || '—'}）· 岗位族：${Object.entries(RADAR.family_stats || {}).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${v}`).join(' · ')}<br>` +
       clsLine
     : '🛰 岗位雷达尚未运行（GitHub Actions 每日 09:30 自动扫描官方招聘门户）';
+  // 首页：最近真实面经（3 条）+ 全部入口
+  const exps = (NC.experiences || []).slice()
+    .sort((a, b) => (b.collected_at || '').localeCompare(a.collected_at || ''));
+  $('h_nc').innerHTML =
+    `<div class="rsec" style="margin:0 0 6px">📰 真实面经（牛客同步 · 共 ${exps.length} 篇 / 有题号关联 ${exps.filter(x => (x.highlights || []).some(h => h.ref)).length} 篇）</div>` +
+    exps.slice(0, 3).map(x => `<div class="hitem">
+      <span class="pid">${esc(x.company)}</span>
+      <b title="${esc(x.title)}">${esc(x.title)}</b>
+      <span class="rnum">${x.n_questions || 0} 题</span>
+      <a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖 ↗</a>
+    </div>`).join('') +
+    `<div class="mrow" style="margin-top:8px"><button class="mini" id="h_nc_more">查看全部面经 / 按公司筛选 →</button></div>`;
   renderScards();
   $('h_quick').innerHTML = `
     <div class="qcard" data-a="due"><b>📋 今日复习</b><small>处理间隔复习到期的题目</small></div>
@@ -2071,21 +2153,23 @@ function renderCompanies(){
         <td>${(j.links || []).length ? `<a class="tag jlink" href="${esc(j.links[0])}" target="_blank" rel="noopener">JD ↗</a>` : '—'}</td>
       </tr>`;
     }).join('');
-    return `<div class="rsec">${cbadge(g.c)} ${g.list.length} 岗</div>
+    const gc = CLS_CSS[g.c] === 'campus' ? 'var(--campus)' : CLS_CSS[g.c] === 'intern' ? 'var(--intern)'
+      : CLS_CSS[g.c] === 'social' ? 'var(--social)' : 'var(--unknown)';
+    return `<div class="rsec" style="border-left:4px solid ${gc};padding-left:8px">${cbadge(g.c)} ${g.list.length} 岗</div>
       <table class="rtable ctable"><thead><tr>
         <th>性质</th><th>公司 · 岗位</th><th>批次 / 届别</th><th>判定依据</th><th>状态 · 处理</th><th>入口</th>
       </tr></thead><tbody>${rows}</tbody></table>`;
   }).join('') : '<div class="cempty">当前筛选下没有岗位（试试切到「全部」或清空搜索）。</div>';
 
   $('comp_stat').innerHTML = [
-    [cos.length, '公司合计（两池去重）'],
-    [poolEntries, '公司池条目 · 启用 ' + enabledEntries + ' 源'],
-    [all.length, '全部岗位（含已处理）'],
-    [cs['校招'] || 0, '校招'],
-    [cs['实习'] || 0, '实习'],
-    [lowN, '入口推定 · 待核实'],
-    [(NC.experiences || []).length + ' / ' + (NC.papers || []).length, '牛客面经 / 真题卷'],
-  ].map(x => `<div class="scard"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
+    [cos.length, '公司合计（两池去重）', 'sc-co'],
+    [poolEntries, '公司池条目 · 启用 ' + enabledEntries + ' 源', 'sc-pool'],
+    [all.length, '全部岗位（含已处理）', 'sc-job'],
+    [cs['校招'] || 0, '校招', 'sc-campus'],
+    [cs['实习'] || 0, '实习', 'sc-intern'],
+    [lowN, '入口推定 · 待核实', 'sc-low'],
+    [(NC.experiences || []).length + ' / ' + (NC.papers || []).length, '牛客面经 / 真题卷', 'sc-nc'],
+  ].map(x => `<div class="scard ${x[2]}"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
   const poolNames = new Set((POOL || []).map(c => coKey(c.company_name)));
   $('comp_note').innerHTML =
     `全部 <b>${cos.length} 家公司 / ${all.length} 个岗位</b>都在这里（含已收藏、已忽略，标注处理状态），` +
@@ -2099,7 +2183,7 @@ function renderCompanies(){
 }
 
 // 真实面经 + 公司真题卷面板（牛客同步数据，随搜索词与自身筛选联动）
-let ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false};
+let ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false, limit: 10};
 function renderNC(q){
   const all = NC.experiences || [];
   const cos = {};
@@ -2110,9 +2194,18 @@ function renderNC(q){
   const topCo = Object.entries(cos)
     .sort((a, b) => (isTargetCo(b[0]) - isTargetCo(a[0])) || (b[1] - a[1]))
     .slice(0, 10);
+  const allCo = Object.entries(cos).sort((a, b) => b[1] - a[1]);
+  const selAll = $('nc_co_all');
+  selAll.innerHTML = '<option value="all">更多公司…</option>' +
+    allCo.map(([c, n]) => `<option value="${esc(c)}">${esc(c)}（${n} 篇）</option>`).join('');
+  selAll.value = ncFilter.co;
+  const chipsCo = topCo.slice();
+  if (ncFilter.co !== 'all' && !chipsCo.some(x => x[0] === ncFilter.co) && cos[ncFilter.co]) {
+    chipsCo.unshift([ncFilter.co, cos[ncFilter.co]]);   // 选中的公司不在前十也要显示
+  }
   $('nc_co_chips').innerHTML =
-    `<button class="chip ${ncFilter.co === 'all' ? 'on' : ''}" data-nk="co" data-v="all">全部</button>` +
-    topCo.map(([c, n]) => `<button class="chip ${ncFilter.co === c ? 'on' : ''}" data-nk="co" data-v="${esc(c)}">${esc(c)} <b>${n}</b></button>`).join('');
+    `<button class="chip ${ncFilter.co === 'all' ? 'on' : ''}" data-nk="co" data-v="all">全部 <b>${all.length}</b></button>` +
+    chipsCo.map(([c, n]) => `<button class="chip ${ncFilter.co === c ? 'on' : ''}" data-nk="co" data-v="${esc(c)}">${esc(c)} <b>${n}</b></button>`).join('');
   const rSel = $('nc_round'), dSel = $('nc_role');
   if (rSel.options.length <= 1) {
     [...new Set(all.map(x => x.round).filter(Boolean))].forEach(r => rSel.add(new Option(r, r)));
@@ -2138,7 +2231,8 @@ function renderNC(q){
   const refN = exps.filter(x => (x.highlights || []).some(h => h.ref)).length;
   $('nc_meta').textContent = `面经 ${exps.length} / ${all.length} 篇（含题号 ${refN}）· 真题卷 ${papers.length} / ${(NC.papers || []).length} 套 · 最近同步 ${(last || '—').slice(0, 10)}`;
   const roundTxt = x => esc(x.round || '轮次未标注');
-  $('nc_exp').innerHTML = exps.length ? exps.map(x => {
+  const shown = exps.slice(0, ncFilter.limit);
+  $('nc_exp').innerHTML = exps.length ? shown.map(x => {
     const hs = x.highlights || [];
     const rows = hs.map(h => `<li class="nch">
         ${h.ref ? `<a class="qref" href="#bank" data-q="${h.ref}" title="跳到题库做这道题">${h.ref}</a>`
@@ -2164,7 +2258,16 @@ function renderNC(q){
         </div>
       </div>
     </details>`;
-  }).join('') : '<div class="cempty">当前筛选下没有面经（换个公司/轮次，或清空搜索）。</div>';
+  }).join('') +
+    (exps.length > shown.length
+      ? `<div class="mrow" style="margin:8px 0"><button class="mini" data-ncmore="1">显示更多（还有 ${exps.length - shown.length} 篇）</button></div>`
+      : '')
+    : '<div class="cempty">当前筛选下没有面经（换个公司/轮次，或清空搜索）。</div>';
+  const TOPICS = [['C++', 1612], ['操作系统', 1617], ['网络基础', 1820], ['Linux', 638],
+    ['推理优化', 190], ['RAG', 192], ['Agent', 191], ['计算机视觉', 199]];
+  const TOPIC_URL = 'https://www.nowcoder.com/exam/intelligent?questionJobId=3&subTabName=intelligent_page&tagId=273590';
+  $('nc_topics').innerHTML = TOPICS.map(([t, n]) =>
+    `<a class="chip" href="${TOPIC_URL}" target="_blank" rel="noopener" title="进入牛客专项练习后按左侧分类选择">${t} <b>${n}</b> ↗</a>`).join('');
   $('nc_papers').innerHTML = papers.length ? `<table class="rtable ctable"><thead><tr>
       <th>公司</th><th>卷名</th><th>题量</th><th>练习人数</th><th>在线作答</th>
     </tr></thead><tbody>${papers.map(p => `<tr>
@@ -2183,6 +2286,12 @@ $('nc_chips').addEventListener('click', e => {
 });
 $('nc_round').addEventListener('change', e => { ncFilter.round = e.target.value; renderNC(compFilter.q); });
 $('nc_role').addEventListener('change', e => { ncFilter.role = e.target.value; renderNC(compFilter.q); });
+$('nc_co_all').addEventListener('change', e => { ncFilter.co = e.target.value; renderNC(compFilter.q); });
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-ncmore]')) return;
+  ncFilter.limit += 20;
+  renderNC(compFilter.q);
+});
 $('nc_onlyref').addEventListener('change', e => { ncFilter.onlyRef = e.target.checked; renderNC(compFilter.q); });
 document.addEventListener('click', e => {
   const a = e.target.closest('a.qref[data-q]'); if (!a) return;
@@ -2221,7 +2330,7 @@ function updateReset(){
 }
 $('comp_reset').addEventListener('click', () => {
   compFilter = {cls: 'all', src: 'all', st: 'all', city: 'all', q: ''};
-  ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false};
+  ncFilter = {co: 'all', round: 'all', role: 'all', onlyRef: false, limit: 10};
   $('comp_q').value = '';
   if ($('nc_round')) $('nc_round').value = 'all';
   if ($('nc_role')) $('nc_role').value = 'all';
@@ -2238,6 +2347,11 @@ $('comp_q').addEventListener('input', e => {
   compQT = setTimeout(() => { compFilter.q = v; renderCompanies(); }, 120);
 });
 document.addEventListener('click', e => {
+  if (e.target.closest('#h_nc_more')) {
+    showView('comp');
+    setTimeout(() => $('ncbox').scrollIntoView({behavior: 'smooth', block: 'start'}), 60);
+    return;
+  }
   if (e.target.closest('#h_allco, [data-goall], [data-rall]')) {
     showView('comp'); window.scrollTo(0, 0);
   }

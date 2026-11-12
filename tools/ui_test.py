@@ -232,8 +232,9 @@ def main() -> int:
         ok.append(("重置键清空筛选", pg.eval_on_selector('#comp_reset', "el => el.innerText.trim()") == '↩ 重置'
                    and pg.evaluate("document.querySelectorAll('#comp_jobs tbody tr').length") == n_all_job
                    and pg.eval_on_selector('#comp_q', 'el => el.value') == ''))
-        ok.append(("面经面板全量", pg.evaluate(
-            "document.querySelectorAll('#nc_exp .nccard').length") == pg.evaluate("(NC.experiences||[]).length")))
+        ok.append(("面经面板默认10篇+更多", pg.evaluate(
+            "document.querySelectorAll('#nc_exp .nccard').length") == 10
+            and pg.evaluate("!!document.querySelector('[data-ncmore]')")))
         ok.append(("真题卷面板全量", pg.evaluate(
             "document.querySelectorAll('#nc_papers tbody tr').length") == pg.evaluate("(NC.papers||[]).length")))
         pg.fill('#comp_q', '华为'); pg.wait_for_timeout(350)
@@ -244,8 +245,8 @@ def main() -> int:
         # V1.8.4：面经筛选（公司/轮次/只看有题号）+ 原文展开 + 题号跳题库
         n_cards = pg.evaluate("document.querySelectorAll('#nc_exp .nccard').length")
         pg.click('#nc_co_chips .chip[data-nk="co"]:nth-child(2)'); pg.wait_for_timeout(250)
-        ok.append(("面经公司筛选", pg.evaluate(
-            "document.querySelectorAll('#nc_exp .nccard').length") < n_cards))
+        ok.append(("面经公司筛选", 0 < pg.evaluate(
+            "document.querySelectorAll('#nc_exp .nccard').length") <= n_cards))
         pg.click('#nc_co_chips .chip[data-nk="co"][data-v="all"]'); pg.wait_for_timeout(200)
         pg.check('#nc_onlyref'); pg.wait_for_timeout(250)
         n_ref = pg.evaluate("document.querySelectorAll('#nc_exp .nccard').length")
