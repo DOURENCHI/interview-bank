@@ -21,7 +21,7 @@
 
 ```mermaid
 flowchart LR
-    A[content/*.md<br/>1026 题卡] --> B[tools/build.py]
+    A[content/*.md<br/>1033 题卡] --> B[tools/build.py]
     C[companies/*.json<br/>targets / radar_companies / jobs / profiles] --> B
     D[sources/jobs_radar.json<br/>岗位快照 667+ 岗] --> B
     N[sources/nowcoder_*<br/>面经索引 + 真题卷元数据] --> B

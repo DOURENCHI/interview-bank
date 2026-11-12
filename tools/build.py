@@ -24,7 +24,7 @@ MODULE_NAME = {
     "04_algo": "算法机考", "05_deploy": "模型部署", "06_ros2": "ROS2",
     "07_imaging": "医学影像", "08_robot": "机器人学",
     "09_hardware": "硬件嵌入式", "10_cv_pytorch": "深度学习",
-    "11_python": "Python",
+    "11_python": "Python", "12_backend": "后端基础",
 }
 MODULE_ORDER = list(MODULE_NAME)
 PRI_ORDER = {"P0": 0, "P1": 1, "P2": 2}
@@ -2316,6 +2316,7 @@ const SKILLS = [
   {name: 'Python', tier: 'eng', kws: ['python'], mods: ['11_python']},
   {name: '硬件/嵌入式', tier: 'core', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['09_hardware']},
   {name: '机器人学', tier: 'domain', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['08_robot']},
+  {name: '数据库/缓存', tier: 'eng', kws: ['mysql', '数据库', 'sql', 'redis', '缓存', '索引', '事务', 'mvcc', '消息队列', 'kafka', 'rabbitmq'], mods: ['12_backend']},
   {name: '工业通信/现场总线', tier: 'eng', kws: ['profinet', 'mrp', 'plc', 'modbus', 'canopen', '现场总线', '工业以太网', 'opc ua'], mods: ['06_ros2', '09_hardware']},
 ];
 const TIER_LABEL = {core: '核心', eng: '工程', domain: '场景'};
