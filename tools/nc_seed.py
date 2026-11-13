@@ -141,32 +141,29 @@ def clean_title(q: str) -> str:
     return t
 
 
-def next_ids(modules: list[str]) -> dict:
-    """各模块下一个可用编号 = 现有最大 id + 1。"""
-    import collections
-    # 号段与 tools/validate.py 的 ID_BASE 保持一致（硬件 4101~4599，CV 4601~5099…）
-    ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
-               "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
-               "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
-               "11_python": 5100, "12_backend": 5600}
-    SPAN = 500
-    used = collections.defaultdict(set)
-    for f in (ROOT / "content").rglob("Q-*.md"):
-        m = re.match(r"Q-(\d{4})", f.name)
-        if m:
-            used[f.parent.name].add(int(m.group(1)))
-    out = {}
-    for m in modules:
-        base = ID_BASE.get(m, 0)
-        lo, hi = base + 1, base + SPAN - 1
-        n = (max(used[m]) + 1) if used[m] else lo
-        if n > hi:                       # 顶部越出号段 → 回退到号段内最小空位
-            free = [i for i in range(lo, hi + 1) if i not in used[m]]
-            if not free:
-                raise SystemExit(f"模块 {m} 号段 {lo}~{hi} 已满，无法再入库（需扩号段）")
-            n = free[0]
-        out[m] = n
-    return out
+ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
+           "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
+           "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
+           "11_python": 5100, "12_backend": 5600}
+SPAN = 500
+
+
+def alloc_id(mod: str, nxt: dict) -> int:
+    """返回模块 mod 的下一个空闲编号：跳过磁盘上已存在的卡文件，且不越出号段。
+
+    修复 2026-11-13 覆盖事故：旧逻辑在号段顶部回退到"最小空位"后，
+    循环里 nxt += 1 盲增，会一路穿过被占用的编号，把旧卡覆盖掉。
+    新逻辑每次分配都检查目标文件是否存在，号段满则明确报错。
+    （号段与 tools/validate.py 的 ID_BASE 保持一致）"""
+    lo, hi = ID_BASE.get(mod, 0) + 1, ID_BASE.get(mod, 0) + SPAN - 1
+    n = max(nxt.get(mod, lo), lo)
+    while n <= hi:
+        # 前缀匹配：Q-0767.md 与 Q-0767-sdk.md 这类变体名都算占用
+        if not list((ROOT / "content" / mod).glob(f"Q-{n:04d}*.md")):
+            nxt[mod] = n + 1
+            return n
+        n += 1
+    raise SystemExit(f"模块 {mod} 号段 {lo}~{hi} 已满，无法再入库（需扩号段或清理低质卡）")
 
 
 def skeleton(qid, title, mod, sub, comp, role, url, rnd) -> str:
@@ -242,10 +239,9 @@ def main() -> int:
     bank_norm = {re.sub(r"[\s，。、？！：:（）()\[\]【】“”\"'…·—+,.?]", "", t.lower())
                  for t in bank_titles}
 
-    # 各模块下一个可用编号（覆盖全部可能模块，避免 KeyError）
+    # 编号分配器状态（alloc_id 逐张检查磁盘占用，避免覆盖既有卡）
+    nxt: dict = {}
     all_posts = sorted(POSTS.glob("*.json")) if POSTS.exists() else []
-    mods = [m for m, _ in MODULE_RULES] + [DEFAULT_MODULE]
-    nxt = next_ids(sorted(set(mods)))
 
     made, skipped_dup, skipped_junk, skipped_nocomp, unmatched = 0, 0, 0, 0, []
     for p in all_posts:
@@ -283,8 +279,7 @@ def main() -> int:
                 skipped_junk += 1
                 continue
             mod, sub = module_of(q["q"] + " " + d["title"])
-            qid = f"Q-{nxt[mod]:04d}"
-            nxt[mod] += 1
+            qid = f"Q-{alloc_id(mod, nxt):04d}"
             title = clean_title(q["q"])
             target = ROOT / "content" / mod / f"{qid}.md"
             target.write_text(skeleton(qid, title, mod, sub, comp, role, url,
