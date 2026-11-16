@@ -1346,5 +1346,26 @@
       "Q-0880"
     ],
     "seeded_at": "2026-11-15"
+  },
+  "951484054375886848": {
+    "company": "网易",
+    "url": "https://www.nowcoder.com/discuss/951484054375886848",
+    "cards": [],
+    "seeded_at": "2026-11-16",
+    "note": "extractor 仅抽到页面噪音（侧栏推荐/专刊目录/复盘碎句），0 实质技术题，骨架已全删"
+  },
+  "951790484211421184": {
+    "company": "阿里巴巴",
+    "url": "https://www.nowcoder.com/discuss/951790484211421184",
+    "cards": [],
+    "seeded_at": "2026-11-16",
+    "note": "extractor 仅抽到页面噪音（侧栏推荐/专刊目录/复盘碎句），0 实质技术题，骨架已全删"
+  },
+  "951817346132291584": {
+    "company": "滴滴",
+    "url": "https://www.nowcoder.com/discuss/951817346132291584",
+    "cards": [],
+    "seeded_at": "2026-11-16",
+    "note": "extractor 仅抽到页面噪音（侧栏推荐/专刊目录/复盘碎句），0 实质技术题，骨架已全删"
   }
 }
