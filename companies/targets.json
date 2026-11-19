@@ -1285,6 +1285,21 @@
       "extra": []
     },
     {
+      "name": "tplink联洲",
+      "tier": "watch",
+      "nc_keywords": [
+        "tplink联洲",
+        "联洲",
+        "TP-LINK",
+        "普联技术"
+      ],
+      "roles": [
+        "A"
+      ],
+      "main": "A · SDK / 基础软件",
+      "extra": []
+    },
+    {
       "name": "联友科技",
       "tier": "watch",
       "nc_keywords": [
