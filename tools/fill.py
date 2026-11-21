@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
-TODAY = "2026-11-20"
+TODAY = "2026-11-21"
 
 
 def _find(qid: str) -> Path:
