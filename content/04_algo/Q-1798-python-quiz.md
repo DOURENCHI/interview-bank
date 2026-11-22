@@ -2,7 +2,7 @@
 id: Q-1798
 title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 105 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -41,16 +41,19 @@ zero_grad 之后梯度变成 None（不是 0），因为 PyTorch 用 None 表示
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+PyTorch 2.x 的 `zero_grad()` 默认 `set_to_none=True`，把 grad 置 None 而非填 0，省一次显存写入，也让"没算过"与"梯度恰为 0"可区分。要得到 0 张量需显式传 `set_to_none=False`。`g` 是 backward 后用 `float()` 提前拷出的数值，所以打印仍是 2.0。
 
 ## 高频追问
 
-待补充。
+1. **为什么 None 比 0 好？** —— 省写显存，backward 时按需新分配，语义也更准确
+2. **旧版本是什么行为？** —— 1.x 默认填 0 张量，所以老代码里 grad 不会是 None
+3. **对优化器有影响吗？** —— 无，None 参数在 `step()` 里被跳过
 
 ## 易错点
 
-待补充。
+- 答 0.0——默认 `set_to_none=True`，实际是 None（选项 B）
+- 用 `if p.grad:` 判断有没有梯度——零张量也为假，语义混淆
+- 以为 `zero_grad()` 会删掉参数——它只清梯度，参数原样保留
 
 ## 关联项目
 

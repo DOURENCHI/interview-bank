@@ -2,7 +2,7 @@
 id: Q-4305
 title: "给 CAN DMA 申请大块连续内存有哪些方式？CMA 是什么？"
 module: 09_hardware
-sub: 嵌入式软件
+sub: 嵌入式 Linux
 priority: P1
 difficulty: 3
 roles: []

@@ -2,7 +2,7 @@
 id: Q-1780
 title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 87 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -39,16 +39,19 @@ CrossEntropyLoss 的输入是 logits 不是概率、目标是类别下标。传�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`CrossEntropyLoss` = `log_softmax` + `NLLLoss`，输入必须是 logits，target 是 long 类标。传概率 `[0.9,0.05,0.05]` 会被再 softmax 一次，损失变 0.56203。0.41703 就是 `−log(0.665241)`。
 
 ## 高频追问
 
-待补充。
+1. **为什么不能传概率？** —— 会二次 softmax，loss 与梯度都错，且不报错，属于静默 bug
+2. **target 能用 one-hot 吗？** —— 这个接口不行，要传类标索引；one-hot 得手写 `−Σy·log_softmax`
+3. **0.41703 怎么算出来？** —— softmax 后正确类概率 0.665241，取负对数即 0.41703
 
 ## 易错点
 
-待补充。
+- 先 softmax 再喂 CE——最常见的错，损失偏大且训练变慢
+- target 传 float——报 `expected scalar type Long`
+- 认为 CE 输入是概率——这是本题的核心考点，答反就全错
 
 ## 关联项目
 

@@ -2,7 +2,7 @@
 id: Q-1902
 title: 输入有多少组不知道，只说到文件结束，C++ 怎么写？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

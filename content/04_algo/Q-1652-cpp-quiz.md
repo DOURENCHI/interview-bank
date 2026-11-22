@@ -2,7 +2,7 @@
 id: Q-1652
 title: 这段 C++ 代码输出什么？（29 序列容器 · 第 40 题）
 module: 04_algo
-sub: C++语言细节
+sub: 模板与 STL
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -38,16 +38,19 @@ deque 两头插入都是 O(1)：push_front(1) 放到最前，push_back(4) 追加
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+deque 是分段连续缓冲加中控数组，两端插入都是 O(1)，且不需要像 vector 那样整体搬移；头插不会让已有元素的引用失效（迭代器会失效）。vector 根本没有 push_front，头插只能 insert(begin(), x)，代价 O(n)。deque 的短板是中间插入比 vector 慢，随机访问多一次间接寻址。
 
 ## 高频追问
 
-待补充。
+1. **为什么是 1234？** —— push_front(1) 放到最前，push_back(4) 追加到最后，原顺序 2、3 不动。
+2. **deque 和 vector 怎么选？** —— 需要两端进出用 deque；只在尾部增长、要求连续内存和最快随机访问用 vector。
+3. **还有 O(1) 头插的容器吗？** —— list 和 forward_list 也可以，但失去随机访问，遍历缓存不友好；实践中多选 deque。
 
 ## 易错点
 
-待补充。
+- 以为 push_front 会追加到末尾，答 2134 选 B
+- 把 push_front 当成覆盖首元素，答 1324
+- 对 vector 写 push_front，编译报无此成员
 
 ## 关联项目
 

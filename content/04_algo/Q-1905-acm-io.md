@@ -2,7 +2,7 @@
 id: Q-1905
 title: 输入是逗号分隔的一串数，C++ 怎么解析？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

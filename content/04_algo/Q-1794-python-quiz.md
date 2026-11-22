@@ -2,7 +2,7 @@
 id: Q-1794
 title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 101 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -41,16 +41,19 @@ BatchNorm1d 保持形状不变，只做归一化；train 模式用当前批统�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`BatchNorm1d` 对 `(N,C)` 沿 N 统计每个通道的均值方差，形状逐元素不变，所以还是 `(4,3)`。train 用当前批统计量并更新 running stats，eval 用 running_mean/var。因此同一输入两种模式结果不同，但形状始终一致。
 
 ## 高频追问
 
-待补充。
+1. **batch=1 时 train 会怎样？** —— 方差为 0，输出退化成偏置，某些实现直接报错
+2. **为什么 eval 结果不同？** —— 统计量来源不同：批统计 vs 运行均值方差
+3. **BN 有哪些状态？** —— weight/bias 是 Parameter，running_mean/var、num_batches_tracked 是 buffer
 
 ## 易错点
 
-待补充。
+- 认为 BN 会改变形状——它只做归一化，形状逐元素保持
+- eval 忘了切——用批统计做单样本推理，输出剧烈抖动
+- 把 running_mean 当 Parameter——它是 buffer，不在 `parameters()` 里
 
 ## 关联项目
 

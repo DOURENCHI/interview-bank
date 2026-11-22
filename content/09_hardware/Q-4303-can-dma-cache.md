@@ -2,7 +2,7 @@
 id: Q-4303
 title: "CAN 驱动用 DMA 要注意什么？Cache 一致性怎么处理？"
 module: 09_hardware
-sub: 嵌入式软件
+sub: 工程与调试
 priority: P1
 difficulty: 4
 roles: []

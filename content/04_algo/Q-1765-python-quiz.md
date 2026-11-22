@@ -2,7 +2,7 @@
 id: Q-1765
 title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 72 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -50,16 +50,19 @@ print(losses[0], losses[-1], losses[-1] < losses[0])
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`losses` 记的是每次 `step` 之前的 loss（顺序 loss→zero_grad→backward→step），所以 `losses[-1]` 比训练结束时的真实 loss 略大。sum + lr=0.01 在 50 步内把 46.89 压到 0.13，方向与步长都对。
 
 ## 高频追问
 
-待补充。
+1. **`losses[0]=46.8943` 怎么来的？** —— seed=4 的初始 w、b 随机，三个样本预测偏离真值，平方和累加得 46.89
+2. **为什么记录的是 step 前的 loss？** —— 代码顺序决定，`loss` 在前向时算好，`step()` 在其后才改参数
+3. **想更快收敛怎么办？** —— 换 Adam、标准化输入、适当调大 lr，或改用 `reduction="mean"` 统一量纲
 
 ## 易错点
 
-待补充。
+- 把 `losses.append` 挪到 `step()` 之后——记录的是更新后的 loss，首值就对不上 46.8943
+- 认为 loss 必须严格单调下降——换 mini-batch 后会抖动，全批才单调
+- 混淆 sum 与 mean——mean 下首值约 15.63，选项全对不上
 
 ## 关联项目
 

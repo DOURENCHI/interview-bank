@@ -684,6 +684,55 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .ncfilter select.ncsel{color:var(--campus);border-color:var(--campus-line);background:var(--campus-bg)}
 a.chip{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 a.chip:hover{border-color:var(--accent);color:var(--accent)}
+/* ── 题库导航：按考点刷题 / 企业题库 ── */
+.navwrap{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin:8px 0 12px}
+.navtabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ntab{font:13px/1.6 inherit;border:1px solid var(--line);background:var(--soft);color:var(--tx);
+  border-radius:999px;padding:5px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.ntab:hover{border-color:var(--accent)}
+.ntab.on{background:var(--accent);color:#fffcf3;border-color:var(--accent)}
+.ntn{font-size:11px;opacity:.75}
+.navpane{margin-top:10px}
+.navwrap.compact .navpane{display:none}
+.hint2{font-size:12px;color:var(--muted);margin:0 0 8px;line-height:1.6}
+.topicgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(156px,1fr));gap:8px;
+  padding:2px 0}
+.tcard{display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--soft);
+  border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;transition:.12s}
+.tcard:hover{border-color:var(--accent);background:#fffdf6;transform:translateY(-1px)}
+.tcard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:#fffdf6}
+.tcard .tn{font-size:13px;font-weight:600;color:#26231b;line-height:1.35}
+.tcard .tm{font-size:11px;color:var(--muted)}
+.tcard .tc{font-size:11.5px;color:var(--accent);font-variant-numeric:tabular-nums}
+.corgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:8px;
+  padding:2px 0}
+.ccard{display:flex;flex-direction:column;gap:5px;text-align:left;background:var(--soft);
+  border:1px solid var(--line);border-radius:9px;padding:10px 12px;cursor:pointer;transition:.12s}
+.ccard:hover{border-color:var(--accent);background:#fffdf6;transform:translateY(-1px)}
+.ccard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:#fffdf6}
+.ccard .cn{font-size:13.5px;font-weight:600;color:#26231b}
+.ccard .cm{font-size:11.5px;color:var(--muted)}
+.ccard .cm b{color:var(--accent);font-weight:600}
+.dbar2{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--soft)}
+.dbar2 i{display:block;height:100%}
+.dbar2 .d1{background:#2e6b3e}.dbar2 .d2{background:#b58a2b}.dbar2 .d3{background:#a63a2e}
+.ccard .cd{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.navfoot{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;
+  border-top:1px dashed var(--line);padding-top:10px}
+.navfoot .hint2{margin:0}
+.navfoot .clr{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline}
+.modrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.mchip{font:12.5px/1.6 inherit;border:1px solid var(--line);background:var(--paper);
+  color:var(--tx);border-radius:999px;padding:4px 11px;cursor:pointer;white-space:nowrap}
+.mchip:hover{border-color:var(--accent)}
+.mchip.on{background:var(--accent);border-color:var(--accent);color:#fffcf3}
+.mchip b{font-weight:600}
+.modrow .mchip:first-child{margin-right:2px}
+.navmore{margin-top:8px}
+.navmore button{font:12.5px/1.6 inherit;border:1px dashed var(--line);background:transparent;
+  color:var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.navmore button:hover{border-color:var(--accent);background:#fffdf6}
 </style>
 </head>
 <body>
@@ -762,6 +811,28 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
   <label hidden><input type="checkbox" id="wrong"></label>
   <label hidden><input type="checkbox" id="hidepred"></label>
   <label hidden><input type="checkbox" id="selftest"></label>
+</div>
+<div class="navwrap" id="banknav">
+  <div class="navtabs">
+    <button class="ntab on" data-nt="topic">📚 按考点刷题<span class="ntn" id="nt_topic"></span></button>
+    <button class="ntab" data-nt="corp">🏢 企业题库<span class="ntn" id="nt_corp"></span></button>
+    <button class="ntab" data-nt="list">📋 直接看列表</button>
+  </div>
+  <div class="navpane" id="nav_topic">
+    <div class="modrow" id="modrow"></div>
+    <div class="hint2">点考点直接筛题；数字是题量，后面是难度分布。</div>
+    <div class="topicgrid" id="topicgrid"></div>
+    <div class="navmore" id="more_topic"></div>
+  </div>
+  <div class="navpane" id="nav_corp" hidden>
+    <div class="hint2">按公司聚合成题库；点卡片只看这家公司真实问过的题。</div>
+    <div class="corgrid" id="corpgrid"></div>
+    <div class="navmore" id="more_corp"></div>
+  </div>
+  <div class="navfoot">
+    <button id="drill10" class="mini">▶ 开始 10 题练习</button>
+    <span class="hint2" id="drillhint"></span>
+  </div>
 </div>
 <div class="hint" id="hint"></div>
 
@@ -1048,6 +1119,7 @@ let review = lsGet(REV_KEY, {});
 let SELFTEST = false;
 let LASTHIT = [];            // 最近一次渲染命中的题，供模拟面试抽题
 let tutFilter = null;        // 宝典章节筛选：{ids:Set, label}（点「练这一章」写入）
+let corpFilter = '';         // 企业题库筛选：公司名；不走 TARGETS 下拉，覆盖面经里出现的全部公司
 let tutTab = ((TUT.tutorials || [])[0] || {}).id;
 function revState(q){
   const r = review[q.id];
@@ -1149,6 +1221,137 @@ function refreshSubs(){
   if (set.includes(cur)) $('sub').value = cur;
 }
 
+// ── 题库导航：按考点 / 企业题库（对应截图里的分类卡片）──
+function corpOf(q){
+  const s = new Set();
+  (q.appearances || []).forEach(a => { const n = String(a).split('·')[0].trim(); if (n) s.add(n); });
+  (q.companies || []).forEach(n => { const t = String(n).split('·')[0].trim(); if (t) s.add(t); });
+  return [...s];
+}
+
+let NAV_ALL = null;
+let NAV_MORE_T = false, NAV_MORE_C = false;
+let NAV_MOD = '';
+const NAV_TOPIC_LIMIT = 18, NAV_CORP_LIMIT = 8;
+
+function bankNavData(){
+  const TM = new Map(), CM = new Map();
+  const all = { name: '', label: '通用题库（全部）', n: 0, d: [0, 0, 0], subs: new Set() };
+  DATA.forEach(q => {
+    const d = Math.min(2, Math.max(0, (q.difficulty || 2) - 1));
+    all.n++; all.d[d]++; all.subs.add(q.module + '|' + (q.sub || '未分类'));
+    const k = q.module + '|' + (q.sub || '未分类');
+    let t = TM.get(k);
+    if (!t) { t = { module: q.module, moduleName: q.moduleName, sub: q.sub || '未分类', n: 0, d: [0, 0, 0] }; TM.set(k, t); }
+    t.n++; t.d[d]++;
+    corpOf(q).forEach(c => {
+      let o = CM.get(c);
+      if (!o) { o = { name: c, n: 0, d: [0, 0, 0], subs: new Set() }; CM.set(c, o); }
+      o.n++; o.d[d]++; o.subs.add(q.sub || '未分类');
+    });
+  });
+  return {
+    topics: [...TM.values()].sort((a, b) => b.n - a.n || a.sub.localeCompare(b.sub)),
+    corps: [...CM.values()].sort((a, b) => b.n - a.n || a.name.localeCompare(b.name)),
+    all
+  };
+}
+
+function renderBankNav(){
+  const { topics, corps, all } = bankNavData();
+  NAV_ALL = all;
+  const modCnt = new Map();
+  topics.forEach(t => modCnt.set(t.module, (modCnt.get(t.module) || 0) + t.n));
+  const mods = [...modCnt.entries()].sort((a, b) => b[1] - a[1]);
+  $('modrow').innerHTML =
+    `<button class="mchip${NAV_MOD ? '' : ' on'}" data-m="">全部 <b>${topics.reduce((s, t) => s + t.n, 0)}</b></button>`
+    + mods.map(([m, n]) => {
+        const nm = (topics.find(t => t.module === m) || {}).moduleName || m;
+        return `<button class="mchip${NAV_MOD === m ? ' on' : ''}" data-m="${esc(m)}">${esc(nm)} <b>${n}</b></button>`;
+      }).join('');
+  const tFiltered = NAV_MOD ? topics.filter(t => t.module === NAV_MOD) : topics;
+  const tShow = NAV_MORE_T ? tFiltered : tFiltered.slice(0, NAV_TOPIC_LIMIT);
+  $('topicgrid').innerHTML = tShow.map(t =>
+    `<button class="tcard" data-mod="${esc(t.module)}" data-sub="${esc(t.sub)}">`
+    + `<span class="tn">${esc(t.sub)}</span><span class="tm">${esc(t.moduleName)}</span>`
+    + `<span class="tc">${t.n} 题 · 易 ${t.d[0]} 中 ${t.d[1]} 难 ${t.d[2]}</span></button>`).join('');
+  $('more_topic').innerHTML = tFiltered.length > NAV_TOPIC_LIMIT
+    ? `<button data-more="t">${NAV_MORE_T ? '收起' : `展开全部 ${tFiltered.length} 个考点`}</button>` : '';
+  const cAll = [all, ...corps];
+  const cShow = NAV_MORE_C ? cAll : cAll.slice(0, NAV_CORP_LIMIT);
+  $('corpgrid').innerHTML = cShow.map(o => {
+    const tot = o.n || 1;
+    const p = o.d.map(x => (x / tot * 100).toFixed(1));
+    return `<button class="ccard" data-co="${esc(o.name)}">`
+      + `<span class="cn">${o.name ? esc(o.name) : o.label}</span>`
+      + `<span class="cm"><b>${o.n}</b> 题 · ${o.subs.size} 个考点</span>`
+      + `<span class="dbar2"><i class="d1" style="width:${p[0]}%"></i>`
+      + `<i class="d2" style="width:${p[1]}%"></i><i class="d3" style="width:${p[2]}%"></i></span>`
+      + `<span class="cd">易 ${o.d[0]} · 中 ${o.d[1]} · 难 ${o.d[2]}</span></button>`;
+  }).join('');
+  $('more_corp').innerHTML = cAll.length > NAV_CORP_LIMIT
+    ? `<button data-more="c">${NAV_MORE_C ? '收起' : `展开全部 ${cAll.length} 个题库`}</button>` : '';
+  $('nt_topic').textContent = topics.length + ' 个';
+  $('nt_corp').textContent = corps.length + ' 家';
+  syncNavSel();
+}
+
+function syncNavSel(){
+  const mod = $('mod').value, sub = $('sub').value;
+  document.querySelectorAll('#topicgrid .tcard').forEach(el =>
+    el.classList.toggle('on', el.dataset.mod === mod && el.dataset.sub === sub));
+  document.querySelectorAll('#corpgrid .ccard').forEach(el =>
+    el.classList.toggle('on', (el.dataset.co || '') === corpFilter));
+  const hint = $('drillhint');
+  if (!hint) return;
+  const co = corpFilter ? `企业「${corpFilter}」` : '';
+  const tp = (!corpFilter && sub) ? `考点「${sub}」` : '';
+  hint.innerHTML = (co || tp)
+    ? `当前范围：${co || tp} · ${LASTHIT.length} 题　<a class="clr" id="navclr">清除</a>`
+    : `当前范围：全部 ${DATA.length} 题`;
+  const c = navclrEl();
+  if (c) c.addEventListener('click', () => { corpFilter = ''; render(); });
+}
+function navclrEl(){ return document.getElementById('navclr'); }
+
+document.querySelectorAll('.ntab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.ntab').forEach(x => x.classList.toggle('on', x === b));
+  const t = b.dataset.nt;
+  $('nav_topic').hidden = t !== 'topic';
+  $('nav_corp').hidden = t !== 'corp';
+  $('banknav').classList.toggle('compact', t === 'list');
+}));
+
+$('topicgrid').addEventListener('click', e => {
+  const b = e.target.closest('.tcard'); if (!b) return;
+  corpFilter = ''; $('co').value = '';
+  $('mod').value = b.dataset.mod; refreshSubs(); $('sub').value = b.dataset.sub;
+  render();
+  $('list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+$('corpgrid').addEventListener('click', e => {
+  const b = e.target.closest('.ccard'); if (!b) return;
+  corpFilter = b.dataset.co || '';
+  $('co').value = ''; $('mod').value = ''; refreshSubs(); $('sub').value = ''; $('dif').value = '';
+  render();
+  $('list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+$('modrow').addEventListener('click', e => {
+  const b = e.target.closest('.mchip'); if (!b) return;
+  NAV_MOD = b.dataset.m || ''; NAV_MORE_T = false; renderBankNav();
+});
+$('more_topic').addEventListener('click', () => { NAV_MORE_T = !NAV_MORE_T; renderBankNav(); });
+$('more_corp').addEventListener('click', () => { NAV_MORE_C = !NAV_MORE_C; renderBankNav(); });
+
+$('drill10').addEventListener('click', () => {
+  if (!LASTHIT.length) { alert('当前范围没有题，先选一个考点或企业'); return; }
+  $('m_n').value = '10';
+  openMock();
+  $('m_start').click();
+});
+
 function render(){
   const kw = $('q').value.trim().toLowerCase();
   const mod = $('mod').value, pri = $('pri').value, st = $('st').value;
@@ -1171,6 +1374,7 @@ function render(){
 
   const hit = DATA.filter(q => {
     if (mod && q.module !== mod) return false;
+    if (corpFilter && !corpOf(q).includes(corpFilter)) return false;
     if (sub && q.sub !== sub) return false;
     if (pri && q.priority !== pri) return false;
     if (dif && q.difficulty !== +dif) return false;
@@ -1198,7 +1402,7 @@ function render(){
   LASTHIT = hit; fcur = -1;
   $('empty').style.display = hit.length ? 'none' : 'block';
   // 搜索/筛选时自动展开，省一次点击；自测模式下不展开，先自己答
-  if (!SELFTEST && (kw || mod || pri || st || sub || dif || onlyW || coDef || rlDef || OPEN_ALL)) {
+  if (!SELFTEST && (kw || mod || pri || st || sub || dif || onlyW || coDef || rlDef || corpFilter || OPEN_ALL)) {
     list.querySelectorAll('.q').forEach(el => el.classList.add('open'));
   }
   if (SELFTEST) list.classList.add('selftest'); else list.classList.remove('selftest');
@@ -1207,7 +1411,7 @@ function render(){
     + `已答 ${DATA.filter(q=>q.status==='answered'||q.status==='verified').length} ｜ 草稿 ${DATA.filter(q=>q.status==='draft').length} ｜ 错题 ${wrong.size} ｜ `
     + `有出现记录 ${DATA.filter(q=>(q.appearances||[]).length).length} ｜ `
     + `已自测 ${Object.keys(review).length} ｜ 今日该复习 ${dueCnt}`;
-  syncChips(); syncPills(); renderScards();
+  syncChips(); syncPills(); renderScards(); syncNavSel();
 
   // 宝典章节筛选提示条（从「分析 → 考点地图」跳进来时显示）
   const tb = $('tutbanner');
@@ -1548,7 +1752,8 @@ const _p = new URLSearchParams(location.search);
   if (v) $(id).value = v;
 });
 
-['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof','dif'].forEach(id => $(id).addEventListener('input', render));
+['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof','dif'].forEach(id =>
+  $(id).addEventListener('input', () => { if (id === 'co') corpFilter = ''; render(); }));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 
 // ---- 模拟面试：抽题 → 逐题计时 → 揭示追问 → 自评 → 总结 ----
@@ -3116,6 +3321,7 @@ document.addEventListener('click', e => {
 
 refreshSubs();
 render();
+renderBankNav();
 showView(['home', 'bank', 'train', 'jobs', 'comp', 'rep'].includes(location.hash.slice(1))
   ? location.hash.slice(1) : 'home');
 </script>

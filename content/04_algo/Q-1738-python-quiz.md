@@ -2,7 +2,7 @@
 id: Q-1738
 title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 45 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -37,16 +37,19 @@ argmax/argmin 返回「下标」不是值：最大的是 9 在下标 1，最小�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+讲深一层：argmax/argmin 返回的是下标而非值，多维数组不传 axis 时先把数组拉平再取扁平下标。遇到并列最大值返回「第一个」出现的下标，这由实现保证但不是数学定义。传 axis 后返回降维后的下标数组，配合 np.take_along_axis 才能取回对应值；空数组调用抛 ValueError。
 
 ## 高频追问
 
-待补充。
+1. **怎么用 argmax 取值？** —— `a.flat[i]` 或 `a[np.unravel_index(i, a.shape)]`。
+2. **有并列最大值取哪个？** —— 第一个，下标最小。
+3. **多维怎么按轴取？** —— argmax(axis=1) 得每行最大值所在列号。
 
 ## 易错点
 
-待补充。
+- 把 argmax 的结果当最大值：输出 1 而不是 9
+- 以为并列时随机取：稳定返回第一个下标
+- 对空数组调 argmax：抛 ValueError，需先判 size
 
 ## 关联项目
 

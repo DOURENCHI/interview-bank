@@ -2,7 +2,7 @@
 id: Q-4708
 title: "给大模型 Agent 接入工具时，哪种做法对减少调用错误是无效的？"
 module: 10_cv_pytorch
-sub: 大模型与推理
+sub: Agent 与工具调用
 priority: P1
 difficulty: 2
 roles: []

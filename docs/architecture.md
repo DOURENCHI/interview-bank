@@ -7,12 +7,12 @@
 
 | 层 | 位置 | 职责 | 产出 / 消费者 |
 |---|---|---|---|
-| 内容层 | `content/`（11 模块） | 一题一 `.md` + YAML frontmatter，口述稿体答案、手写 SVG 插图 | `tools/build.py` 读取 |
+| 内容层 | `content/`（12 模块） | 一题一 `.md` + YAML frontmatter，口述稿体答案、手写 SVG 插图 | `tools/build.py` 读取 |
 | 写卡层 | `tools/cards/*.cards`、`tools/apply_cards.py` | 纯文本写答案，避开 Python 中文引号转义 | 回灌到 `content/` |
 | 校验层 | `tools/validate.py`、`tools/audit.py` | 字段/号段/小节/ID 唯一；重复与来源审计 | CI 门禁 |
 | 数据层 | `companies/*.json`、`sources/*.json` | 目标公司池、雷达公司池、岗位模板、种子岗位、雷达快照 | 构建时注入 HTML |
 | 采集层 | `tools/job_radar.py`、`tools/nc_collect.py` | 官方招聘门户低频增量扫描；牛客面经/真题增量 | `sources/jobs_radar.json` 等 |
-| 构建层 | `tools/build.py` | 把 913 题卡 + 数据对象注入 `PAGE` 模板，产出单文件离线页 | `dist/bank.html`（约 5.3 MB） |
+| 构建层 | `tools/build.py` | 把 1610 题卡 + 数据对象注入 `PAGE` 模板，产出单文件离线页 | `dist/bank.html`（约 11 MB） |
 | 表现层 | `dist/bank.html` | 6 个视图、筛选、复习、训练、岗位匹配、公司总览；状态存 localStorage | 双击即开，无需服务端 |
 | 自动化层 | `.github/workflows/radar.yml` / `ci.yml` | 每日 09:30 扫描；push 时校验+构建+审计+雷达逻辑回归 | 有 diff 才提交 |
 | 测试层 | `tools/ui_test.py`、`tools/radar_test.py`、`tools/rep_test.py` | Edge/Playwright 冒烟、纯逻辑回归、报告回归 | 本机验收 |
@@ -68,7 +68,7 @@ flowchart LR
 | hash | 视图 | 主要职责 |
 |---|---|---|
 | `#home` | 首页 | 数据卡、快速入口、今日任务、岗位进度、雷达可信行、公司/岗位总览入口 |
-| `#bank` | 题库 | 全文搜索、chips/pills 筛选、答案折叠、自评 1~4、错题、备份 |
+| `#bank` | 题库 | **题库导航（按考点 76 个 / 企业题库 34 家，带题量与难度分布）+ 开始 10 题练习**、全文搜索、chips/pills 筛选、答案折叠、自评 1~4、错题、备份 |
 | `#train` | 训练 | 模拟面试、项目连环问、专项训练入口 |
 | `#jobs` | 岗位 | **投递决策中心（四类）+ 五大岗位族** + 五维适配度 + JD 原文依据 + 技术岗过滤 + 雷达分页（18/页） |
 | `#comp` | 公司（V1.8） | **全部公司 + 全部岗位**，按校招/实习/社招分组，含已收藏/已忽略 |

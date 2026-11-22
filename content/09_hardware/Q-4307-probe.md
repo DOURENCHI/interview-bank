@@ -2,7 +2,7 @@
 id: Q-4307
 title: "驱动里的 probe 函数负责什么？设备和驱动怎么匹配？"
 module: 09_hardware
-sub: 嵌入式软件
+sub: 嵌入式 Linux
 priority: P0
 difficulty: 2
 roles: []

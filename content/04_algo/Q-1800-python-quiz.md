@@ -2,7 +2,7 @@
 id: Q-1800
 title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 107 题）
 module: 04_algo
-sub: Python语言细节
+sub: 函数与异常
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -51,16 +51,19 @@ print(round(first, 4), round(loss.item(), 4), loss.item() > first)
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+一步更新量是 `lr×grad`，量级 1e4×几十，w 直接跳到 1e5 以上；下一步 loss 含 w 的平方，放大到 1e10 再乘 lr 继续爆炸，几轮就超过 float32 上限 3.4e38 变 inf。inf 参与后续运算仍是 inf，不会自己回到有限值。`first` 是第一次 step 之前的 loss。
 
 ## 高频追问
 
-待补充。
+1. **为什么是 inf 不是 nan？** —— nan 需要 `inf−inf` 或 `0×inf`，这里只有单向上溢
+2. **怎么预防？** —— 梯度裁剪、lr warmup、输入标准化，并监控 `torch.isfinite`
+3. **`first=48.404` 怎么来的？** —— seed=9 的初始参数，第一次更新前的 loss
 
 ## 易错点
 
-待补充。
+- 说会收敛到 0——lr=1e4 是发散，方向完全相反
+- 以为 inf 会被自动裁剪——PyTorch 不会，必须手动 `clip_grad_norm_`
+- 把 `1e4` 读成 `1e-4`——差 8 个数量级，结论彻底反了
 
 ## 关联项目
 

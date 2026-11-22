@@ -2,7 +2,7 @@
 id: Q-1630
 title: 这段 C++ 代码输出什么？（11 类与对象 · 第 18 题）
 module: 04_algo
-sub: C++语言细节
+sub: 对象与继承
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -40,16 +40,19 @@ class 的成员默认是 private，类外不能访问；改成 struct 就可以�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+class 的默认访问权限是 private，默认继承方式也是 private；struct 两者都是 public。所以类外写 a.x 直接编译失败，与运行期无关。加上 public: 就能通过，程序不输出任何东西。另外空类 sizeof 为 1，编译器要保证不同对象地址唯一。
 
 ## 高频追问
 
-待补充。
+1. **为什么编译不过？** —— x 在 class 中默认 private，main 是类外代码，无权访问私有成员。
+2. **改成 struct 呢？** —— 默认 public，a.x = 1 合法；程序没有输出语句，所以什么都不打印。
+3. **class 和 struct 还有别的差别吗？** —— 只剩默认访问权限和默认继承权限；template<class T> 与 template<typename T> 完全等价。
 
 ## 易错点
 
-待补充。
+- 以为能访问，答输出 1 选 C
+- 以为只是未初始化，答运行时崩溃选 D
+- 以为 class 成员默认 public，判程序正常
 
 ## 关联项目
 

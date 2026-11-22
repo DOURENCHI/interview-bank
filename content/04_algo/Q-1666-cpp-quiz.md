@@ -2,7 +2,7 @@
 id: Q-1666
 title: 这段 C++ 代码输出什么？（34 类型转换与模板 · 第 54 题）
 module: 04_algo
-sub: C++语言细节
+sub: 语法与陷阱
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -39,16 +39,19 @@ int main() {
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+显式写 add<int> 会跳过推导，实参走隐式转换（可能有损），T 同时决定形参和返回类型，所以第二次返回的是 double 4.0，只是 cout 默认不打印末尾的 .0。add(2, 2.5) 两个实参分别推出 int 和 double，冲突直接编译失败。想保留小数应写 add<double>(2, 2.5)。
 
 ## 高频追问
 
-待补充。
+1. **第二个为什么显示 4？** —— 实际值是 4.0，ostream 默认格式省略末尾的 .0 和小数点，加 showpoint 才会显示。
+2. **add(2, 2.5) 能编译吗？** —— 不能，T 被同时推成 int 和 double，模板实参推导失败。
+3. **怎么让它打印 4.0？** —— cout << showpoint 或 fixed 配合 setprecision，输出格式问题而非计算问题。
 
 ## 易错点
 
-待补充。
+- 以为 cout 默认带 .0，答 5 4.0 选 B
+- 以为显式指定 <int> 不合法，答编译错误选 D
+- 以为第二次返回 4.5，把 1.5+2.5 算错
 
 ## 关联项目
 

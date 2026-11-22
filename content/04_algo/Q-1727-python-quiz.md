@@ -2,7 +2,7 @@
 id: Q-1727
 title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 34 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -40,16 +40,19 @@ print(bump(), bump(), counter["n"])
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+讲深一层：函数内 `counter["n"] += 1` 只做「取下标、加、写回」，从未给名字 counter 赋值，所以不需要 global；一旦写 `counter = {...}`，counter 立刻变局部名，外部字典不受影响。真正需要 global 的是重新绑定模块级名字。+= 在字典上是读-改-写三步，多线程下并非原子。
 
 ## 高频追问
 
-待补充。
+1. **什么时候必须写 global？** —— 在函数内给模块级名字重新赋值时。
+2. **为什么改字典内容不用 global？** —— 没有发生名字绑定，只是对象内部状态变化。
+3. **多线程自增安全吗？** —— 不安全，counter["n"]+=1 非原子，要加锁。
 
 ## 易错点
 
-待补充。
+- 在函数里写 counter = {"n":0} 想重置：变成局部变量，外部字典不变
+- 以为必须加 global 才能改字典：加了不报错但非必需，关键是区分改内容与改名字
+- 把 += 当原子操作：并发下会丢更新，最终值小于调用次数
 
 ## 关联项目
 

@@ -2,7 +2,7 @@
 id: Q-1910
 title: Python 机考第一行两个整数，怎么写最快？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

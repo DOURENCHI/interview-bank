@@ -2,7 +2,7 @@
 id: Q-4703
 title: "Agent 范式 ReAct 的名字是哪两个英文单词拼起来的？"
 module: 10_cv_pytorch
-sub: 大模型与推理
+sub: Agent 与工具调用
 priority: P1
 difficulty: 1
 roles: []

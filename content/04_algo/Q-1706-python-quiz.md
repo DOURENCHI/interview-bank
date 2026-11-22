@@ -2,7 +2,7 @@
 id: Q-1706
 title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 13 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -36,16 +36,19 @@ print(hash("x") == hash("x"), "x" == "x")
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+讲深一层：契约是「a == b 必须 hash(a) == hash(b)」，反过来不成立——不同键可哈希碰撞。str 的哈希带每进程随机盐（PYTHONHASHSEED），具体数值跨进程会变，但同一进程内必然相同，本题才稳定为 True。list/dict 不可哈希，因为可变会破坏桶位置；tuple 只含不可变元素时才可哈希。
 
 ## 高频追问
 
-待补充。
+1. **为什么字符串哈希每次运行不同？** —— 防哈希碰撞攻击，解释器启动时随机加盐。
+2. **自定义类做字典键要注意什么？** —— 实现 __hash__ 和 __eq__，且参与哈希的字段不可变。
+3. **hash 冲突了字典怎么办？** —— 同一桶内再用 == 逐个比较，靠探测或链表解决。
 
 ## 易错点
 
-待补充。
+- 以为 hash 相等就一定相等：碰撞时 hash(a)==hash(b) 但 a!=b
+- 把 hash("x") 的具体数字写进答案：它随进程随机，题目只能问相等性
+- 用 list 做 dict 键：直接 TypeError，程序不输出预期结果
 
 ## 关联项目
 

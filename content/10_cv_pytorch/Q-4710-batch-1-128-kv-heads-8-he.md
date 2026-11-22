@@ -2,7 +2,7 @@
 id: Q-4710
 title: "batch=1、序列 128、kv_heads=8、head_dim=64、FP16，一层 KV Cache 占多少显存？"
 module: 10_cv_pytorch
-sub: 大模型与推理
+sub: LLM 基础与训练
 priority: P0
 difficulty: 2
 roles: []

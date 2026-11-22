@@ -2,7 +2,7 @@
 id: Q-1913
 title: Python 多组测试用例怎么组织，才不会串数据？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

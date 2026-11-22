@@ -2,7 +2,7 @@
 id: Q-1909
 title: 输入里混着数字和字符串，C++ 怎么读不串行？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

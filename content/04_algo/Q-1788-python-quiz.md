@@ -2,7 +2,7 @@
 id: Q-1788
 title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 95 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -39,16 +39,19 @@ print(tuple(conv(x).shape), conv.weight.shape[0])
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+输出通道数只由 `out_channels` 决定，与输入通道无关；输入通道必须等于 `in_channels`，否则直接报错。weight 形状 `(out, in, kH, kW) = (16,3,3,3)`，bias `(16,)`，共 `16×3×3×3+16 = 448` 个参数。空间尺寸 `8−3+1=6`，与通道数互不影响。
 
 ## 高频追问
 
-待补充。
+1. **这个层多少参数？** —— 448，`16×3×3×3` 加 16 个 bias
+2. **输入通道传错会怎样？** —— `RuntimeError: expected input to have 3 channels, but got 1`
+3. **为什么 weight 第 0 维是 out？** —— 与 Linear 的 out-first 约定一致，便于按输出通道切分与并行
 
 ## 易错点
 
-待补充。
+- 答 `(1,3,6,6)`——以为通道跟着输入走，这是选项 B 的坑
+- 把 `weight.shape[0]` 说成 3——那是 in_channels，第 0 维是 16
+- 忘记 bias——参数算成 432，少 16
 
 ## 关联项目
 

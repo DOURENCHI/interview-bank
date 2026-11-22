@@ -2,7 +2,7 @@
 id: Q-1900
 title: 机考第一行给两个整数，C++ 怎么读最稳？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

@@ -2,7 +2,7 @@
 id: Q-1908
 title: 数据量到了十万级，C++ 读入太慢超时怎么办？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

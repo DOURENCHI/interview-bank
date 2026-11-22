@@ -2,7 +2,7 @@
 id: Q-1697
 title: 这段 Python 代码输出什么？（01 Python 语言地基 · 第 4 题）
 module: 04_algo
-sub: Python语言细节
+sub: 函数与异常
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -36,16 +36,19 @@ bool 的判定规则是「非空即真」，不看内容是不是 0：空字符�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+讲深一层：真值判定只看「空不空、零不零」，不看内容含义：""、[]、{}、0、0.0、None、False 为假，而 "0"、" "、[0]、[[]] 都为真。print 对字符串不加引号，所以 str(3.5) 显示成 3.5，看输出分不清它是 str 还是 float，用 repr 才带引号。bool 是 int 子类，True+True 得 2。
 
 ## 高频追问
 
-待补充。
+1. **怎么判断字符串非空更明确？** —— `if s:` 即可；要排除纯空白用 `s.strip()`。
+2. **bool("False") 是什么？** —— True，非空字符串，不看字面含义。
+3. **print 里怎么看出是字符串？** —— 用 repr() 或 f"{x!r}"，会补上引号。
 
 ## 易错点
 
-待补充。
+- 认为 bool("0") 是 False：非空即真，实际输出 True
+- 把 str(3.5) 的输出当 float：它是字符串，`== 3.5` 得 False
+- 用 `if x == True` 判真值：应写 `if x`，且 1==True 也成立，容易混
 
 ## 关联项目
 

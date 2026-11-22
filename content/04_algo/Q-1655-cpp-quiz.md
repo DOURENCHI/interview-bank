@@ -2,7 +2,7 @@
 id: Q-1655
 title: 这段 C++ 代码输出什么？（30 关联容器与适配器 · 第 43 题）
 module: 04_algo
-sub: C++语言细节
+sub: 模板与 STL
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -38,16 +38,19 @@ stack 是容器适配器，后进先出：压入 1、2 后 top 是 2；pop 只�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+stack 是容器适配器，默认用 deque 承载，只暴露 push/pop/top，严格后进先出。pop 返回 void，只移除不返回元素，想取值必须先 top 再 pop。queue 是先进先出（front/back），priority_queue 默认是大顶堆。空栈调 top 或 pop 都是未定义行为，必须先判 empty。
 
 ## 高频追问
 
-待补充。
+1. **为什么先输出 2？** —— 压入顺序是 1、2，栈顶是最后进的 2。
+2. **pop 有返回值吗？** —— 没有，返回 void；标准写法是 int v = st.top(); st.pop()。
+3. **空栈 top 会怎样？** —— 未定义行为，可能读到越界内存或崩溃，使用前必须 if (!st.empty())。
 
 ## 易错点
 
-待补充。
+- 当成队列，答 12 选 B
+- 写 int x = st.pop(); 编译错误
+- pop 后继续用之前 top 返回的引用，引用已悬垂
 
 ## 关联项目
 

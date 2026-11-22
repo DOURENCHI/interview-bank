@@ -2,7 +2,7 @@
 id: Q-1773
 title: 这段 Python 代码输出什么？（06 Dataset 与 DataLoader · 第 80 题）
 module: 04_algo
-sub: Python语言细节
+sub: 函数与异常
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -54,16 +54,19 @@ print(a, b, a == b, len(DataLoader(DS(5), batch_size=2, shuffle=True)))
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+没给 `generator` 时 `RandomSampler` 用全局 RNG，`manual_seed(0)` 能复现同一排列 `[1,4,2,3,0]`；显式传 generator 就与全局隔离，seed 失效。批数 `ceil(5/2)=3`，末批 1 个样本。多 worker 还要 `worker_init_fn`。
 
 ## 高频追问
 
-待补充。
+1. **为什么两次结果完全一样？** —— 全局 RNG 状态被 `manual_seed(0)` 重置，采样序列从头重放
+2. **多进程 dataloader 还能复现吗？** —— 要设 `worker_init_fn` 和 `base_seed`，否则每个 worker 的种子不同
+3. **`len(...)` 为什么是 3？** —— 5 个样本、批大小 2，`ceil(5/2)=3`，末批只有 1 个
 
 ## 易错点
 
-待补充。
+- 认为 shuffle 不可复现——固定 seed 后可复现，这是实验可复现的前提
+- 传了 `generator` 还指望 `manual_seed` 生效——独立随机源，两者互不影响
+- 把批数算成 2——`5//2=2` 漏掉尾批
 
 ## 关联项目
 

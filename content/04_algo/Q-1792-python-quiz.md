@@ -2,7 +2,7 @@
 id: Q-1792
 title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 99 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -38,16 +38,19 @@ LSTM 与 RNN 输出形状相同 (批, 序列长, 隐层)，区别在于内部多
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+LSTM 返回 `(out, (h_n, c_n))`——第二个元素本身还是二元组，最容易漏。out 形状与 RNN 相同 `(B,T,H)`，`h_n`、`c_n` 都是 `(num_layers,B,H)`。`[0]` 只取 out，所以打印 `(2,7,5)`。cell state 是 LSTM 区别于 RNN 的关键，也是它擅长长依赖的原因。
 
 ## 高频追问
 
-待补充。
+1. **返回几个值？** —— 两个，第二个是 `(h_n, c_n)` 元组，解包要写 `out, (h, c) = lstm(x)`
+2. **h 和 c 的形状？** —— 都是 `(1,2,5)`，层数、批、隐层
+3. **为什么写 `[0]`？** —— 返回值是 tuple，没有 `.shape` 属性，必须取第一项
 
 ## 易错点
 
-待补充。
+- 写 `lstm(x).shape`——报 `AttributeError: 'tuple' object has no attribute 'shape'`
+- 以为返回 `(out, h)` 两元组——实际第二项还套了一层
+- 输出宽度写成 `2×hidden`——门控在内部，不改变输出维度
 
 ## 关联项目
 

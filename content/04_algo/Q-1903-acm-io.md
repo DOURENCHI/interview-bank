@@ -2,7 +2,7 @@
 id: Q-1903
 title: 第一行给组数 T，多组用例怎么组织？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

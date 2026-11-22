@@ -2,7 +2,7 @@
 id: Q-4304
 title: "CAN 驱动突然 Kernel Panic，你怎么定位？"
 module: 09_hardware
-sub: 嵌入式软件
+sub: 工程与调试
 priority: P1
 difficulty: 3
 roles: []

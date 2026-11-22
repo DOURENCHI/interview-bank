@@ -2,7 +2,7 @@
 id: Q-1757
 title: 这段 Python 代码输出什么？（04 线性模型与梯度下降 · 第 64 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -49,16 +49,19 @@ print(round(model.weight.item(), 4), round(model.bias.item(), 4), round(model(to
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`MSELoss(reduction="sum")` 不除样本数，梯度是 mean 版的 3 倍，等价于把 lr 放大到 0.03。该问题 Hessian 的两个特征值是 33.3 与 0.72，慢方向每步只衰减 0.7%，`0.9928^100 ≈ 0.49`，所以 w 停在 1.9622、b 停在 0.086，预测 4 得 7.9346 而不是 8.0。
 
 ## 高频追问
 
-待补充。
+1. **为什么不是精确的 2.0 / 0.0？** —— 100 轮远未收敛，b 方向曲率极小（特征值 0.72），是最慢的方向
+2. **换成 `reduction="mean"` 会怎样？** —— 梯度小 3 倍，同样 100 轮离 2.0 更远，说明 reduction 会改变有效学习率
+3. **想收敛到 2.0 怎么办？** —— 加轮数、调大 lr（上限受最大特征值 33.3 约束，lr<0.06）或先标准化输入
 
 ## 易错点
 
-待补充。
+- 直接答 2.0 / 0.0 / 8.0（选项 B）——把"应该收敛到"当成"实际算出来"
+- 认为 sum 与 mean 只差常数不影响训练——梯度差 3 倍，100 轮后的 w 完全不同
+- 把 weight 当标量——`Linear(1,1)` 的 weight 形状是 `(1,1)`，要 `.item()` 才能取数
 
 ## 关联项目
 

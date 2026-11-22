@@ -2,7 +2,7 @@
 id: Q-1911
 title: Python 一行给不定长整数，怎么读到行尾？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

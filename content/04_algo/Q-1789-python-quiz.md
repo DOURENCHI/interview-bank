@@ -2,7 +2,7 @@
 id: Q-1789
 title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 96 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -38,16 +38,19 @@ print(tuple(c(torch.randn(1, 64, 8, 8)).shape), c.weight.shape)
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+1×1 卷积在通道维做线性组合，等价于对每个像素施加一个 `Linear(64,32)`，权重跨空间位置共享。k=1、p=0、s=1 时输出尺寸公式退化为 H 不变，所以 8×8 原样保留。它常用来升降维（NiN、ResNet bottleneck），参数量 `32×64+32 = 2080`，与特征图大小无关。
 
 ## 高频追问
 
-待补充。
+1. **参数量多少？** —— 2080，`32×64` 加 32 个 bias
+2. **与 `Linear(64,32)` 的区别？** —— 逐像素共享同一组权重，不依赖像素位置
+3. **1×1 能改空间尺寸吗？** —— 只能靠 `stride>1`（或后续池化），核本身不缩尺寸
 
 ## 易错点
 
-待补充。
+- 答 `(1,32,7,7)`——把 1×1 当 3×3 减了核，即选项 D
+- weight 写成 `(64,32,1,1)`——通道顺序反了，即选项 C
+- 认为 1×1 卷积没有参数——它是最小的可学习通道变换
 
 ## 关联项目
 

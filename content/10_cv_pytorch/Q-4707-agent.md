@@ -2,7 +2,7 @@
 id: Q-4707
 title: "Agent 处理复杂任务要分解任务，下列说法哪项是对的？"
 module: 10_cv_pytorch
-sub: 大模型与推理
+sub: Agent 与工具调用
 priority: P1
 difficulty: 2
 roles: []

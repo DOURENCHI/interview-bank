@@ -2,7 +2,7 @@
 id: Q-1795
 title: 这段 Python 代码输出什么？（08 CNN 与 RNN · 第 102 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -46,16 +46,19 @@ padding=1 保持空间尺寸，残差相加要求形状一致，所以残差块�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+3×3 卷积配 `padding=1`、`stride=1`，输出满足 `H+2−3+1 = H`，所以残差块进出完全同形，`x + F(x)` 才合法。通道若变化必须加 1×1 投影把 x 变到同通道，否则广播失败或报错。恒等通路让梯度直接回传，这是深网可训的前提。
 
 ## 高频追问
 
-待补充。
+1. **c1 改成 2c 通道会怎样？** —— 相加报 shape mismatch，需要 downsample 分支做 1×1 投影
+2. **去掉 padding 呢？** —— 16→14，空间维不符，无法相加
+3. **为什么残差好训？** —— 梯度有恒等旁路，缓解连乘导致的消失
 
 ## 易错点
 
-待补充。
+- 忘 padding 直接相加——报 `The size of tensor a (14) must match tensor b (16)`
+- 以为会自动 broadcast 到 `(1,16,16,16)`——通道 8≠16 且空间维不同，广播失败
+- 把残差写成 `cat`——通道翻倍，下游形状全变
 
 ## 关联项目
 

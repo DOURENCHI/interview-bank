@@ -1,0 +1,709 @@
+@@ Q-1750
+@DEEP
+`item()` 只接受单元素张量，返回 Python 标量，类型随 dtype：float32 → float，int64 → int；多元素调用抛 RuntimeError。不调它拿到 0 维张量，print 走 repr 得 `tensor(3.)`，还能 backward；调了就脱离计算图。若 t 是整型张量，会输出 `3 int`，即选项 B。
+@FOLLOW
+1. **多元素张量调用 `item()` 会怎样？** —— 抛 `RuntimeError: a Tensor with 2 elements cannot be converted to Scalar`，只能先 `.sum()` 或索引到单个元素
+2. **为什么 D 不对？** —— D 假设 print 张量输出 `3.0`，实际走 `__repr__` 打印 `tensor(3.)`；要打印纯数字必须 `.item()`
+3. **`item()` 之后还能反向传播吗？** —— 不能，返回的是 Python float 已脱离计算图；要保留梯度得用 `.sum()` 这类张量运算
+@TRAPS
+- 把 `type(...).__name__` 记成 `int`——`torch.tensor([1.0, 2.0])` 是 float32，`item()` 返回 float，写成 int 就选了 B
+- 以为 `t.sum()` 返回 Python 数——它是 0 维张量，直接 print 得 `tensor(3.)` 而不是 `3.0`
+- 对多元素张量写 `.item()`——整行直接报错，这题一分拿不到
+
+@@ Q-1751
+@DEEP
+`m.shape` 是 `torch.Size`（tuple 子类），print 显示 `torch.Size([2, 3])`，套 `tuple()` 才得 `(2, 3)`。`reshape` 行优先填充，0..5 排成两行。`m[0]` 与 `m[:,1]` 都是视图。改成 `reshape(3,2)` 则 `m[:,1]` 得 `[1,3]`。
+@FOLLOW
+1. **`print(m.shape)` 和 `print(tuple(m.shape))` 一样吗？** —— 不一样，前者 `torch.Size([2, 3])`，后者 `(2, 3)`；选项里写 `(2, 3)` 是显式转过类型
+2. **`m[0]` 和 `m[0, :]` 有区别吗？** —— 没有，省略的维默认取全部，两者都是第 0 行的视图
+3. **改成 `reshape(3, 2)` 结果怎么变？** —— 矩阵变 `[[0,1],[2,3],[4,5]]`，`m[0].tolist()` 得 `[0, 1]`，`m[:,1].tolist()` 得 `[1, 3]`
+@TRAPS
+- 把 `m.shape` 直接当元组答——实际打印带 `torch.Size([...])` 外壳，选项 C/D 就是把外壳与内容搞混
+- 按列优先理解 `reshape`——会算成 `[[0,3],[1,4],[2,5]]`，`m[:,1]` 写错成 `[3, 5]`
+- 认为切片是拷贝——`m[0] += 100` 会改掉原张量，调试时容易怀疑是 bug
+
+@@ Q-1752
+@DEEP
+广播从最右维对齐：维度相等或其一为 1 才能算，否则报错。`(2,1)` 与 `(3,)` 对齐成 `(2,1)` 与 `(1,3)`，各扩到 `(2,3)`。边界在 `(2,1)+(2,)`：末维 1 对 2 不兼容，直接报错。广播不复制数据，靠 stride=0 视图。
+@FOLLOW
+1. **`(2,1)` 和 `(2,)` 相加呢？** —— 报错，右对齐时最后一维 1 与 2 不匹配，得先把 `(2,)` 改成 `(2,1)`
+2. **为什么第一行是 `[11,21,31]`？** —— `a[0,0]=1` 被广播到整行，与 `[10,20,30]` 逐元素相加
+3. **换成 `a @ b` 会怎样？** —— 内维 1 与 3 不匹配，报矩阵乘维度错误；广播只对逐元素运算生效
+@TRAPS
+- 以为 `(3,)` 会补成 `(3,1)`——那样得 `[[11,12],[21,22],[31,32]]`，就是选项 B
+- 把广播理解成"复制成同形状再算"——实际是 stride=0 视图，`a.expand(2,3)` 不占新内存
+- 以为形状不同一定报错——只要满足右对齐规则就能算，这是判断题最常见的失分点
+
+@@ Q-1753
+@DEEP
+`cat` 沿已有维拼接，其余维必须完全相同；`stack` 新建一维，两个 `(2,)` 堆成 `(2,2)`。若 a、b 是 `(2,3)`：`cat` 得 `(4,3)`，`stack` 得 `(2,2,3)`。`stack` 等价于先 `unsqueeze` 再 `cat`，dtype 不同会报错。
+@FOLLOW
+1. **`cat` 的 `dim` 怎么影响结果？** —— 对 `(2,2)` 张量 `dim=0` 得 `(4,2)`、`dim=1` 得 `(2,4)`；1-D 张量传 `dim=1` 越界报错
+2. **`stack` 之后怎么拆回去？** —— `torch.unbind(y, dim=0)` 得到两个 `(2,)`，或直接 `y[0]`、`y[1]`
+3. **变长序列能直接 `cat` 吗？** —— 不能，除拼接维外其余维必须一致，得先 pad 到等长或改用 `pad_sequence`
+@TRAPS
+- 把 `stack` 当 `cat`——期望 `(4,)` 实得 `(2,2)`，后面接 Linear 时输入维度算错
+- 认为 `stack` 不改变总元素数——元素数不变但秩加 1，`ndim` 判断会错
+- 用 `cat` 拼不同 dtype——int64 与 float32 混拼直接报错，需先 `.float()`
+
+@@ Q-1754
+@DEEP
+PyTorch 默认 dtype 与 NumPy 相反：整数给 int64，浮点给 float32（NumPy 是 float64），为省显存与提吞吐。要双精度须显式指定。`device` 打印 `cpu` 不带 `:0`，因为 CPU 无卡号、`index` 为 None；CUDA 才打印 `cuda:0`。
+@FOLLOW
+1. **为什么浮点默认 float32 而 NumPy 是 float64？** —— 深度学习对精度不敏感但对显存与带宽敏感，fp32 在 GPU 上吞吐是 fp64 的数倍
+2. **`torch.Tensor([1,2])` 和 `torch.tensor([1,2])` 一样吗？** —— 不一样，前者是构造函数别名固定产出 float32，后者按字面量推断得 int64
+3. **int64 与 float32 相加结果是什么类型？** —— 提升为 float32，可用 `torch.result_type` 验证；float64 与 float32 相加则得 float64
+@TRAPS
+- 以为整数默认 int32——实际是 `torch.int64`，答 int32 就选了 B
+- 以为 device 打印 `cpu:0`——CPU 无索引，`str(t.device)` 就是 `cpu`
+- 把 NumPy 的 float64 习惯带过来——`np.array([1.0])` 转 torch 后是 float64，与 float32 模型相加报 dtype 错
+
+@@ Q-1755
+@DEEP
+MSE 是 `1/n·Σ(xw−y)²`，对 w 求导得 `2/n·Σx(xw−y)`。w=1 时误差 −1、−2、−3，平方和 14 除 3 得 4.6667；梯度 `2/3×(−14) = −9.3333`。为负说明 w 偏小。若损失改成不除 n 的 sum，两数同时放大 3 倍。
+@FOLLOW
+1. **梯度为什么是负的？** —— 当前 w=1 小于最优值 2，预测偏小，沿负梯度方向（增大 w）走才能降损
+2. **最优 w 是多少？** —— 2.0，闭式解 `Σxy/Σx² = 28/14`，此时梯度恰好为 0
+3. **把 `1/len(xs)` 去掉结果怎么变？** —— cost 变 14.0、grad 变 −28.0，即选项 C；两者同步放大 3 倍，方向不变
+@TRAPS
+- 漏掉 `1/len(xs)`——得 14.0 和 −28.0（选项 C），这是最常见的口径错误
+- 求导漏掉链式法则的 2——得 −4.6667，落不到任何选项上
+- 把梯度符号写反——写成 9.3333 会误判"该减小 w"，更新方向整体反了
+
+@@ Q-1756
+@DEEP
+更新式 `w ← w − lr·g`，初始 g=−9.3333，lr=0.01 第一步只挪 0.0933。该问题 Hessian 是 `28/3≈9.33`，稳定条件 `lr < 0.214`。误差每步按 `1−0.0933≈0.907` 衰减，三步到 1.2547，离 2.0 还远。
+@FOLLOW
+1. **为什么不一步到 2.0？** —— 梯度下降是迭代逼近，步长受 lr 限制；只有闭式解能一步到位
+2. **lr 取 0.2 会怎样？** —— 接近 2/9.33 的临界值，误差乘子接近 −0.87，来回震荡不收敛
+3. **cost 为什么从 4.6667 降到 2.5923？** —— w 从 1 靠近 2，三个样本误差同步缩小，平方和从 14 降到 7.78
+@TRAPS
+- 把 lr 漏掉写成 `w -= grad(w)`——这就是 Q-1760 的发散场景，w 会冲到 −1.6e9
+- 每轮用更新前的 w 算 cost——cost 滞后一步，末值对不上 2.5923
+- 循环次数数错（写成 4 次）——w≈1.324、cost≈2.13，落到选项之外
+
+@@ Q-1757
+@DEEP
+`MSELoss(reduction="sum")` 不除样本数，梯度是 mean 版的 3 倍，等价于把 lr 放大到 0.03。该问题 Hessian 的两个特征值是 33.3 与 0.72，慢方向每步只衰减 0.7%，`0.9928^100 ≈ 0.49`，所以 w 停在 1.9622、b 停在 0.086，预测 4 得 7.9346 而不是 8.0。
+@FOLLOW
+1. **为什么不是精确的 2.0 / 0.0？** —— 100 轮远未收敛，b 方向曲率极小（特征值 0.72），是最慢的方向
+2. **换成 `reduction="mean"` 会怎样？** —— 梯度小 3 倍，同样 100 轮离 2.0 更远，说明 reduction 会改变有效学习率
+3. **想收敛到 2.0 怎么办？** —— 加轮数、调大 lr（上限受最大特征值 33.3 约束，lr<0.06）或先标准化输入
+@TRAPS
+- 直接答 2.0 / 0.0 / 8.0（选项 B）——把"应该收敛到"当成"实际算出来"
+- 认为 sum 与 mean 只差常数不影响训练——梯度差 3 倍，100 轮后的 w 完全不同
+- 把 weight 当标量——`Linear(1,1)` 的 weight 形状是 `(1,1)`，要 `.item()` 才能取数
+
+@@ Q-1758
+@DEEP
+对线性模型加平方损失，目标函数是凸二次型，驻点唯一且就是全局最优，所以 `grad(2)=0` 与 `cost(2)=0` 同时成立不是巧合。若数据带噪声，梯度为 0 的点仍存在，但残差不为 0，cost 大于 0。浮点下"恰好为 0"依赖数据可精确表示：这里全是 1、2、3 与整数倍，二进制没有误差。
+@FOLLOW
+1. **梯度为 0 一定是全局最优吗？** —— 凸二次函数是；神经网络非凸，梯度为 0 可能是鞍点或局部极小，要看二阶信息
+2. **把 ys 改成 `[2, 4, 7]` 呢？** —— 最优 w=31/14≈2.214，`grad(2) = 2/3·(0+0−3) = −2.0`，cost 为 `1/3 ≈ 0.3333`
+3. **工程上怎么判断收敛？** —— 看 `|grad| < tol` 或连续若干轮 loss 变化小于阈值，而不是等 loss 精确为 0
+@TRAPS
+- 认为 cost=0 说明代码写错了——数据完全线性且 w 取到真值时本就该是 0
+- 把 `grad(2.0)` 算成 2.0——误把 x 的系数当结果，误差项其实全为 0
+- 输出写成 `(0.0, 0.0)` 带括号——`print(a, b)` 用空格分隔，括号是选项 B 的干扰项
+
+@@ Q-1759
+@DEEP
+这是无截距最小二乘的正规方程解：最小化 `Σ(xw−y)²` 对 w 求导令零，得 `w = Σxy/Σx²`，与 `(XᵀX)⁻¹Xᵀy` 一致。`@` 对 1-D 张量就是内积，等价 `np.dot`。加截距后要解 2×2 方程组，w 变成 `Σ(x−x̄)(y−ȳ)/Σ(x−x̄)²`；本例因 y=2x 过原点，加不加截距都得 2.0。
+@FOLLOW
+1. **有 bias 时闭式解怎么算？** —— 解 `[[Σx², Σx],[Σx, n]]·[w, b]ᵀ = [Σxy, Σy]ᵀ`，一个二元一次方程组
+2. **为什么梯度下降也奔着 2.0 去？** —— 优化的是同一个平方损失，凸函数只有这一个极小点
+3. **`xs @ ys` 换成 `np.outer` 会怎样？** —— 得到 3×3 矩阵，外面套 `float()` 直接报错，只能对标量转型
+@TRAPS
+- 分母写成 `ys @ ys`——得 28/56=0.5，公式记反是最典型的失分
+- 忘写 `float()`——打印成 `np.float64(2.0)`，与题目输出格式不符
+- 以为 `xs @ ys` 是矩阵乘——1-D 时是内积返回标量，2-D 才是矩阵乘
+
+@@ Q-1760
+@DEEP
+稳定条件是 `lr < 2/λmax`，这里 `λmax = 2Σx²/n = 28/3 ≈ 9.33`，临界值约 0.214。lr=1.0 时误差乘子为 `1 − 1.0×9.33 = −8.33`，绝对值大于 1 且为负，于是每步放大 8 倍多并交替变号，10 步后到 1e9 量级。注意 10 步内还没溢出成 inf，仍是有限大数，只是符号为负。
+@FOLLOW
+1. **为什么结果是负数且绝对值爆炸？** —— 乘子为负说明每步越过最优点并反向，`|−8.33|>1` 使幅度指数增长
+2. **临界学习率是多少？** —— 约 0.214；超过它震荡发散，恰好等于它则等幅震荡
+3. **训练出现 inf/nan 怎么排查？** —— 先把 lr 降一个数量级，再加梯度裁剪、检查输入是否未标准化
+@TRAPS
+- 认为发散一定得到 nan——10 步内是有限大数 `−1.6e9`，inf 要更多步或更大 lr
+- 把 lr 当"越大收敛越快"——超过 2/λmax 直接发散，这正是本题考点
+- 只说"变得很大"不说符号——输出带负号，漏掉符号就选不出 A
+
+@@ Q-1761
+@DEEP
+`nn.Linear` 的 weight 是 `(out, in)`，与数学写法 `W(in, out)` 互为转置，前向为 `y = x·Wᵀ + b`。这样与 `Conv2d` 的 out-first 约定统一。参数量 = `out×in + out`，`Linear(3,2)` 即 6+2=8。
+@FOLLOW
+1. **为什么 weight 不是 `(3, 2)`？** —— 为了直接 `x @ W.t()`，且与卷积 out-first 的约定统一，`F.linear` 内部就是这么算的
+2. **输入 `(5, 3)` 时输出形状？** —— `(5, 2)`，只有最后一维被 in_features 吃掉，前面几维都是 batch
+3. **这个层的 FLOPs 怎么估？** —— 约 `2 × batch × in × out`（乘、加各一次），bias 另加
+@TRAPS
+- 把 weight 当 `(in, out)`——参数量仍算 6，但 bias 只加 3 个，总数错成 9
+- 忘记 bias——得 2×3=6，正好是选项 C 的坑
+- 把 `shape[0]*shape[1]+2` 里的 2 当输入维——那是 bias 个数，等于 out_features
+
+@@ Q-1762
+@DEEP
+`requires_grad` 沿计算图传播：任一浮点输入需要梯度，输出就需要。这里输入默认 False，但 weight/bias 是 True，所以 out 为 True 并挂 grad_fn。整数张量不能求导，`nn.Linear` 喂 long 直接报 dtype 错。
+@FOLLOW
+1. **什么时候输出会是 False？** —— 包在 `torch.no_grad()` / `inference_mode()` 里，或所有参数的 `requires_grad` 都被冻结
+2. **为什么形状是 `(4,1)` 不是 `(1,4)`？** —— 第一维是 batch（4 个样本），最后一维是 out_features=1
+3. **想让输入也参与求导怎么办？** —— 先 `x.requires_grad_(True)`（x 必须是浮点），再前向，`out.grad_fn` 会多一层
+@TRAPS
+- 认为输入没设 requires_grad 所以输出 False——参数是 True，输出就跟着 True
+- 把形状写成 `(1,4)`——`Linear(2,1)` 输出最后一维恒为 1
+- 以为 `requires_grad` 是只读属性——`.requires_grad_(True)` 可原地改，但只对叶子张量有意义
+
+@@ Q-1763
+@DEEP
+每层参数 = `out×in + out`（有 bias 时）。4→8 是 32+8=40，8→1 是 8+1=9，合计 49。ReLU 无参数，`Sequential` 本身也不额外产生参数。把第一层改成 `bias=False` 则 32+8=40；把 ReLU 换成 `BatchNorm1d(8)` 会多 16 个仿射参数（8 个 γ、8 个 β）。
+@FOLLOW
+1. **`parameters()` 和 `state_dict()` 差在哪？** —— BN 的 `running_mean/var` 是 buffer，进 state_dict 但不进 parameters，所以参数量统计会漏掉它们
+2. **冻结的参数算不算 numel？** —— 算，`numel()` 只看元素个数，与是否需要梯度无关
+3. **换成 `Conv2d(1, 8, 3)` 参数量多少？** —— `8×1×3×3 + 8 = 80`，卷积核在空间维上共享权重
+@TRAPS
+- 忘加 bias——得 32+8=40，正好落在选项 B 上
+- 把 ReLU 当有参数——多算 0 个还好，若把它当 Linear 会多算 8×8
+- 用 `len(list(m.parameters()))` 当参数量——得 4（4 个张量），不是 49
+
+@@ Q-1764
+@DEEP
+`sum().backward()` 上游梯度为 1，故 `∂Σout/∂w = x = 1`，与 w 初值无关；两次都在 backward 前清了零，所以都是 1.0。删掉 `zero_grad()` 才会累加。梯度是累加不是覆盖，这是支持多 loss 反传的设计代价。
+@FOLLOW
+1. **删掉 `m.zero_grad()` 结果如何？** —— g2 变 2.0，第二次 backward 在旧梯度上叠加，训练会不知不觉放大步长
+2. **为什么梯度与 w 无关？** —— 输出是 `xw+b`，对 w 的偏导就是 x，这里 x=1
+3. **清零有哪几种写法？** —— `opt.zero_grad()`、`m.zero_grad()`、`p.grad = None`；前两者默认 `set_to_none=True`
+@TRAPS
+- 认为不清零会自动覆盖——实际是累加，多轮后梯度成倍增长
+- 把 g1 算成 w 的初值——权重初值是随机数，而梯度只由 x 决定
+- 认为 `backward()` 会自动清零——它只累加，清不清零是调用方的事
+
+@@ Q-1765
+@DEEP
+`losses` 记的是每次 `step` 之前的 loss（顺序 loss→zero_grad→backward→step），所以 `losses[-1]` 比训练结束时的真实 loss 略大。sum + lr=0.01 在 50 步内把 46.89 压到 0.13，方向与步长都对。
+@FOLLOW
+1. **`losses[0]=46.8943` 怎么来的？** —— seed=4 的初始 w、b 随机，三个样本预测偏离真值，平方和累加得 46.89
+2. **为什么记录的是 step 前的 loss？** —— 代码顺序决定，`loss` 在前向时算好，`step()` 在其后才改参数
+3. **想更快收敛怎么办？** —— 换 Adam、标准化输入、适当调大 lr，或改用 `reduction="mean"` 统一量纲
+@TRAPS
+- 把 `losses.append` 挪到 `step()` 之后——记录的是更新后的 loss，首值就对不上 46.8943
+- 认为 loss 必须严格单调下降——换 mini-batch 后会抖动，全批才单调
+- 混淆 sum 与 mean——mean 下首值约 15.63，选项全对不上
+
+@@ Q-1766
+@DEEP
+train 模式按 p 置零，并把保留值除以 `1-p`（inverted dropout），保证输出期望不变；eval 模式既不置零也不缩放。所以 train 得 3.4002（本次采样的随机结果），eval 得 1.4552（确定的 Linear 输出）。同一份权重、同一输入，两种模式结果不同，这是模式标志而不是权重差异。
+@FOLLOW
+1. **为什么要除以 `1-p`？** —— 保持训练与推理的期望一致，推理时就不必再乘 `(1-p)` 做补偿
+2. **train 模式连跑两次结果一样吗？** —— 不一样，每次前向重新采样 mask；本题能复现是因为之前固定了 seed
+3. **eval 后忘了切回 train 会怎样？** —— 训练时 Dropout 失效、BN 用运行统计量，正则消失且统计量不再更新
+@TRAPS
+- 认为 eval 输出 = train 输出 × 0.5——inverted dropout 下 eval 完全不缩放，直接是 1.4552
+- 以为 Dropout 有权重参数——它没有可学参数，只有 p 与 training 标志
+- 只调子模块 `.eval()` 而父模块仍 train——父模块的 `train()` 会递归覆盖子模块状态
+
+@@ Q-1767
+@DEEP
+`nn.Parameter` 构造时默认 `requires_grad=True`，`nn.Linear` 的 weight/bias 都是 Parameter，所以全部为真。注意 `all()` 对空序列返回 True——无参数模块（如只有 ReLU）也会打印 True，这是逻辑上的坑。冻结只需把标志改 False，张量本身不变。
+@FOLLOW
+1. **`all([])` 返回什么？** —— True，所以对无参数模块做这个判断会得到"全部可训练"的假象
+2. **怎么只冻结第一层？** —— 遍历 `named_parameters()`，按前缀 `c1.` 匹配后 `requires_grad_(False)`
+3. **冻结后还要传给 optimizer 吗？** —— 可以不传；传了也不会更新，但会多占一点状态内存
+@TRAPS
+- 用 `any` 代替 `all`——本题两者都为 True 看不出差别，换到部分冻结的场景就答反了
+- 以为 `requires_grad` 是张量里的数值——它是布尔标志，不参与计算
+- 把 buffer 也纳入判断——BN 的 running_mean 没有 requires_grad 属性语义，容易抛 AttributeError
+
+@@ Q-1768
+@DEEP
+`requires_grad_()` 是带下划线的原地方法，返回自身，把标志改成 False。冻结后反向不会为该参数分配 grad（保持 None），前向仍正常算，只是不建那段图，省显存。若输入 requires_grad=True，输出仍会是 True——输出标志看的是所有输入，不只参数。
+@FOLLOW
+1. **冻结后 `p.grad` 是什么？** —— None，因为反向时直接跳过，不会写 0
+2. **冻结与不传进 optimizer 的区别？** —— 前者连计算图都不建，省显存；后者照样建图只是不更新
+3. **怎么恢复训练？** —— `p.requires_grad_(True)`，注意 optimizer 若当初没传该参数，需要重建
+@TRAPS
+- 以为冻结会把 weight 置 0——参数值原样保留，只是不再更新
+- 以为 `any` 返回 0——`any` 返回 bool，print 出 `False` 而不是 `0`
+- 只改 `p.data.requires_grad`——`.data` 脱离 autograd，改它无效且危险
+
+@@ Q-1769
+@DEEP
+`len(ds)` 来自 `__len__` 返回 10；`len(dl)` 是 `ceil(N/batch_size)`，`drop_last=True` 时变 floor。DataLoader 的长度依赖 sampler，`IterableDataset` 无长度会抛 TypeError。余数必须单独成批，不能整除取整了事。
+@FOLLOW
+1. **`drop_last=True` 时 `len(dl)` 是多少？** —— 2，10//4=2，尾部 2 个样本被丢弃
+2. **`batch_size` 大于 N 呢？** —— 1 批，形状 `(10, 1)`，不会报错也不会补齐
+3. **`len(ds)` 是谁提供的？** —— 必须自己实现 `__len__`，否则 `len(ds)` 直接 TypeError
+@TRAPS
+- 用整除算成 2——忘了余数要单独成一批，正确是 3
+- 以为最后一批会补零到 4——默认不补，形状是 `(2,1)`
+- 忘了写 `__len__`——`len(ds)` 报 `TypeError: object of type 'DS' has no len()`
+
+@@ Q-1770
+@DEEP
+默认 collate 把样本沿新维 stack，`(1,)` 堆成 `(B,1)`，末批 B=2 不补齐。`shuffle=False` 时顺序就是索引 0..9。若 `__getitem__` 返回 dict，collate 按 key 分别堆叠成 dict of tensors。
+@FOLLOW
+1. **最后一批会补零吗？** —— 不会，`(2,1)` 就是 2 个样本，补零要自己写 collate_fn
+2. **想要固定形状怎么办？** —— `drop_last=True` 丢掉尾批，或自定义 sampler/collate 补齐
+3. **batch 内样本顺序由谁决定？** —— sampler，`shuffle=False` 时是 `SequentialSampler`，严格按索引
+@TRAPS
+- 认为末批补零成 `(4,1)`——即选项 B，实际只有 `(2,1)`
+- 把 `(2,1)` 写成 `(2,)`——样本本身是 `(1,)`，堆叠后必是二维
+- 把 `len(dl)=3` 与批形状混淆——批数不等于批大小
+
+@@ Q-1771
+@DEEP
+`drop_last=True` 丢弃不足一批的尾部，`10//4=2`，出 2 个满批共 8 个样本，剩 2 个被丢。这个开关主要防 BN 在单样本批上方差为 0（或直接报错），以及保证各批形状一致好做静态图编译。代价是每 epoch 有样本不参与训练，shuffle 下相当于随机丢。
+@FOLLOW
+1. **被丢掉的数据怎么办？** —— 每个 epoch 因 shuffle 顺序不同而不同，等价于随机丢弃，量小可接受
+2. **什么时候必须开？** —— 末批只剩 1 个样本且网络里有 BatchNorm 时，必须开，否则 BN 报错
+3. **N=8 时是多少？** —— 2 批，正好整除，`drop_last` 不丢任何样本
+@TRAPS
+- 算成 3——那是 `drop_last=False` 的结果
+- 以为 `drop_last` 会把尾批补齐——它是丢弃，不是填充
+- N=8 时仍答 1——整除时两种设置结果相同，都是 2
+
+@@ Q-1772
+@DEEP
+列表推导逐批取 `shape`，默认 `drop_last=False` 所以是 `[(4,1),(4,1),(2,1)]`。DataLoader 是可迭代对象，每次 `iter()` 重建迭代器，所以能重复遍历；但 `it = iter(dl)` 得到的迭代器本身只能走一次。批形状的第一维是实际样本数，因此末批会变。
+@FOLLOW
+1. **同一个 dl 能遍历两次吗？** —— 能，`for` 每次调 `__iter__` 新建迭代器；但缓存的 `iter(dl)` 走完就空
+2. **为什么是 `(4,1)` 不是 `(4,)`？** —— 单样本是 `(1,)`，堆叠后多一个 batch 维
+3. **想让各批形状统一怎么办？** —— `drop_last=True`，或自定义 `collate_fn` 做 padding
+@TRAPS
+- 答三个 `(4,1)`——忽略末批只有 2 个样本
+- 认为迭代器耗尽后 dl 也废了——dl 本身可反复 `iter`，只有迭代器一次性
+- 把形状写成 `(4,)`——丢掉特征维，与 `reshape(-1,1)` 矛盾
+
+@@ Q-1773
+@DEEP
+没给 `generator` 时 `RandomSampler` 用全局 RNG，`manual_seed(0)` 能复现同一排列 `[1,4,2,3,0]`；显式传 generator 就与全局隔离，seed 失效。批数 `ceil(5/2)=3`，末批 1 个样本。多 worker 还要 `worker_init_fn`。
+@FOLLOW
+1. **为什么两次结果完全一样？** —— 全局 RNG 状态被 `manual_seed(0)` 重置，采样序列从头重放
+2. **多进程 dataloader 还能复现吗？** —— 要设 `worker_init_fn` 和 `base_seed`，否则每个 worker 的种子不同
+3. **`len(...)` 为什么是 3？** —— 5 个样本、批大小 2，`ceil(5/2)=3`，末批只有 1 个
+@TRAPS
+- 认为 shuffle 不可复现——固定 seed 后可复现，这是实验可复现的前提
+- 传了 `generator` 还指望 `manual_seed` 生效——独立随机源，两者互不影响
+- 把批数算成 2——`5//2=2` 漏掉尾批
+
+@@ Q-1774
+@DEEP
+默认 `collate_fn` 遇到 tuple 会按位置转置：先取所有样本的第 0 个元素 stack 成 `(3,)`，再取第 1 个。所以解包 `for xb, _ in ...` 拿到的 xb 是 `[10,20,30]`。若 `__getitem__` 只返回单值，堆叠后是 `(3,)` 少一维；各样本字段数不一致会直接报错。
+@FOLLOW
+1. **返回单值会怎样？** —— 得到 `(3,)` 而不是 `(1,3)`，后面接 Linear 时维度对不上
+2. **返回 dict 呢？** —— 按 key 分别堆叠，得到 `{"x": tensor(...), "y": tensor(...)}`
+3. **为什么只有一批？** —— `batch_size=3` 等于样本总数 3，正好一批
+@TRAPS
+- 以为输出是 `[[10],[20],[30]]`——那是按样本分组，实际是按字段分组
+- 以为 tuple 需要自定义 collate——默认实现已按位置处理，不用写
+- 把 `_` 当成丢弃后形状变化——解包不影响堆叠结果
+
+
+@@ Q-1775
+@DEEP
+`σ(x)=1/(1+e^{−x})`，0→0.5、2→0.8808、4→0.9820，值域 (0,1) 且单调。饱和区梯度极小，`σ'(4)≈0.0177`，层一多连乘就趋零，这是梯度消失根源。多标签用 sigmoid，单标签多分类必须 softmax。
+@FOLLOW
+1. **sigmoid 与 softmax 的区别？** —— softmax 各类互相竞争、和恒为 1；sigmoid 每个输出独立，和可以是任意值
+2. **深层网络为什么改用 ReLU？** —— sigmoid 在饱和区梯度接近 0，连乘后梯度消失；ReLU 正区间梯度恒为 1
+3. **`σ(−2)` 是多少？** —— 0.119203，正好等于 `1 − σ(2)`，这是 sigmoid 的对称性
+@TRAPS
+- 把 `σ(4)` 算成 0.999——实际 0.982014，饱和不等于到 1
+- 认为 sigmoid 输出之和为 1——只有两个互补输入时才恰好为 1
+- 多分类用 sigmoid 再算交叉熵——各类概率不归一，loss 与梯度都不对
+
+@@ Q-1776
+@DEEP
+softmax 先减最大值再取指数以防 `exp` 溢出，因此对整体平移不变：`[1,2,3]` 与 `[101,102,103]` 结果完全相同。分母是各类指数之和，所以输出恒和为 1。`dim` 必须显式指定，二维输入给错维度会沿错误轴归一化，行和不再是 1，这是最常见的静默错误。
+@FOLLOW
+1. **`dim` 传错会怎样？** —— 沿错误维归一化，如 `(B,C)` 传 `dim=0` 会变成每列和为 1，语义完全错
+2. **为什么不能直接写 `exp(x)/Σexp(x)`？** —— 大数会溢出成 inf，减去 max 后指数最大为 0，数值安全
+3. **与 `log_softmax` 什么关系？** —— 后者是 softmax 再取 log，数值更稳，配 `NLLLoss` 等价于交叉熵
+@TRAPS
+- 认为输出顺序反转——softmax 保序，最大 logit 拿最大概率（选项 B 是倒序陷阱）
+- 说概率和是 3——归一化后恒为 1.0
+- 忘写 `dim`——旧版本只警告并按推断维算，新版本直接报错
+
+@@ Q-1777
+@DEEP
+`argmax` 返回 int64 下标张量，`float()` 转成 `1.0`；有并列最大值时返回第一个。`0.7` 在 float32 里的实际值是 0.699999988079071，因为 0.7 的二进制是无限循环小数。这也解释了为什么浮点比较要用 `torch.allclose` 或先 round，直接 `==` 判等几乎必然失败。
+@FOLLOW
+1. **`argmax` 和 `max` 的区别？** —— `argmax` 只给下标，`max` 返回值本身（还能返回下标元组）
+2. **有并列最大值返回哪个？** —— 第一个，CPU 上保证，GPU 上不保证顺序
+3. **为什么打印出 `0.699999988`？** —— float32 只有 24 位有效位，0.7 无法精确表示，转 Python float 后暴露误差
+@TRAPS
+- 用 `== 0.7` 判断——得 False，正确写法是 `abs(p[1]-0.7) < 1e-6`
+- 把 `argmax` 当最大值——会答 0.7 而不是下标 1
+- 以为 `torch.tensor([0.2,0.7,0.1])` 是 float64——浮点字面量默认 float32，误差正是由此而来
+
+@@ Q-1778
+@DEEP
+BCE 为 `−[y·log p+(1−y)·log(1−p)]`，默认取 mean。p=`[0.8,0.2]`、y=`[1,0]` 时两项都是 `−log0.8`，平均仍是 0.223144。若标签反过来 `[0,1]`，得 `−log0.2 = 1.609`。
+@FOLLOW
+1. **`reduction="sum"` 是多少？** —— 0.446287，等于 mean 乘 2；训练时 sum 会让梯度随批大小放大
+2. **p 里出现 0 或 1 会怎样？** —— `log(0)` 得 inf，梯度变 nan，所以要先 clamp 或改用 `BCEWithLogitsLoss`
+3. **为什么平均后仍等于 `−log0.8`？** —— 两项数值相同，均值等于其中任一项
+@TRAPS
+- 忘了 mean 要除以 2——得 0.446287，正好是 sum 的结果
+- 把 log 当 log10——得 0.0969 量级，与所有选项都对不上
+- 直接把 logits 喂给 BCELoss——不报错但语义错，值也是错的（应先 sigmoid）
+
+@@ Q-1779
+@DEEP
+`BCEWithLogitsLoss` 用 log-sum-exp 恒等式 `max(x,0) − x·y + log(1+e^{−|x|})` 计算，数学上等于 sigmoid + BCE，但不会显式算出 0 或 1 再取 log，因此不会溢出。这里两种写法都得 0.126928，是数值稳定的等价实现；logits 到 ±20 以上时手动版就会炸。
+@FOLLOW
+1. **为什么数值更稳？** —— 不显式算 sigmoid，避免 `log(0)` 与 `exp` 上溢，全程在同一对数域内合并
+2. **`logits=[20,−20]` 时手动版会怎样？** —— sigmoid 饱和到 1 和 0，`log(0)` 得 inf；融合版仍是有限值
+3. **多标签怎么用？** —— 直接对 C 维 logits 用，target 同形状且为 float，逐元素独立算 BCE
+@TRAPS
+- 认为融合版结果会不同——数学等价，只差浮点误差
+- 对已 sigmoid 的输出再用 `BCEWithLogitsLoss`——等于做了两次 sigmoid，值偏小且梯度错
+- target 传 int——报 dtype 不匹配，BCE 要求 float
+
+@@ Q-1780
+@DEEP
+`CrossEntropyLoss` = `log_softmax` + `NLLLoss`，输入必须是 logits，target 是 long 类标。传概率 `[0.9,0.05,0.05]` 会被再 softmax 一次，损失变 0.56203。0.41703 就是 `−log(0.665241)`。
+@FOLLOW
+1. **为什么不能传概率？** —— 会二次 softmax，loss 与梯度都错，且不报错，属于静默 bug
+2. **target 能用 one-hot 吗？** —— 这个接口不行，要传类标索引；one-hot 得手写 `−Σy·log_softmax`
+3. **0.41703 怎么算出来？** —— softmax 后正确类概率 0.665241，取负对数即 0.41703
+@TRAPS
+- 先 softmax 再喂 CE——最常见的错，损失偏大且训练变慢
+- target 传 float——报 `expected scalar type Long`
+- 认为 CE 输入是概率——这是本题的核心考点，答反就全错
+
+@@ Q-1781
+@DEEP
+`log_softmax = logits − logsumexp(logits)`，输出全负；`NLLLoss` 取 target 位置的负值求平均，与 `CrossEntropyLoss` 完全等价。拆开写便于加权、ignore_index 与蒸馏。注意 NLLLoss 只认 log 概率，给概率会得负 loss。
+@FOLLOW
+1. **与 `CrossEntropyLoss` 数值关系？** —— 完全相等，前者就是后者的两步展开
+2. **为什么要拆开写？** —— 需要类别加权、忽略某类、或对 log 概率做额外运算时更灵活
+3. **`NLLLoss` 能给概率吗？** —— 不能，它直接取负号，给概率会得负数 loss，属于静默错误
+@TRAPS
+- 把 `log_softmax` 当 softmax——输出应为负数，写成正的概率值（选项 B）
+- 对 log 概率再取一次 log——数值彻底错，还可能出 nan
+- 忘记 NLLLoss 内部取负——会以为 loss 是 −0.41703
+
+@@ Q-1782
+@DEEP
+logits `[0.5,−0.5,1.5]` 经 sigmoid 得 `[0.6225,0.3775,0.8176]`，BCE 逐元素算完平均，三项都等于 `−log0.6225`，得 0.383189。融合版是对数域同式，结果相同，只差稳定性与计算量。
+@FOLLOW
+1. **两者什么时候会不同？** —— logits 极大时手动版 sigmoid 饱和，`log(0)` 得 inf；融合版仍有限
+2. **哪个更快？** —— 融合版少一次 sigmoid 和一次 log，反向也更简洁
+3. **为什么三项 loss 相同？** —— 每个样本的预测概率与标签"匹配度"恰好一致，都是 0.6225
+@TRAPS
+- 算成 0.693147——那是全预测 0.5 时的 BCE，说明漏算了 sigmoid
+- 把 mean 当 sum——得 1.149567，是 3 倍关系
+- target 用 int——报 dtype 错，BCE 系列要求 float
+
+@@ Q-1783
+@DEEP
+`(y==p).float().mean()` 是逐元素准确率：90 个负类全对、10 个正类全错，得 0.9。accuracy 对类别不平衡完全不敏感，全预测多数类就能拿高分，但正类召回率是 0。所以不平衡数据要看 per-class precision/recall/F1 或 AUC-PR，而不是单看 accuracy。
+@FOLLOW
+1. **该看什么指标？** —— 正类的 precision/recall/F1、AUC-PR；本场景 recall=0 会立刻暴露问题
+2. **为什么 AUC 更稳？** —— 它衡量排序质量，与阈值和类别先验无关，不受多数类淹没
+3. **若全预测 1 呢？** —— accuracy 变 0.1，同样说明单看 accuracy 会被先验带着走
+@TRAPS
+- 认为 0.9 说明模型不错——正类一个没抓到，实际不可用
+- 去掉 `.float()` 直接 `mean()`——bool 张量求均值报 `could not infer output dtype`
+- 用 `==` 比较浮点概率——只有 p 恰好是 0.0 才成立，一般要用阈值二值化
+
+@@ Q-1784
+@DEEP
+无 padding、stride=1、dilation=1 时 `out = 5−3+1 = 3`；权重全 1 时每个输出就是对应 3×3 窗口的元素和。首窗口 `0+1+2+5+6+7+10+11+12 = 54`，按行序依次是 54、63、72。PyTorch 做的是互相关而非严格卷积（不翻转核），因为核是学出来的，翻转与否等价。
+@FOLLOW
+1. **为什么不是真正的卷积？** —— 深度学习框架实现的是互相关，权重训练时自动补偿，数学上等价
+2. **加 `padding=1` 形状怎么变？** —— 仍是 `(1,1,5,5)`，`5+2−3+1=5`，边界补零
+3. **加 `stride=2` 呢？** —— `(5−3)//2+1 = 2`，输出 `(1,1,2,2)`，只覆盖部分窗口
+@TRAPS
+- 算成 `(1,1,5,5)`——忘减核尺寸，选项 C 就是这个坑
+- 按列优先列结果——得 `[54,99,144,63,...]`，即选项 D
+- 以为要先翻转核——PyTorch 不翻转，翻转后结果不同（这里全 1 才碰巧一样）
+
+@@ Q-1785
+@DEEP
+`MaxPool2d(2)` 的 stride 默认等于 kernel_size，2×2 输入正好一窗，输出 `(1,1,1,1)` 取最大值 4.0。池化没有可学参数，反向只把梯度传给窗口内最大值那个位置，其余为 0。若输入奇数边长如 3×3，`floor((3−2)/2+1)=1`，最后一行一列会被直接丢弃。
+@FOLLOW
+1. **换成 `AvgPool2d(2)` 是多少？** —— 2.5，四个数平均；这说明池化类型改变的是聚合方式而非形状
+2. **反向传播怎么走？** —— 梯度只回传到 argmax 位置，其余位置梯度为 0
+3. **输入 3×3 会怎样？** —— 输出 1×1，边界一行一列被丢弃，不补零
+@TRAPS
+- 认为池化有参数——它没有权重，只有 kernel/stride/padding 超参
+- 形状写成 `(1,1,2,2)`——池化是降采样，尺寸只会变小
+- 以为会补零保持尺寸——池化不 padding，除非显式传 `padding`
+
+@@ Q-1786
+@DEEP
+28 经 3×3 无 padding 卷积得 26，2×2 池化得 13，通道 10，展平后 `13×13×10 = 1690`。`Flatten` 默认从 `dim=1` 开始，保留 batch 维。这条链是 CNN 分类头的标准算法：空间尺寸按 `(H−k)/s+1` 缩，通道按 `out_channels` 变，最后乘起来就是全连接层输入维度。
+@FOLLOW
+1. **`Flatten` 从哪维开始展平？** —— 默认 `start_dim=1`，batch 保留，所以是 `(1,1690)` 而不是 `(1690,)`
+2. **卷积加 `padding=1` 结果多少？** —— 28→28→14，`14×14×10 = 1960`
+3. **这个卷积层参数量多少？** —— `10×1×3×3 + 10 = 100`，与输入尺寸无关
+@TRAPS
+- 忘除 2——得 `26×26×10 = 6760`，漏掉池化
+- 用 `28/2=14` 当卷积后尺寸——卷积先减核再加一
+- 把通道乘在最前面——维度顺序是 `(N,C,H,W)`，展平后是 `C×H×W`
+
+
+@@ Q-1787
+@DEEP
+卷积输出 `floor((H + 2p − k)/s) + 1`；这里先 3×3 卷积把 28/32 变 26/30，再 2×2、stride 2 池化得 13/15。整数除法 `//` 在正数上等价 floor，负数会向负无穷取整而出错。padding 与 stride 只改公式里的常数，不改变"先卷积再池化"的结构。
+@FOLLOW
+1. **加 `padding=1` 是多少？** —— `(28+2−3)//2+1 = 14`，池化后 14，边界补零保住尺寸
+2. **卷积直接 `stride=2` 呢？** —— `(28−3)//2+1 = 13`，与"先卷积再池化"数值相同，属巧合
+3. **`dilation=2` 呢？** —— 有效核 `2×(3−1)+1 = 5`，`(28−5)//2+1 = 12`
+@TRAPS
+- 直接用 `28/2=14`——漏掉卷积减核那步，28 侧得 14、32 侧得 16（选项 B）
+- 忘 `+1`——26//2=13 碰巧对，32 侧会算成 15 减 1 得 14（选项 D）
+- 把 `//` 写成 `/`——打印出 13.5、15.5，与题目要求的整数不符
+
+@@ Q-1788
+@DEEP
+输出通道数只由 `out_channels` 决定，与输入通道无关；输入通道必须等于 `in_channels`，否则直接报错。weight 形状 `(out, in, kH, kW) = (16,3,3,3)`，bias `(16,)`，共 `16×3×3×3+16 = 448` 个参数。空间尺寸 `8−3+1=6`，与通道数互不影响。
+@FOLLOW
+1. **这个层多少参数？** —— 448，`16×3×3×3` 加 16 个 bias
+2. **输入通道传错会怎样？** —— `RuntimeError: expected input to have 3 channels, but got 1`
+3. **为什么 weight 第 0 维是 out？** —— 与 Linear 的 out-first 约定一致，便于按输出通道切分与并行
+@TRAPS
+- 答 `(1,3,6,6)`——以为通道跟着输入走，这是选项 B 的坑
+- 把 `weight.shape[0]` 说成 3——那是 in_channels，第 0 维是 16
+- 忘记 bias——参数算成 432，少 16
+
+@@ Q-1789
+@DEEP
+1×1 卷积在通道维做线性组合，等价于对每个像素施加一个 `Linear(64,32)`，权重跨空间位置共享。k=1、p=0、s=1 时输出尺寸公式退化为 H 不变，所以 8×8 原样保留。它常用来升降维（NiN、ResNet bottleneck），参数量 `32×64+32 = 2080`，与特征图大小无关。
+@FOLLOW
+1. **参数量多少？** —— 2080，`32×64` 加 32 个 bias
+2. **与 `Linear(64,32)` 的区别？** —— 逐像素共享同一组权重，不依赖像素位置
+3. **1×1 能改空间尺寸吗？** —— 只能靠 `stride>1`（或后续池化），核本身不缩尺寸
+@TRAPS
+- 答 `(1,32,7,7)`——把 1×1 当 3×3 减了核，即选项 D
+- weight 写成 `(64,32,1,1)`——通道顺序反了，即选项 C
+- 认为 1×1 卷积没有参数——它是最小的可学习通道变换
+
+@@ Q-1790
+@DEEP
+输入 `(B,T,in)`、输出 `(B,T,hidden)`、`h_n` 是 `(num_layers,B,hidden)`。`batch_first` 只改输入输出的前两维布局，不改 `h_n`——h 永远层数在前。多层时 out 只给最后一层所有时刻，中间层结果不外露，所以取 out 直接接分类头即可。
+@FOLLOW
+1. **`batch_first=False` 时形状？** —— 输入 `(7,2,4)`、输出 `(7,2,5)`，`h` 仍是 `(1,2,5)`
+2. **`h` 与 `out` 什么关系？** —— 单层时 `h[0]` 等于 `out[:, -1, :]`，就是最后时刻的隐状态
+3. **`num_layers=2` 时 h 形状？** —— `(2,2,5)`，每层一个终态
+@TRAPS
+- 把 h 写成 `(2,5)`——那是 batch_first 思维，h 恒为三维
+- 输出写成 `(2,4,7)`——把特征维与时间维调换了
+- 以为 h 含所有时刻——它只存最后一步，全序列在 out 里
+
+@@ Q-1791
+@DEEP
+RNNCell 只跑一个时间步：输入 `(B,in)`、隐状态 `(B,hidden)`，返回新的 `(B,hidden)`，没有 out。处理序列要自己写循环并逐步传递 h。参数与单层 RNN 相同：`W_ih(5,4)`、`W_hh(5,5)` 加两个 bias，共 `20+25+5+5 = 55`。
+@FOLLOW
+1. **与 `RNN` 的区别？** —— 没有时间维，不会自动展开，需手动循环
+2. **参数量多少？** —— 55，`5×4 + 5×5 + 5 + 5`
+3. **想拿整段输出？** —— 循环里收集每步 h 再 `torch.stack` 成 `(T,B,H)`
+@TRAPS
+- 期望输出 `(2,3,5)`——把 Cell 当 RNN，凭空多一个时间维
+- 初始 h 写成 `(5,2)`——形状反了，直接报维度错
+- 以为 Cell 自动展开序列——它只处理一步，3 次循环才走 3 步
+
+@@ Q-1792
+@DEEP
+LSTM 返回 `(out, (h_n, c_n))`——第二个元素本身还是二元组，最容易漏。out 形状与 RNN 相同 `(B,T,H)`，`h_n`、`c_n` 都是 `(num_layers,B,H)`。`[0]` 只取 out，所以打印 `(2,7,5)`。cell state 是 LSTM 区别于 RNN 的关键，也是它擅长长依赖的原因。
+@FOLLOW
+1. **返回几个值？** —— 两个，第二个是 `(h_n, c_n)` 元组，解包要写 `out, (h, c) = lstm(x)`
+2. **h 和 c 的形状？** —— 都是 `(1,2,5)`，层数、批、隐层
+3. **为什么写 `[0]`？** —— 返回值是 tuple，没有 `.shape` 属性，必须取第一项
+@TRAPS
+- 写 `lstm(x).shape`——报 `AttributeError: 'tuple' object has no attribute 'shape'`
+- 以为返回 `(out, h)` 两元组——实际第二项还套了一层
+- 输出宽度写成 `2×hidden`——门控在内部，不改变输出维度
+
+@@ Q-1793
+@DEEP
+GRU 把 LSTM 的输入门与遗忘门合并成更新门，另有重置门，没有独立 cell state，所以只返回 `(out, h_n)` 两项，参数约为 LSTM 的 3/4。输出形状与 RNN、LSTM 完全一致，换模型不影响下游形状，这也是三者能互换的直接原因。
+@FOLLOW
+1. **参数量怎么比？** —— GRU 是 `3×(H(H+I)+H)`，LSTM 是 4 倍同式，约 75%
+2. **为什么只有 h？** —— 没有 cell state，隐状态同时承担短期与长期信息
+3. **工程上怎么选？** —— 短序列 GRU 更快够用，长依赖 LSTM 表达力更强
+@TRAPS
+- 以为 GRU 也返回 `(h,c)`——解包会报 `too many values to unpack`
+- 答 `(2,4,5)`——把 in=4 与 hidden=5 的位置搞混
+- 说 GRU 有三个门——它只有重置门与更新门两个
+
+@@ Q-1794
+@DEEP
+`BatchNorm1d` 对 `(N,C)` 沿 N 统计每个通道的均值方差，形状逐元素不变，所以还是 `(4,3)`。train 用当前批统计量并更新 running stats，eval 用 running_mean/var。因此同一输入两种模式结果不同，但形状始终一致。
+@FOLLOW
+1. **batch=1 时 train 会怎样？** —— 方差为 0，输出退化成偏置，某些实现直接报错
+2. **为什么 eval 结果不同？** —— 统计量来源不同：批统计 vs 运行均值方差
+3. **BN 有哪些状态？** —— weight/bias 是 Parameter，running_mean/var、num_batches_tracked 是 buffer
+@TRAPS
+- 认为 BN 会改变形状——它只做归一化，形状逐元素保持
+- eval 忘了切——用批统计做单样本推理，输出剧烈抖动
+- 把 running_mean 当 Parameter——它是 buffer，不在 `parameters()` 里
+
+@@ Q-1795
+@DEEP
+3×3 卷积配 `padding=1`、`stride=1`，输出满足 `H+2−3+1 = H`，所以残差块进出完全同形，`x + F(x)` 才合法。通道若变化必须加 1×1 投影把 x 变到同通道，否则广播失败或报错。恒等通路让梯度直接回传，这是深网可训的前提。
+@FOLLOW
+1. **c1 改成 2c 通道会怎样？** —— 相加报 shape mismatch，需要 downsample 分支做 1×1 投影
+2. **去掉 padding 呢？** —— 16→14，空间维不符，无法相加
+3. **为什么残差好训？** —— 梯度有恒等旁路，缓解连乘导致的消失
+@TRAPS
+- 忘 padding 直接相加——报 `The size of tensor a (14) must match tensor b (16)`
+- 以为会自动 broadcast 到 `(1,16,16,16)`——通道 8≠16 且空间维不同，广播失败
+- 把残差写成 `cat`——通道翻倍，下游形状全变
+
+@@ Q-1796
+@DEEP
+Embedding 是一张 `(num_embeddings, dim)` 的查找表，输入必须是 long 索引，输出形状 = 输入形状 + `(dim,)`，所以 3 个下标变 `(3,16)`。它等价于 one-hot 乘权重矩阵，但省掉了 one-hot 的存储。`padding_idx` 指定某行恒为零且不更新梯度。
+@FOLLOW
+1. **输入 float 会怎样？** —— `RuntimeError: Expected tensor for argument 'indices' to have scalar type Long`
+2. **索引越界呢？** —— `IndexError: index out of range in self`，词表只有 0..99
+3. **`padding_idx` 有什么用？** —— 该行输出固定为零向量且梯度不更新，用于变长序列对齐
+@TRAPS
+- 答 `(100,16)`——把权重形状当输出，选项 B 的坑
+- 用 float 索引——直接报错，必须先 `.long()`
+- 以为 embedding 不可训练——weight 是 Parameter，会随训练更新
+
+@@ Q-1797
+@DEEP
+优化器把参数分成若干 param_group，每组一份超参副本，构造时的 `defaults` 只是建组模板。所以 lr、momentum 挂在优化器而非模型上。微调时给不同层不同 lr 就是传多个 dict；scheduler 改的也是 group 里的 lr，不动模型。
+@FOLLOW
+1. **怎么给不同层不同 lr？** —— `SGD([{"params": backbone, "lr": 1e-4}, {"params": head, "lr": 1e-2}], lr=1e-3)`
+2. **scheduler 改的是哪个值？** —— `param_groups[i]["lr"]`，所以改完立刻对下一步生效
+3. **momentum 的物理意义？** —— 累积历史梯度方向，抑制震荡、加速沿一致方向前进
+@TRAPS
+- 用 `opt.lr` 访问——AttributeError，必须 `opt.param_groups[0]["lr"]`
+- 以为 lr 存在模型上——模型只有参数，超参在优化器
+- 认为 momentum 默认是 0.9——默认 0，本题 0.9 是显式传的
+
+@@ Q-1798
+@DEEP
+PyTorch 2.x 的 `zero_grad()` 默认 `set_to_none=True`，把 grad 置 None 而非填 0，省一次显存写入，也让"没算过"与"梯度恰为 0"可区分。要得到 0 张量需显式传 `set_to_none=False`。`g` 是 backward 后用 `float()` 提前拷出的数值，所以打印仍是 2.0。
+@FOLLOW
+1. **为什么 None 比 0 好？** —— 省写显存，backward 时按需新分配，语义也更准确
+2. **旧版本是什么行为？** —— 1.x 默认填 0 张量，所以老代码里 grad 不会是 None
+3. **对优化器有影响吗？** —— 无，None 参数在 `step()` 里被跳过
+@TRAPS
+- 答 0.0——默认 `set_to_none=True`，实际是 None（选项 B）
+- 用 `if p.grad:` 判断有没有梯度——零张量也为假，语义混淆
+- 以为 `zero_grad()` 会删掉参数——它只清梯度，参数原样保留
+
+@@ Q-1799
+@DEEP
+首次 `step()` 后为每个参数建 state：`step` 记录 t 用于偏差修正，`exp_avg` 是一阶矩（梯度指数平均），`exp_avg_sq` 是二阶矩（梯度平方的指数平均），后两者形状同参数。`step()` 之前 state 是空字典，所以打印时机决定结果。这也是 Adam 显存约为参数三倍的原因。
+@FOLLOW
+1. **`step` 有什么用？** —— 偏差修正 `1−β^t`，否则前几步动量偏小、更新过慢
+2. **显存开销多大？** —— 除参数外多存两份同形张量，约 3 倍参数量
+3. **SGD 带 momentum 的 state 是什么？** —— 只有 `momentum_buffer` 一项
+@TRAPS
+- 在 `opt.step()` 之前打印——得到空 tuple `()`，即选项 D
+- 认为 state 是全局共享——每个参数一份，按参数对象索引
+- 把 `exp_avg_sq` 当方差——它是梯度平方的滑动平均，不是统计方差
+
+@@ Q-1800
+@DEEP
+一步更新量是 `lr×grad`，量级 1e4×几十，w 直接跳到 1e5 以上；下一步 loss 含 w 的平方，放大到 1e10 再乘 lr 继续爆炸，几轮就超过 float32 上限 3.4e38 变 inf。inf 参与后续运算仍是 inf，不会自己回到有限值。`first` 是第一次 step 之前的 loss。
+@FOLLOW
+1. **为什么是 inf 不是 nan？** —— nan 需要 `inf−inf` 或 `0×inf`，这里只有单向上溢
+2. **怎么预防？** —— 梯度裁剪、lr warmup、输入标准化，并监控 `torch.isfinite`
+3. **`first=48.404` 怎么来的？** —— seed=9 的初始参数，第一次更新前的 loss
+@TRAPS
+- 说会收敛到 0——lr=1e4 是发散，方向完全相反
+- 以为 inf 会被自动裁剪——PyTorch 不会，必须手动 `clip_grad_norm_`
+- 把 `1e4` 读成 `1e-4`——差 8 个数量级，结论彻底反了
+
+@@ Q-1801
+@DEEP
+`weight_decay` 是优化器超参，按 `θ ← θ − lr(g + wd·θ)` 施加，层不持有。`Module.__getattr__` 只查参数、buffer 与子模块，找不到抛 AttributeError，所以 `hasattr` 为 False。要分层设 wd 得拆 param_groups。
+@FOLLOW
+1. **`hasattr` 为什么是 False？** —— Module 未定义该属性，`__getattr__` 找不到就抛 AttributeError，`hasattr` 捕获后返回 False
+2. **怎么给某层单独设 wd？** —— 分成两个 param_group，BN 与 bias 那组设 `weight_decay=0`
+3. **Adam 的 wd 与 AdamW 差在哪？** —— 前者把 wd 混进梯度被自适应缩放，后者解耦成独立衰减项
+@TRAPS
+- 写 `nn.Linear(2, 1, weight_decay=0.01)`——`TypeError: __init__() got an unexpected keyword argument`
+- 以为层里能读 wd——`hasattr` 为 False，打印出 `n/a` 就是本题答案
+- 以为 L2 与 weight decay 等价——Adam 下不等价，这是 AdamW 的动机
+
+@@ Q-1802
+@DEEP
+每个元素独立伯努利 p=0.5，1000 次的零比例标准差是 `√(0.25/1000) ≈ 0.0158`，所以 0.499 完全正常，不是精确 0.5。固定 seed=10 让这个抽样可复现。保留下来的元素被放大到 2.0，这是 inverted dropout 的期望补偿。
+@FOLLOW
+1. **为什么不是精确 0.5？** —— 有限样本的抽样波动，n 越大越贴近 p
+2. **非零位置的数值是多少？** —— 2.0，即 `1/(1−0.5)` 的放大
+3. **p=0.2 时零比例？** —— 约 0.2，同样带 ±0.013 量级的波动
+@TRAPS
+- 答精确 0.5——那是期望值，实测是抽样结果（选项 B 的干扰）
+- 认为剩下仍是 1.0——被放大成 2.0，否则输出期望会偏小一半
+- 在 eval 模式下统计——得 0.0，因为 eval 直接关闭 dropout
+
+@@ Q-1803
+@DEEP
+eval 模式 Dropout 退化成恒等映射，既不置零也不缩放——因为缩放已在 train 阶段做进数值里（inverted dropout）。所以 10 个 1 原样通过，和是 10.0。若换成经典 dropout（train 不缩放、推理乘 1−p），才会得 5.0，这是两种实现的根本差别。
+@FOLLOW
+1. **什么情况下 eval 要做缩放？** —— 经典 dropout 实现；PyTorch 用 inverted 版本，推理不需要
+2. **忘了 `eval()` 的后果？** —— 输出随机、线上指标抖动，是最常见的上线事故
+3. **与 `no_grad()` 的区别？** —— 前者控制层行为，后者控制建图，两件独立的事
+@TRAPS
+- 答 5.0——以为推理要乘 `(1−p)`（选项 C）
+- 认为 eval 会把输出清零——恰恰相反，eval 是全部保留
+- 只给 Dropout 调 eval 忘了 BN——BN 仍用批统计，结果不稳定
+
+@@ Q-1804
+@DEEP
+`state_dict()` 是 OrderedDict，只含参数与 buffer，不含结构与超参，键名按层级拼（如 `0.weight`）。`load_state_dict` 默认 strict，键集合必须完全一致。正因只存张量，才能跨代码重构加载。
+@FOLLOW
+1. **为什么不存整个模型？** —— pickle 依赖类的定义路径，重构后 `torch.load` 直接失败
+2. **`strict=False` 的作用？** —— 允许缺键/多键，返回 missing_keys 与 unexpected_keys 供检查
+3. **optimizer 也要存吗？** —— 续训必须存 `opt.state_dict()`，否则动量与步数丢失
+@TRAPS
+- 以为 state_dict 含结构——只有张量，重建模型要另写代码
+- 键名写错——报 `Missing key(s)` 或 `Unexpected key(s)`
+- 用 `torch.save(model)` 存整个对象再改类定义——加载时 AttributeError
+
+@@ Q-1805
+@DEEP
+`torch.save` 用 pickle 序列化，`weights_only=True` 只允许张量与基本容器，阻断反序列化执行任意代码（2.6 起成默认）。所以加载不可信文件也安全。结构必须一致：`Linear(3,2)` 的 weight 是 `(2,3)`，换成 `Linear(2,3)` 就 size mismatch。
+@FOLLOW
+1. **形状不一致会怎样？** —— 报 `size mismatch for weight: copying a param with shape torch.Size([2,3])`
+2. **为什么用 state_dict？** —— 与代码解耦，类重构后仍能加载
+3. **`weights_only` 的意义？** —— 防 pickle 反序列化执行任意代码，是加载外部权重的安全开关
+@TRAPS
+- 直接 `torch.load` 整个模型再改类——反序列化失败，找不到旧类
+- GPU 存、CPU 读不加 `map_location`——报 CUDA 不可用
+- 以为 save 存了网络结构——只存张量，结构要自己重建
+
+@@ Q-1806
+@DEEP
+`torch.device("cpu")` 打印 `cpu`，其 `index` 为 None——CPU 没有卡号概念。CUDA 张量打印 `cuda:0`，因为要多卡区分。`torch.zeros(2)` 默认落在 CPU，不会因为装了 CUDA 版就自动上卡，必须显式 `.to("cuda")`。
+@FOLLOW
+1. **为什么不是 `cpu:0`？** —— CPU 无索引，`torch.device("cpu").index` 是 None
+2. **怎么判断有可用 GPU？** —— `torch.cuda.is_available()`，再配合 `torch.cuda.device_count()`
+3. **`.to("cuda")` 在无卡机器上？** —— 报 `AssertionError: Torch not compiled with CUDA enabled`
+@TRAPS
+- 答 `cpu:0`——那是 CUDA 风格写法，CPU 不带索引
+- 用字符串比较 device——应比较 `torch.device` 对象，字符串形式不保证一致
+- 认为 `zeros` 默认在 cuda——默认 CPU，需显式搬运
+
+@@ Q-1807
+@DEEP
+`inference_mode` 除禁用梯度外还禁用 version counter（版本计数），张量更轻、开销更小。代价是这些张量之后不能参与需要 autograd 记录的计算，否则报错；`no_grad` 只关梯度，退出后张量还能重新入图。所以纯推理用前者，推理后还要训的用后者。
+@FOLLOW
+1. **与 `no_grad` 的区别？** —— 更彻底，连版本计数都不记，并禁止后续参与 autograd
+2. **输出能 backward 吗？** —— 不能，报 `Inference tensors cannot be saved for backward`
+3. **什么时候只能用 `no_grad`？** —— 推理结果还要接着求导/训练的流水线
+@TRAPS
+- 认为两者完全等价——`inference_mode` 更严格也更快
+- 在 `inference_mode` 里建要训的张量——后续 backward 直接报错
+- 以为 `requires_grad` 变 None——是 False，不是 None
+
+@@ Q-1808
+@DEEP
+`manual_seed` 重置 CPU 全局 RNG，同种子同调用序列必得同结果，所以两次 `randn(3)` 全等。GPU 要另调 `cuda.manual_seed_all`；cuDNN 的 benchmark 会换算法，还需 `cudnn.deterministic=True` 才真可复现。
+@FOLLOW
+1. **为什么两次完全相同？** —— RNG 状态被重置到同一起点，序列从头重放
+2. **换个 seed 数值会变吗？** —— 会，生成的序列完全不同
+3. **为什么线上仍可能不可复现？** —— DataLoader worker 种子、cuDNN 算法选择、多线程浮点归约顺序
+@TRAPS
+- 认为 seed 只影响第一次调用——它重置整个状态，后续序列都可复现
+- 只设 CPU seed——GPU 张量仍随机，需 `manual_seed_all`
+- 以为设了 seed 就完全确定——cuDNN benchmark 与多 worker 仍引入不确定性

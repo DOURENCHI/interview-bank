@@ -2,7 +2,7 @@
 id: Q-1901
 title: 一行里给不定长个整数，C++ 怎么读到行尾？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

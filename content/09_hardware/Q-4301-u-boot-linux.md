@@ -2,7 +2,7 @@
 id: Q-4301
 title: "U-Boot 在 Linux 启动过程中负责哪些工作？典型启动流程是什么？"
 module: 09_hardware
-sub: 嵌入式软件
+sub: 嵌入式 Linux
 priority: P0
 difficulty: 2
 roles: []

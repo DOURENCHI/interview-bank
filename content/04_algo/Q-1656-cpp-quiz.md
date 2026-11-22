@@ -2,7 +2,7 @@
 id: Q-1656
 title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 44 题）
 module: 04_algo
-sub: C++语言细节
+sub: 模板与 STL
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -37,16 +37,19 @@ accumulate 在 <numeric> 里，按左闭右开区间从初值 0 开始累加，�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+accumulate 声明在 <numeric> 而非 <algorithm>；第三参数既是初值也决定累加变量和返回值的类型：0 得 int，0.0 得 double，0LL 得 long long。区间左闭右开。第四个参数可传自定义二元操作，如 std::multiplies<> 变成连乘。初值类型给错会静默截断，累加大数时容易溢出。
 
 ## 高频追问
 
-待补充。
+1. **结果怎么算出来的？** —— 从初值 0 开始依次加 5、2、9、1、6，得 23。
+2. **初值写 0.0 会怎样？** —— 按 double 累加，值仍是 23，但返回类型变成 double；cout 默认不显示 .0。
+3. **只 include algorithm 行吗？** —— 不行，accumulate 在 <numeric>，会报未声明标识符。
 
 ## 易错点
 
-待补充。
+- 把区间当闭区间，多数一个元素
+- 用 int 初值累加十亿级数据，溢出成负数
+- 把 accumulate 记成在 <algorithm> 里，编译失败
 
 ## 关联项目
 

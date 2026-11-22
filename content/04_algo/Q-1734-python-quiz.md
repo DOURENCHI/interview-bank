@@ -2,7 +2,7 @@
 id: Q-1734
 title: 这段 Python 代码输出什么？（02 NumPy 与张量基础 · 第 41 题）
 module: 04_algo
-sub: Python语言细节
+sub: 容器与切片
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -37,16 +37,19 @@ zeros/ones 默认 float64，所以是 1.0 不是 1；shape 参数是元组，(2,
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+讲深一层：zeros/ones 默认 dtype 是 float64，所以 1 打印成 1.0；要整数必须显式 dtype=int，这一点与 np.array([1,2]) 自动推断 int 相反。shape 传元组 (2,3)，传单个整数 3 表示长度 3 的一维。zeros 会真正写入 0，np.empty 只分配内存不初始化，内容随机但更快。
 
 ## 高频追问
 
-待补充。
+1. **怎么创建整型全零？** —— `np.zeros((2,3), dtype=int)`。
+2. **zeros 和 empty 区别？** —— 前者置零，后者内容未初始化。
+3. **怎么按已有数组形状建？** —— `np.zeros_like(a)`，dtype 也跟随。
 
 ## 易错点
 
-待补充。
+- 以为 np.ones((2,)) 输出 [1, 1]：默认 float64，实际 [1.0, 1.0]
+- 把 shape 写成 np.zeros(2,3)：抛 TypeError，多维必须传元组
+- 用 np.empty 当全零：内容是残留内存的随机值
 
 ## 关联项目
 

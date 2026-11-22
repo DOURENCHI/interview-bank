@@ -2,7 +2,7 @@
 id: Q-1907
 title: 输出要保留两位小数，C++ 怎么写才不被判格式错？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

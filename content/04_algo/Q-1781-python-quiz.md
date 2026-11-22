@@ -2,7 +2,7 @@
 id: Q-1781
 title: 这段 Python 代码输出什么？（07 分类：逻辑回归与交叉熵 · 第 88 题）
 module: 04_algo
-sub: Python语言细节
+sub: 函数与异常
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -39,16 +39,19 @@ log_softmax 输出对数概率（都是负数），NLLLoss 取负对数似然作
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`log_softmax = logits − logsumexp(logits)`，输出全负；`NLLLoss` 取 target 位置的负值求平均，与 `CrossEntropyLoss` 完全等价。拆开写便于加权、ignore_index 与蒸馏。注意 NLLLoss 只认 log 概率，给概率会得负 loss。
 
 ## 高频追问
 
-待补充。
+1. **与 `CrossEntropyLoss` 数值关系？** —— 完全相等，前者就是后者的两步展开
+2. **为什么要拆开写？** —— 需要类别加权、忽略某类、或对 log 概率做额外运算时更灵活
+3. **`NLLLoss` 能给概率吗？** —— 不能，它直接取负号，给概率会得负数 loss，属于静默错误
 
 ## 易错点
 
-待补充。
+- 把 `log_softmax` 当 softmax——输出应为负数，写成正的概率值（选项 B）
+- 对 log 概率再取一次 log——数值彻底错，还可能出 nan
+- 忘记 NLLLoss 内部取负——会以为 loss 是 −0.41703
 
 ## 关联项目
 

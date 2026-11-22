@@ -2,7 +2,7 @@
 id: Q-1916
 title: Python 读百万级数据超时，怎么优化输入？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

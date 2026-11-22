@@ -2,7 +2,7 @@
 id: Q-1762
 title: 这段 Python 代码输出什么？（05 nn.Module 与训练循环 · 第 69 题）
 module: 04_algo
-sub: Python语言细节
+sub: 语法与类型
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -40,16 +40,19 @@ print(tuple(out.shape), out.requires_grad)
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`requires_grad` 沿计算图传播：任一浮点输入需要梯度，输出就需要。这里输入默认 False，但 weight/bias 是 True，所以 out 为 True 并挂 grad_fn。整数张量不能求导，`nn.Linear` 喂 long 直接报 dtype 错。
 
 ## 高频追问
 
-待补充。
+1. **什么时候输出会是 False？** —— 包在 `torch.no_grad()` / `inference_mode()` 里，或所有参数的 `requires_grad` 都被冻结
+2. **为什么形状是 `(4,1)` 不是 `(1,4)`？** —— 第一维是 batch（4 个样本），最后一维是 out_features=1
+3. **想让输入也参与求导怎么办？** —— 先 `x.requires_grad_(True)`（x 必须是浮点），再前向，`out.grad_fn` 会多一层
 
 ## 易错点
 
-待补充。
+- 认为输入没设 requires_grad 所以输出 False——参数是 True，输出就跟着 True
+- 把形状写成 `(1,4)`——`Linear(2,1)` 输出最后一维恒为 1
+- 以为 `requires_grad` 是只读属性——`.requires_grad_(True)` 可原地改，但只对叶子张量有意义
 
 ## 关联项目
 

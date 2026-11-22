@@ -2,7 +2,7 @@
 id: Q-1914
 title: Python 要读一整行（含空格），怎么写？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 1
 roles: [AI算法, 端侧部署]

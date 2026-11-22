@@ -2,7 +2,7 @@
 id: Q-1804
 title: 这段 Python 代码输出什么？（09 优化、正则化与工程化 · 第 111 题）
 module: 04_algo
-sub: Python语言细节
+sub: 并发与性能
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/Python实验台/Python考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [Python, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -43,16 +43,19 @@ state_dict 是有序字典，键为 weight/bias；load_state_dict 把保存的�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+`state_dict()` 是 OrderedDict，只含参数与 buffer，不含结构与超参，键名按层级拼（如 `0.weight`）。`load_state_dict` 默认 strict，键集合必须完全一致。正因只存张量，才能跨代码重构加载。
 
 ## 高频追问
 
-待补充。
+1. **为什么不存整个模型？** —— pickle 依赖类的定义路径，重构后 `torch.load` 直接失败
+2. **`strict=False` 的作用？** —— 允许缺键/多键，返回 missing_keys 与 unexpected_keys 供检查
+3. **optimizer 也要存吗？** —— 续训必须存 `opt.state_dict()`，否则动量与步数丢失
 
 ## 易错点
 
-待补充。
+- 以为 state_dict 含结构——只有张量，重建模型要另写代码
+- 键名写错——报 `Missing key(s)` 或 `Unexpected key(s)`
+- 用 `torch.save(model)` 存整个对象再改类定义——加载时 AttributeError
 
 ## 关联项目
 

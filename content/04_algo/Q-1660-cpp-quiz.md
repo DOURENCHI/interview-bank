@@ -2,7 +2,7 @@
 id: Q-1660
 title: 这段 C++ 代码输出什么？（31 STL 算法 · 第 48 题）
 module: 04_algo
-sub: C++语言细节
+sub: 模板与 STL
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -39,16 +39,19 @@ binary_search 只回答「是否存在」，返回 bool（输出 1 / 0），不�
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+binary_search 只回答「是否存在」，返回 bool，内部用 lower_bound 判等，拿不到任何位置信息。必须先按同一比较器有序，否则结果未定义——不是稳定地返回 0。要位置用 lower_bound 或 equal_range，要个数用上界减下界。复杂度是对数级比较次数。
 
 ## 高频追问
 
-待补充。
+1. **为什么是 1 0？** —— sort 后为 1 2 3 4，3 存在得 true 输出 1，5 不存在得 false 输出 0。
+2. **能拿到下标吗？** —— 不能，binary_search 只返回 bool；要下标就 lower_bound(a, a+4, 3) - a。
+3. **不排序会怎样？** —— 未定义行为，可能把存在的值判成不存在，不能当兜底手段。
 
 ## 易错点
 
-待补充。
+- 以为找不到返回 -1，转 bool 为真，答 1 1 选 C
+- 忘记先排序，答 0 0 选 D
+- 把返回值当下标用，直接越界访问
 
 ## 关联项目
 

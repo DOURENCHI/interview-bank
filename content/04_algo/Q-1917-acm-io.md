@@ -2,7 +2,7 @@
 id: Q-1917
 title: Python 要输出很多行，怎么避免 print 拖慢整体？
 module: 04_algo
-sub: Python 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

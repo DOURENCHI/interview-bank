@@ -2,7 +2,7 @@
 id: Q-1904
 title: cin 读完后接 getline，为什么会读到空串？
 module: 04_algo
-sub: C++ 读写
+sub: ACM 读写
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]

@@ -2,7 +2,7 @@
 id: Q-1665
 title: 这段 C++ 代码输出什么？（34 类型转换与模板 · 第 53 题）
 module: 04_algo
-sub: C++语言细节
+sub: 语法与陷阱
 priority: P0
 difficulty: 2
 roles: [AI算法, 端侧部署]
@@ -11,7 +11,7 @@ qtype: coding
 status: answered
 source_type: self_doc
 source_ref: 教学文档/C++实验台/C++考点实验台.html
-verified_at: 2026-11-09
+verified_at: 2026-11-21
 tags: [C++, 读程序写结果, 机考, 语言细节]
 auto: true
 lab_src: quiz
@@ -37,16 +37,19 @@ cout << static_cast<int>(d) << " " << (int)d;
 
 ## 讲深一层
 
-待补充：把这条规则扩到相邻场景（换个运算符、换个类型、换个边界值会不会变）。
-机考里这类题错一次就是整题分，靠的是把规则记准而不是临场推。
+浮点转整型向零截断，不是四舍五入：-3.9 得 -3 而非 -4；超出目标类型范围是未定义行为。static_cast 与 C 风格括号结果一致，但语义明确、可被检索。dynamic_cast 用于多态类型的向下转型并做运行时检查，指针失败得 nullptr、引用失败抛 bad_cast；reinterpret_cast 只重解释位模式。
 
 ## 高频追问
 
-待补充。
+1. **为什么不是 4？** —— 转换规则是丢弃小数部分，不做任何舍入，3.9 直接截成 3。
+2. **两种写法有区别吗？** —— 结果相同。static_cast 有编译期相关性检查且可搜索，C 风格会依次尝试 const_cast、static_cast、reinterpret_cast。
+3. **负数怎么截？** —— 向零截断，-3.9 得 -3，不是 floor 的 -4；这点和取整函数容易混。
 
 ## 易错点
 
-待补充。
+- 以为 C 风格括号会四舍五入，答 3 4 选 B
+- 两种都当四舍五入，答 4 4 选 C
+- 把超范围的 double 转 int，写成合法代码却触发 UB
 
 ## 关联项目
 
