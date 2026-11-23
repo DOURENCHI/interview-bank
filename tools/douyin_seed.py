@@ -87,6 +87,78 @@ def split_qa(head: str, pts: list[str]) -> tuple[str, list[str]]:
     return head, pts
 
 
+def norm(s: str) -> str:
+    return re.sub(r"[\s，。、？！：:（）()\[\]【】“”\"'…·—+,.?《》/\\]", "", s or "")
+
+
+def find_dup(q: str, bank: list, thr: float):
+    """判重：先看包含关系（短题干更准），再看 Dice 相似度。
+
+    只用 Dice 时，短标题（「进程和线程的核心区别是什么？」vs 题库 0.57）会擦着阈值漏判，
+    包含关系能把这类「同题不同措辞」挡住。
+    """
+    nq = norm(q)
+    for qid, t in bank:
+        nt = norm(t)
+        if len(nq) >= 6 and len(nt) >= 6 and (nq in nt or nt in nq):
+            return qid, 1.0, "包含"
+        s = dice(q, t)
+        if s >= thr:
+            return qid, s, "相似"
+    return "", 0.0, ""
+
+
+GENERIC = re.compile(
+    r"是什么|为什么|为啥|怎么|如何|有哪些|哪些|区别|原理|讲讲|谈谈|说说|介绍一下|是否|能否|"
+    r"可不可以|请问|简述|需要|实现|方式|方法|作用|特点|场景|流程|步骤|优化|设计|处理|使用|支持|"
+    r"出现|理解|掌握|核心|过程|机制|什么|哪些|以及|并且|以及|和|与|的|吗|呢|它|这|那|个|些|"
+    r"问题|情况|内容|部分|地方|时候|时间|东西|方式|目前|现在|一般|具体|主要|相关|不同|一样|"
+    r"参数|配置|关键|设置|常见|典型|实际|具体|真正|本质|深入|扩展|进阶")
+TERM_SPLIT = re.compile(r"[\s，。、？！：:（）()\[\]【】/、,.;；|｜]+")
+TERM_OK = re.compile(r"[\u4e00-\u9fa5A-Za-z0-9+#]")
+
+
+TRIM = "是的了把和与及或吗呢啊呀把被让给从向对跟给"
+
+
+def _terms(text: str) -> list[str]:
+    """剥掉通用词后剩下的技术名词（2 字以上）。
+
+    还要把首尾的虚词剪掉：「什么|是虚拟内存」→「虚拟内存」——
+    否则「是什么」被拆成「什么」+「是」，术语就带上了无意义的「是」字。
+    """
+    core = GENERIC.sub("|", text or "")
+    out = []
+    for t in TERM_SPLIT.split(core):
+        t = t.strip(TRIM)
+        if len(t) >= 2 and TERM_OK.search(t) and t not in GENERIC.pattern:
+            out.append(t)
+    return out
+
+
+def topic_match(q: str, bank: list, limit: int = 2):
+    """主题级疑似匹配：用题库自身出现的术语与问题求交集。
+
+    纯字符串相似度对「同题不同措辞」会漏判（「进程和线程的核心区别是什么？」vs
+    「进程和线程有什么区别？」），但主题词交集能抓住。**只标记不丢弃**——
+    「零拷贝」一个词能命中多道不同角度的题，必须留给人判断。
+    """
+    q_terms = set(_terms(q))
+    if not q_terms:
+        return []
+    hits, seen = [], set()
+    for qid, t in bank:
+        t_terms = set(_terms(t))
+        # 子串包含也算（题库里「零拷贝做」与问题里的「零拷贝」是同一个点）
+        shared = {a for a in q_terms for b in t_terms if a == b or (len(a) >= 3 and a in b) or (len(b) >= 3 and b in a)}
+        if shared:
+            hits.append((qid, "/".join(sorted(shared))[:18]))
+            seen.add(qid)
+            if len(hits) >= limit:
+                break
+    return hits
+
+
 def usable(q: str) -> bool:
     if not (6 <= len(q) <= 60):
         return False
@@ -127,14 +199,11 @@ def main() -> int:
                 q, pts2 = split_qa(head, pts)
                 if not usable(q):
                     continue
-                # 与题库比对
-                best, bs = "", 0.0
-                for qid, t in bank:
-                    s = dice(q, t)
-                    if s > bs:
-                        best, bs = qid, s
+                # 与题库比对（含包含关系，短题干更准）
+                best, bs, how = find_dup(q, bank, args.dup)
                 if bs >= args.dup:
                     continue
+                topics = topic_match(q, bank)
                 # 与本批已收的去重
                 if any(dice(q, x["title"]) >= 0.85 for x in seen_local):
                     continue
@@ -142,7 +211,8 @@ def main() -> int:
                 mod, sub = module_of(q + " " + " ".join(pts2))
                 cands.append({
                     "title": q, "points": pts2[:6], "module": mod, "sub": sub,
-                    "priority": "P1", "near": best, "sim": round(bs, 2),
+                    "priority": "P1", "near": best, "sim": round(bs, 2), "dup_by": how,
+                    "topic_near": topics,
                     "conf": page.get("conf", 0), "img": page.get("img", ""),
                     "aweme_id": r.get("aweme_id", ""), "url": r.get("url", ""),
                     "desc": r.get("desc", ""), "date": r.get("date", ""),
@@ -150,10 +220,14 @@ def main() -> int:
 
     Path(args.out).write_text(json.dumps(cands, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"候选 {len(cands)} 道 → {args.out}")
+    flagged = [c for c in cands if c.get("topic_near")]
+    if flagged:
+        print(f"其中 {len(flagged)} 道与题库同主题（需人工判断是否值得单独成题）：")
     if cands:
         print("样例：")
         for c in cands[:12]:
-            print(f"  [{c['module']}/{c['sub']}] {c['title'][:38]}  (近似 {c['near']} {c['sim']}, conf {c['conf']})")
+            tp = ("｜同主题:" + ",".join(f"{q}({t})" for q, t in c.get("topic_near", []))) if c.get("topic_near") else ""
+            print(f"  [{c['module']}/{c['sub']}] {c['title'][:34]}  (近似 {c['near']} {c['sim']}, conf {c['conf']}){tp}")
     if args.write:
         print("写卡功能需人工确认题目质量后再开（避免污染题库）；先用 --dry 看清单。")
     return 0

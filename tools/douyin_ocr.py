@@ -144,6 +144,9 @@ def main() -> int:
     ap.add_argument("--engine", default="auto", choices=["auto", "rapidocr", "tesseract"])
     ap.add_argument("--psm", type=int, default=6)
     ap.add_argument("--redo", action="store_true", help="忽略已有结果，全部重跑")
+    ap.add_argument("--alt", dest="alt", action="store_true", default=True,
+                    help="同时跑另一个引擎，结果存 alt_text（默认开）")
+    ap.add_argument("--no-alt", dest="alt", action="store_false", help="只跑主引擎")
     args = ap.parse_args()
 
     wp = Path(args.works)
@@ -162,7 +165,8 @@ def main() -> int:
             engine = "rapidocr"
         except Exception:
             engine = "tesseract"
-    print(f"OCR 引擎：{engine} ｜ 待处理图文作品 {len(works)} 个")
+    print(f"OCR 主引擎：{engine} ｜ 备用引擎：{'tesseract' if engine == 'rapidocr' else 'rapidocr'}"
+          f"｜ 待处理图文作品 {len(works)} 个")
 
     done = {}
     outp = Path(args.out)
@@ -186,16 +190,25 @@ def main() -> int:
                 fail += 1
                 pages.append({"img": str(img.relative_to(ROOT)), "text": "", "conf": 0.0})
                 continue
+            alt_txt, alt_conf = "", 0.0
             if engine == "rapidocr":
                 txt, conf = ocr_rapidocr(img)
+                if args.alt:
+                    alt_txt, alt_conf = ocr_tesseract(img, args.psm)
             else:
                 txt, conf = ocr_tesseract(img, args.psm)
+                if args.alt:
+                    alt_txt, alt_conf = ocr_rapidocr(img)
             txt = clean(txt)
+            alt_txt = clean(alt_txt)
             if not conf:                      # tesseract 无逐行置信度 → 用有效字符占比粗估
                 conf = min(1.0, len(re.sub(r"\s", "", txt)) / 120.0)
             if conf < 0.6:
                 low += 1
-            pages.append({"img": str(img.relative_to(ROOT)), "text": txt, "conf": round(conf, 3)})
+            pages.append({"img": str(img.relative_to(ROOT)), "text": txt,
+                          "conf": round(conf, 3),
+                          "alt_text": alt_txt, "alt_conf": round(alt_conf, 3),
+                          "alt_engine": "tesseract" if engine == "rapidocr" else "rapidocr"})
         rec = {"aweme_id": aid, "desc": w.get("desc", ""), "url": w.get("url", ""),
                "date": w.get("date", ""), "pages": pages}
         rows.append(rec)
