@@ -1,0 +1,417 @@
+{
+ "profile_url": "https://www.douyin.com/user/MS4wLjABAAAAPLRtDcOVy4eeFqYfpEK7SKB75QwKK7-EEqG2aVCN8s5FFSMDMTdCYbss_GUmErDx?from_tab_name=main&vid=7706857210693565531",
+ "sec_user_id": "MS4wLjABAAAAPLRtDcOVy4eeFqYfpEK7SKB75QwKK7-EEqG2aVCN8s5FFSMDMTdCYbss_GUmErDx",
+ "fetched_at": "2026-11-23 16:14:28",
+ "count": 27,
+ "note_count": 18,
+ "image_total": 119,
+ "works": [
+  {
+   "aweme_id": "7706857210693565531",
+   "desc": "端侧AI到底到底需要什么样的人。端侧AI热度升温，量化模型和芯片算力推动部署需求。关键在于底层理解，从数据预处理到模型部署，每个环节都需精细把控。建议从C++、Linux基础入手，深入量化和算子优化，确保项目可量化的成果。\n#端侧ai #模",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIBBEvO9gGw9AEhYqAIDhEFJAMA0NEfQCPAfDA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=1l6ZwofMx7yd%2BuZsoKuuDeS2qY8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okEA0qmAICiAvg9w4wIADiiADQBoIeAEXfAAYN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=voAg31n8CIsDlBv51lcNORMTIwU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIf9EADXB4AmDAw0ImCGIBwQgAiYAqAiemBNAi~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Op5O1e88U6a%2FWceylXqw%2BhfT5J4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/osAjiXAegD49AEwYqAIDwGiPAmA0NifQCIACBA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=bqgP37ZlAv4soL7pJkXh8J4tjDw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIBBEvO9gGw9AEhYqAIDhEFJAMA0NEfQCPAfDA~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=3RjlnNCgH7zyz3aeb1MgM0FO9Vo%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1794392525,
+   "date": "2026-11-11",
+   "url": "https://www.douyin.com/note/7706857210693565531"
+  },
+  {
+   "aweme_id": "7703522508318842586",
+   "desc": "嵌入式秋招目前进况汇总。整理了这段时间帮同学改简历跟进秋招的真实反馈，同时梳理端侧 AI 主流的 7 个投递赛道，每个方向的业务、门槛、岗位情况都写清楚了。\n具身智能、智驾、AI infra、安防视觉… 赛道差别很大，求职选对方向少走很多弯",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogEoIAAAeaXdAsB1qiDAfdrsqQ1A1iAgNRDGC7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=S7loAF158Tb%2B0xFdYkR8JK806GQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oM1DEodAABiuRgAAralCfiG1QANb1IsqeDdXjA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=305g87PThNyYF65CyYZVRwWy9kk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oI7XDWAwQI2dfpABNoVBhGaE0gfxaFAeAAqLO7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=TBowwFjcJGkqNxlwmSV3rP6s%2Fy4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogEoIAAAeaXdAsB1qiDAfdrsqQ1A1iAgNRDGC7~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=cJfSJ9hVw40d2wHLeOLnXODZmEw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1793616104,
+   "date": "2026-11-02",
+   "url": "https://www.douyin.com/note/7703522508318842586"
+  },
+  {
+   "aweme_id": "7701672822493605299",
+   "desc": "端侧AI兴起，嵌入式该补什么？嵌入式想转端侧AI，不用从零开始——你已有的 C/C++、交叉编译、硬件直觉，纯算法工程师反而没有。真正要补的是对大模型推理的认知：推理框架、模型量化、NPU 加速、性能调优、多模态，5 项能力按优先级排好，前",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oUAQcDcj1EVEiNIPWA0wuaIijAHABAhPHhQgw~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=WnPAyArbHaryusuk3BQcHBE5Ja0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ooBFEAghQwhjxAAHdAN10DAjiwaP8HIQWiuIP~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=pOsguC8u7cZKQP%2FP0v1iNdMHT8c%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okhDYqGbEhfdAFNHBANIAgArqcA4CMDgAQDf9o~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ZMW4Er%2Bb994KVzk6yqF8qfLxZX8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/ownGAhfDNIgk9BqAbreOH4odDCDArEYAFAAcQg~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=dWX8Y4s6pXvwXhLQql7TF%2B%2BPxGg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o01PaNDhAEHIjWiuQQPij0AxhADAHAwIBAI1g~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=l80RdYyGWGHfSlBZSaraOMCkZCs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/osZYINSbcDADrGAhAdFgA9qAHABgoCe4QhfMDE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=SHyFKKAzE3CZDj3vo2W7bDOQg%2B0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o0PiaAAIBjiAAHDhAKPEIgXQQN0S1HWwhwujG~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=3SRM%2BpifuisaifkLbDAUqgYFXFI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocEiWNIwPihHQLjlA1AHQIwgDDBTj0AahuAPA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=iaB0SUALySPvlf6aHOSRSsDsJTU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oUAQcDcj1EVEiNIPWA0wuaIijAHABAhPHhQgw~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=9f2IstZqwR7omE6tkmsINyHFACU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1793185441,
+   "date": "2026-10-28",
+   "url": "https://www.douyin.com/note/7701672822493605299"
+  },
+  {
+   "aweme_id": "7700184911986651610",
+   "desc": "模型部署岗每天在干嘛？拆开就这四件事。很多人以为模型部署就是调调包跑跑demo，其实训模型只占两成精力，剩下八成全在部署\n这篇把部署岗每天干的四件事用大白话拆开了：转格式、伺候算子、榨性能、做量化\n每件事都给了学生党现在就能上手的准备方法，",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owuAsEQRefMA7qAWnsAmXvyB8raANVgBMeQr18~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=VrpD3oOuKGKu4gAkHx4ssvfP2ew%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o0k1CctAi6PipDjAUgEEbsdAeZmvBAA9AfUIlN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=YjFfVvno0CEi1p6Yerto2WbEFCw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/o8bZENtd6BAPjmAVAki9Ae1ADApglCkbIvfQci~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=8Vcm1bLJcWeZCb%2FS1uAstKbMNQQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o4VuNrWMgAR4EmsBQrAyWBAgA7Xeqa81fAeMnQ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=3DmraAmvzUVy0aAOm1nUfxWMPwU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oc6NidybgZ9eAEvP1AIDmXiuApAcNkfjClAvBA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=gzGNLr2urilryVUOeBgVjJ33qlA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oorlAAcieNmfpZDwjgAkVIAbEAd1v9BlM6PAiC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ArsB6WIWb3RbrYWxPDbYkoqyvwI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owuAsEQRefMA7qAWnsAmXvyB8raANVgBMeQr18~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=%2B2TwocAEI7W%2BhjQcoBmLTbCmDMM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1792839009,
+   "date": "2026-10-24",
+   "url": "https://www.douyin.com/note/7700184911986651610"
+  },
+  {
+   "aweme_id": "7698708388880518106",
+   "desc": "嵌入式秋招行情Ι软硬件岗位汇总。汇总最近几十个同学投递、面试后的真实体感，只代表这一届应届生反馈，不是官方大数据。\n今年秋招拿到面试、offer 的难易度体感排序：硬件 ＞ 嵌入式软件 ＞ 传统互联网后端 / 应用开发\n#嵌入式就业 #嵌入",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ogegI0eZfGABnoA6ATLbC2rAGDKAnIdXQ7eUuI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=k4LEGIU3znGxWbr6COyMIoyBO7c%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ogGEdnlBIstANc1CUueDfAA94PAFAA0gA2cqQ0~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=BszICcqnYZFVswaaYvVHa2PXKfc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIod2TElrQ0ADACbOIXLjNgIg7GAZfAKfAeeDo~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=rHR3b2PoHp5S%2FP1dJu%2BD5BFqpSI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oAieOGIX2DvaAVByCgfCi2ANAcEqgA8HA6a1TA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ghzXqKQ6Cv3OSPifd5lUR%2Fo8%2Fn4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o4qANsusPCUI0AF9tAlQ0BfAA1AdgQfGB4nDEG~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=%2BagFbCAfybeijUvB4ax0ETpb0A8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oI9GrAPdAtAQUABqI0NFE4l1IC0fDAfutgDnAs~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=zCzmUJ0HN1raHTRAesYeK1vLMYo%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ogegI0eZfGABnoA6ATLbC2rAGDKAnIdXQ7eUuI~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=h44kU4RvX8psIKNjNlnf8BCmW9g%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1792495230,
+   "date": "2026-10-20",
+   "url": "https://www.douyin.com/note/7698708388880518106"
+  },
+  {
+   "aweme_id": "7696840735177695579",
+   "desc": "Momenta面经｜车端部署岗复盘。Momenta 端侧AI部署岗两轮完整面经！量化相关的问题占了三分之一，面试官会顺着你的回答从量化本质一路追问到校准方法、混合精度、INT4，非常看重真实做过的工程积累，准备投自动驾驶部署岗的同学建议收藏",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oofq2AAZqDAtATHQC0FEgtDqA0A9kpAIEKfCNK~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=7S0psXQcdMAlbc4Lnrs4%2BNF9QZA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAEQIAAA9qH0ArDqKFDzfTxfat0AqEAgNCK2CR~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=RJ8bnzuZWhWpoXqWiUihSCxc890%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oITFbACCEv9NDtAqsf0KQIKHq2AqfDoq0AEgAA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=%2FpQbSSSbnsbcG%2BO8z2%2BNIbiUTK4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ooAIgE0A9tHEqAqfQAc0DK2vfTaDACFqNKpAQC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=CFcWPSP1fL9r8bbi0EqSJdgeSjU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ocfq2AAdqDAXMTHQC0FEgtDqA0A9xqAIEKfCNK~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=3lJV2bT7V7z3Fm9rCS95adaUXrg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIEEAqmoiLDAVBVAEVIGo2eeIAr0AbOeBaQVE7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=5iQX%2F5Dvm5wUGWt%2BEijxHYd4I8c%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/oofq2AAZqDAtATHQC0FEgtDqA0A9kpAIEKfCNK~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=xNTYM6%2F8pJ%2BFDCQY9%2FsSIlShUjA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1792060382,
+   "date": "2026-10-15",
+   "url": "https://www.douyin.com/note/7696840735177695579"
+  },
+  {
+   "aweme_id": "7695387476642335974",
+   "desc": "想做端侧AI？4条就业路线一次讲透。最近一直在复盘端侧 AI、模型部署相关的求职方向，发现很多同学学的时候很容易混淆赛道。\n分清：大模型算法 / 嵌入式端侧集成 / 算子底层 / 云端 AI Infra / 量产交付\n每条路线写清岗位、技能",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oEeoAIDgEFAIIECykAENAgAAA14tf9KLqWiDgy~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=bSTFFGNc3XDDJ1cWZQ%2B4hxWaKCY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okCG9ADgyD4fIA0KLeUWNBgEAl1FEAqoAIgAiy~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=TVqdz5CbIknvUSJszQpZJDX%2Fuj4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oUAAyDEIEAgqg6yfWgFNL5DomiIKGAAeDC49A1~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=mZdmwGy8NyPUDgxA%2FrajvfaY5SA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ocnyAALE9NWfoIDnggA4DIAyEAeqK1DXbgiAFC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=3D0MzAPHaPyzStFsDUwEdYOK%2BfU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owlXg8IEAs9VAQDIGCFqABGDgQNeAAEEf4yAR1~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=GoCL8ZhmgJDb7m%2FD5KDxesRIiz8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oUMAyAfEdgyiqgpNeICI9oA1AWECFKAAD1D4gL~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=keoUcE9FAob9pFAOr57%2Fej5%2BLzc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oYfTg4gNyCAFKKqEAIoA1AACyeIgiqjWDA9LED~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=zXggE7RKMbLF%2FViaa5iJFSp5i5w%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owDEKgoiEe1ANtyCyLCDfAr9IgAFAA4gAL1qIW~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=CfBjd61DlxXNbiv8u5XVX92r0ro%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okAKg4CeDIDisL1IAoFANL9gyCfxqAAEE5gWAy~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=gvNj7PvBrJY7PxH28nfgL0wwvmM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/osNRyaE9lI8VABsAEq4gJID1FgfAACEAGQ8XAf~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=dxXURfBepiFl8hGd1ucoQMpSI98%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oEeoAIDgEFAIIECykAENAgAAA14tf9KLqWiDgy~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=6vYIk8s1x4DEZNQbpsT6IfiM5Gk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1791722020,
+   "date": "2026-10-11",
+   "url": "https://www.douyin.com/note/7695387476642335974"
+  },
+  {
+   "aweme_id": "7693881163861147123",
+   "desc": "大疆嵌入式面试复盘，面试官只关心工程问题。大疆 MCU 嵌入式面试原题复盘✨\n面试官十分看重工程落地能力，不喜欢死记硬背八股。\n面试会深挖项目底层原理、量产稳定性、异常问题排查。\n就算部分题目答不全，能够讲出自己的分析思路同样可以拿到分数。",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oMKAYBasjIAHBiKARio3DgdE4PGAPAYzzQdPI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=KYo5wlzmQ1jAS6isgvH%2FqK1XnK4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/osYjoQyKGIXALPHiAPDBzDAPiaA3As4BIdEdR~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=gvpjw7Y5DxePWOYwQMIP%2BDuotAc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/oYIQAMyPoAAi4RAPaHY8sBzGKjiEdBAI3DVdW~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=VyZXPljaFTmuvLpKQPo4BcHSEZk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYiA6xAGmF7aACNAiqxc9tgAgEIAfAuDQMUDie~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=%2BacMHEZRC%2BtAzi7jqK0O4mRCByg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o0m6IJCqAgAQhG9cAEeDfAuAMcDDxFxgiN7UiA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=i1YSjzfrxsnt1ZQDsh6iuOJ7CPI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oQBPEAdBQ4GdEAAYYAzK3DAjizaPSHIRoisIP~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=cZwF%2B51pwusXgw%2Fc0wqHUnTpfNQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oMKAYBasjIAHBiKARio3DgdE4PGAPAYzzQdPI~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=vHZsTaKbTz7BIJm%2FZZ4r%2FKwetik%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1791371304,
+   "date": "2026-10-07",
+   "url": "https://www.douyin.com/note/7693881163861147123"
+  },
+  {
+   "aweme_id": "7692773714169181659",
+   "desc": "聊聊目前嵌入式行业就业现状。最后说句大实话\n嵌入式给不了互联网那种一夜暴富的剧本，但选对方向，待遇真的不差\n当下\"嵌入式+AI\"就是确定性最高的组合\n26、27届的同学别再观望了，先把项目攒起来，秋招拼的就是手上有东西\n#嵌入式  #嵌入式",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIE9DQIC3D2uAtDHCgfLFeANAhEkGAmpAjwqOA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ERxSR9GoTHRX%2Fqo4yTvboDafYqw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okhwDf3pAETNIGOkeAqgFCuCEn9jAAHMDAmADI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=l8qiY8gf1UxGdDj6dWQpEsuQtAA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o8he3AfuNwIANO9DApgDEHFEQkAkAqCGDZAjCJ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=L7Ot5Talra6tmbgXnIiyjiGW3rc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o4DEAASOEFAenwAgI9mDNpDHjkOAh3qCMAufCG~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=n2HDWScY2CNLFeVf0K16pi6gKUM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIEAINCfjGkEDYA9pOwqeAFhPAnDuDgAAH3nCC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=YcCZuFHdGZCzdbEOkuJgordJAi4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okuAkAfEcgwGqpQNeICh9HAIAuEnFDAAD3DjOC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=iwiju%2BJeW6XXtgqn4Q4QjY2Gj5I%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oUDCANDpICHwDEEkGf9OAl3AshvRjgkuAeAAFq~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Pw%2Bi9Wthvg2Xah2t5aLfYxP60Ks%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/o4OASESDgkACDhHFfAq9AAA3EeCuGwICjpkDrN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=HZ7Khs89LXJcyWj%2Ft36c8s%2BvQw0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIE9DQIC3D2uAtDHCgfLFeANAhEkGAmpAjwqOA~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=D6SxpXzpD0TxtAsyERnAK3rE%2BpA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1791113456,
+   "date": "2026-10-04",
+   "url": "https://www.douyin.com/note/7692773714169181659"
+  },
+  {
+   "aweme_id": "7692023275241142898",
+   "desc": "嵌入式校招汇总｜岗位｜内推｜真题｜内幕。📝自己维护的 27 届嵌入式校招企业汇总表\n一共拆分了 8 张独立表格：\n✅秋招软硬岗位汇总\n✅端侧 AI 部署专属岗位表\n✅实习岗位汇总\n✅企业内推码收集\n✅笔试面试真题、测评题\n✅各家企业求职内幕",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oo5qx91AAAAoA9lXgIF0vjNDcfSkbV4EAACFfQ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=kSJ9Bb%2F8Y2cSZZ8oor1NuOvAVMA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oEAsAfkSDAFqFAAAcfEj4iIVvCNQ52bgoz9Q1A~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=URdwVTOpg9idwd6EFUdZKQd6H28%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/oUFA1VDwFAkcvjfMA9z4ACbA5oAIQNAfgq4SpE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Om92eUlpWVfaNg7x4R4%2Bn%2BuFrGs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oYfqbb9FApDvAfRExjF1cIAVA6ASQgCo4kAN5A~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ep4aKIUGvy7b%2BuWPuqzgxGJ1OUk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/osfAfycAAACEAbg5oPDkNqQVvIA1hj9d4F8AFS~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=IWP90zd3jvyWFjsGG0QXekWtemU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oo5qx91AAAAoA9lXgIF0vjNDcfSkbV4EAACFfQ~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=AoNANA2N526kEQ5Lbf80GVxgCyw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1790938731,
+   "date": "2026-10-02",
+   "url": "https://www.douyin.com/note/7692023275241142898"
+  },
+  {
+   "aweme_id": "7691215143988017610",
+   "desc": "✨秋招必看｜4大AI研发岗位的差别与关联。做端侧 AI 久了，经常被小伙伴问：\nAI‑Infra、端侧 AI、AI Agent、大模型算法，这几个岗位到底有什么区别？求职的时候该怎么选？ \n很多同学投简历的时候岗位关键词都分不清，明明自己想",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYAAKfEQIAgq3rvfjXFN5lFyMW651AAoDCK9Ap~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=zbUPGpjz7WrzGYO49ErIbpjOl8E%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oQ5jgvDAAQqAFFy6MNfC9o3rWpKfXKA5AEAO4I~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=qwygNznsy9S4bJKmrvCLczjopyY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oI0Er3FRABrX8N58hIiCgdIieA0cA1bfAAC1Al~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=jXcz0ICcIozQc5%2FXEpDe8wYJm5o%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/o8uVqCgT1AGkAzAvQeLDIbHyk0Lt2eUIfAIReA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=uFtZOK6rQt1t04nzGifyuFni5tw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oEARA1lC05diAmiehFIAycAN8rgfKb08ACXErB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=x6YUcDnr2p0%2BxHZEJ8Ua6w8rg5c%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/owjW5Ay4KNAe5EQqFvFfACgFKXbA6WIo9ADpA3~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=tF%2FWhq%2BV2n3vkuyYPewUCuXy9iA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAPAyFFvKIDe3pAA6YAgfjEoq5Q49N5ANAWKXC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Jh2zeWl5Tj4s%2F04tQfS9XbxNeQc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYAAKfEQIAgq3rvfjXFN5lFyMW651AAoDCK9Ap~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=55zykcqo1%2B4mjWkdQalw1rZNrOc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1790750573,
+   "date": "2026-09-30",
+   "url": "https://www.douyin.com/note/7691215143988017610"
+  },
+  {
+   "aweme_id": "7690892683343407462",
+   "desc": "从夯到拉锐评嵌入式各岗位受AI影响程度。嵌入式各赛道 AI 替代风险分层！底层岗稳，表层岗内卷加剧\n1. 虽然嵌入式在主流的研发岗当中，受 AI 影响程度较小，但具体到不同的细分方向又有明显差别。\n2. 总体而言，越偏向底层的方向受 AI ",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocO79elEAX9pAI2EVCFqAiCDgENAAAhXf4uAQu~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=9CxZYK2Vcc0Oq0C2HiNUPTaoh0M%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocO79elEAX9pAI2EVCFqAiCDgENAAAhXf4uAQu~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=Wu9J%2BcCWZU97%2FVeGDUWRGDF%2Fi5A%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1790675494,
+   "date": "2026-09-29",
+   "url": "https://www.douyin.com/note/7690892683343407462"
+  },
+  {
+   "aweme_id": "7689787369310111470",
+   "desc": "我自己做了一套嵌入式AI全栈学习平台｜端侧AI求职一站式学习 之前一直在做图文，分享嵌入式、端侧 AI 的学习路线和面试经验，平时很多同学来找我要学习资料，也帮不少同学看过简历。\n发现大家求职主要卡在两件事：简历打磨、面试准备。于是我做了这",
+   "type": "video",
+   "images": [],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okEBAnHbnLCAOBzAEVIGJNefIAlmAmIfBa3zC7~tplv-dy-cropcenter:323:430.jpeg?lk3s=138a59ce&x-expires=2110780800&x-signature=b7u%2BBJM1gTkJTly%2BK0OW3AyNNQc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=true&sh=323_430&sc=cover&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1790418143,
+   "date": "2026-09-26",
+   "url": "https://www.douyin.com/video/7689787369310111470"
+  },
+  {
+   "aweme_id": "7689068413041619547",
+   "desc": "端侧AI四大技术路线｜别混淆你的项目赛道。做端侧 AI 简历的时候，发现很多同学都踩同一个坑。\n自己手上做过部署项目，但是分不清到底属于哪一条技术路线，写简历的时候直接全部揉在一起往上堆。\n等到面试被面试官深挖项目细节，一下子就直接露馅翻车",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYLB3fGHLATxaOU1A7f8AE2BxiQQgaAeAVh5aI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Zavs8XxGizewkkdSzUVZCNHi%2FY8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ogvAAt4NTIAQlApeNwD71fAjAgExYCDCqEU9AF~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ZoOR592prqUkGh94n%2B9zarT8R3s%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAGANCFtlEDU4xAA7BAgfeEYq1Ih95UANAvQDC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=pyVflg3J78Iz4%2FfcUV2vrOLoOzY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o4F7vAiqtALNAl4AExeQC9DCNj1fIdUAAYCgED~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=lAc5oi8nY3E3ruF%2B6pM6PMLqrZc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYLB3fGHLATxaOU1A7f8AE2BxiQQgaAeAVh5aI~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=j%2F3Dil4eKIRiLQCD1LyUp%2Fn4D64%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1790250748,
+   "date": "2026-09-24",
+   "url": "https://www.douyin.com/note/7689068413041619547"
+  },
+  {
+   "aweme_id": "7687935111660807910",
+   "desc": "嵌入式端侧AI从入门学习到求职上岸路线。如果之后准备找实习校招，项目 + 八股 + 刷题三者同样重要，项目做完之后别忘了同步复习 C++、操作系统、计算机网络，再刷一部分算法题。\n✨顺带提一句：面试过程问的最多的依然还是嵌入式 Linux ",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogO2B1ACfACRAwBFA4gxPQIgdietIWsACNiEAM~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=tUI62bD8%2FmoTDBu6crySmflbQLg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oYOxeINU1ENAAAA2BCWipCPiIdBAQvACFgfd4w~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=P3tzBamRImyYL6VZjKYctkRlbXg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owxCOAXAeIQA4Ntf2CEAwdB1ABOiiAFICgKPBW~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=U2aW9R9ZJ0QPxsV3rn2BdWRy0Gk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oI4IYBWQIANFQOAA2ABiRCPAsECegAid1xCwPf~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Cned%2BZT%2FB6Qomnscaf%2BHxuHJCoE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/osQEgABA7H0YA4GVDLLee5uBA8ZBXIAAaIgiEf~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Z2sX4szoCS9p%2FTtqiYIGI03vVPs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogO2B1ACfACRAwBFA4gxPQIgdietIWsACNiEAM~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=113kDKTeDfTSS9TPq3zK0BHKiAw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1789986881,
+   "date": "2026-09-21",
+   "url": "https://www.douyin.com/note/7687935111660807910"
+  },
+  {
+   "aweme_id": "7686863507510144174",
+   "desc": "秋招必看✨嵌入式去哪座城市好找工作？很多嵌入式同学秋招选城市很迷茫🤔\n不知道哪个城市对应什么赛道，投简历到处瞎投。 \n整理了2026嵌入式15城就业地图🗺️\n每个城市整理了：\n▪本地主流产业方向\n▪代表企业清单\n▪高频岗位类型\n▪适配的技术",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAALAfIZBAC1iAlAItiOpHEZVCNI4iLgwEeLzA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Hr82jYa8ddI7QVnZotrJhqk8p1Y%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oYjewViClA4XGtNZAZzIOXgEBfAXiAAILCA1pI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=nLhKB4gyY59fZAEVufBNIacJ62E%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ocAZA1pC4LziAGiegIIAhFANlOgfkIwtACVEZB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ApBAxh0pdxovSOjpfY2mzujtXW8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o4ntllgIiIBAVNFipRCZC1OzwA4AeAAAE2ZIfL~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=FXQ0WUZ%2FuOIYLIhLg9IoU6BsYpI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oEPALCiVIEBoIwAAzmAgfZi41tIEeylANAZpOC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=IS%2BRB9B0QA%2Fmw3%2FlwUb7748zvAA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogAlgIEgNTAinipOCEeIwVfZAzBJACAILAZ14t~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=vzkxqJ44YHn2OFxhlBBLM0umcwM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o8CAzZBFiAIIVOt5AeGoACLA4wlEINAfg1pZYi~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=2Nk5Dc4ltSfW%2FzuJH9Pjiesc9mw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ocwUIpNeAAFp4CBLAAgiIVZjEfOl1IiCZAzwtA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Z1F%2BHKvzpjKrUp9lhoMpLz3n1qI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oEEAt1LA1CpAOgeZwlIACiiAzOBTIVAG4fqIZN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=5n9RCWSpfeY6pRl7I2lpnATh1XY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okZpGBVaIANI4IAAwAOi6LzAGECegAil1tCZrf~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=o6s223%2FgOabOkULi%2Ff%2FUnAygt6g%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o4ielnItwC0ZA3BLCgfsi4ANAzEIZAEIApV1OA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=I%2FBwZWwjhNkD8eIXBN0yzVGuJSI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o8AZA1pC4LziA2iejIIAUGANlOgftIwtACVEZB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=3gcMqHYr%2BzGTi8vOgPLYYc%2BtDOA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/okOwIi4AiICEg4VLptfzuAIAeAZF1BNlAAIZCR~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=GdRdc8AHuQ9niS4%2BY%2BREuTGQa%2FI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owAlOpH4BICZvtwzALiANreIICfV1AAEi6gZAV~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=b8vTgq4L4Z4QXud2t8R2nlo2e%2Bg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oAzVBfwIAiINIZOI4A1giCZtEJepAALwCAGAl6~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=0vPS0wxzwmeuf2xFLA7Z%2BQba%2BQE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owFAmyDOFARRrcaeA9liACWAwhKIQNAfgqTzKE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=%2BF%2BKPkPAPdVk9hzmkbQwqml%2B3Fw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAALAfIZBAC1iAlAItiOpHEZVCNI4iLgwEeLzA~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=hWBwErn9bopWrP6DblhyY%2BI9VYI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1789737379,
+   "date": "2026-09-18",
+   "url": "https://www.douyin.com/note/7686863507510144174"
+  },
+  {
+   "aweme_id": "7686079415386389723",
+   "desc": "新凯来半导体设备 MCU 嵌入式完整三面。📌个人整体感悟✨\n整场面试的递进逻辑很清晰：\n一面考察:单块控制板的基础功底；\n二面考察:板子运行起来，应对故障、异常、长期运行的可靠性能力；\n三面考察:设备交付，行业认知、协作和现场解决问题的交付",
+   "type": "note",
+   "images": [
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/osAb3NdtGQF1kUX9A0LAaQ7XbEekVABIIeAfBV~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=%2Fnlb7KbbBDgAd4%2FWVqNQRH0WNQk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/ootDFEt2NBrANCeqEAA6EfzrabVBVIAfLB67AL~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=aEu4ukpEoUeNgAqMQA%2BXO%2F%2FBAn0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAAb3NZtGQF1oUX9A0LAad7XbEe1VABIIfAfBV~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=j33Cu%2BtN7QOKyFK1%2FR7YpycOvqY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oAN2aFD47BBtXIArJqEEfeEAbA6A6rAtVVf1NC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=F3Pr5jh8G9ybup4DXxdN3wT5cZo%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o4EqIABA7btVAsDV2FCNfNdf2erBrEAAa6N6ER~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=OIJ83K3zP2wtLEYCpqkIfB1WJXE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oY1AbBeIeAV1VXuatQE970AAAfIZLbBAGXFN3U~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=7x%2B7AQV3hrIhjUhcK210q%2BnV9Cs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/osAb3NdtGQF1kUX9A0LAaQ7XbEekVABIIeAfBV~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=1ni1SoE0vB0H46QyK9M2iFh4Tdc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1789554818,
+   "date": "2026-09-16",
+   "url": "https://www.douyin.com/note/7686079415386389723"
+  },
+  {
+   "aweme_id": "7684963168670327690",
+   "desc": "端侧AI前景｜哪些赛道会爆发？ 哪些饱和。端侧 AI 不是单一赛道，不同方向的技术栈、岗位门槛、薪资上限差别很大。 \n- 想长期发展优先选：车载、工业边缘、机器人边缘端、高端穿戴（AI 眼镜 / 智能手表）；\n- 尽量避开同质化简单 Dem",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oUEedA9AIAAfEQFMAqAgdgxhNCFgB8pDnBKnCl~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Srdi7T9szsb%2Bl3PnaEz1WMnaL8U%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o8enqAQlgADhgdAnIcFACadMiNFC9pBEbArxfA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=ynYqEOUEO%2BHHReMdX6CO3Gu281Y%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oEnnEhg2dEAfxAdqAkAKQ8IMfgAFQCANBDl9pF~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=jmMw25lsXMbZz4umlsxxMV16L2w%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAFpNInQDdFgnC8BgEfEAeAAhFxdAqAAvlm9UM~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=75OFdGKb%2B5tlkjbUZ4K91fEfRhI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oUEedA9AIAAfEQFMAqAgdgxhNCFgB8pDnBKnCl~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=%2BmCSE%2B2Nf%2Bj4Sj2Na6lKP0V2GyM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1789294921,
+   "date": "2026-09-13",
+   "url": "https://www.douyin.com/note/7684963168670327690"
+  },
+  {
+   "aweme_id": "7678656649564835146",
+   "desc": "嵌入式边缘AI｜6 大赛道岗位&企业汇总。很多人学RKNN、YOLO、Linux，却不知道最后能投什么岗位。 \n嵌入式AI不是只有“跑模型”这一条路。 \n工业视觉、安防、机器人、自动驾驶、芯片工具链、消费IoT……每个方向对应的技术栈和就业",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oMNCkxLACBZBv3x0AAA9XefFA6AiQEiqgEoIj2~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Wo8ugT1hl3BHJ91QFTZLri2uFrw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ow63ABFEpAiBAjefAgxQLNqXEC9jkAKziIZCA2~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Zec2Am6XXgn4esJCk0Ftfi5mpto%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o0IAgqHAfCBAug9WjzQAEFEAFIDw1kAvufU9vN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Q3HI34vQf%2FLYdcVKUEnmGHjkKv8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oMXArfBQjg29BpAIAZxiAeCNEAkiEwiLq6F3AC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=FDK%2B%2BXlsdw7wNu6FEP68HQBFsUU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/osLXQAjmBNA0ZiIqCkifACg76EpAFsE39ABxAe~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Wsc55kfdwLgaqpHifQaj52aTLoM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owC9BigZE3qAjGAXICQA6NiALktPEAfBxIA0Fe~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=TJ2jwceNTh7syWbso8qRp6bk0zc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oAEQIAAA9EZkA1Bq3iCjf6KLuFxAeiAgNjBXCM~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=zY79iqwEt28RubI%2BzhB2fcXfo1s%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o06Qe3FiAL9ZAI1EuCiqAECBgvN4AAOXfBkAjx~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=Kcjw06dEgjjCSrgZzKMeUsjp%2Bh0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIEQIAAA9EZkA2Bq3iCFf6vLwFxAeiAgNjBXCU~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=76LBd7lPqAhKTIHYcXtrK5OKRak%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/osEAQqjA2CBA1g9LxZIACiiAFEBY6kA33fxeXN~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=uO%2BcWOvuvNV7Q6hSbffvmZ5D8xE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ogZQFqL3i14BAiwCjANEAgAE9eAkCyBxAIXf96~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=k%2BPRDDhl5bjkaNcHUXR5ooPMlw0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owXQ9qA3kCLiAEsGAAIA6xFfeZ3gGiEBAjNCzB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=85C0yWNME%2B1dqL77KzKqv%2B7%2FYaw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogZQe6gkfAE0uFCBAB9qLXC0EiANiAAj3BAIUx~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=16tY5tPPSocisNKvVcie1rjulTM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/ocCFENiBA3fAjx3AEqBQA61IXAiAL9AkZeCWTg~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798012800&x-signature=liMMvQG9UZNQHbpH6xvhAhek%2FuE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123161427A85FAE692E194DE63333"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oMNCkxLACBZBv3x0AAA9XefFA6AiQEiqgEoIj2~noop.jpeg?lk3s=138a59ce&x-expires=1796630400&x-signature=Op7Ba2op9GPSADIc5bJ9EeNItt8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123161427A85FAE692E194DE63333",
+   "create_time": 1787826571,
+   "date": "2026-08-27",
+   "url": "https://www.douyin.com/note/7678656649564835146"
+  },
+  {
+   "aweme_id": "7710950564611254527",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7710950564611254527"
+  },
+  {
+   "aweme_id": "7657769878207614259",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7657769878207614259"
+  },
+  {
+   "aweme_id": "7421211862231960841",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7421211862231960841"
+  },
+  {
+   "aweme_id": "7415560893078965556",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7415560893078965556"
+  },
+  {
+   "aweme_id": "7476386264619486491",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7476386264619486491"
+  },
+  {
+   "aweme_id": "7376222471009094946",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7376222471009094946"
+  },
+  {
+   "aweme_id": "7476383782858247487",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7476383782858247487"
+  },
+  {
+   "aweme_id": "7340839175886884105",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7340839175886884105"
+  }
+ ]
+}
