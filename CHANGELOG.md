@@ -1,5 +1,31 @@
 # Changelog
 
+## CareerOS 内容 V2.10 — 2026-11-23（b2 面经 27 张入库 + 三新模块 + 模块语义化改名）
+
+- **b2 博主（Java/后端/Agent）27 张全入库**（用户拍板全量 + 新建 Agent 模块）：
+  - `backend` 17 张：滴滴（慢查询/Error 捕获/工厂 vs 策略/注解原理/@Controller vs @RestController——
+    残题按原图第 2 页复原）、美团设计模式场景、得物（CAS vs sync/ArrayList/分蛋糕并发）、
+    SHEIN（GET body/IoC/脏读幻读/秒杀五层漏斗）、字节（双亲委派/Kafka vs RocketMQ/K8s/测试沙箱组件）。
+  - `agent` 新模块 10 张（Q-6601–6610）：ReAct vs Plan-Execute、多库路由 RRF、多轮 Query 改写、
+    超长检索压缩、Context 压缩防遗忘、长对话注意力、LLM 评估分层、MCP 通信形态、多租户隔离、function calling。
+  - `ai_native` 行为卡 Q-7611（AI Coding vs 古法，SHEIN 一面；原入 `project` 发现会污染项目连环问池后迁移）。
+- **三新模块**（27 届 AI 全栈经验帖建议的场景题 + AI-Native 能力题）：
+  - `scene` 场景系统设计 4 张（Q-7101–7104）：校园网 IM（华为真题）、五步方法论、端侧数据上云、临场应对。
+  - `ai_native` AI-Native 能力 6 张（Q-7601–7606）：AI 工作流四层、质量链路三段、大仓库上下文工程、
+    幻觉防范、Spec+TDD、从零全周期（均 `source_type: self_doc`，关联本项目真实实践）。
+- **模块语义化改名**（用户指定「去掉数字前缀，按考点命名」）：01_project→project、02_cpp→cpp、
+  03_linux→linux、04_algo→algo、05_deploy→deploy、06_ros2→ros2、07_imaging→imaging、08_robot→robot、
+  09_hardware→hardware、10_cv_pytorch→cv_pytorch、11_python→python、12_backend→backend、
+  14_agent→agent；`13_hardware2` 六张卡并入 `hardware`（505 张，双号段 4100/6100）。
+  frontmatter 1683 张批量替换 + tools 三件套（validate/build/gen_taxonomy）与运行时工具全部改新键。
+- **数据文件残留修复 559 处**（`tools/fix_module_rename.py` 固化，可重跑）：
+  `sources/tutorial_map.json` 30（宝典章节 rule.modules 失效 → ui_test 宝典点击超时的根因）、
+  `companies/job_profiles.json` 41（岗位族权重旧键查不到 → 岗位准备度归零）、`targets.json` 14、
+  douyin 候选存档 417、公司笔记 9 文件 57。
+- **回归**：gen_taxonomy 1693 题/15 模块、validate ✅、ui_test 全过 ✅、radar_test 36/36 ✅、dist 重建 ✅。
+- **踩坑记录**：PowerShell 5.1 `Set-Content -Encoding UTF8` 写入 BOM 致 validate 报「缺少 id」
+  （frontmatter 解析对 BOM 敏感）；GBK 控制台跑 validate 需 `PYTHONIOENCODING=utf-8`。
+
 ## CareerOS 内容 V2.9.2 — 2026-11-23（抖音面经入库：新卡 + 出现记录 + 公司池）
 
 - **抖音流水线首次实战**（嵌入式/端侧 AI 秋招博主）：27 作品 → 18 图文 119 页 OCR（RapidOCR 主 + tesseract 备，

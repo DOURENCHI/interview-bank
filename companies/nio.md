@@ -39,11 +39,11 @@ updated: 2026-11-09
 
 | 顺序 | 模块 | 内容 |
 |---|---|---|
-| 1 | `02_cpp` | P0 全部 |
-| 2 | `03_linux` | 进程线程与 IPC |
-| 3 | `06_ros2` | 节点通信、QoS、Executor |
-| 4 | `01_project` | 项目深挖 |
-| 5 | `09_hardware` | CAN 与车载通信子类 |
+| 1 | `cpp` | P0 全部 |
+| 2 | `linux` | 进程线程与 IPC |
+| 3 | `ros2` | 节点通信、QoS、Executor |
+| 4 | `project` | 项目深挖 |
+| 5 | `hardware` | CAN 与车载通信子类 |
 
 ## 判断
 

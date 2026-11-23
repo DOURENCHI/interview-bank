@@ -2,7 +2,7 @@
  {
   "title": "学生怎么准备",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -19,7 +19,7 @@
  {
   "title": "最后问了车端芯片（比如Orin 、高通SA8295）和服务器GPU相比，部署一个感知模型有什么差异。",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -45,7 +45,7 @@
  {
   "title": "挑你做的最完整的固件项目讲，说明自己负责模块的输入输出，如果重新开发你会优化哪块架构？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -71,7 +71,7 @@
  {
   "title": "产品要求MCU上电500ms内就可以正常通信，可以从哪些环节做耗时优化？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -97,7 +97,7 @@
  {
   "title": "Cortex-M中断向量表和中断服务函数是什么关联？中断里面直接调用不可重入printf会产生什么问题？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -123,7 +123,7 @@
  {
   "title": "使用DMA实现串口循环接收数据，如何判断一顺数据接收完成？怎么处理数据丢失的问题？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -149,7 +149,7 @@
  {
   "title": "FreeRTOS软件定时器回调与普通任务执行上下文有什么区别？为什么回调函数不能执行长时间业务逻辑？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -175,7 +175,7 @@
  {
   "title": "两个任务通过全局结构体传递传感器数据，只使用关中断做同步够用吗？还有哪些同步手段？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -201,7 +201,7 @@
  {
   "title": "12C通信收到从机NACK，驱动层面可以做哪些处理？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -223,7 +223,7 @@
  {
   "title": "Flash保存配置参数，断电会带来什么风险？如何利用备份分区保障参数可靠？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -249,7 +249,7 @@
  {
   "title": "项目中有周期性控制任务，如何保障任务按时执行，不被其他任务干扰？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -271,7 +271,7 @@
  {
   "title": "传感器读出的数据偶尔异常，说说你的完整排查",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -293,7 +293,7 @@
  {
   "title": "设备现场偶发卡死，没办法外接调试器，固件可以预留哪些定位手段、自恢复机制？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -315,7 +315,7 @@
  {
   "title": "OTA升级中途断电不能变砖，A/B双分区升级整体思路是什么，如何做校验和回滚？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -332,7 +332,7 @@
  {
   "title": "控制任务和通信任务同时读写同一份数据，互斥锁、消息队列、双缓冲分别适合什么场景？",
   "points": [],
-  "module": "03_linux",
+  "module": "linux",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -358,7 +358,7 @@
  {
   "title": "FreeRTOS高优先级任务被低优先级任务阻塞，大概率是优先级反转，如何发现、如何规避？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -384,7 +384,7 @@
  {
   "title": "SPI采集传感器数据，DMA、环形缓存如何搭配，避免数据丢失？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -410,7 +410,7 @@
  {
   "title": "UART/CAN偶发丢包，如何分层定位问题发生在哪一层？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -436,7 +436,7 @@
  {
   "title": "Demo样机转为量产版本，嵌入式软件层面需要补充哪些容错逻辑？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -453,7 +453,7 @@
  {
   "title": "系统上电速度慢，缩短上电时间有哪些优化方",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -470,7 +470,7 @@
  {
   "title": "设备参数存储，需要考虑掉电、擦写失败、版本升级兼容，你会如何设计？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -496,7 +496,7 @@
  {
   "title": "MCU内存资源紧张，怎么排查RAM占用、栈溢出、内存碎片问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -522,7 +522,7 @@
  {
   "title": "为什么选择嵌入式开发，为什么想来大疆？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -539,7 +539,7 @@
  {
   "title": "平时学习新技术用什么方法，举一个最近学习的",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -556,7 +556,7 @@
  {
   "title": "问题调试很久找不到根源，你会如何调整自己的",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -582,7 +582,7 @@
  {
   "title": "团队开发，和同事的技术方案产生分歧，你会怎么沟通协调？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -608,7 +608,7 @@
  {
   "title": "项目赶工期加班较多，你如何看待加班？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -625,7 +625,7 @@
  {
   "title": "手上目前有几个offer，求职选工作优先看重什么，如何排序？",
   "points": [],
-  "module": "04_algo",
+  "module": "algo",
   "sub": "模拟",
   "priority": "P1",
   "near": "",
@@ -647,7 +647,7 @@
  {
   "title": "你还有什么想要问面试官的？个人面试心得",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -664,7 +664,7 @@
  {
   "title": "单纯背八股用处有限，知识点尽量结合自己的项自经历来讲原理。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -690,7 +690,7 @@
  {
   "title": "怎么刷真题：先看「企业真题」确认笔试题型和核心考点，再看「测评真题」提前熟悉行测/性格题，测评挂了连面试机会都没有。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -707,7 +707,7 @@
  {
   "title": "1.量化之后精度为什么掉了？什么时候适合INT8，什么时候只能FP16?",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "大模型与推理",
   "priority": "P1",
   "near": "",
@@ -733,7 +733,7 @@
  {
   "title": "遇到算子不支持，该怎么定位，有哪些处理思",
   "points": [],
-  "module": "05_deploy",
+  "module": "deploy",
   "sub": "部署工程化",
   "priority": "P1",
   "near": "",
@@ -759,7 +759,7 @@
  {
   "title": "开场先问：半导体设备里面子控制板MCU和上位机是怎么配合，有没有做过类似板子。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -785,7 +785,7 @@
  {
   "title": "顺着整机架构往下，过渡到C语言底层：const全局常量和宏定义的区别，编译之后存储位置、是否占用RAM。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -811,7 +811,7 @@
  {
   "title": "然后转到硬件1O的工程安全：1O驱动继电器软硬件如何保证上电不会误吸合。",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -828,7 +828,7 @@
  {
   "title": "再往后走到信号采集环节：ADC采样数据跳动大，硬件和软件滤波如何选型，中值、均值、滑动平均、一阶滞后分别适配什么信号。",
   "points": [],
-  "module": "03_linux",
+  "module": "linux",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -854,7 +854,7 @@
  {
   "title": "EtherCAT的基础概念，对比普通以太网，DC分布式时钟解决什么问题。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -880,7 +880,7 @@
  {
   "title": "总线聊完转到执行机构：步进电机与伺服电机区别，设备场景该如何选型。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -906,7 +906,7 @@
  {
   "title": "之后是测温传感器：热电偶和PT100原理，热电偶为什么需要做冷端补偿，",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -932,7 +932,7 @@
  {
   "title": "设备现场偶发死机，没有仿真器的情况下怎么定位问题；",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -958,7 +958,7 @@
  {
   "title": "从RTOS中断与任务的数据互通开始：FreeRTOS中断和任务之间传递数据，信号量、任务通知、队列分别该怎么选；",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -984,7 +984,7 @@
  {
   "title": "再聊软件定时器，对比硬件定时器，以及软件定时器回调里面有哪些禁忌。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1010,7 +1010,7 @@
  {
   "title": "SPI挂多个从设备偶发通信失败，该怎么一步步排查;",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1036,7 +1036,7 @@
  {
   "title": "I2C出现SDA被从机拉死的死锁，如何做总线恢复；",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1062,7 +1062,7 @@
  {
   "title": "聊完故障，聊存储方案：Flash存放运行日志，环形日志该怎么设计。",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1088,7 +1088,7 @@
  {
   "title": "然后拔高到整机可靠性：软件依靠哪些机制实现设备7×24高可用；",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1114,7 +1114,7 @@
  {
   "title": "接着拓展到板间通信：双MCU之间用SPI做高速通信，自定义协议怎么设计，包含帧格式、同步、流控。",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1140,7 +1140,7 @@
  {
   "title": "再回到控制闭环：要做到±0.5℃控温精度，抛开PID参数调参，采样端与执行端还能做哪些优化。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1166,7 +1166,7 @@
  {
   "title": "往下是工业模拟量接口：0－10V电压信号和4-20mA电流信号MCU如何对接，电流环的优",
   "points": [],
-  "module": "03_linux",
+  "module": "linux",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -1192,7 +1192,7 @@
  {
   "title": "再回到总线容错：Modbus主机轮询20个从站，如果其中一个从站掉线，如何避免把整条总线",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1218,7 +1218,7 @@
  {
   "title": "二面收尾抛了一个跨岗位协同的现实问题：硬件同事判定是软件bug，但你怀疑是硬件问题，出现分歧该怎么协同定位。二面感受：",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1240,7 +1240,7 @@
  {
   "title": "接看聊对半导体设备行业的理解，为什么想要投递这个方向。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1262,7 +1262,7 @@
  {
   "title": "再思考产线现场环境，对软件质量、可维护性会提出哪些特殊的要求。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1288,7 +1288,7 @@
  {
   "title": "然后是经典现场难题：bug在实验室复现不出来，只有客户现场才会触发，该如何处理。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",

@@ -20,11 +20,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
 
-ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
-           "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
-           "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
-           "11_python": 5100, "12_backend": 5600, "13_hardware2": 6100}
+ID_BASE = {"project": 100, "cpp": 600, "linux": 1100, "algo": 1600,
+           "deploy": 2100, "ros2": 2600, "imaging": 3100,
+           "robot": 3600, "hardware": 4100, "cv_pytorch": 4600,
+           "python": 5100, "backend": 5600,
+           "agent": 6600, "scene": 7100, "ai_native": 7600}
+# hardware 由 09_hardware 与 13_hardware2 合并而来，保留两段号段
+ID_EXTRA_BASES = {"hardware": (6100,)}
 SPAN = 500
+
+
+def id_in_range(mod: str, num: int) -> bool:
+    base = ID_BASE.get(mod)
+    if base is None:
+        return False
+    if base < num < base + SPAN:
+        return True
+    return any(b < num < b + SPAN for b in ID_EXTRA_BASES.get(mod, ()))
 REQUIRED = ["id", "title", "module", "priority", "difficulty", "status",
             "source_type", "source_ref", "tags"]
 VALID_PRI = {"P0", "P1", "P2"}
@@ -93,9 +105,9 @@ def main() -> int:
                 errors.append(f"{qid}: ID 格式应为 Q-数字")
             else:
                 num = int(m.group(1))
-                if not (base < num < base + SPAN):
+                if not id_in_range(mod, num):
                     errors.append(
-                        f"{qid}: 编号越界，{mod} 应为 {base+1}~{base+SPAN-1}")
+                        f"{qid}: 编号越界，{mod} 应为 {ID_BASE[mod]+1}~{ID_BASE[mod]+SPAN-1}")
 
         # 目录与模块一致
         if f.parent.name != mod:

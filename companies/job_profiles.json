@@ -6,7 +6,7 @@
       "id": "A1_cpp_sdk",
       "family": "A",
       "name": "C++ SDK 开发工程师",
-      "weights": {"02_cpp": 40, "03_linux": 25, "01_project": 20, "09_hardware": 10, "06_ros2": 5},
+      "weights": {"cpp": 40, "linux": 25, "project": 20, "hardware": 10, "ros2": 5},
       "jd_evidence": [
         "桥介数物·机器人系统开发工程师(跨机型SDK)：对编译与链接机制有深入理解（静态/动态库、符号可见性、ABI 兼容、交叉编译）；熟悉 CMake；EtherCAT/CAN/串口加分",
         "浙江杰峰物联·SDK开发工程师(2027届)：扎实 C++ 基础、多线程与内存管理、跨平台构建",
@@ -23,7 +23,7 @@
       "id": "A2_rtnet",
       "family": "A",
       "name": "实时网络通信工程师（机器人方向）",
-      "weights": {"02_cpp": 30, "03_linux": 30, "06_ros2": 25, "01_project": 15},
+      "weights": {"cpp": 30, "linux": 30, "ros2": 25, "project": 15},
       "jd_evidence": [
         "高校就业网·软件开发工程师-实时网络通信方向：优化通信架构降延迟；DDS/ROS2 QoS 配置（可靠性/延迟/带宽）；UDP/TCP、多线程、IPC"
       ],
@@ -36,7 +36,7 @@
       "id": "B1_sysint",
       "family": "B",
       "name": "机器人系统集成工程师",
-      "weights": {"06_ros2": 30, "08_robot": 25, "10_cv_pytorch": 15, "03_linux": 15, "01_project": 15},
+      "weights": {"ros2": 30, "robot": 25, "cv_pytorch": 15, "linux": 15, "project": 15},
       "jd_evidence": [
         "浙江人形·2027届：SLAM 与路径规划、运动规划与操作控制、点云感知融合；ROS/ROS2 + RViz/MoveIt/Gazebo；推理部署框架了解"
       ],
@@ -49,7 +49,7 @@
       "id": "C1_deploy",
       "family": "C",
       "name": "模型部署与推理优化工程师",
-      "weights": {"05_deploy": 30, "10_cv_pytorch": 25, "02_cpp": 15, "03_linux": 10, "04_algo": 10, "01_project": 10},
+      "weights": {"deploy": 30, "cv_pytorch": 25, "cpp": 15, "linux": 10, "algo": 10, "project": 10},
       "jd_evidence": [
         "Dexmal·模型部署与推理优化工程师(2027届)：模型转换、推理加速、显存/内存与延迟优化；PyTorch/ONNX/TensorRT/OpenVINO 任一；量化/剪枝/蒸馏/CUDA 优先",
         "常宝股份·AI部署工程师：ONNX/TensorRT 转换与量化剪枝；Docker 容器化 + FastAPI/Flask 服务化；CUDA/cuDNN 版本冲突排查"
@@ -64,7 +64,7 @@
       "id": "C2_llminfra",
       "family": "C",
       "name": "LLM 推理平台工程师",
-      "weights": {"10_cv_pytorch": 35, "05_deploy": 30, "02_cpp": 15, "03_linux": 10, "01_project": 10},
+      "weights": {"cv_pytorch": 35, "deploy": 30, "cpp": 15, "linux": 10, "project": 10},
       "jd_evidence": [
         "WeRide·AI Infra推理平台工程师(2027届)：TensorRT/SGLang/vLLM 优化；INT8/FP8 量化、算子融合、动态 Batch；KV Cache 管理（Mooncake/LMCache）；P/D 分离架构；CUDA 基础"
       ],
@@ -77,7 +77,7 @@
       "id": "D1_percep",
       "family": "D",
       "name": "感知算法工程师",
-      "weights": {"10_cv_pytorch": 35, "04_algo": 25, "07_imaging": 20, "02_cpp": 10, "01_project": 10},
+      "weights": {"cv_pytorch": 35, "algo": 25, "imaging": 20, "cpp": 10, "project": 10},
       "jd_evidence": [
         "按 D 族常见校招要求归纳：检测/分割/融合 + 深度学习基础 + 机考算法；权重为初始配比，待收集到目标 JD 后按其修订"
       ],
@@ -88,7 +88,7 @@
       "id": "E1_embedded",
       "family": "E",
       "name": "嵌入式软件工程师（MCU/Linux）",
-      "weights": {"09_hardware": 45, "03_linux": 20, "02_cpp": 15, "04_algo": 10, "01_project": 10},
+      "weights": {"hardware": 45, "linux": 20, "cpp": 15, "algo": 10, "project": 10},
       "jd_evidence": [
         "联友智连·嵌入式软件工程师(2027届)：BOOT/BSP 开发调试；Linux 驱动与系统裁剪；FreeRTOS 驱动框架；网络/串口/CAN 通讯；单片机原理 + ARM Cortex-M/R；Keil/IAR/GCC",
         "金溢科技·软件工程师(2027届)：STM32/GD32 驱动与应用；Bootloader 定制移植、内核裁剪适配；I2C/SPI/UART/USB/CAN 总线",
@@ -104,7 +104,7 @@
       "id": "F1_ros",
       "family": "F",
       "name": "ROS 机器人软件工程师",
-      "weights": {"06_ros2": 35, "02_cpp": 15, "03_linux": 15, "08_robot": 15, "04_algo": 10, "01_project": 10},
+      "weights": {"ros2": 35, "cpp": 15, "linux": 15, "robot": 15, "algo": 10, "project": 10},
       "jd_evidence": [
         "灵心巧手·ros工程师(2027校招)：ROS/ROS2 架构、节点/话题/服务/TF/URDF；SLAM、感知、规划、控制模块的 ROS 封装与联调；Gazebo 仿真与真机部署",
         "珠海一微·软件开发(OS/SDK方向)(2027届)：ROS2 功能包、传感器接入、里程计/TF、cmd_vel；SLAM/导航/避障集成；Yocto/Debian 裁剪、交叉编译"

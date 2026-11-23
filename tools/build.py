@@ -20,12 +20,13 @@ CONTENT = ROOT / "content"
 DIST = ROOT / "dist"
 
 MODULE_NAME = {
-    "01_project": "项目深挖", "02_cpp": "C++", "03_linux": "Linux",
-    "04_algo": "算法机考", "05_deploy": "模型部署", "06_ros2": "ROS2",
-    "07_imaging": "医学影像", "08_robot": "机器人学",
-    "09_hardware": "硬件嵌入式", "10_cv_pytorch": "深度学习",
-    "11_python": "Python", "12_backend": "后端基础",
-    "13_hardware2": "硬件嵌入式·续",
+    "project": "项目深挖", "cpp": "C++", "linux": "Linux",
+    "algo": "算法机考", "deploy": "模型部署", "ros2": "ROS2",
+    "imaging": "医学影像", "robot": "机器人学",
+    "hardware": "硬件嵌入式", "cv_pytorch": "深度学习",
+    "python": "Python", "backend": "后端基础",
+    "agent": "Agent 应用",
+    "scene": "场景系统设计", "ai_native": "AI-Native 能力",
 }
 MODULE_ORDER = list(MODULE_NAME)
 PRI_ORDER = {"P0": 0, "P1": 1, "P2": 2}
@@ -1795,7 +1796,7 @@ $('m_close').addEventListener('click', () => {
 
 // ---- 项目连环问：按项目顺序过全部题，不限时（面试官就是这么连环问的） ----
 const PROJ = {};
-DATA.forEach(q => { if (q.module === '01_project' && q.sub)
+DATA.forEach(q => { if (q.module === 'project' && q.sub)
   (PROJ[q.sub] = PROJ[q.sub] || []).push(q); });
 
 function openDrill(sub){
@@ -2402,7 +2403,7 @@ function renderHome(){
   const dueIds = DATA.filter(q => revState(q) === 'due').map(q => q.id);
   const weakIds = DATA.filter(q => revState(q) === 'weak').map(q => q.id);
   const dueSet = new Set(dueIds), weakSet = new Set(weakIds);
-  const projIds = new Set(DATA.filter(q => q.module === '01_project').map(q => q.id));
+  const projIds = new Set(DATA.filter(q => q.module === 'project').map(q => q.id));
   const mockIds = new Set(today.filter(h => h.m).map(h => h.i));
   const projToday = new Set(today.filter(h => projIds.has(h.i)).map(h => h.i));
   const tasks = [
@@ -2514,17 +2515,17 @@ function loadJobs(){
 }
 // 技能规则表：JD 关键词 → 题库模块。匹配分析的核心映射，随题库方向扩展
 const SKILLS = [
-  {name: 'C++', tier: 'core', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['02_cpp']},
-  {name: 'Linux', tier: 'core', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['03_linux']},
-  {name: '算法机考', tier: 'eng', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['04_algo']},
-  {name: '模型部署', tier: 'core', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['05_deploy']},
-  {name: 'ROS2/中间件', tier: 'core', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['06_ros2']},
-  {name: '深度学习/感知', tier: 'domain', kws: ['pytorch', '目标检测', '分割', 'yolo', 'opencv', '感知', '融合', '深度学习', '视觉'], mods: ['10_cv_pytorch', '07_imaging']},
-  {name: 'Python', tier: 'eng', kws: ['python'], mods: ['11_python']},
-  {name: '硬件/嵌入式', tier: 'core', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['09_hardware']},
-  {name: '机器人学', tier: 'domain', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['08_robot']},
-  {name: '数据库/缓存', tier: 'eng', kws: ['mysql', '数据库', 'sql', 'redis', '缓存', '索引', '事务', 'mvcc', '消息队列', 'kafka', 'rabbitmq'], mods: ['12_backend']},
-  {name: '工业通信/现场总线', tier: 'eng', kws: ['profinet', 'mrp', 'plc', 'modbus', 'canopen', '现场总线', '工业以太网', 'opc ua'], mods: ['06_ros2', '09_hardware']},
+  {name: 'C++', tier: 'core', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['cpp']},
+  {name: 'Linux', tier: 'core', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['linux']},
+  {name: '算法机考', tier: 'eng', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['algo']},
+  {name: '模型部署', tier: 'core', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['deploy']},
+  {name: 'ROS2/中间件', tier: 'core', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['ros2']},
+  {name: '深度学习/感知', tier: 'domain', kws: ['pytorch', '目标检测', '分割', 'yolo', 'opencv', '感知', '融合', '深度学习', '视觉'], mods: ['cv_pytorch', 'imaging']},
+  {name: 'Python', tier: 'eng', kws: ['python'], mods: ['python']},
+  {name: '硬件/嵌入式', tier: 'core', kws: ['单片机', 'uart', 'spi', 'i2c', '嵌入式', 'fpga', 'mcu', 'rtos', '原理图'], mods: ['hardware']},
+  {name: '机器人学', tier: 'domain', kws: ['运动学', '动力学', 'slam', '轨迹规划', '标定', '机械臂'], mods: ['robot']},
+  {name: '数据库/缓存', tier: 'eng', kws: ['mysql', '数据库', 'sql', 'redis', '缓存', '索引', '事务', 'mvcc', '消息队列', 'kafka', 'rabbitmq'], mods: ['backend']},
+  {name: '工业通信/现场总线', tier: 'eng', kws: ['profinet', 'mrp', 'plc', 'modbus', 'canopen', '现场总线', '工业以太网', 'opc ua'], mods: ['ros2', 'hardware']},
 ];
 const TIER_LABEL = {core: '核心', eng: '工程', domain: '场景'};
 const TARGET_FAMS = ['AI推理部署', '机器人软件/ROS2', 'C++ SDK/系统软件', 'VLM/VLA/视觉算法', '嵌入式/控制'];
@@ -3421,7 +3422,7 @@ def main() -> int:
         proj = json.loads(pp.read_text(encoding="utf-8"))
         sub_n = {}
         for q in qs:
-            if q["module"] == "01_project":
+            if q["module"] == "project":
                 sub_n[q.get("sub") or ""] = sub_n.get(q.get("sub") or "", 0) + 1
         for pr in proj.get("projects", []):
             pr["interview_count"] = sub_n.get(pr.get("sub") or "", 0)

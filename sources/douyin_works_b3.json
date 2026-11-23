@@ -1,0 +1,353 @@
+{
+ "profile_url": "https://www.douyin.com/user/MS4wLjABAAAAWKPpyY2jmBE2eqGOVWCTUkVanGeEmq1YhLnhi27neZm44UhDZ2U5cq49JOf8HK0P?from_tab_name=main&is_search=0&list_name=follow&nt=0",
+ "sec_user_id": "MS4wLjABAAAAWKPpyY2jmBE2eqGOVWCTUkVanGeEmq1YhLnhi27neZm44UhDZ2U5cq49JOf8HK0P",
+ "fetched_at": "2026-11-23 19:27:40",
+ "count": 27,
+ "note_count": 20,
+ "image_total": 54,
+ "works": [
+  {
+   "aweme_id": "7708641720502997425",
+   "desc": "嵌入式技术方向推荐 65w校招大包经验。常见的组合：\n- MCU+RTOS + linux驱动开发：偏底层,一般适合 MCU+RTOS学完之后.想要补 Linux的朋友。应用的话只需要简单学学。然后详细补一下驱动开发的知识就行\n- MCU+",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ooAIwi5A9xIEqAmf6AkfDUMvTmpBACimoQ2EaQ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=WijessOBJoTg1tRmFtxQfmBpBqI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ooAIwi5A9xIEqAmf6AkfDUMvTmpBACimoQ2EaQ~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=U%2BxT%2BAGeg1LSkhjlMtQzVTgpMZc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1794808014,
+   "date": "2026-11-16",
+   "url": "https://www.douyin.com/note/7708641720502997425"
+  },
+  {
+   "aweme_id": "7707501378063398501",
+   "desc": "工科读研 如何选导师 秋招65w大包经验。工科研究生考研 保研 如何选老师，这里分为两个情况：\n第一种是面向读博的，无脑选大老师、大团队，去看他晚年的学生论文产出，越能发论文的越要去这种。\n第二种是 决定研究生毕业就业：实习非常重要，项目、",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYATAfbLBEDqiAYAU2ii0hE6eCnIMBLw3n97XA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=aIzcS9iIIP%2Fbd8PruuFlZW3TuG8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEL62AL80nAlYiIqDeifECwAbiaAXCEM9AB3AU~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=OGi0wOuXzcfex8qHehb4Ybhzj50%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYATAfbLBEDqiAYAU2ii0hE6eCnIMBLw3n97XA~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=2kOiIYT%2BDegJAIZ%2FxMGPKseV7pI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1794542507,
+   "date": "2026-11-13",
+   "url": "https://www.douyin.com/note/7707501378063398501"
+  },
+  {
+   "aweme_id": "7706378733996756239",
+   "desc": "研三是否能转嵌入式？要分以下几种情况，满足其中一种才有可能实现快速转，不然碰都别碰\n1. 学历极好，本科或研究生阶段有嵌入式基础，只是因为课题组等原因没有继续做这个方向。\n2. 之前做过 Agent 相关实习，已经具备 C、C++ 和 40",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIJqXodQAAA7A9HygEimejDBSfmDzqUiAACDyI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=QzbSSfwwiJc2MwuBYG7426UcDw0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocldsADBqCj7DoziiAAUjAEJAAQyfeUgm9IqDS~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=ciurYK53LtYdzlv3rJfwv565u80%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oQ8DAAyi9DmfzdDkjgAUXIAeEAJqQ7BJgSqAiC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=ZhJ%2FvgsbQ4vwCWv6d7HoPymC7NQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIJqXodQAAA7A9HygEimejDBSfmDzqUiAACDyI~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=yKcKBrkrZUNs3AMpTlsZoEukxdI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1794281127,
+   "date": "2026-11-10",
+   "url": "https://www.douyin.com/note/7706378733996756239"
+  },
+  {
+   "aweme_id": "7704534343347393723",
+   "desc": "拓竹嵌软offer!应该也是ssp\n拓竹和DJI应该选哪个呢，拓竹的强\n度可低很多，年终奖也多，时薪算起来拓竹更高\n了。不知道到底选title还是选工作强度\n主要是我另外几个机器人厂和DJI都在逼签，所以提\n前开出来了。话说机器人厂真夸张啊",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ocksC1dxilagAinDvAnEAwEA7UAdCDByAISfeB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=AasKsvIB5SaJLozZW3gbDlUplNY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQAkAglxBIDSEsyCAviAnneUBCfn1AEEiZwdAd~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=hypqFxcSU%2FevvbXdd9gx0rdGaUU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ocksC1dxilagAinDvAnEAwEA7UAdCDByAISfeB~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=Z565wYd6lWdbFrVpkhm%2BFRfVsz4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1793851690,
+   "date": "2026-11-05",
+   "url": "https://www.douyin.com/note/7704534343347393723"
+  },
+  {
+   "aweme_id": "7703831095632114426",
+   "desc": "嵌软秋招结束！大疆offer.应该是ssp，薪资堪比机器人，中间经历了快100场面试，从7月份到现在4个月了可以好好休息了。送给所有还在努力的朋友的一段话\n就像现在全网都在说嵌入式软件不行了，硬件才是未来。但回头看看，前几年芯片和 IC 行",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o4fp2gYQrE4ADATQgJpLvDYIIXGAN8AefAeJYi~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=%2BmEHnsU8nGtuPpSttgv8VuCD1kA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/owNr73YXAAAQA2eXAILypA4Gfeie9xgITDJHTQ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=bNvUJpHIeGKCY0m14ALgGNZMbdw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o4fp2gYQrE4ADATQgJpLvDYIIXGAN8AefAeJYi~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=L578Eocmmo8bUKF2tsoEKmafQxE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1793687953,
+   "date": "2026-11-03",
+   "url": "https://www.douyin.com/note/7703831095632114426"
+  },
+  {
+   "aweme_id": "7703108629125245092",
+   "desc": "嵌入式软件八股分享-内存管理。这里主要是给做嵌入式Linux的朋友看，除去基础的通信协议，第二多的应该就是Linux中的进程管理、内存管理。这里分享给大家最常问的几个问题，然后兆芯也发offer了，今年给的条件是相当不错呀，看了一下已经开奖",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8IEABqImlwDzC78w6oHvfEuFAA9DA5hrreYAE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=yxmFWFXhpNYaDNdwKqzhpNgqOOU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ooIDq5AhT76vACsYhqBE6eAAEDoHmwAElwfF98~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=KODJSf1ITz7cWDvHgofEt9SKgYQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogDEoI8NwABSEYhw9FflvqDCqA5MtEAeHA76Am~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=GSaJU6lcfRMFfsRQofdiMKERJ8U%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYDEoI8BwABTEYhw9FflvqDCrA5zuEAeHA76Am~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=prDR%2B3i32pjKhKiVDJ1X2z1rzSg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oIHm9qAY5DlEA8A4EAIAwhBf67rwWFEDAeoCvv~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=JHq1QKejZQKq2LXRtc3OrF%2BVVzw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8IEABqImlwDzC78w6oHvfEuFAA9DA5hrreYAE~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=yHP2s0O%2B9MaSkCW%2Fs%2BudwtaMyTE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1793519740,
+   "date": "2026-11-01",
+   "url": "https://www.douyin.com/note/7703108629125245092"
+  },
+  {
+   "aweme_id": "7702312173153885157",
+   "desc": "实习怎么快速地得到简历产出。首先实习干杂活是非常正常的，我们要在杂活过程中去找到核心工作内容，最简单的就是把你 mentor 干的活变成自己干的活。在和他工作的过程中，学习他工作和做事的一些思维与方式，不懂就问\n#嵌入式 #实习#秋招#me",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8gyGeE3BIUQQDOHfAVgLFCIIe7DAA3oHJbAx6~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=8vxWo6P8rqvsKiE%2BnocXiDYzF44%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o0AEABjkvP1IfCsAxDBg7ENrocHei4iwAuYA1h~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=geUqXQqVl71S3Wkc5XXDF4eyTrk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8gyGeE3BIUQQDOHfAVgLFCIIe7DAA3oHJbAx6~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=o9VpgHGljZ4xVnwv2YcP0JEqmeE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1793334301,
+   "date": "2026-10-30",
+   "url": "https://www.douyin.com/note/7702312173153885157"
+  },
+  {
+   "aweme_id": "7701895413335589241",
+   "desc": "嵌软通信协议八股问题。面了八九十场面试了，每一场面试中必问的应该就是通信协议了。不管是芯片原厂、消费电子还是机器人，都属于必问问题，问来问去也就这 10 来个问题，分享给大家#面经 #面试问题 #嵌入式软件#秋招",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oozi7USEVEOABAJvoFxLiDIIIhGAeDAehge7RD~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=YH5uR%2FbmxNDJ6N3Aet4hfRVix20%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oADIhoeREevBOuxFziBGeJT7IhALAAUgArWVID~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=jU2CfkpY9vdT1%2B2hQ1bBLNixwOk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQeVBe7DB5GxhiBIDoLIhEARJUADIgFvUzAOeA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=SVvrGP1zCnFuX4on6v2jcJ8ROVA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogtzBAiI7ODeeIDVogAUDIAxEAeVhvGVnhRJLF~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=1RnCPWN2iz%2B8booKbRjoZf616Uk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYI7hIIivDzDAQGeFgeWLeAOAIEzRABhJUxVoB~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=AJmdKwegwNS%2BbBmV6ZwluSVHvgk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oozi7USEVEOABAJvoFxLiDIIIhGAeDAehge7RD~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=ZgCJTF5mMevFufKXegTuxqjtzwk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1793237267,
+   "date": "2026-10-29",
+   "url": "https://www.douyin.com/note/7701895413335589241"
+  },
+  {
+   "aweme_id": "7699453655497610725",
+   "desc": "库玛嵌入式意向，艾为电子开奖 。秋招第 18 个意向， 库玛就不等了 直接意向都拒了，今年艾为电子真很舍得开呀，天呐，给了一个很难拒绝的价格，往年ic 才能开出来吧，在半导体厂的话，嵌软这边算非常高了。得好好考虑考虑。最后一个是库玛面经可以",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oIiZM83XDQecgS02WArAXKtnQu2eAAeQNTfAKI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=iC5sjAbq6SGYMLooJ1ucHOm3DEM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o0OFsi1ADfpDE6eYAAA7ELfRBtJFZ9EVgElIXt~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=06ycyCJXpZpKUmyc2QDmfbVKg4Y%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oIiZM83XDQecgS02WArAXKtnQu2eAAeQNTfAKI~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=2LbW3FM0fZZq4%2FNWCBsISb6F7uY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1792668750,
+   "date": "2026-10-22",
+   "url": "https://www.douyin.com/note/7699453655497610725"
+  },
+  {
+   "aweme_id": "7698596246965943409",
+   "desc": "翱捷科技嵌软开奖。第 17 个意向。在上海 20K+1K，总包一年大概 30 万左右吧。虽然WLB，但是实在活不下去，秒拒了。年轻还得醒着拼，去大厂熬两年吧，以后实在熬不住了 再去这些。公司休息休息，后面的面经隐去了个人的细节实习 和项目，",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oofTtweAJAEEAEglxeDB8VQPrIADF07cdFkBGb~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=1bMFIdjtETKj%2BEKRSmiqbBbdEoI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8DaeEfIBphQ3E6AwivHA7AAiiytA1EAJ4zeiW~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=JaRib7eoPKxSvOWxU8ahu06rtdg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYQDVrAxeTedBEolXzDJ1EAAEG8PtBAIbgfF70~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=aWLSDYa8y7cgMKu%2Bl4Y6c7LlbiE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oofTtweAJAEEAEglxeDB8VQPrIADF07cdFkBGb~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=N6OOfVycAqGXB1Zjn8gOArwTPEQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1792469120,
+   "date": "2026-10-20",
+   "url": "https://www.douyin.com/note/7698596246965943409"
+  },
+  {
+   "aweme_id": "7697880356703177999",
+   "desc": "智元机器人嵌软 第 16 个意向 面经。共 4 面。本部进不去，子公司倒是发面了，时间是 9.2、9.11、9.14、9.23，面试难度不大。 \n后面是删了一些个人信息的面经。主要还没开奖，不知道能开多少，不过大概率是要拒掉的，听说智元开的",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIAAV2IIEBAVbGqefXLGU7DkfWrOWBAwGEL7Ao~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=%2BE4fiUoymw7pPWfuQzO3LKCSmU8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oAg266AAEiLn2HAAiX1AUBWCaILPDSAfgAMiDe~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=eDU%2FYEum%2FMn6RBTu9lqUTuUyuag%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIAAV2IIEBAVbGqefXLGU7DkfWrOWBAwGEL7Ao~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=TE9lR0xdAoUxVfgHzhFWNXNlJ7M%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1792302447,
+   "date": "2026-10-18",
+   "url": "https://www.douyin.com/note/7697880356703177999"
+  },
+  {
+   "aweme_id": "7696119172773793039",
+   "desc": "嵌软 第十四个意向 拓竹。不知道能不能开到 50w ，拓竹的平台稳定性相比于机器人都好了太多，薪资到位就秒接。后面的面筋是小米的bsp工程师二面的面经，问了一个多小时，另外也有几个家陆陆续续开奖了 已经拒了，今年电子电力真猛啊 上来就是 4",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/osbBdIsGAGAEGdiLeAV7BAAxQ44CongfDHeMoG~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=2vT160rpRS9pcOgrs04Cp1Tk%2Brs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oQYuaADDqCN4D9RFEAAhfAI8AADcfzbgB9Q0Gj~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=Odu2xqQLsl0XILoe68a27xOu2tY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/osbBdIsGAGAEGdiLeAV7BAAxQ44CongfDHeMoG~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=rPSkdOklerutR966ReeK70W9id0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1791892390,
+   "date": "2026-10-13",
+   "url": "https://www.douyin.com/note/7696119172773793039"
+  },
+  {
+   "aweme_id": "7695611833519004133",
+   "desc": "嵌入式软件 秋招第 13 个oc 。报的 30-40K给发意向了，但是要提前实习，薪资确实算蛮高的，总包算算都有 60 万了。有朋友知道这家公司怎么样吗，不管是发展前景 还是说工作强度？不知道要不要去，后面的面筋不是自变量的哈，是小米嵌入式",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oY1ZD9NTIAiPCBtAEXAMMEAbAeii8ofztwlBci~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=ILRRbyAxoIDv8cJUf45ZnCowW94%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oUrABDiZNEBrX9AAcQAwfzit1MI8eblEoAiiTC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=Px48GzXpof5JMLnyS4O9AiFTFuk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ocieloIM9DJzAZBBCwfRitAoAcENiA8XEiZ1TA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=3iNSasWTZuVOHbohIqAm6cnIm7w%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oY1ZD9NTIAiPCBtAEXAMMEAbAeii8ofztwlBci~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=Un3TLElKeduou5aRWpQSvSFI6vk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1791774257,
+   "date": "2026-10-12",
+   "url": "https://www.douyin.com/note/7695611833519004133"
+  },
+  {
+   "aweme_id": "7694501618795990287",
+   "desc": "禾望电气嵌入式软件速通面经。从一面到HR面 4 天结束，这么回头一看，其实面试官是非常有水平的，虽然问的问题不难，但是很多问题其实都值得去深究，面试体验感也很不错，工作强度居然说不是 996，975，少数感觉加班没那么多的制造业了#秋招 #",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o4AAI3iIEAgqekyf0XiDIlDgRHx50AALBCF9A6~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=yMKDv45DdArN1SzjjaBCjzRd8Yc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oMsgpQu9AXxAF0Dq9vkCAAzfPEQJIAFQAGAyfD~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=Ohq65FF7u8NABMGpc6tC9OL%2BiIk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oQA5XF2LBIDHTI6xAgiADS9eICfbqAAEibg0Ay~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=4k02jN9qSoDd%2F7Tny0p8rSKPO5Q%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oo65AIxiFeEIyAHqALAI9X0iHfDyb2ADABUCgg~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=IUoCRxc5Q9%2Fscs%2F5H4MqJsxfCq4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/o4AAI3iIEAgqekyf0XiDIlDgRHx50AALBCF9A6~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=qT1qtUmkwsFJhiYmDq6M5ALOBqc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1791515774,
+   "date": "2026-10-09",
+   "url": "https://www.douyin.com/note/7694501618795990287"
+  },
+  {
+   "aweme_id": "7694088723595578658",
+   "desc": "小鹏汽车嵌入式软件isp部门面经。两道手撕题都不算难，这段时间跟一些朋友聊了一下\n嵌入式软件校招今年最大的感受变化，就是高端岗位\n的需求增加，且低端岗位的需求减少\n自驾公司：大面积缩招，综合性价比烂完了强度大\nHC少薪资偏上但不顶级\n机器人",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ooEAGqkAPCuAqg9oxSIADFEAT5D9AxA1ffE9PD~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=GE9HBx%2FIfCXDh9gL%2B387nwxEqa0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o8xSAGTEu9EAxAPqAfAI95oFLfDlR2ADADFCgk~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=eLdT%2F%2FY5mzIGQ6f%2BpPHyJ2aZ2PU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ooEAGqkAPCuAqg9oxSIADFEAT5D9AxA1ffE9PD~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=LKjMFWqvxIQ1NNH%2B0T%2BZF1H1lcQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1791419646,
+   "date": "2026-10-08",
+   "url": "https://www.douyin.com/note/7694088723595578658"
+  },
+  {
+   "aweme_id": "7692711133563735311",
+   "desc": "Telink嵌入式软件一面 二面面经。8 月初面的了，泰凌微也是为数不多要用英语回答一些问题的公司，当时是一面 30 分钟，然后休息 5 分钟，直接二面。不过到现在好像也没给我发意向，不知道挂没挂 可能还在泡池子吧#嵌入式软件 #秋招 #芯",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okAAwviIEAg1FiYfRAiDCNDvzAAB6AA2BCQeA1~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=NqL1fozOo5MehqtF860CJ7gYSLA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c001/o8DIXyAQAI7NAg1QfEWVAAMMAQGTABeC8AhBfu~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=QvZNEvz2sJLL3EdPfmPQpZMVJoE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okAAwviIEAg1FiYfRAiDCNDvzAAB6AA2BCQeA1~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=RTpziLFpjXsE86P8q2TyiVXkDbk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1791098893,
+   "date": "2026-10-04",
+   "url": "https://www.douyin.com/note/7692711133563735311"
+  },
+  {
+   "aweme_id": "7692262745483332879",
+   "desc": "最近接了几个咨询。感觉反馈还不错hhh，赚点零花钱开始毕业旅行了🤗，国庆之后会陆陆续续释放掉大部分offer，留几个保底就是#秋招#实习#嵌入式软件",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owiAIDmfDD2E1wAedaY11AiQ5A7BNDgAAOysAC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=YvJyL4%2B8vpe81A6YMRQqSAiPGO4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/owAAAD2Av11IfCSAyDBDOEdNDYaeiQigAI1A4N~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=Sj%2BKKMWkIb3TVrkbgY3Lgkdwv4c%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ooA3yiCeDB1DY1AQagANAKDOEf2d1uAiX0IADA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=E4Upu5LiJ7dAiuHxZcdEKCb6ycI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oIfqAc7AAACEAdgqlFDtDqQHwIAge09SGFsAGb~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=PQ%2BNADqBd1lyhs0Azmml5fBZXE0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogA7Aeb3GBMVLAUB3BIoNxQOgEGgUU7ALe7fBA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=ZUi8%2BO2%2BtTAPs4c%2BEppDv2VFNlE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/owiAIDmfDD2E1wAedaY11AiQ5A7BNDgAAOysAC~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=U0xhBldQzKfDOoRwZwmWxzAN71Q%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1790994493,
+   "date": "2026-10-03",
+   "url": "https://www.douyin.com/note/7692262745483332879"
+  },
+  {
+   "aweme_id": "7692260181631175936",
+   "desc": "原力灵机嵌入式软件意向 第 12 个oc.这家真是面的次数最多的一家了 面了 4 轮，国庆前OC的，具体时间就不说了，面试强度还是很大的，听说马上要上市了，不知道秋招会不会给股票。后面是其中一轮的面筋，不知道最后能开多少。最后祝大家国庆节日",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocZAoBXEAu9YAQiIxCFqAyGDg2DKAAyefGwA5l~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=9wEqwGU7ZPFhq6KOj5LARPNIUV8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/oMpBeGLgpIG2RkAAvEAAemIOVAQi7GKBGAeMyE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=pCsN6sezx6D%2FDICVgRvnHFrwB7I%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/o0eeIGLiAmGRopHABAGAQvgk7OVAyEGBAMIKeR~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=usXyrFCF6SwmnP07sZY6K4cRC8I%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813/oYgmBKeGGIkS7eVBOynIGgpMAEeAVIvALAARQA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=PlwiLU8V%2FEJjrw8NUJUOlzHRfZE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ogE5AypgRLGAOBMAIVIGkeeKQAj2AvKmBGARe7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=5jEFb5%2F1Sb%2Bc5JU9ssxAEUr1zv0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/ocZAoBXEAu9YAQiIxCFqAyGDg2DKAAyefGwA5l~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=kNdeDpNpCuW6Myz5LFVpmmwXX60%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1790993898,
+   "date": "2026-10-03",
+   "url": "https://www.douyin.com/note/7692260181631175936"
+  },
+  {
+   "aweme_id": "7681897307982246843",
+   "desc": "秋招第二个带薪offer.base开的比第一家高一点，年终少两个月，总包少蛮多，准备拒了。还是第一家更好，然后就是等三幻神能不能走完流程吧，insta除外，卡本。#嵌入式软件 #秋招 #开奖",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEbi5iCeoB1CTwAplwA6AEOMEfVy9VEinLIAcA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=upxRM0fEvQb9pPa87yaO8Xl5H2Y%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/owoCTM6ACcwBU959AAAeOyfpAVEibli1wEjIMU~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798023600&x-signature=K3D%2F8ORWyIvllF2FHtq8tacq%2FZY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261123192730A14EE708F6856F04EB55"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEbi5iCeoB1CTwAplwA6AEOMEfVy9VEinLIAcA~noop.jpeg?lk3s=138a59ce&x-expires=1796641200&x-signature=eVrm2k5tkHM1%2FaE%2BM95f3fmUyTw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261123192730A14EE708F6856F04EB55",
+   "create_time": 1788581095,
+   "date": "2026-09-05",
+   "url": "https://www.douyin.com/note/7681897307982246843"
+  },
+  {
+   "aweme_id": "7710828261140042217",
+   "desc": "",
+   "type": "note",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/note/7710828261140042217"
+  },
+  {
+   "aweme_id": "7595587392191368498",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7595587392191368498"
+  },
+  {
+   "aweme_id": "6972524513598770465",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/6972524513598770465"
+  },
+  {
+   "aweme_id": "7154597324054973727",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7154597324054973727"
+  },
+  {
+   "aweme_id": "7584614244801350954",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7584614244801350954"
+  },
+  {
+   "aweme_id": "7384796546321141003",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7384796546321141003"
+  },
+  {
+   "aweme_id": "7030363395987606817",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7030363395987606817"
+  },
+  {
+   "aweme_id": "7409281275657194793",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7409281275657194793"
+  }
+ ]
+}

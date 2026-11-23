@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-把两个考点实验台里的题库导入 04_algo 模块。
+把两个考点实验台里的题库导入 algo 模块。
 
 实验台的 DATA 是结构化 JSON（不是散落的 HTML），所以能直接拿到
 题目、代码、选项、答案、解析——比从标题抽题可靠得多。
@@ -22,14 +22,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CONTENT = ROOT / "content" / "04_algo"
+CONTENT = ROOT / "content" / "algo"
 DEC = json.JSONDecoder()
 
 LABS = [
     ("C++", r"D:/工程/教学文档/C++实验台/C++考点实验台.html", "cpp"),
     ("Python", r"D:/工程/教学文档/Python实验台/Python考点实验台.html", "python"),
 ]
-MODULE = "04_algo"
+MODULE = "algo"
 ID_BASE, SPAN = 1600, 500
 
 

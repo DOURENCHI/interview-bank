@@ -137,7 +137,7 @@ def main() -> int:
     p0 = [q for q in qs if q["priority"] == "P0"]
     A(f"- P0 共 **{len(p0)}** 道，占 {len(p0)*100//len(qs)}%")
     core_p0 = [q for q in p0 if q["module"] in
-               ("01_project", "02_cpp", "03_linux", "04_algo")]
+               ("project", "cpp", "linux", "algo")]
     A(f"- 其中「项目+C+++Linux+算法」四块核心 **{len(core_p0)}** 道"
       f"（实习笔试+一面主战场）")
     bydate = collections.Counter((q.get("verifiedAt") or "?")[:10] for q in qs)

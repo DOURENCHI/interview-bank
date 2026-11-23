@@ -137,9 +137,9 @@ def main() -> int:
         return 0
 
     cand = cand[:a.max]
-    nxt = next_ids(["02_cpp", "03_linux", "04_algo", "05_deploy", "06_ros2",
-                    "07_imaging", "08_robot", "09_hardware", "10_cv_pytorch", "11_python",
-                    "12_backend", "13_hardware2"])
+    nxt = next_ids(["cpp", "linux", "algo", "deploy", "ros2",
+                    "imaging", "robot", "hardware", "cv_pytorch", "python",
+                    "backend", "hardware"])
     made = 0
     for c in cand:
         mod, sub = module_of(c["q"])

@@ -15,17 +15,20 @@ CONTENT = ROOT / "content"
 OUT = ROOT / "docs" / "taxonomy.md"
 
 MODULE_NAME = {
-    "01_project": "项目深挖", "02_cpp": "C++", "03_linux": "Linux",
-    "04_algo": "算法机考", "05_deploy": "模型部署", "06_ros2": "ROS2",
-    "07_imaging": "医学影像", "08_robot": "机器人学",
-    "09_hardware": "硬件嵌入式", "10_cv_pytorch": "深度学习",
-    "11_python": "Python", "12_backend": "后端基础",
-    "13_hardware2": "硬件嵌入式·续",
+    "project": "项目深挖", "cpp": "C++", "linux": "Linux",
+    "algo": "算法机考", "deploy": "模型部署", "ros2": "ROS2",
+    "imaging": "医学影像", "robot": "机器人学",
+    "hardware": "硬件嵌入式", "cv_pytorch": "深度学习",
+    "python": "Python", "backend": "后端基础",
+    "agent": "Agent 应用",
+    "scene": "场景系统设计", "ai_native": "AI-Native 能力",
 }
-BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
-        "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100, "08_robot": 3600,
-        "09_hardware": 4100, "10_cv_pytorch": 4600, "11_python": 5100, "12_backend": 5600,
-        "13_hardware2": 6100}
+BASE = {"project": 100, "cpp": 600, "linux": 1100, "algo": 1600,
+        "deploy": 2100, "ros2": 2600, "imaging": 3100, "robot": 3600,
+        "hardware": 4100, "cv_pytorch": 4600, "python": 5100, "backend": 5600,
+        "agent": 6600, "scene": 7100, "ai_native": 7600}
+# hardware 合并了旧 09_hardware(4100) 与 13_hardware2(6100) 两段
+EXTRA_BASES = {"hardware": (6100,)}
 
 
 def main() -> int:
@@ -51,8 +54,12 @@ def main() -> int:
               "|---|---|---|---|---|---|---|---|"]
     for mod in sorted(subs):
         used = len(ids[mod])
+        segs = [(BASE[mod] + 1, BASE[mod] + 499)] + \
+               [(b + 1, b + 499) for b in EXTRA_BASES.get(mod, ())]
+        seg_txt = " / ".join(f"{a}–{z}" for a, z in segs)
+        capacity = 499 * len(segs)
         lines.append(f"| `{mod}` | `content/{mod}/` | {MODULE_NAME.get(mod, mod)} | {used} | "
-                     f"{BASE[mod] + 1}–{BASE[mod] + 499} | {used} | {500 - used} | {len(subs[mod])} |")
+                     f"{seg_txt} | {used} | {capacity - used} | {len(subs[mod])} |")
     lines.append("")
 
     lines += ["## 二、子方向与题量", ""]
@@ -68,9 +75,9 @@ def main() -> int:
     lines += ["## 三、维护规则", "",
               "1. **新题先找归属**：优先并入已有子方向；只有当某类题超过 25 道且考点明显不同时，才新开子方向。",
               "2. **子方向粒度**：一个子方向 10–60 道为宜。低于 5 道的合并到相邻方向；超过 80 道的考虑拆分。",
-              "3. **硬件题号段已满**（4101–4599 用尽）。再进硬件题的顺序：",
+              "3. **硬件号段**：主段 4101–4599 已满，续段 6101–6599（原 13_hardware2 并入 hardware）。再进硬件题的顺序：",
               "   - 先**并题**：把新考点写成现有卡片的「高频追问」或「讲深一层」，不新增题卡；",
-              "   - 确需新卡时，先删/并低价值卡腾号，或**扩号段**——扩号段必须整体后移 `10_cv_pytorch` 及其后所有模块，并同步改 `tools/validate.py` 的 `ID_BASE/SPAN` 与 `tools/gen_taxonomy.py` 的 `BASE`。",
+              "   - 确需新卡时先进续段 6101–6599；号段全满再扩号段——扩号段必须整体后移后续模块，并同步改 `tools/validate.py` 的 `ID_BASE/SPAN` 与 `tools/gen_taxonomy.py` 的 `BASE`。",
               "4. **改子方向**：只改题卡 frontmatter 的 `sub`，不要动文件名；`id` 只在跨模块迁移时重编。",
               ""]
     OUT.parent.mkdir(parents=True, exist_ok=True)

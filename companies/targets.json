@@ -1,7 +1,7 @@
 {
   "_comment": "公司 / 岗位筛选的机器可读映射 + 牛客采集器的公司注册表。tier: core=有档案且采集（10家）; watch=仅索引与筛选（来自 公司池_苏南优先 xlsx + 常见互联网补充）。source_type 一律是 inferred：按 JD 与技术方向推导，不代表该公司真实考过。真实面经请写进题卡的 appearances 字段。新增公司：复制一条条目、给 nc_keywords、注意把它排在会吞掉其关键词的公司之前。",
   "always": [
-    "01_project"
+    "project"
   ],
   "roles": [
     {
@@ -14,9 +14,9 @@
         "c++ 开发"
       ],
       "mods": [
-        "02_cpp",
-        "03_linux",
-        "11_python"
+        "cpp",
+        "linux",
+        "python"
       ],
       "subs": [
         "工程化与 SDK",
@@ -37,8 +37,8 @@
         "平台软件"
       ],
       "mods": [
-        "06_ros2",
-        "03_linux"
+        "ros2",
+        "linux"
       ],
       "subs": [
         "工程化与 SDK",
@@ -60,8 +60,8 @@
         "onnx"
       ],
       "mods": [
-        "05_deploy",
-        "10_cv_pytorch"
+        "deploy",
+        "cv_pytorch"
       ],
       "subs": [
         "端侧部署",
@@ -83,8 +83,8 @@
         "vlm"
       ],
       "mods": [
-        "10_cv_pytorch",
-        "07_imaging"
+        "cv_pytorch",
+        "imaging"
       ],
       "subs": [
         "跟骨分割（科研）",
@@ -108,7 +108,7 @@
         "固件"
       ],
       "mods": [
-        "09_hardware"
+        "hardware"
       ],
       "subs": [
         "二维云台",
@@ -127,8 +127,8 @@
         "具身"
       ],
       "mods": [
-        "08_robot",
-        "06_ros2"
+        "robot",
+        "ros2"
       ],
       "subs": [
         "跟骨分割（科研）",
@@ -2017,6 +2017,6 @@
     }
   ],
   "universal": [
-    "04_algo"
+    "algo"
   ]
 }

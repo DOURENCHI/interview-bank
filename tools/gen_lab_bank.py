@@ -2,8 +2,8 @@
 """把题库里的 C++ / Python 题导出成两个实验台目录下的「题库」页。
 
 产出：
-    D:/工程/教学文档/C++实验台/C++题库.html      （02_cpp 全部）
-    D:/工程/教学文档/Python实验台/Python题库.html （11_python + 04_algo 的 Python 语言细节）
+    D:/工程/教学文档/C++实验台/C++题库.html      （cpp 全部）
+    D:/工程/教学文档/Python实验台/Python题库.html （python + algo 的 Python 语言细节）
 
 设计：
 - 单文件、零外部依赖，风格沿用实验台的浅蓝灰（不套暖纸模板）。
@@ -264,34 +264,34 @@ def build_page(cfg: dict) -> Path:
 
 def main() -> int:
     build_page({
-        "pred": lambda q: q["module"] == "02_cpp",
+        "pred": lambda q: q["module"] == "cpp",
         "out": "C++实验台/C++题库.html",
         "title": "C++ 题库 · 251 题（按新分类）",
-        "kicker": "// 面试题库 · 02_cpp · 与实验台同一套浅蓝灰",
+        "kicker": "// 面试题库 · cpp · 与实验台同一套浅蓝灰",
         "h1": "C++ 题库",
-        "lede": "题库里 <b>02_cpp</b> 的全部题，按新的子方向分类（指针与内存 / 类型与语义 / 对象模型 / 模板与泛型 / "
+        "lede": "题库里 <b>cpp</b> 的全部题，按新的子方向分类（指针与内存 / 类型与语义 / 对象模型 / 模板与泛型 / "
                 "STL 容器 / 并发与多线程 / 编译链接 / 工程化与 SDK / Qt 与 GUI / 时间与算法）。"
-                "实验台原来的 62 道读程序题属于 04_algo 的「C++语言细节」，不在这 251 道里——两套互为补充："""
+                "实验台原来的 62 道读程序题属于 algo 的「C++语言细节」，不在这 251 道里——两套互为补充："""
                 "读程序练手，这里补概念面。",
         "back": "C++考点实验台.html",
         "lab_data": LAB / "C++实验台/_work/data.json",
         "mark": lambda q: False,
-        "src": "02_cpp 全部",
+        "src": "cpp 全部",
     })
     build_page({
-        "pred": lambda q: q["module"] == "11_python" or (q["module"] == "04_algo" and q["sub"] in
+        "pred": lambda q: q["module"] == "python" or (q["module"] == "algo" and q["sub"] in
                                                           ("语法与类型", "容器与切片", "函数与异常", "并发与性能")),
         "out": "Python实验台/Python题库.html",
         "title": "Python 题库 · 155 题（按新分类）",
-        "kicker": "// 面试题库 · 11_python + 04_algo · 与实验台同一套浅蓝灰",
+        "kicker": "// 面试题库 · python + algo · 与实验台同一套浅蓝灰",
         "h1": "Python 题库",
-        "lede": "题库里 <b>11_python</b> 的 40 道语言机制题，加上 <b>04_algo</b> 的 115 道 Python 语言细节题，"
+        "lede": "题库里 <b>python</b> 的 40 道语言机制题，加上 <b>algo</b> 的 115 道 Python 语言细节题，"
                 "按新分类（语法与类型 / 容器与切片 / 函数与异常 / 并发与性能 / 语言机制 / 性能与工程等）。"
                 "其中 115 道就是实验台「读程序写结果」区的原题，已标「读程序区已收录」；另外 40 道是新补的语言机制题。",
         "back": "Python考点实验台.html",
         "lab_data": LAB / "Python实验台/_work/data.json",
-        "mark": lambda q: q["module"] == "04_algo",
-        "src": "11_python 40 题 + 04_algo Python 语言细节 115 题",
+        "mark": lambda q: q["module"] == "algo",
+        "src": "python 40 题 + algo Python 语言细节 115 题",
     })
     return 0
 

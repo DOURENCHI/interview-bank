@@ -39,7 +39,7 @@
           "emphasis": "原文：必考、且占比非常大",
           "rule": {
             "modules": [
-              "02_cpp"
+              "cpp"
             ]
           },
           "sections": [
@@ -47,7 +47,7 @@
               "n": "语言基础",
               "rule": {
                 "modules": [
-                  "02_cpp"
+                  "cpp"
                 ],
                 "subs": [
                   "语言基础"
@@ -58,7 +58,7 @@
               "n": "C++内存",
               "rule": {
                 "modules": [
-                  "02_cpp"
+                  "cpp"
                 ],
                 "terms": [
                   "内存",
@@ -76,7 +76,7 @@
               "n": "面向对象(一)",
               "rule": {
                 "modules": [
-                  "02_cpp"
+                  "cpp"
                 ],
                 "subs": [
                   "对象模型"
@@ -90,7 +90,7 @@
               "n": "STL",
               "rule": {
                 "modules": [
-                  "02_cpp"
+                  "cpp"
                 ],
                 "subs": [
                   "STL 容器"
@@ -101,7 +101,7 @@
               "n": "新特性(一)",
               "rule": {
                 "modules": [
-                  "02_cpp"
+                  "cpp"
                 ],
                 "terms": [
                   "C++11",
@@ -130,7 +130,7 @@
           "emphasis": "常考：进程/线程/内存/文件",
           "rule": {
             "modules": [
-              "03_linux"
+              "linux"
             ]
           },
           "sections": [
@@ -152,7 +152,7 @@
           "emphasis": "常考：TCP/HTTP/Socket",
           "rule": {
             "modules": [
-              "03_linux"
+              "linux"
             ],
             "subs": [
               "网络编程"
@@ -163,7 +163,7 @@
               "n": "计算机网络(一)",
               "rule": {
                 "modules": [
-                  "03_linux"
+                  "linux"
                 ],
                 "subs": [
                   "网络编程"
@@ -244,7 +244,7 @@
           "emphasis": "原文：必考、且占比非常大（含手撕代码）",
           "rule": {
             "modules": [
-              "04_algo"
+              "algo"
             ]
           },
           "sections": [
@@ -252,7 +252,7 @@
               "n": "树",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "二叉树",
@@ -268,7 +268,7 @@
               "n": "堆与栈",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "堆",
@@ -282,7 +282,7 @@
               "n": "数组",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "数组",
@@ -296,7 +296,7 @@
               "n": "排序",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "排序",
@@ -310,7 +310,7 @@
               "n": "哈希",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "哈希",
@@ -325,7 +325,7 @@
               "n": "动态规划",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "动态规划",
@@ -339,7 +339,7 @@
               "n": "链表",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "链表",
@@ -351,7 +351,7 @@
               "n": "高级算法",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "BFS",
@@ -369,7 +369,7 @@
               "n": "字符串",
               "rule": {
                 "modules": [
-                  "04_algo"
+                  "algo"
                 ],
                 "terms": [
                   "字符串",
@@ -388,7 +388,7 @@
           "emphasis": "原文：项目与算法决定 sp offer / 名企",
           "rule": {
             "modules": [
-              "01_project"
+              "project"
             ]
           },
           "sections": [
@@ -396,7 +396,7 @@
               "n": "项目相关",
               "rule": {
                 "modules": [
-                  "01_project"
+                  "project"
                 ]
               }
             }
@@ -652,7 +652,7 @@
           "emphasis": "原文：必考、占比非常大（含 CNN/Transformer）",
           "rule": {
             "modules": [
-              "10_cv_pytorch"
+              "cv_pytorch"
             ]
           },
           "sections": [
@@ -674,7 +674,7 @@
           "emphasis": "原文：必考、占比非常大",
           "rule": {
             "modules": [
-              "04_algo"
+              "algo"
             ]
           },
           "sections": [
@@ -720,8 +720,8 @@
           "emphasis": "常考：语言细节 + 工程工具链",
           "rule": {
             "modules": [
-              "11_python",
-              "05_deploy"
+              "python",
+              "deploy"
             ]
           },
           "sections": [
@@ -729,7 +729,7 @@
               "n": "编程语言",
               "rule": {
                 "modules": [
-                  "11_python"
+                  "python"
                 ]
               }
             },
@@ -781,7 +781,7 @@
           "emphasis": "常考：linux / 网络 / OS / 数据库",
           "rule": {
             "modules": [
-              "03_linux"
+              "linux"
             ]
           },
           "sections": [
@@ -789,7 +789,7 @@
               "n": "linux",
               "rule": {
                 "modules": [
-                  "03_linux"
+                  "linux"
                 ],
                 "subs": [
                   "Linux 系统",
@@ -802,7 +802,7 @@
               "n": "计算机网络",
               "rule": {
                 "modules": [
-                  "03_linux"
+                  "linux"
                 ],
                 "subs": [
                   "网络编程"
@@ -813,7 +813,7 @@
               "n": "操作系统",
               "rule": {
                 "modules": [
-                  "03_linux"
+                  "linux"
                 ],
                 "subs": [
                   "并发",

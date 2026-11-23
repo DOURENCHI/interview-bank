@@ -38,10 +38,10 @@ updated: 2026-11-09
 
 | 顺序 | 模块 | 内容 |
 |---|---|---|
-| 1 | `07_imaging` | DICOM 与影像处理全模块 |
-| 2 | `02_cpp` | P0 全部 |
-| 3 | `10_cv_pytorch` | 分割模型与指标 |
-| 4 | `01_project` | 跟骨 U-Net 科研项目 |
+| 1 | `imaging` | DICOM 与影像处理全模块 |
+| 2 | `cpp` | P0 全部 |
+| 3 | `cv_pytorch` | 分割模型与指标 |
+| 4 | `project` | 跟骨 U-Net 科研项目 |
 
 ## 判断
 
