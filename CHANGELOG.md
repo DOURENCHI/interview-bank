@@ -1,5 +1,19 @@
 # Changelog
 
+## CareerOS 内容 V2.9.2 — 2026-11-23（抖音面经入库：新卡 + 出现记录 + 公司池）
+
+- **抖音流水线首次实战**（嵌入式/端侧 AI 秋招博主）：27 作品 → 18 图文 119 页 OCR（RapidOCR 主 + tesseract 备，
+  均置信 0.77–0.87）→ 55 切题候选 → 判重后 10 道真新题。产出 `sources/douyin_works.json` /
+  `douyin_ocr.jsonl` / `douyin_candidates.json`（validate 已登记 `source_type: douyin`）。
+- **新卡 2 张**（`13_hardware2`，大疆 MCU 二面原题）：Q-6117 OTA A/B 双分区升级（校验链 + 元数据防掉电 +
+  试启动回滚）、Q-6118 样机转量产容错（输入防御/异常兜底/状态自愈/黑匣子四层）。
+- **出现记录 9 张**（Momenta 车端部署 2026-10-15 面 8 张 + 新凯来 MCU 三面 1 张）：
+  Q-2024 环形缓冲区、Q-0924 memcpy vs memmove、Q-0681 std::copy vs memcpy、Q-0669 shared_ptr 线程安全、
+  Q-2312 量化精度评估、Q-2313 量化校准、Q-2314 INT4、Q-2102 端侧部署坑、Q-4208 IO 驱动继电器（顺带补
+  追问：上电防误吸合四层防护）。
+- **公司池**：新凯来入池（C 档，半导体设备，enabled=false 入口待核验），池 52 → 53。
+- **回归**：validate 1651 题 ✅ / ui_test 全过 ✅ / radar_test 36/36 ✅ / dist 重建 ✅。
+
 ## CareerOS 内容 V2.9.1 — 2026-11-23（内容债清零：24 张空壳卡全部补写 + 审计修复）
 
 - **24 张「待补充」空壳卡全部补写**（2026-11-22 牛客周增量带入）：
