@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12",
+  "updated": "2026-11-23",
   "note": "项目证据档案。stack 必须用技能表里的名字（C++ / Linux / 模型部署 / ROS2·中间件 / 深度学习·感知 / Python / 硬件·嵌入式 / 机器人学 / 工业通信·现场总线 / 算法机考），页面据此把 JD 要求映射到项目。repo 为空 = 公开仓库未登记，页面按「证据不完整」处理，不当作已具备。evidence 的 status 只有 present（有实物）/ partial（有但缺链接或数据）/ missing（没有）三态。",
   "projects": [
     {
@@ -9,12 +9,12 @@
       "tier": "核心",
       "stack": ["C++", "Linux", "模型部署", "Python", "深度学习/感知"],
       "evidence": {
-        "code": {"status": "partial", "note": "C++ 推理链路已实现（preprocess→infer→NMS→后处理）；公开仓库链接待填"},
+        "code": {"status": "present", "note": "C++ 推理链路已实现（preprocess→infer→NMS→后处理）；公开仓库含 cpp/ 推理工程、ONNX/TensorRT 导出链与 GitHub Pages 演示页"},
         "metric": {"status": "present", "note": "端到端 7.94ms / 纯推理 3.22ms；FP32/FP16/INT8 三档对比"},
         "test": {"status": "present", "note": "p99 延迟、精度差异、fuse 前后对比"},
         "doc": {"status": "present", "note": "题库项目深挖 16 题，覆盖链路/性能/精度/踩坑"}
       },
-      "repo": "",
+      "repo": "https://github.com/DOURENCHI/YOLO-road-detection",
       "gaps": ["CUDA Kernel 自研（目前用现成算子）", "Docker + CI 一键复现", "多 batch / 多流并发压测"]
     },
     {
@@ -84,12 +84,12 @@
       "tier": "科研",
       "stack": ["Python", "深度学习/感知"],
       "evidence": {
-        "code": {"status": "partial", "note": "PyTorch + U-Net 训练/评估脚本；仓库暂不公开"},
+        "code": {"status": "present", "note": "PyTorch + U-Net 训练/评估脚本；公开仓库（U-Net 分割 + Böhler/Gissane 角自动测量）"},
         "metric": {"status": "present", "note": "Dice / IoU / HD95 三指标；类别不平衡处理有对照"},
         "test": {"status": "partial", "note": "小样本交叉验证；缺外部数据集验证"},
         "doc": {"status": "partial", "note": "题库项目深挖 10 题；论文未投稿"}
       },
-      "repo": "",
+      "repo": "https://github.com/DOURENCHI/Calcaneus-X-ray-Segmentation-and-Automatic-Measurement-from-Clinical-Angles",
       "gaps": ["外部数据集泛化验证", "论文/预印本（一作）", "推理时延与显存（临床可用性）"]
     }
   ]

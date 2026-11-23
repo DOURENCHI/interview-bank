@@ -99,7 +99,7 @@ def main() -> int:
 
     # ---- 4. 来源完整性 ----
     no_src = [q["id"] for q in qs if not q.get("sourceRef")]
-    no_date = [q["id"] for q in qs if not q.get("verified_at")]
+    no_date = [q["id"] for q in qs if not q.get("verifiedAt")]
     A("## 4. 来源完整性\n")
     A(f"- 缺 `source_ref`：**{len(no_src)}** 道" + (f"（{', '.join(no_src[:8])}…）" if no_src else ""))
     A(f"- 缺 `verified_at`：**{len(no_date)}** 道\n")
@@ -140,7 +140,7 @@ def main() -> int:
                ("01_project", "02_cpp", "03_linux", "04_algo")]
     A(f"- 其中「项目+C+++Linux+算法」四块核心 **{len(core_p0)}** 道"
       f"（实习笔试+一面主战场）")
-    bydate = collections.Counter(q.get("verified_at", "?")[:10] for q in qs)
+    bydate = collections.Counter((q.get("verifiedAt") or "?")[:10] for q in qs)
     A("- 最近核验日期分布：" + "，".join(f"{k}×{v}" for k, v in
                                        sorted(bydate.items(), reverse=True)[:5]))
 

@@ -205,6 +205,7 @@ def load_questions() -> list[dict]:
             "appearances": meta.get("appearances", []),
             "sourceRef": meta.get("source_ref", ""),
             "sourceType": meta.get("source_type", "inferred"),
+            "verifiedAt": str(meta.get("verified_at") or ""),
             # 证据等级（外部评审建议的 S1~S4，由 source_type 派生）
             "evidence": {
                 "official": "S1", "upstream": "S1",

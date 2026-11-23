@@ -1,5 +1,21 @@
 # Changelog
 
+## CareerOS 内容 V2.9.1 — 2026-11-23（内容债清零：24 张空壳卡全部补写 + 审计修复）
+
+- **24 张「待补充」空壳卡全部补写**（2026-11-22 牛客周增量带入）：
+  - `02_cpp` 12 张：vivo 面·日程 Agent 连环问 4 张（DAG vs 状态机 / 过期响应竞态 / 序列双层评测 / 微宏平均），
+    快手面·视频检索连环问 6 张（CLIP 对齐 / 窗长步长 / tIoU / 时间 NMS / 片段拼接 / 任务级指标）+ 字幕检索 RRF 1 张，
+    华为面 2 张（MAC 地址 / 数据库查询优化）。
+  - `10_cv_pytorch` 12 张（快手算法面）：LoRA 数据与低秩原理、LSTM 三门、Rejection Sampling 蒸馏、BERT MLM 与
+    BERT/GPT 之争、Reward 设计与配比、PPO Critic 与 GAE、vLLM PagedAttention、NCCL Ring/Tree/NVLS、数据集质量评估。
+- **审计修复**（`tools/build.py` + `tools/audit.py`）：`load_questions()` 此前丢弃 frontmatter 的 `verified_at`，
+  导致体检报告「缺 verified_at 1649 道」全量误报；现装载为 `verifiedAt` 字段，实测 1649 → **0**。
+- **体检结果**：可疑重复对 61 → **2**（空壳卡占位文本互撞的假重复随补写自动塌缩；剩 2 对为读程序题同模板已知模式）；
+  缺来源 0；真实一手+社区面经 1212/1649（73%）。
+- `companies/projects.json`：yolo_deploy、calcaneus 两项目补公开仓库链接（YOLO-road-detection 含 C++ 推理工程；
+  calcaneus 仓库已改名公开），证据等级 partial → present。
+- 全量回归绿：`validate.py` ✅ 1649 题 ｜ `ui_test.py` ✅ ｜ `radar_test.py` 36/36 ✅ ｜ dist 已重建。
+
 ## CareerOS 内容 V2.9 — 2026-11-21（题库导出到两个实验台，不改题量）
 
 - 新增 `tools/gen_lab_bank.py`：把题库按模块导出成实验台目录下的单文件题库页，沿用实验台浅蓝灰配色，零依赖。
