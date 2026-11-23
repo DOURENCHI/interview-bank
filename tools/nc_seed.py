@@ -144,16 +144,16 @@ def clean_title(q: str) -> str:
 ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
            "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
            "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
-           "11_python": 5100, "12_backend": 5600}
+           "11_python": 5100, "12_backend": 5600, "13_hardware2": 6100}
 SPAN = 500
 
 
-def alloc_id(mod: str, nxt: dict) -> int:
+def alloc_id(mod: str, nxt: dict):
     """返回模块 mod 的下一个空闲编号：跳过磁盘上已存在的卡文件，且不越出号段。
 
     修复 2026-11-13 覆盖事故：旧逻辑在号段顶部回退到"最小空位"后，
     循环里 nxt += 1 盲增，会一路穿过被占用的编号，把旧卡覆盖掉。
-    新逻辑每次分配都检查目标文件是否存在，号段满则明确报错。
+    新逻辑每次分配都检查目标文件是否存在，号段满返回 None（调用方决定溢出或跳过）。
     （号段与 tools/validate.py 的 ID_BASE 保持一致）"""
     lo, hi = ID_BASE.get(mod, 0) + 1, ID_BASE.get(mod, 0) + SPAN - 1
     n = max(nxt.get(mod, lo), lo)
@@ -163,7 +163,12 @@ def alloc_id(mod: str, nxt: dict) -> int:
             nxt[mod] = n + 1
             return n
         n += 1
-    raise SystemExit(f"模块 {mod} 号段 {lo}~{hi} 已满，无法再入库（需扩号段或清理低质卡）")
+    return None
+
+
+# 号段溢出：09_hardware（4101~4599）2026-11-23 已满 499/499，
+# 硬件题自动落到 13_hardware2（6101~6599），模块名/子类保持硬件语义
+OVERFLOW_MODULE = {"09_hardware": "13_hardware2"}
 
 
 def skeleton(qid, title, mod, sub, comp, role, url, rnd) -> str:
@@ -279,9 +284,17 @@ def main() -> int:
                 skipped_junk += 1
                 continue
             mod, sub = module_of(q["q"] + " " + d["title"])
-            qid = f"Q-{alloc_id(mod, nxt):04d}"
+            n = alloc_id(mod, nxt)
+            if n is None and mod in OVERFLOW_MODULE:
+                mod = OVERFLOW_MODULE[mod]
+                n = alloc_id(mod, nxt)
+            if n is None:
+                print(f"  ⚠ {comp} 号段满跳过：{q['q'][:44]}")
+                continue
+            qid = f"Q-{n:04d}"
             title = clean_title(q["q"])
             target = ROOT / "content" / mod / f"{qid}.md"
+            target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(skeleton(qid, title, mod, sub, comp, role, url,
                                        d.get("round") or ""), encoding="utf-8")
             bank_norm.add(norm)

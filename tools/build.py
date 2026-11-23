@@ -25,6 +25,7 @@ MODULE_NAME = {
     "07_imaging": "医学影像", "08_robot": "机器人学",
     "09_hardware": "硬件嵌入式", "10_cv_pytorch": "深度学习",
     "11_python": "Python", "12_backend": "后端基础",
+    "13_hardware2": "硬件嵌入式·续",
 }
 MODULE_ORDER = list(MODULE_NAME)
 PRI_ORDER = {"P0": 0, "P1": 1, "P2": 2}
