@@ -1,7 +1,7 @@
 {
   "updated": "2026-11-24",
   "schedule": "weekly-sunday",
-  "route_note": "route=image → tools/douyin_works.py 枚举 + douyin_ocr.py OCR + douyin_seed.py 切题判重；route=video_asr → douyin_works.py 枚举 + douyin_video.py 下载转写。新博主：加一条目即可，流水线每周日全量扫描新作品。",
+  "route_note": "route=image → douyin_works.py 枚举 + douyin_ocr.py OCR + douyin_seed.py 切题判重；route=article → douyin_article.py --enum（枚举 aweme_type）+ --fetch（抓文字笔记正文）+ 转换 douyin_ocr_<id>.jsonl + douyin_seed.py。视频作品未登录只能拿 60s 预览音轨，完整视频需登录（douyin_login.py 扫码）或 ASR 路线。未登录主页枚举可能只拿到部分作品（如 b4 首页标 30 实际只返回 18-26），缺的条目需登录后枚举或用户补单条链接。",
   "bloggers": [
     {
       "id": "b1",
@@ -32,13 +32,14 @@
     },
     {
       "id": "b4",
-      "name": "嵌入式面经博主(沁恒/经纬恒润/中控/兆易创新)",
+      "name": "嵌入式面经博主(沁恒/经纬恒润/中控/兆易创新/灵动微)",
       "url": "https://www.douyin.com/user/MS4wLjABAAAAAAzSnitWuZ5ormgGtY1fRQvFmtOnWg0LKHTyh2ziXS_By4KLEsTKFolh-0YUb1cU",
-      "route": "video_asr",
+      "route": "article",
       "works_file": "sources/douyin_works_b4.json",
-      "transcript_file": "sources/douyin_transcript_b4.jsonl",
       "added": "2026-11-24",
-      "last_checked": "2026-11-24"
+      "last_checked": "2026-11-24",
+      "text_file": "sources/douyin_text_b4.jsonl",
+      "note": "17 篇文字笔记(aweme_type=163)已抓 16 篇；主页标 30 作品仅捕获 26，灵动微电子等 4 条待补"
     }
   ]
 }

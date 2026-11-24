@@ -117,16 +117,43 @@ curl -L -o /d/msys64/ucrt64/share/tessdata/chi_sim.traineddata \
 去重：与现有 1033 道题做 Dice 相似度，≥0.62 直接判重；同批次内 0.85 判重。
 候选清单会带上「近似题号 + 相似度」，方便快速扫一眼就知道是新题还是老题。
 
+## 文字笔记路线（2026-11-24 新增，tools/douyin_article.py）
+
+部分博主发的是**文字笔记**（aweme_type=163，正文直接在 detail 接口里），不需要 OCR：
+
+```
+python tools/douyin_article.py --enum  <主页URL> --out sources/douyin_works_b4.json   # 枚举并区分 article/video
+python tools/douyin_article.py --fetch --works sources/douyin_works_b4.json --out sources/douyin_text_b4.jsonl
+```
+
+- `--fetch` 未登录即可拿到 `aweme_detail.article_info.article_content` 全量正文（实测 659~1624 字/篇）；
+- 真**视频**作品未登录只能拿到 60s 预览音轨，完整视频需登录（`tools/douyin_login.py` 扫码存 `_cache/douyin_state.json`）+ ASR（faster-whisper，`tools/douyin_video.py --state` 自动注入登录态，模型 Systran/faster-whisper-small 已缓存，HF_ENDPOINT=https://hf-mirror.com 可重下）；
+- **视频两分支判定**（2026-11-24 实测 ADC+DMA 视频得出）：ASR 转 0 字且音量正常（mean_volume ≈ -12dB）→ 多半是**图卡动画+BGM 无旁白**，改走抽帧 OCR：`ffmpeg -i x.bin -vf fps=1 frames/f%03d.png` + RapidOCR 逐帧去重；有旁白的教学视频才走 whisper（vad_filter=True）。CUDA 转写报 `cublas64_12.dll is not found` → douyin_video.py 已修（torch/lib 加 DLL 目录）；图卡视频转写结果记 `"model": "frames+rapidocr"`；
+- 文字正文转成 `douyin_ocr_*.jsonl` 兼容格式（text 当作单页 OCR 结果，conf=1.0）后，照常走 `douyin_seed.py` 切题判重。
+
+## 每周例行（DSH 定时任务，周日 10:00）
+
+配置在 `sources/douyin_watch.json`（博主清单，route=image/article/video_asr）：
+
+1. 逐博主枚举作品，与已存 works 文件 diff 出新作品；
+2. 新作品按 route 处理：图文→OCR，文字笔记→article 正文，视频→登录态+ASR；
+3. `douyin_seed.py` 切题判重 → 人工甄别（真新题写卡 / 经典八股挂出现记录 / HR 题不入库）；
+4. `validate.py` → `gen_taxonomy.py` → `build.py` → CHANGELOG → push。
+
+**注意**：未登录枚举可能只拿到部分作品（b4 主页标 30 实测未登录只给 18~26 条），登录态（`_cache/douyin_state.json`）能拿全量；登录态过期时用 `tools/douyin_login.py` 重新扫码。
+
 ## 合规边界
 
 - 只读公开页面、低频、**不批量再分发原图**，图片不落仓库（`_cache/` 已在 `.gitignore`）；
 - 题卡里只保留**题目文字 + 原作品链接 + 作者署名**，标注 `source_type: douyin`；
 - 著作权属原作者，入库仅作个人复习使用；若要公开发布，建议只保留**题目本身**（事实性内容），
   不复制其原创排版、答案长文或图片；
-- 抖音用户协议对自动化访问有限制，脚本已按「不登录账号、不点赞评论、不刷量」的低扰动方式实现。
+- 抖音用户协议对自动化访问有限制，脚本按「低频访问、不点赞评论、不刷量」的低扰动方式实现；
+- 登录态仅用于读取自己账号可见的公开内容，不做任何互动操作。
 
 ## 当前状态
 
-- 三个脚本已就位并跑通（枚举 → OCR → 切题去重）；
+- 四个脚本已就位并跑通（枚举 → OCR/正文 → 切题去重 → 登录）；
 - `source_type: douyin` 已在 `tools/validate.py` 登记；
-- **还差博主主页链接**：给我 `https://www.douyin.com/user/...` 就能跑全量。
+- 博主清单 `sources/douyin_watch.json`（b1 嵌入式/b2 Java后端/b3 嵌入式/b4 嵌入式·文字笔记）；
+- 每周日 10:00 DSH 定时任务自动周检；未覆盖的视频 ASR 路线工具已就绪（douyin_video.py）。

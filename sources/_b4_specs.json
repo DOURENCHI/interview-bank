@@ -930,6 +930,185 @@
     "进阶：相遇后一指针回头，同速前进交点=入环点（数学推导 a=c）",
     "复杂度 O(n) 时间 O(1) 空间；对比哈希表法"
    ]
+  },
+  {
+   "id": "Q-2326",
+   "module": "deploy",
+   "sub": "部署工程化",
+   "title": "把应用或驱动从 ARM Linux 迁移到 LoongArch（国产 CPU 平台），你会先核对哪些架构差异？交叉工具链、sysroot 和内核头文件版本怎么固定？",
+   "works": [
+    {
+     "aweme_id": "7708379470247365914",
+     "company": "龙芯中科",
+     "date": "2026-11-21",
+     "url": "https://www.douyin.com/note/7708379470247365914"
+    }
+   ],
+   "points": [
+    "指令集/ABI/字节序/内存模型差异",
+    "内核版本与驱动 API 变化",
+    "交叉编译工具链三件套 gcc/sysroot/内核头文件",
+    "版本固定与复现性"
+   ]
+  },
+  {
+   "id": "Q-2327",
+   "module": "deploy",
+   "sub": "部署工程化",
+   "title": "国产 CPU 平台从固件复位到 Linux init 的启动链经过哪些阶段？板卡停在早期启动阶段时，怎么区分固件、DDR、桥片和内核问题？",
+   "works": [
+    {
+     "aweme_id": "7708379470247365914",
+     "company": "龙芯中科",
+     "date": "2026-11-21",
+     "url": "https://www.douyin.com/note/7708379470247365914"
+    }
+   ],
+   "points": [
+    "启动链分阶段：PMON/UEFI 固件→DDR 训练→桥片枚举→内核解压→initramfs→init",
+    "分层定位法：串口输出停在哪一阶段",
+    "桥片地址空间/设备窗口与 CPU 物理地址映射（追问）"
+   ]
+  },
+  {
+   "id": "Q-1568",
+   "module": "cpp",
+   "sub": "内核与驱动",
+   "title": "设备树的 reg、interrupts、clocks、compatible 属性分别怎么和硬件手册对应？驱动里怎么取出来用？",
+   "works": [
+    {
+     "aweme_id": "7708379470247365914",
+     "company": "龙芯中科",
+     "date": "2026-11-21",
+     "url": "https://www.douyin.com/note/7708379470247365914"
+    }
+   ],
+   "points": [
+    "reg=地址单元(cells/size)、interrupts=中断号+触发方式、clocks=phandle 引用、compatible=匹配 of_match_table",
+    "of_ioremap/of_get_named_gpio/clk_get 等取用 API",
+    "compatible 从精确到通用的匹配顺序"
+   ]
+  },
+  {
+   "id": "Q-1569",
+   "module": "cpp",
+   "sub": "系统与进程",
+   "title": "Linux 内核早期串口完全没有输出，你会按什么顺序排查时钟、引脚、驱动和启动参数？",
+   "works": [
+    {
+     "aweme_id": "7708379470247365914",
+     "company": "龙芯中科",
+     "date": "2026-11-21",
+     "url": "https://www.douyin.com/note/7708379470247365914"
+    }
+   ],
+   "points": [
+    "earlycon/console= 启动参数与 earlyprintk",
+    "UART 引脚复用、时钟门控在早期是否已开",
+    "调试等级 loglevel/ignore_loglevel",
+    "内核解压前 vs 解压后输出分界"
+   ]
+  },
+  {
+   "id": "Q-6158",
+   "module": "hardware",
+   "sub": "内核与驱动",
+   "title": "开启 MMU 和 Cache 之后设备寄存器访问异常了，怎么判断是页表映射、内存属性、屏障还是驱动访问顺序问题？",
+   "works": [
+    {
+     "aweme_id": "7708379470247365914",
+     "company": "龙芯中科",
+     "date": "2026-11-21",
+     "url": "https://www.douyin.com/note/7708379470247365914"
+    }
+   ],
+   "points": [
+    "设备内存要 Device/Non-cacheable 属性，不能用普通 Cacheable 映射",
+    "ioremap 与页表属性",
+    "dmb/dsb/isb 屏障语义与驱动读写顺序",
+    "先映射再访问、先关中断再清配置的顺序问题"
+   ]
+  },
+  {
+   "id": "Q-6159",
+   "module": "hardware",
+   "sub": "内核与驱动",
+   "title": "跨芯片移植（如 STM32 代码搬到 MM32）时，CMSIS 兼容层哪些能直接复用，哪些启动/时钟/外设代码必须重核？",
+   "works": [
+    {
+     "aweme_id": "7708378024252689673",
+     "company": "灵动微电子",
+     "date": "2026-11-19",
+     "url": "https://www.douyin.com/note/7708378024252689673"
+    }
+   ],
+   "points": [
+    "CMSIS 核心层(内核寄存器/ NVIC /SysTick)可复用",
+    "启动文件、时钟树、Flash 等待周期、外设寄存器映射必须重核",
+    "HAL/LL 库不跨厂商",
+    "Keil Pack/调试器支持包匹配（现象排查）"
+   ]
+  },
+  {
+   "id": "Q-6160",
+   "module": "hardware",
+   "sub": "嵌入式软件",
+   "title": "MCU 通过 UART 和 Boot Pin 进入 ISP 下载时，启动模式、串口电平和复位时序怎么配合？ISP 过程中突然断电怎么保证还能恢复？",
+   "works": [
+    {
+     "aweme_id": "7708378024252689673",
+     "company": "灵动微电子",
+     "date": "2026-11-19",
+     "url": "https://www.douyin.com/note/7708378024252689673"
+    }
+   ],
+   "points": [
+    "BOOT0/BOOT1 采样时机=复位释放沿",
+    "SystemMemory bootloader 的 UART 协议(0x7F 握手/ACK/NAK)",
+    "电平匹配与复位时序配合",
+    "断电恢复=Flash 校验位+回退入口（呼应 OTA 双分区）"
+   ]
+  },
+  {
+   "id": "Q-6161",
+   "module": "hardware",
+   "sub": "嵌入式软件",
+   "title": "用定时器输出 PWM 并捕获输入频率时，计数频率、分频和溢出怎么核算？输入捕获测频怎么避免误差？",
+   "works": [
+    {
+     "aweme_id": "7708378024252689673",
+     "company": "灵动微电子",
+     "date": "2026-11-19",
+     "url": "https://www.douyin.com/note/7708378024252689673"
+    }
+   ],
+   "points": [
+    "PWM 频率=计数时钟/((PSC+1)(ARR+1))，占空比=CCR/(ARR+1)",
+    "输入捕获：测周期法 vs 计数法，高低频各自适用",
+    "溢出/更新中断与重装值",
+    "捕获溢出处理与等价定时器选型"
+   ]
+  },
+  {
+   "id": "Q-6162",
+   "module": "hardware",
+   "sub": "嵌入式软件",
+   "title": "5A 电流怎么变成内存里的数字？把采样电阻到 DMA 搬运的完整 ADC 链路讲一遍",
+   "works": [
+    {
+     "aweme_id": "7693067654379110126",
+     "company": "博主分享",
+     "date": "2026-10-05",
+     "url": "https://www.douyin.com/video/7693067654379110126"
+    }
+   ],
+   "points": [
+    "低侧测流：10mΩ 采样电阻 ΔV=50mV，检测放大器×20 → 1.0V 进 ADC_IN",
+    "12-bit SAR：采样电容充电（源阻抗↔采样窗口矛盾）→保持→逐次比较；VREF=3.30V，1.00/3.30×4095≈1241=0x04D9",
+    "DMA：ADC 转换完成请求 → DMA2 从 ADC_DR 搬 16 位到 SRAM，高 4 位为 0",
+    "端到端串联：前端增益→量化→搬运，每级误差来源"
+   ]
   }
- ]
+ ],
+ "total": 52
 }

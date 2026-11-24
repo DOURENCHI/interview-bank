@@ -2,7 +2,7 @@
  {
   "title": "从复位入口开始，CH32V20x 的启动代码需要完成哪些初始化，才能安全进入 main 函数？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -28,8 +28,8 @@
  {
   "title": "如果把系统时钟切到高频运行，时钟树、Flash 等待周期和外设分频之间要怎样配合？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -54,7 +54,7 @@
  {
   "title": "一个 CH32V20x 工程能够编译，但烧录后程序不运行，你会怎样检查启动文件、链接脚本、向量表和芯片型号？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -80,8 +80,8 @@
  {
   "title": "RISC-V 内核的异常入口和 Cortex-M 的异常入口有哪些差异，移植启动代码时最容易漏掉什么？",
   "points": [],
-  "module": "03_linux",
-  "sub": "内核与驱动",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -106,7 +106,7 @@
  {
   "title": "使用 CH32V203 的 USB Device 功能时，设备描述符、端点配置和枚举阶段分别承担什么职责？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -132,7 +132,7 @@
  {
   "title": "如果同一块板需要支持 USB Host 和 USB Device，软件架构和供电、连接检测策略应怎样拆分？",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -158,8 +158,8 @@
  {
   "title": "USB 收发过程中，端点缓冲区、应用层队列和中断回调之间如何管理所有权，避免数据被覆盖？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -184,8 +184,8 @@
  {
   "title": "HIRAIN OS.EAS 在 MCU/MPU 基础软件栈中承担什么角色，应用层为什么不应直接依赖芯片寄存器？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -208,35 +208,9 @@
   "date": "2026-11-15"
  },
  {
-  "title": "一个 SWC 从接口定义到可运行任务，需要经过哪些 Data Mapping、Task Mapping 和代码生成步骤？",
-  "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
-   [
-    "Q-1769",
-    "Data"
-   ],
-   [
-    "Q-1770",
-    "Data"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7708287468184898843",
-  "url": "https://www.douyin.com/note/7708287468184898843",
-  "desc": "经纬恒润面经 #嵌入式 ##嵌入式面试 #车载 #27秋招 #大学生求职",
-  "date": "2026-11-15"
- },
- {
   "title": "更换区域控制器的车规 MCU 时，MCAL、OS、BSW 配置和应用接口分别要验证哪些内容？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -262,7 +236,7 @@
  {
   "title": "CAN、LIN 和车载以太网同时存在时，如何划分通信栈、路由、诊断和应用消息的责任？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -288,8 +262,8 @@
  {
   "title": "区域控制器中的网关、智能配电、信号采集和负载驱动，怎样拆成可测试的软件模块？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -298,28 +272,10 @@
    [
     "Q-1524",
     "网关"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7708287468184898843",
-  "url": "https://www.douyin.com/note/7708287468184898843",
-  "desc": "经纬恒润面经 #嵌入式 ##嵌入式面试 #车载 #27秋招 #大学生求职",
-  "date": "2026-11-15"
- },
- {
-  "title": "ZCU 支持第三方软件部署时，如何处理软件边界、资源隔离、版本管理和故障回收？",
-  "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
+   ],
    [
-    "Q-2101",
-    "资源隔离"
+    "Q-6131",
+    "网关/负载驱动"
    ]
   ],
   "conf": 1.0,
@@ -332,7 +288,7 @@
  {
   "title": "如果面试中介绍中控技术的控制系统，你会如何说明控制器、I/O、工程师站、操作员站和现场仪表之间的职责边界？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -358,7 +314,7 @@
  {
   "title": "如何区分通用控制系统、DCS、PLC 和安全仪表系统？哪些功能可以放在普通控制逻辑中，哪些必须由独立安全边界处理？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -368,6 +324,10 @@
    [
     "Q-0144",
     "PLC"
+   ],
+   [
+    "Q-6136",
+    "DCS/PLC"
    ]
   ],
   "conf": 1.0,
@@ -380,8 +340,8 @@
  {
   "title": "一个流程控制回路要求固定周期运行时，你会怎样设计任务周期、优先级、抖动预算和超时监测？",
   "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -406,8 +366,8 @@
  {
   "title": "PID 控制中采样、计算、输出和执行器响应的时间关系会怎样影响稳定性？如何定位周期抖动造成的控制波动？",
   "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -432,7 +392,7 @@
  {
   "title": "如果控制器采用冗余或热备，主备切换时怎样保证 I/O 状态、控制输出和组态版本一致？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -458,7 +418,7 @@
  {
   "title": "现场 I/O 模块或仪表链路出现单点故障时，你会如何设计诊断、冗余、旁路和恢复流程？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -484,13 +444,18 @@
  {
   "title": "工业控制网络为什么要区分控制网、设备网和管理网？如何设计分区、白名单和故障隔离？",
   "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
+  "module": "cpp",
+  "sub": "网络编程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
   "dup_by": "",
-  "topic_near": [],
+  "topic_near": [
+   [
+    "Q-6139",
+    "管理网"
+   ]
+  ],
   "conf": 1.0,
   "img": "",
   "aweme_id": "7706537814686551346",
@@ -501,8 +466,8 @@
  {
   "title": "Modbus RTU、Modbus TCP 等设备接入控制系统时，如何处理轮询周期、超时、重试、字节序和寄存器语义？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -527,7 +492,7 @@
  {
   "title": "OPC UA 或其他上层数据接口适合承载哪些数据？为什么…",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -553,8 +518,8 @@
  {
   "title": "volatile 能保证变量操作的原子性吗？在 GD32 的中断标志、外设寄存器或主循环共享变量中，什么时候必须使用它？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -579,8 +544,8 @@
  {
   "title": "数组作为函数参数传入后 sizeof 为什么会变化？在 GD32 驱动接口中，如何同时传递缓冲区地址和有效长度？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -605,7 +570,7 @@
  {
   "title": "GD32 Cortex-M 从复位向量到 main 大致经历哪些步骤？启动文件、向量表和系统时钟初始化分别负责什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -631,8 +596,8 @@
  {
   "title": "如果修改 GD32 的系统时钟或 PLL 配置后，UART 波特率和定时器周期都不对，你会按什么顺序排查？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -657,7 +622,7 @@
  {
   "title": "GD32 GPIO 的推挽、开漏、上拉输入和复用功能分别适合什么场景？如何避免复用配置与外部电路冲突？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -683,8 +648,8 @@
  {
   "title": "C 语言中的 volatile 关键字有什么作用？在中断、寄存器访问和多任务开发中分别有哪些使用场景？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -709,7 +674,7 @@
  {
   "title": "MCU 进入低功耗模式后，如果只保留 UART 的 TX/RX 引脚，能否通过串口数据唤醒芯片？需要满足什么条件？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -735,7 +700,7 @@
  {
   "title": "I2C 通信过程中，START、STOP、ACK 和 NACK 分别对应怎样的 SDA、SCL 时序变化？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -761,7 +726,7 @@
  {
   "title": "如果需要向面试官介绍一个自己做过的嵌入式项目，你会如何说明项目架构、核心技术以及个人贡献？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -787,8 +752,8 @@
  {
   "title": "SPI 一共有哪四种工作模式？如果配置为 Mode 1，CPOL、CPHA 分别是多少？数据通常在哪个时钟边沿采样？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -813,8 +778,8 @@
  {
   "title": "Cortex-M 内核发生中断时，CPU 会自动保存哪些寄存器？中断返回时又是如何恢复现场的？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -839,7 +804,7 @@
  {
   "title": "如果 MCU 运行过程中出现异常功耗升高，你会如何判断是外设未关闭、时钟配置错误，还是系统没有真正进入休眠状态？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -865,7 +830,7 @@
  {
   "title": "sizeof 和 strlen 的区别是什么？对于字符数组和字符指针，两者的计算结果可能有什么不同？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -891,7 +856,7 @@
  {
   "title": "UART 一帧数据通常包含哪些字段？如果通信双方波特率一致但仍然出现乱码，你会怎样定位？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -917,8 +882,8 @@
  {
   "title": "在 FreeRTOS 中，任务切换通常由哪些机制触发？任务调度和中断优先级之间有什么关系？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -943,7 +908,7 @@
  {
   "title": "I2C 设备地址通常是7位还是8位？读写方向位在通信帧中处于什么位置？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -969,8 +934,8 @@
  {
   "title": "USB 通信中，控制传输、批量传输、中断传输和同步传输分别适用于哪些场景？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -995,7 +960,7 @@
  {
   "title": "硬件 PWM 与软件 PWM 有什么区别？PWM 频率、周期和占空比之间有什么关系？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1021,8 +986,8 @@
  {
   "title": "如果 I2C 从设备始终没有响应，除了检查设备地址，还应该重点检查哪些硬件信号和寄存器状态？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1047,7 +1012,7 @@
  {
   "title": "MCU 从单核升级到多核后，软件开发中可能遇到哪些新的同步问题？核间通信通常采用哪些机制？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1073,7 +1038,7 @@
  {
   "title": "在实际嵌入式开发中，你会如何使用示波器和逻辑分析仪？如果 SPI 通信异常，两种工具分别能帮助你观察什么？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1101,13 +1066,18 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
   "dup_by": "",
-  "topic_near": [],
+  "topic_near": [
+   [
+    "Q-1564",
+    "希望从事嵌入式软件开发工作"
+   ]
+  ],
   "conf": 1.0,
   "img": "",
   "aweme_id": "7704662287215515968",
@@ -1118,7 +1088,7 @@
  {
   "title": "Camera 数据采集链路一般是怎样的？从 Sensor 输出图像到内存 Buffer，中间会经过哪些硬件模块？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1144,7 +1114,7 @@
  {
   "title": "UART 接收数据时，如果偶尔出现丢帧、粘包或者数据不完整，你一般会怎么排查？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1170,7 +1140,7 @@
  {
   "title": "简单介绍一下自己，重点讲讲做过的嵌入式项目，以及你负责的核心模块。",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1182,8 +1152,8 @@
     "模块"
    ],
    [
-    "Q-4123",
-    "自己"
+    "Q-1564",
+    "嵌入式项目"
    ]
   ],
   "conf": 1.0,
@@ -1196,7 +1166,7 @@
  {
   "title": "ISP 处理的原始图像通常是什么格式？经过 ISP 处理后可以输出哪些像素格式？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -1222,7 +1192,7 @@
  {
   "title": "如果让你设计一个 UART 环形接收缓冲区，如何处理读写指针、缓冲区满以及并发访问的问题？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1248,8 +1218,8 @@
  {
   "title": "Linux 使用 Direct I/O 时，为什么对用户 Buffer 的地址、长度和文件偏移可能存在对齐要求？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1274,8 +1244,8 @@
  {
   "title": "Camera 驱动开发中，MIPI CSI-2、D-PHY、CIF 和 ISP 分别承担什么功能？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1300,7 +1270,7 @@
  {
   "title": "如果 I2C 通信过程中从设备一直不返回 ACK，你会从硬件和软件两个方面如何定位？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1326,7 +1296,7 @@
  {
   "title": "假设一个串口持续高速接收数据，而业务线程处理速度不稳定，你会怎样设计接收缓存和线程间的数据传递机制？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1352,7 +1322,7 @@
  {
   "title": "图像采集过程中，如果出现花屏、丢帧或者帧率不稳定，你会从 Sensor、MIPI、ISP 和 DMA 哪些环节开始排查？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1378,7 +1348,7 @@
  {
   "title": "手撕算法：给定两个非负整数，将它们的十进制数字分别反转后再相加。如何处理末尾的 0、整数溢出和边界情况？",
   "points": [],
-  "module": "04_algo",
+  "module": "algo",
   "sub": "模拟",
   "priority": "P1",
   "near": "",
@@ -1404,7 +1374,7 @@
  {
   "title": "如果需要实现多线程共享的环形缓冲区，怎样避免读写竞争？单生产者单消费者和多生产者多消费者的实现有什么区别？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -1432,8 +1402,8 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1458,7 +1428,7 @@
  {
   "title": "SPI 使用 DMA 传输数据时，CPU、DMA 控制器和 SPI 外设分别承担什么工作？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1484,8 +1454,8 @@
  {
   "title": "Linux 内核中为什么不能在普通硬中断上下文中调用可能导致睡眠的函数？如果调用了会有什么后果？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1510,7 +1480,7 @@
  {
   "title": "UART、SPI 和 I2C 在通信方式、硬件连接以及传输效率方面有什么区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1536,8 +1506,8 @@
  {
   "title": "如果需要设计一套可复用的嵌入式软件架构，你会如何划分硬件驱动层、业务逻辑层和应用接口层？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1562,8 +1532,8 @@
  {
   "title": "SPI 主机和从机分别负责什么？SPI 通信过程中的时钟信号由哪一端提供？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1588,8 +1558,8 @@
  {
   "title": "Linux 中断处理为什么需要区分上半部和下半部？哪些工作适合放在下半部执行？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1614,7 +1584,7 @@
  {
   "title": "在 SPI DMA 接收过程中，DMA Buffer 通常位于什么位置？主机和从机是否可以分别配置 DMA？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1640,7 +1610,7 @@
  {
   "title": "如果 SPI 通信过程中偶尔出现数据丢失或接收内容异常，你会从哪些方面排查？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1666,8 +1636,8 @@
  {
   "title": "什么是自旋锁（spinlock）？为什么它可以用于某些中断上下文，而互斥锁通常不可以？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1692,7 +1662,7 @@
  {
   "title": "在 STM32 项目中，你使用过哪些外设通信接口？分别连接了什么设备？为什么选择对应的总线？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1718,8 +1688,8 @@
  {
   "title": "Linux 中的 mmap 是如何建立用户虚拟地址与底层内存之间映射关系的？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1744,7 +1714,7 @@
  {
   "title": "如果 SPI 从机使用 DMA 接收数据，如何设计缓冲区管理机制，避免数据覆盖或者读取不完整？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1770,8 +1740,8 @@
  {
   "title": "如果在中断处理函数中等待一个信号量，会产生什么问题？应该如何重新设计同步流程？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1796,8 +1766,8 @@
  {
   "title": "I2C、SPI 和 UART 的通信速率分别受哪些因素限制？为什么不能只根据标称时钟频率判断实际吞吐量？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1822,8 +1792,8 @@
  {
   "title": "假设用户空间将一个虚拟地址传递给驱动程序，内核能否直接解引用该地址？为什么？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1848,13 +1818,17 @@
  {
   "title": "如果你负责一个嵌入式项目的技术方案设计，如何在任务划分、模块接口和数据同步方面保证系统稳定性？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
   "dup_by": "",
   "topic_near": [
+   [
+    "Q-1564",
+    "嵌入式项目"
+   ],
    [
     "Q-4722",
     "数据同步方面保证系统稳定性"
@@ -1870,7 +1844,7 @@
  {
   "title": "在嵌入式项目调试过程中，遇到过哪些比较复杂的问题？你如何通过日志、示波器或者逻辑分析仪定位根因？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1878,11 +1852,11 @@
   "dup_by": "",
   "topic_near": [
    [
-    "Q-4337",
-    "示波器或者逻辑分析仪定位根因"
+    "Q-1564",
+    "在嵌入式项目调试"
    ],
    [
-    "Q-4340",
+    "Q-4337",
     "示波器或者逻辑分析仪定位根因"
    ]
   ],
@@ -1896,8 +1870,8 @@
  {
   "title": "Linux 系统中，用户态程序发生段错误（Segmentation Fault），通常有哪些原因？你会按照什么步骤定位？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -1922,7 +1896,7 @@
  {
   "title": "RTOS 和 Linux 在任务调度、内存管理以及实时性方面有哪些主要区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1948,7 +1922,7 @@
  {
   "title": "I2C 总线为什么需要上拉电阻？上拉阻值过大或过小分别会带来什么影响？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -1974,8 +1948,8 @@
  {
   "title": "假设需要将一套基于 STM32 的驱动程序移植到 RK3588 平台，你认为哪些部分需要重新适配？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2000,7 +1974,7 @@
  {
   "title": "C 语言中的函数指针应该如何定义？如果函数接收两个 int 参数并返回 int，如何声明对应的函数指针？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2026,8 +2000,8 @@
  {
   "title": "Linux 内核为什么要区分中断上半部和下半部？常见的下半部处理机制有哪些？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2052,7 +2026,7 @@
  {
   "title": "如果一个链表存在环，你会采用什么算法检测？如何分析它的时间复杂度和空间复杂度？",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -2078,8 +2052,8 @@
  {
   "title": "在 Linux 系统中，普通用户态程序能否直接访问内核空间？用户态与内核态通常通过哪些方式交换数据？",
   "points": [],
-  "module": "03_linux",
-  "sub": "内核与驱动",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2104,8 +2078,8 @@
  {
   "title": "Linux 内核出现异常时，如何结合 dmesg、内核日志和调用栈定位问题？",
   "points": [],
-  "module": "03_linux",
-  "sub": "内核与驱动",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2130,8 +2104,8 @@
  {
   "title": "实时操作系统为什么通常具有更好的调度确定性？Linux 如果需要满足较高的实时性要求，可以采用哪些方案？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2142,8 +2116,8 @@
     "如果"
    ],
    [
-    "Q-0754",
-    "Linux"
+    "Q-0700",
+    "实时操作系统"
    ]
   ],
   "conf": 1.0,
@@ -2156,7 +2130,7 @@
  {
   "title": "解释一下 C 语言程序的内存布局。代码段、数据段、BSS 段、堆和栈分别存放什么内容？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2178,8 +2152,8 @@
  {
   "title": "什么情况下需要暂时屏蔽中断？除了关闭全局中断，还有哪些控制中断响应的方法？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2195,7 +2169,7 @@
  {
   "title": "如果多个线程频繁访问同一块共享内存，如何降低数据竞争和内存访问异常的风险？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -2221,8 +2195,8 @@
  {
   "title": "Linux 进程之间有哪些常见通信方式？共享内存与消息队列分别适用于什么场景？",
   "points": [],
-  "module": "03_linux",
-  "sub": "并发",
+  "module": "backend",
+  "sub": "后端基础",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2247,8 +2221,8 @@
  {
   "title": "请解释函数指针与指针函数的区别，并举例说明函数指针在驱动程序中的实际用途。",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2273,7 +2247,7 @@
  {
   "title": "Linux 系统中出现 Kernel Panic 和普通进程崩溃有什么区别？两者的排查方式有什么不同？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -2299,7 +2273,7 @@
  {
   "title": "手写一个函数，判断单链表是否存在环，并说明快慢指针算法为什么能够完成检测。",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -2327,13 +2301,17 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
   "dup_by": "",
   "topic_near": [
+   [
+    "Q-1564",
+    "嵌入式平台项目"
+   ],
    [
     "Q-1583",
     "应用层"
@@ -2349,7 +2327,7 @@
  {
   "title": "CAN 和 CAN FD 有哪些区别？CAN 报文一般包含哪些字段？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -2375,8 +2353,8 @@
  {
   "title": "STM32 上电复位后，从启动文件到 main() 会经历哪些步骤？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2401,8 +2379,8 @@
  {
   "title": "在中断服务函数中调用阻塞函数，可能会导致什么问题？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2423,7 +2401,7 @@
  {
   "title": "你项目里 ADC 是怎么采样的？为什么需要配置采样时间？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2449,7 +2427,7 @@
  {
   "title": "Cortex-M 中的 MSP 和 PSP 有什么区别？一般什么时候使用？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2471,7 +2449,7 @@
  {
   "title": "UART 通信需要配置哪些参数？波特率是怎么计算出来的？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -2497,7 +2475,7 @@
  {
   "title": "项目中如果出现栈溢出，你会怎么判断和定位？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2523,7 +2501,7 @@
  {
   "title": "UDS 诊断中，0x10、0x22、0x27 服务分别有什么作用？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2549,7 +2527,7 @@
  {
   "title": "MCU 的时钟树是怎么配置的？PLL 倍频后时钟如何分配？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2575,7 +2553,7 @@
  {
   "title": "如果使用双核 DSP，两个核心之间通常有哪些通信方式？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2601,7 +2579,7 @@
  {
   "title": "AUTOSAR 软件架构一般分为哪几层？MCAL 在其中起什么作用？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2610,6 +2588,10 @@
   "topic_near": [
    [
     "Q-4576",
+    "AUTOSAR/MCAL"
+   ],
+   [
+    "Q-6126",
     "AUTOSAR/MCAL"
    ]
   ],
@@ -2623,7 +2605,7 @@
  {
   "title": "CAN 总线为什么能够实现无损仲裁？仲裁失败的节点会怎样？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -2649,7 +2631,7 @@
  {
   "title": "UDS 通过 CAN 进行大数据传输时，ISO-TP 是怎么完成分包的？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -2675,7 +2657,7 @@
  {
   "title": "如果双核之间通信延迟比较大，你会从哪些方面优化？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2701,7 +2683,7 @@
  {
   "title": "以太网通信中，TCP 和 UDP 有什么区别？嵌入式项目怎么选择？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -2727,7 +2709,7 @@
  {
   "title": "MCU 发生栈溢出和堆内存不足时，表现有什么不同？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2751,35 +2733,9 @@
   "date": "2026-10-30"
  },
  {
-  "title": "如果需要通过 UDS 完成 ECU 固件升级，整个刷写流程是怎样的？",
-  "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
-   [
-    "Q-0166",
-    "如果"
-   ],
-   [
-    "Q-3609",
-    "怎样"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7701334019098749155",
-  "url": "https://www.douyin.com/note/7701334019098749155",
-  "desc": "#嵌入式秋招 #经纬恒润 #嵌入式面试 #汽车电子 #27届校招",
-  "date": "2026-10-30"
- },
- {
   "title": "使用 DMA 配合 ADC 采样有什么优势？如何处理采样缓冲区？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -2807,7 +2763,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2833,8 +2789,8 @@
  {
   "title": "Linux 驱动开发中，ioremap() 主要解决什么问题？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2859,7 +2815,7 @@
  {
   "title": "C 程序运行时，代码段、数据段、堆和栈分别存放什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2881,8 +2837,8 @@
  {
   "title": "你之前接触过 MCU 和 Linux，后续更想往哪个方向发展？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -2907,7 +2863,7 @@
  {
   "title": "如果系统出现 Kernel Panic，你一般怎么定位问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2933,7 +2889,7 @@
  {
   "title": "I2C 总线突然卡死，SDA 一直被拉低，你会怎么恢复通信？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -2959,7 +2915,7 @@
  {
   "title": "Linux 内核中为什么会使用自旋锁？它和互斥锁有什么区别？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -2985,7 +2941,7 @@
  {
   "title": "摄像头从 Sensor 到内存的数据采集链路是怎样的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -2993,12 +2949,12 @@
   "dup_by": "",
   "topic_near": [
    [
-    "Q-6121",
+    "Q-1563",
     "摄像头"
    ],
    [
-    "Q-7103",
-    "数据采集链路是怎样"
+    "Q-6121",
+    "摄像头"
    ]
   ],
   "conf": 1.0,
@@ -3011,8 +2967,8 @@
  {
   "title": "Linux 中断处理为什么要区分上半部和下半部？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3037,7 +2993,7 @@
  {
   "title": "如果函数返回了一个局部变量的地址，后续访问会出现什么问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3061,36 +3017,10 @@
   "date": "2026-10-28"
  },
  {
-  "title": "V4L2 主要负责什么？摄像头驱动一般怎么接入这个框架？",
-  "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
-   [
-    "Q-6121",
-    "摄像头驱动"
-   ],
-   [
-    "Q-5618",
-    "接入"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7701332217108491171",
-  "url": "https://www.douyin.com/note/7701332217108491171",
-  "desc": "#嵌入式软件开发 #秋招面经 #嵌入式Linux #机器人开发 #27届秋招",
-  "date": "2026-10-28"
- },
- {
   "title": "Linux 用户空间和内核空间之间有哪些数据交互方式？",
   "points": [],
-  "module": "03_linux",
-  "sub": "内核与驱动",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3113,35 +3043,9 @@
   "date": "2026-10-28"
  },
  {
-  "title": "OverlayFS 的工作原理是什么？为什么嵌入式 Linux 经常使用它？",
-  "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
-   [
-    "Q-0754",
-    "Linux"
-   ],
-   [
-    "Q-0933",
-    "工作"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7701332217108491171",
-  "url": "https://www.douyin.com/note/7701332217108491171",
-  "desc": "#嵌入式软件开发 #秋招面经 #嵌入式Linux #机器人开发 #27届秋招",
-  "date": "2026-10-28"
- },
- {
   "title": "I2C 的起始、停止和 ACK 信号分别是怎么产生的？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3167,7 +3071,7 @@
  {
   "title": "Linux 中常见的进程间通信方式有哪些？各自适合什么场景？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -3193,8 +3097,8 @@
  {
   "title": "Media Controller 在摄像头驱动中有什么作用？和 V4L2 是什么关系？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3219,8 +3123,8 @@
  {
   "title": "Linux 从 Bootloader 启动到用户程序运行，大致经历哪些阶段？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3243,35 +3147,9 @@
   "date": "2026-10-28"
  },
  {
-  "title": "initramfs 和根文件系统有什么关系？一般用在什么地方？",
-  "points": [],
-  "module": "02_cpp",
-  "sub": "语言基础",
-  "priority": "P1",
-  "near": "",
-  "sim": 0.0,
-  "dup_by": "",
-  "topic_near": [
-   [
-    "Q-0936",
-    "关系"
-   ],
-   [
-    "Q-1552",
-    "关系"
-   ]
-  ],
-  "conf": 1.0,
-  "img": "",
-  "aweme_id": "7701332217108491171",
-  "url": "https://www.douyin.com/note/7701332217108491171",
-  "desc": "#嵌入式软件开发 #秋招面经 #嵌入式Linux #机器人开发 #27届秋招",
-  "date": "2026-10-28"
- },
- {
   "title": "如果需要实现一个循环缓冲区，你会怎么设计读写指针和满空判断？",
   "points": [],
-  "module": "04_algo",
+  "module": "algo",
   "sub": "模拟",
   "priority": "P1",
   "near": "",
@@ -3299,8 +3177,8 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3325,7 +3203,7 @@
  {
   "title": "项目中是怎么划分软件模块的？不同模块之间如何解耦？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3351,7 +3229,7 @@
  {
   "title": "I2C 通信时，如果 SCL 一直被拉低，通常是什么原因？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3377,7 +3255,7 @@
  {
   "title": "FreeRTOS 中互斥锁和信号量有什么区别？实际项目中怎么选择？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3403,7 +3281,7 @@
  {
   "title": "函数内部定义 static 变量，为什么函数退出后变量仍然存在？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3429,7 +3307,7 @@
  {
   "title": "RTOS 多任务运行时，如何定位任务阻塞和调度异常？用过哪些工具？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3455,7 +3333,7 @@
  {
   "title": "如果把 STM32 项目迁移到 ESP32，哪些代码需要修改？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3481,7 +3359,7 @@
  {
   "title": "FreeRTOS 中什么是优先级反转？一般有哪些解决办法？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3507,7 +3385,7 @@
  {
   "title": "UART、CAN、I2C 这几种通信方式，你项目中用得最多的是哪个？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -3533,8 +3411,8 @@
  {
   "title": "I2C 总线异常时，为什么可以尝试发送9个时钟脉冲恢复通信？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3559,7 +3437,7 @@
  {
   "title": "FreeRTOS 任务之间有哪些通信方式？你项目中具体怎么用的？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3585,7 +3463,7 @@
  {
   "title": "RTOS 中什么时候会使用自旋锁？和互斥锁有什么区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3611,7 +3489,7 @@
  {
   "title": "优先级继承和优先级天花板有什么区别？FreeRTOS 支持哪些机制？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3637,7 +3515,7 @@
  {
   "title": "如果某个任务一直占用 CPU，看门狗一定能检测到吗？",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -3663,7 +3541,7 @@
  {
   "title": "项目中遇到过哪些比较难定位的时序问题？最后怎么解决的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3689,7 +3567,7 @@
  {
   "title": "SPI 和 I2C 在通信方式、硬件连接和传输效率上有什么区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3715,7 +3593,7 @@
  {
   "title": "你之前做的项目主要基于 Linux 还是 RTOS？两者开发有什么不同？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3741,7 +3619,7 @@
  {
   "title": "C 语言中的堆、栈、data 段和 bss 段分别存放什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3763,7 +3641,7 @@
  {
   "title": "只通过调整任务优先级，能不能彻底解决优先级反转问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3791,7 +3669,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3799,12 +3677,12 @@
   "dup_by": "",
   "topic_near": [
    [
-    "Q-4123",
-    "自己"
+    "Q-1564",
+    "选择嵌入式开发方"
    ],
    [
-    "Q-4497",
-    "简单"
+    "Q-4123",
+    "自己"
    ]
   ],
   "conf": 1.0,
@@ -3817,7 +3695,7 @@
  {
   "title": "双核 MCU 项目中，两个核心一般怎么分配任务？需要注意哪些问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3843,7 +3721,7 @@
  {
   "title": "串口接收数据时偶尔出现丢字节，你会怎么定位原因？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3869,7 +3747,7 @@
  {
   "title": "FreeRTOS 中看门狗任务的优先级应该怎么设置？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3895,7 +3773,7 @@
  {
   "title": "使用 DMA 接收不定长串口数据时，怎么判断一帧数据接收完成？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -3921,8 +3799,8 @@
  {
   "title": "STM32 发生中断时，CPU 会自动保存哪些寄存器？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3947,7 +3825,7 @@
  {
   "title": "双核 MCU 之间如何实现数据交互？共享内存会有什么问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -3973,8 +3851,8 @@
  {
   "title": "串口收发双方的时钟存在偏差，连续传输数据时误差会累积吗？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -3990,7 +3868,7 @@
  {
   "title": "项目中使用看门狗主要解决什么问题？如何判断系统是否真正正常运行？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4016,7 +3894,7 @@
  {
   "title": "RS485 半双工通信时，发送和接收方向是怎么切换的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4042,8 +3920,8 @@
  {
   "title": "DMA 半传输中断有什么作用？实际项目中怎么使用？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4068,7 +3946,7 @@
  {
   "title": "双核系统中，如果一个核心发生死锁，另一个核心应该如何处理？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -4094,7 +3972,7 @@
  {
   "title": "C 语言中 const 修饰的变量一定存储在 Flash 中吗？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -4120,8 +3998,8 @@
  {
   "title": "STM32 的 GPIO 产生边沿信号后，是如何进入中断服务函数的？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4146,7 +4024,7 @@
  {
   "title": "如果双核 MCU 只有一个看门狗，怎么同时监测两个核心？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4172,7 +4050,7 @@
  {
   "title": "串口环形缓冲区为什么会发生数据覆盖？怎么避免？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -4198,7 +4076,7 @@
  {
   "title": "如果让你设计一个两轮差速机器人，左右电机的速度如何计算？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4224,8 +4102,8 @@
  {
   "title": "中断和主循环同时访问一个变量，只加 volatile 就能保证安全吗？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4250,8 +4128,8 @@
  {
   "title": "DMA 配合串口空闲中断时，需要注意哪些数据处理问题？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4276,8 +4154,8 @@
  {
   "title": "为什么不建议在中断服务函数中大量打印日志？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4300,7 +4178,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4326,7 +4204,7 @@
  {
   "title": "简单介绍一下你做的机器人项目，底盘控制部分是怎么实现的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4348,8 +4226,8 @@
  {
   "title": "STM32 使用 DMA 接收串口数据时，为什么还要配合空闲中断？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4374,7 +4252,7 @@
  {
   "title": "RS485 和 RS232 有什么区别？RS485 为什么通常采用半双工通信？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4396,8 +4274,8 @@
  {
   "title": "电机编码器一般输出什么信号？MCU 如何获取电机的位置和转速？",
   "points": [],
-  "module": "03_linux",
-  "sub": "并发",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4422,8 +4300,8 @@
  {
   "title": "Cortex-M 内核发生中断后，CPU 是如何进入中断服务函数的？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4448,7 +4326,7 @@
  {
   "title": "MCU 和上位机之间使用什么通信协议？数据帧是怎么设计的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4474,8 +4352,8 @@
  {
   "title": "如果电机突然收到一个较大的速度指令，导致驱动器报故障，你会怎么处理？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4500,7 +4378,7 @@
  {
   "title": "C 语言中 const 的作用是什么？通过指针能否修改 const 变量？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4526,7 +4404,7 @@
  {
   "title": "串口使用 DMA 循环接收时，如何判断缓冲区中的有效数据长度？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -4552,8 +4430,8 @@
  {
   "title": "NVIC 的抢占优先级和响应优先级有什么区别？中断嵌套如何实现？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4578,8 +4456,8 @@
  {
   "title": "项目中使用过哪些电机驱动方式？速度闭环一般怎么实现？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4604,7 +4482,7 @@
  {
   "title": "RS485 通信中，收发方向如何切换？切换时机不对会有什么问题？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4630,8 +4508,8 @@
  {
   "title": "DMA 半传输中断和传输完成中断有什么区别？双缓冲如何处理数据？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4656,8 +4534,8 @@
  {
   "title": "MCU 和 Linux 主控之间需要交互哪些信息？控制指令和状态反馈如何同步？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4682,7 +4560,7 @@
  {
   "title": "如果串口波特率不高，但通信仍然出现丢帧，你会从哪些方面排查？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -4708,7 +4586,7 @@
  {
   "title": "两轮差速机器人是如何实现直行、转弯和原地旋转的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4725,8 +4603,8 @@
  {
   "title": "中断发生时，哪些寄存器由硬件自动保存？中断返回时如何恢复现场？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4751,7 +4629,7 @@
  {
   "title": "串口通信协议使用固定帧长还是可变帧长？如何处理粘包和异常数据？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -4773,8 +4651,8 @@
  {
   "title": "如果需要在中断服务函数中执行耗时操作，可能会产生哪些问题？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -4801,7 +4679,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4823,7 +4701,7 @@
  {
   "title": "你怎么理解 ISO-TP 和 UDS？这两个协议在项目里分别负责什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4849,7 +4727,7 @@
  {
   "title": "ISO-TP 的单帧、首帧、连续帧和流控帧，具体怎么通过首字节区分？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4866,7 +4744,7 @@
  {
   "title": "流控帧里的 BS 和 STmin 分别有什么作用？你在项目代码里是怎么处理这两个参数的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4892,7 +4770,7 @@
  {
   "title": "如果连续帧的序号不对，或者中间丢了一帧，你会怎么处理？先不说让上层重发，下位机当前这次接收应该怎么结束？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4918,7 +4796,7 @@
  {
   "title": "读取和清除 DTC 分别用哪个服务？0x19 你们实现了哪些子功能？DTC 状态字节里的各个 bit 表示什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4944,7 +4822,7 @@
  {
   "title": "车辆的 DID 数据是怎么读取的？讲一下请求和响应的具体过程。",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4970,7 +4848,7 @@
  {
   "title": "诊断会话怎么保活，通过哪个服务发送？UDS 对响应时间和超时有什么要求，你了解吗？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -4996,7 +4874,7 @@
  {
   "title": "你做过 CAN 收发，那 CAN 网络管理这部分有没有了解过？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -5022,7 +4900,7 @@
  {
   "title": "LVGL 在项目里负责什么？它和 UDS 任务哪个优先级更高，为什么这样设置？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5048,7 +4926,7 @@
  {
   "title": "每个任务的栈大小怎么评估？有没有遇到过栈溢出，出现之后怎么检测和定位？",
   "points": [],
-  "module": "10_cv_pytorch",
+  "module": "cv_pytorch",
   "sub": "基础",
   "priority": "P1",
   "near": "",
@@ -5074,7 +4952,7 @@
  {
   "title": "你简历里提到的“车辆数据快照”具体是怎么设计的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5091,7 +4969,7 @@
  {
   "title": "岗位是基于 AUTOSAR CP 做通信栈开发，你对 AUTOSAR 了解多少？之前是从哪一部分开始学习的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5117,7 +4995,7 @@
  {
   "title": "安全访问中请求种子、计算密钥所用的算法，是你们自己定义的，还是 OEM 提供的？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5146,7 +5024,7 @@
    "<br/>",
    "<br/>"
   ],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5172,7 +5050,7 @@
  {
   "title": "FreeRTOS 中任务通知和消息队列有什么区别？如何选择？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5198,7 +5076,7 @@
  {
   "title": "SPI 通信需要哪些引脚？各自有什么作用？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5224,7 +5102,7 @@
  {
   "title": "LVGL 的屏幕刷新机制是什么？底层如何实现？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5250,8 +5128,8 @@
  {
   "title": "STM32 中断的执行流程是什么？中断服务函数需要注意什么？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5276,7 +5154,7 @@
  {
   "title": "Linux 下如何分析某个进程的 CPU 占用率？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -5302,8 +5180,8 @@
  {
   "title": "I2C 触摸芯片的驱动流程是怎样的？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5328,7 +5206,7 @@
  {
   "title": "DMA 数据传输的原理是什么？相比 CPU 搬运有什么优势？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5354,7 +5232,7 @@
  {
   "title": "使用 PWM 控制电机时，如何确定频率和占空比？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5380,8 +5258,8 @@
  {
   "title": "U-Boot 从上电到启动 Linux 内核经历了哪些步骤？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5406,7 +5284,7 @@
  {
   "title": "串口接收数据异常时，通常从哪些方面排查？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5428,7 +5306,7 @@
  {
   "title": "LVGL 的图片资源一般存放在哪里？如何加载？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5450,7 +5328,7 @@
  {
   "title": "RTOS 的实时性体现在哪些方面？如何保证任务及时响应？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5476,7 +5354,7 @@
  {
   "title": "SPI 的四种工作模式分别是什么？如何区分？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5502,7 +5380,7 @@
  {
   "title": "使用过哪些示波器或逻辑分析仪？具体型号是什么？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5528,7 +5406,7 @@
  {
   "title": "项目中 FreeRTOS 的任务之间如何传递数据和同步事件？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5554,7 +5432,7 @@
  {
   "title": "SPI 接口的 LCD 屏幕是如何完成数据接收和显示的？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5580,7 +5458,7 @@
  {
   "title": "LVGL 常用的图像格式有哪些？有什么区别？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5606,7 +5484,7 @@
  {
   "title": "串口波特率匹配但数据仍然出错，可能是什么原因？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5632,7 +5510,7 @@
  {
   "title": "逻辑分析仪的电平触发阈值如何设置？依据是什么？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5658,7 +5536,7 @@
  {
   "title": "LVGL 显示缓冲区设置了多大？为什么这样分配？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5682,7 +5560,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5699,7 +5577,7 @@
  {
   "title": "在嵌入式 Linux 系统中，如果某个业务进程突然被 OOM Killer 终止，你会从哪些方面分析内存异常？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5725,7 +5603,7 @@
  {
   "title": "CAN 总线和 RS485 在通信机制、实时性以及应用场景上有哪些区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "总线协议",
   "priority": "P1",
   "near": "",
@@ -5751,7 +5629,7 @@
  {
   "title": "多线程程序中，如何通过 CPU 亲和性设置优化系统性能？线程绑核一定能够降低 CPU 占用率吗？",
   "points": [],
-  "module": "03_linux",
+  "module": "cpp",
   "sub": "并发",
   "priority": "P1",
   "near": "",
@@ -5777,7 +5655,7 @@
  {
   "title": "使用 UART 接收不定长数据时，如何设计环形缓冲区？遇到数据粘包、丢包或者接收不完整时怎么处理？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5803,7 +5681,7 @@
  {
   "title": "STM32H7 等高性能 MCU 引入 Cache 后，会对 DMA 数据传输产生什么影响？如何保证数据一致性？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5829,7 +5707,7 @@
  {
   "title": "如果嵌入式设备运行过程中突然断电，导致部分文件损坏，你会设计怎样的检测和恢复机制？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5855,8 +5733,8 @@
  {
   "title": "在 Linux 平台上开发摄像头功能时，用户态程序和内核驱动分别负责哪些工作？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5881,8 +5759,8 @@
  {
   "title": "多核异构系统中，Linux 主核与 MCU 从核通常如何进行通信？共享内存和消息通知机制如何设计？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5907,7 +5785,7 @@
  {
   "title": "假设摄像头以 30FPS 采集图像，而其他传感器以 500Hz 输出数据，如何实现不同采样频率数据的时间同步？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -5933,7 +5811,7 @@
  {
   "title": "嵌入式项目中如何优化内存使用？除了减少动态内存分配，还有哪些实际可行的方法？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -5959,8 +5837,8 @@
  {
   "title": "当 Linux 系统出现 Kernel Panic 或者设备无响应时，你通常按照什么顺序定位故障？",
   "points": [],
-  "module": "03_linux",
-  "sub": "03_linux",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -5985,7 +5863,7 @@
  {
   "title": "eMMC 与普通 SPI Flash 在存储架构、读写方式以及应用场景方面有什么区别？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -6011,8 +5889,8 @@
  {
   "title": "如果需要连续采集大量传感器数据，如何结合 DMA、中断和缓冲区机制降低 CPU 的处理负担？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -6037,7 +5915,7 @@
  {
   "title": "在工业设备中，Modbus、EtherCAT 和 Profinet 分别适合哪些场景？它们在实时通信方面有什么差异？",
   "points": [],
-  "module": "02_cpp",
+  "module": "cpp",
   "sub": "语言基础",
   "priority": "P1",
   "near": "",
@@ -6063,8 +5941,8 @@
  {
   "title": "Linux 字符设备驱动的基本开发流程是什么？用户空间如何通过系统调用与驱动交互？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -6089,7 +5967,7 @@
  {
   "title": "对于嵌入式视觉系统，图像采集、缓存管理、编码压缩以及数据传输通常如何组织成完整的数据处理链路？",
   "points": [],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -6115,8 +5993,8 @@
  {
   "title": "如果设备已经部署在偏远地区，无法现场连接调试工具，你会提前设计哪些日志和监控机制来排查内存泄漏？",
   "points": [],
-  "module": "03_linux",
-  "sub": "内核与驱动",
+  "module": "cpp",
+  "sub": "系统与进程",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -6141,8 +6019,8 @@
  {
   "title": "在实际项目中，如果发现系统运行一段时间后存储读写速度明显下降，如何判断问题出在应用层、文件系统还是底层驱动？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
@@ -6167,20 +6045,20 @@
  {
   "title": "你在嵌入式开发过程中如何使用 AI 辅助编程？对于 AI 生成的驱动代码，如何验证其可靠性和正确性？",
   "points": [],
-  "module": "09_hardware",
-  "sub": "嵌入式软件",
+  "module": "hardware",
+  "sub": "内核与驱动",
   "priority": "P1",
   "near": "",
   "sim": 0.0,
   "dup_by": "",
   "topic_near": [
    [
-    "Q-1864",
-    "正确性"
+    "Q-1564",
+    "你在嵌入式开发"
    ],
    [
-    "Q-4563",
-    "验证其可靠性"
+    "Q-1864",
+    "正确性"
    ]
   ],
   "conf": 1.0,
@@ -6195,7 +6073,7 @@
   "points": [
    "<br/>"
   ],
-  "module": "09_hardware",
+  "module": "hardware",
   "sub": "嵌入式软件",
   "priority": "P1",
   "near": "",
@@ -6217,5 +6095,629 @@
   "url": "https://www.douyin.com/note/7695722412604565160",
   "desc": "#嵌入式秋招 #嵌入式软件开发 #秋招求职 #嵌入式实习 #大学生成长",
   "date": "2026-10-12"
+ },
+ {
+  "title": "volatile 能保证 i++ 是原子操作吗？如果变量会被中断修改，为什么可能需要 volatile？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0902",
+    "volatile"
+   ],
+   [
+    "Q-1213",
+    "volatile/能保证"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7710655610311822630",
+  "aweme_id": "7710655610311822630",
+  "url": "https://www.douyin.com/note/7710655610311822630",
+  "desc": "乐鑫科技面经 #嵌入式 #单片机 #ESP32 #嵌入式面试 #校招",
+  "date": "2026-11-23"
+ },
+ {
+  "title": "读取一个 16 位寄存器时，怎样取出第 4～7 位，并只修改这四位而不影响其他位？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1628",
+    "16"
+   ],
+   [
+    "Q-1634",
+    "16"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7710655610311822630",
+  "aweme_id": "7710655610311822630",
+  "url": "https://www.douyin.com/note/7710655610311822630",
+  "desc": "乐鑫科技面经 #嵌入式 #单片机 #ESP32 #嵌入式面试 #校招",
+  "date": "2026-11-23"
+ },
+ {
+  "title": "函数返回局部数组的地址为什么不安全？如果要返回一段采样数据，你会怎样设计接口？",
+  "points": [],
+  "module": "cpp",
+  "sub": "语言基础",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0146",
+    "你会怎样"
+   ],
+   [
+    "Q-0721",
+    "地址"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7710655610311822630",
+  "aweme_id": "7710655610311822630",
+  "url": "https://www.douyin.com/note/7710655610311822630",
+  "desc": "乐鑫科技面经 #嵌入式 #单片机 #ESP32 #嵌入式面试 #校招",
+  "date": "2026-11-23"
+ },
+ {
+  "title": "ESP32-C3 与传感器用 UART 通信时，双方至少要统一哪些参数？接线时 TX、RX 和地应该怎么连？",
+  "points": [],
+  "module": "hardware",
+  "sub": "嵌入式软件",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0133",
+    "传感器用"
+   ],
+   [
+    "Q-4519",
+    "UART"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7710655610311822630",
+  "aweme_id": "7710655610311822630",
+  "url": "https://www.douyin.com/note/7710655610311822630",
+  "desc": "乐鑫科技面经 #嵌入式 #单片机 #ESP32 #嵌入式面试 #校招",
+  "date": "2026-11-23"
+ },
+ {
+  "title": "UART 一次读到的数据可能只有半帧，也可能连着两帧。协议包含帧头、长度和校验，你会怎样实现接收解析？",
+  "points": [],
+  "module": "hardware",
+  "sub": "嵌入式软件",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0132",
+    "校验"
+   ],
+   [
+    "Q-0146",
+    "你会怎样"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7710655610311822630",
+  "aweme_id": "7710655610311822630",
+  "url": "https://www.douyin.com/note/7710655610311822630",
+  "desc": "乐鑫科技面经 #嵌入式 #单片机 #ESP32 #嵌入式面试 #校招",
+  "date": "2026-11-23"
+ },
+ {
+  "title": "LoongArch 平台从 ARM Linux 迁移应用或驱动时，首先要核对哪些架构差异？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0754",
+    "Linux"
+   ],
+   [
+    "Q-0958",
+    "Linux"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "从固件复位到 Linux init，国产 CPU 平台的启动链通常经过哪些阶段？",
+  "points": [],
+  "module": "cpp",
+  "sub": "系统与进程",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1204",
+    "CPU"
+   ],
+   [
+    "Q-0674",
+    "CPU"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "板卡停在早期启动阶段时，如何区分固件、DDR 初始化、桥片和内核问题？",
+  "points": [],
+  "module": "cpp",
+  "sub": "系统与进程",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0722",
+    "初始化"
+   ],
+   [
+    "Q-0727",
+    "初始化"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "桥片地址空间、设备窗口和 CPU 物理地址之间怎样建立映射关系？",
+  "points": [],
+  "module": "cpp",
+  "sub": "语言基础",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1204",
+    "CPU"
+   ],
+   [
+    "Q-0674",
+    "CPU"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "设备树中的 reg、interrupts、clocks 和 compatible 属性分别怎样与硬件手册对应？",
+  "points": [],
+  "module": "cpp",
+  "sub": "语言基础",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0686",
+    "interrupts"
+   ],
+   [
+    "Q-4251",
+    "设备树中"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "Linux 内核早期串口没有输出时，你会检查哪些时钟、引脚、驱动和启动参数？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0754",
+    "Linux"
+   ],
+   [
+    "Q-0958",
+    "Linux"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "LoongArch 交叉编译工具链、sysroot、内核头文件和用户态库怎样固定版本？",
+  "points": [],
+  "module": "cpp",
+  "sub": "系统与进程",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-4202",
+    "用户态库怎样固定版本"
+   ],
+   [
+    "Q-4248",
+    "用户态库怎样固定版本"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "发生异常或非法访问时，如何结合寄存器现场、内核日志和反汇编定位？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-4503",
+    "结合寄存器现场"
+   ],
+   [
+    "Q-4260",
+    "结合寄存器现场"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "开启 MMU 和 Cache 后设备访问异常，怎样判断是页表、属性、屏障还是驱动顺序问题？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1106",
+    "Cache"
+   ],
+   [
+    "Q-1124",
+    "Cache"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "Linux 驱动申请 DMA 缓冲区时，为什么不能把普通 CPU 虚拟地址直接交给设备？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1204",
+    "CPU"
+   ],
+   [
+    "Q-0674",
+    "CPU"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708379470247365914",
+  "aweme_id": "7708379470247365914",
+  "url": "https://www.douyin.com/note/7708379470247365914",
+  "desc": "龙芯中科面经 #嵌入式 #Linux #LoongArch #嵌入式面试 #校招",
+  "date": "2026-11-21"
+ },
+ {
+  "title": "选定一颗 MM32 MCU 时，你会怎样核对内核、Flash、RAM、封装、电压和外设资源？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0146",
+    "你会怎样核对内核"
+   ],
+   [
+    "Q-4103",
+    "RAM"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "从复位到进入 main，MM32 启动文件通常需要完成哪些工作？",
+  "points": [],
+  "module": "cpp",
+  "sub": "语言基础",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0933",
+    "工作"
+   ],
+   [
+    "Q-1150",
+    "工作"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "修改系统时钟后，为什么要同时检查 Flash 等待周期、总线分频和外设时钟？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-4145",
+    "Flash"
+   ],
+   [
+    "Q-4160",
+    "Flash"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "CMSIS 接口兼容时，哪些代码可以复用，哪些寄存器和启动相关代码必须重新核对？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-1566",
+    "寄存器"
+   ],
+   [
+    "Q-4301",
+    "启动"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "Keil Pack、J-Link 支持包和工程芯片型号不一致时，可能造成哪些现象？",
+  "points": [],
+  "module": "cpp",
+  "sub": "语言基础",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0126",
+    "现象"
+   ],
+   [
+    "Q-4104",
+    "现象"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "MM32 通过 UART 和 Boot Pin 进入 ISP 下载时，启动模式、串口电平和复位时序怎样配合？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-4301",
+    "Boot"
+   ],
+   [
+    "Q-4519",
+    "UART"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "UART 接收变长帧时，怎样结合中断、环形缓冲区、超时和帧边界识别？",
+  "points": [],
+  "module": "hardware",
+  "sub": "内核与驱动",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0870",
+    "超时"
+   ],
+   [
+    "Q-2024",
+    "环形缓冲区"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "UART 使用 DMA 接收时，如何处理 DMA 正在写入的缓冲区与业务线程的所有权？",
+  "points": [],
+  "module": "hardware",
+  "sub": "嵌入式软件",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0948",
+    "缓冲区"
+   ],
+   [
+    "Q-1050",
+    "缓冲区"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
+ },
+ {
+  "title": "用定时器输出 PWM 并捕获输入频率时，怎样核对计数频率、分频和溢出处理？",
+  "points": [],
+  "module": "hardware",
+  "sub": "嵌入式软件",
+  "priority": "P1",
+  "near": "",
+  "sim": 0.0,
+  "dup_by": "",
+  "topic_near": [
+   [
+    "Q-0121",
+    "用定时器输出"
+   ],
+   [
+    "Q-2027",
+    "溢出"
+   ]
+  ],
+  "conf": 1.0,
+  "img": "article:7708378024252689673",
+  "aweme_id": "7708378024252689673",
+  "url": "https://www.douyin.com/note/7708378024252689673",
+  "desc": "灵动微电子面经 #嵌入式 #单片机 #嵌入式开发 #嵌入式面试 #校招",
+  "date": "2026-11-19"
  }
 ]

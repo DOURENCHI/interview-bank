@@ -178,6 +178,10 @@ def render_md(md: str) -> str:
             i += 1
         if buf:
             out.append("<p>" + inline(join_lines(buf)) + "</p>")
+        else:
+            # 兜底：孤儿表格行（上一行非表格、自身被段落正则排除）等
+            # 未被任何分支消费的行，强制前进一行，防止外层 while 死循环
+            i += 1
     return "\n".join(out)
 
 

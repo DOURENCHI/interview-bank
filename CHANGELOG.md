@@ -1,5 +1,31 @@
 # Changelog
 
+## CareerOS 内容 V2.12 — 2026-11-24（b4 嵌入式博主全量接入 + Linux 考点拆分 + 视频转写路线 + 周检定时）
+
+- **`linux` 考点退役**（用户指定「题目合并到其他考点、去除考点名」）：118 张按 sub 拆分——
+  并发 30/网络编程 16/系统与进程 39/GDB（Q-1149）→ `cpp`（86 张）；内核与驱动 32 → `hardware`。
+  旧 1100–1599 号段归 cpp 扩展段（`ID_EXTRA_BASES`），README 模块表重写。
+- **b4 博主（灵动微电子/沁恒/经纬恒润/中控/兆易/小鹏/禾望/影石/拓竹/原力/智元等）全量接入**：
+  - **文字笔记路线**（新工具 `tools/douyin_article.py`）：抖音「文字笔记」aweme_type=163 未登录即返回
+    全量正文 `article_info.article_content`，绕开视频 60s 预览限制；`--enum` 记录作品类型、`--fetch` 断点抓正文。
+  - **登录态**（新工具 `tools/douyin_login.py`）：主页入口扫码（SSO 直开页 ticket 空失败）→
+    `_cache/douyin_state.json`；登录后主页作品 18→30 条全量（灵动微/乐鑫/龙芯 3 篇新面经补抓）。
+  - **52 张新卡**：`hardware` Q-6123–6162（USB 枚举/OTG/端点缓冲、AUTOSAR MCAL/SWC/ZCU、ISO-TP/UDS 刷写、
+    DCS/PLC/SIS、Modbus-EtherCAT、双核核间通信、DMA 半传输、I2C 卡死 9 时钟、RTOS vs Linux、优先级继承、
+    Camera/MIPI-ISP、LVGL、断电恢复、启动代码、ADC 完整链路 Q-6162 等 40 张）+ `cpp` Q-1562–1569
+    （Direct I/O/V4L2/OverlayFS/initramfs/ioremap/copy_from_user/设备树/早期串口）+ `deploy` Q-2326/2327
+    （LoongArch 迁移/整机不亮分层）+ `algo` Q-2027/2028（十进制反转相加/链表环 Floyd）。
+  - **出现记录挂载 96 行/56+16 张卡**（沁恒→禾望等 16 篇图文 + 乐鑫/龙芯/灵动微 3 篇）。
+- **视频转写路线**（`tools/douyin_video.py` + 登录态）：完整 mp4 直链下载→ffmpeg 16k wav→faster-whisper
+  （CUDA cublas64_12.dll 路径坑修复）；无旁白图卡视频两分支=ffmpeg fps=1 抽帧+RapidOCR。
+  b5 博主（硬件就业指导）27 条视频转写 25 成功 36650 字→候选 0（就业指导内容无技术题，仅存档）。
+- **build.py 死循环修复**：孤儿表行（出现记录行与表头被空行拆开）落入段落分支后外层 while 不前进；
+  段落分支尾加兜底 `i += 1` 强制前进，并全库合并 8 张被拆开的表格组（Q-2024/2026/1583/4145/4258/4553/6117/6125）。
+  连带修正 Q-6162 difficulty 中文、24 张 V2.9.1 卡 status=indexed→answered（已答 1755/待补充 0）。
+- **每周例行定时**（本机 DSH，每周日 10:00）：枚举→diff 新作品→文字/图片/视频三路线→切题→甄别→
+  回归→CHANGELOG→push；`sources/douyin_watch.json` 登记博主清单（b1–b5）。
+- **回归**：gen_taxonomy 1755 题/14 模块、validate ✅、radar_test 36/36 ✅、ui_test 全过 ✅、dist 重建 ✅。
+
 ## CareerOS 内容 V2.11 — 2026-11-23（b3 嵌入式博主全量吸收 + 四张考点查漏卡）
 
 - **b3 博主（嵌入式秋招）50 道真新题全量处理**：逐题对照题库甄别后——

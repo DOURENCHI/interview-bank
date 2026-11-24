@@ -24,9 +24,25 @@ def main():
             viewport={"width": 1380, "height": 860}, locale="zh-CN")
         page = ctx.new_page()
         page.set_default_timeout(60_000)
-        page.goto("https://www.douyin.com/login", wait_until="commit", timeout=60_000)
-        print("[login] 浏览器已打开登录页。若页面空白请手动点右上角「登录」并扫码……")
-        print("[login] 等待登录成功（最多 3 分钟），检测到会话 cookie 后自动保存并关闭。")
+        # 主页入口：点「登录」弹二维码。直接开 /passport/sso/login 页会走 SSO 回调，
+        # 实测回调 ticket 为空报「缺少参数 error_code:3」（2026-11-24）。
+        page.goto("https://www.douyin.com/", wait_until="domcontentloaded", timeout=60_000)
+        page.wait_for_timeout(4000)
+        print("[login] 浏览器已打开抖音主页，正在点「登录」弹二维码……")
+        try:
+            page.locator("[data-e2e=login-icon]").first.click(timeout=5000)
+        except Exception:
+            try:
+                page.locator("text=/登录/").first.click(timeout=5000)
+            except Exception:
+                print("[login] 没找到登录按钮，请手动点右上角「登录」。")
+        # 弹窗里二维码默认展示；若默认是验证码登录，尝试切到扫码
+        try:
+            page.locator("text=扫码登录").first.click(timeout=4000)
+            print("[login] 已切到「扫码登录」。")
+        except Exception:
+            pass
+        print("[login] 请用手机抖音扫码（最多等 5 分钟），检测到会话 cookie 后自动保存并关闭。")
         deadline = time.time() + 300
         ok = False
         while time.time() < deadline:

@@ -13,7 +13,7 @@ source_type: nowcoder
 source_ref: 牛客面经（地平线·嵌入式软件·一面）
 verified_at: 2026-11-10
 tags: [牛客面经, 地平线]
-appearances: ["地平线·嵌入式软件"]
+appearances: ["地平线·嵌入式软件", "原力灵机·嵌入式软件"]
 video_src: ""
 video_bv: ""
 video_page: ""
@@ -56,6 +56,8 @@ nc_url: https://www.nowcoder.com/discuss/945100596145553408
 | 日期 | 公司 | 岗位 | 轮次 | 来源 | 可信度 |
 |---|---|---|---|---|---|
 | 2026-11-10 抓取 | 地平线 | 嵌入式软件 | 一面 | https://www.nowcoder.com/discuss/945100596145553408 | 社区经验 |
+| 2026-10-28 发布 | 原力灵机 | 嵌入式软件 | 面经 | [抖音面经图文](https://www.douyin.com/note/7701332217108491171) | 社区经验 |
+| 2026-10-17 发布 | 未注名 | 嵌入式软件 | 面经 | [抖音面经图文](https://www.douyin.com/note/7697589995939868072) | 社区经验 |
 
 ## 关联项目
 

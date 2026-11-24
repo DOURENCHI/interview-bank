@@ -31,6 +31,12 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 def pick_model():
     from faster_whisper import WhisperModel
+    # ctranslate2 运行时需要 cuBLAS/cuDNN，torch 自带的 DLL 目录加进来
+    import os, sys
+    sp = Path(sys.executable).parent.parent / "Lib" / "site-packages" / "torch" / "lib"
+    if sp.exists():
+        os.add_dll_directory(str(sp))
+        os.environ["PATH"] = str(sp) + os.pathsep + os.environ.get("PATH", "")
     for device, compute in (("cuda", "float16"), ("cpu", "int8")):
         try:
             m = WhisperModel("small", device=device, compute_type=compute)
@@ -135,6 +141,9 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--ids", default="")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--state", default=str(ROOT / "_cache" / "douyin_state.json"),
+                    help="登录态文件（douyin_login.py 产出）；存在则注入 cookie 拿完整视频")
+    ap.add_argument("--keep", action="store_true", help="保留 _cache/douyin_video 下的中间媒体文件（调试用）")
     args = ap.parse_args()
 
     works = json.loads(Path(args.works).read_text(encoding="utf-8"))
@@ -163,8 +172,15 @@ def main():
     ok_n = fail_n = 0
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(user_agent=UA,
-                                  viewport={"width": 1380, "height": 860}, locale="zh-CN")
+        state_path = Path(args.state)
+        ctx_kwargs = dict(user_agent=UA,
+                          viewport={"width": 1380, "height": 860}, locale="zh-CN")
+        if state_path.exists():
+            ctx_kwargs["storage_state"] = str(state_path)
+            print(f"[login] 注入登录态 {state_path.name}")
+        else:
+            print("[login] 无登录态，未登录模式（视频可能只有 60s 预览音轨）")
+        ctx = browser.new_context(**ctx_kwargs)
         page = ctx.new_page()
         with out_path.open("a", encoding="utf-8") as fout:
             for i, w in enumerate(todo, 1):
@@ -200,8 +216,9 @@ def main():
                     fail_n += 1
                     print(f"    [FAIL] {e}")
                 finally:
-                    for f in (mpath, wpath):
-                        f.unlink(missing_ok=True)
+                    if not args.keep:
+                        for f in (mpath, wpath):
+                            f.unlink(missing_ok=True)
         browser.close()
     print(f"\n[done] 成功 {ok_n} 失败 {fail_n} -> {out_path}")
     if fail_n:
