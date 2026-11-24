@@ -32,7 +32,7 @@ MODULE_RULES = [
     ("ros2",      r"ros2?|ROS|SLAM|slam|导航算法|话题|TF2?|激光雷达"),
     ("hardware",  r"\bCAN\b|CANopen|驱动|U-Boot|[Uu]-?[Bb]oot|Bootloader|单片机|STM32|FreeRTOS|"
                   r"\bRTOS\b|嵌入式|PWM|I2C|IIC|SPI|UART|串口|Flash|寄存器|PCB|运放|GPIO|"
-                  r"中断|DMA|Cache一致性|晶振|示波器"),
+                  r"(?<!缺页)中断|DMA|Cache一致性|晶振|示波器"),
     ("deploy",    r"k8s|K8s|KubeVirt|容器|docker|Docker|推理服务|ONNX|[Oo]nnx|TensorRT|"
                   r"端侧|[Jj]etson|CUDA|cuda|算子|量化部署"),
     ("agent",     r"RAG|rag|Agent|agent|智能体|\bMCP\b|Function Call|function call|工具调用|"
@@ -54,8 +54,8 @@ MODULE_RULES = [
 ]
 SUB_RULES = {
     "cpp":     [(r"锁|线程|进程|死锁|信号量|fork|epoll", "并发"),
-                (r"TCP|UDP|socket|Socket|TIME_WAIT|网络|粘包|HTTP", "网络编程"),
-                (r"Linux|linux|内核|内存泄漏|虚拟内存|页表|调度|GCC|gdb|GDB|管道|信号", "系统与进程"),
+                (r"TCP|UDP|socket|Socket|TIME_WAIT|网络|粘包|HTTP|握手|挥手", "网络编程"),
+                (r"Linux|linux|内核|内存泄漏|虚拟内存|页表|缺页|分页|分段|抖动|颠簸|调度|GCC|gdb|GDB|管道|信号", "系统与进程"),
                 (r".*", "语言基础")],
     "hardware": [(r"U-Boot|[Uu]-?[Bb]oot|Bootloader|驱动|内核|寄存器|上电|复位|时钟|中断", "内核与驱动"),
                  (r"\bCAN\b|CANopen|SocketCAN", "总线协议"),
@@ -78,16 +78,18 @@ SUB_RULES = {
 DEFAULT_MODULE = "cpp"
 
 
+def _pick_sub(mod: str, text: str) -> str:
+    for sp, sname in SUB_RULES.get(mod, [(r".*", "语言基础")]):
+        if re.search(sp, text):
+            return sname
+    return "语言基础"
+
+
 def module_of(text: str) -> tuple[str, str]:
     for mod, pat in MODULE_RULES:
         if re.search(pat, text):
-            sub = mod
-            for sp, sname in SUB_RULES.get(mod, [(r".*", "语言基础")]):
-                if re.search(sp, text):
-                    sub = sname
-                    break
-            return mod, sub
-    return DEFAULT_MODULE, "语言基础"
+            return mod, _pick_sub(mod, text)
+    return DEFAULT_MODULE, _pick_sub(DEFAULT_MODULE, text)
 
 
 def dice(a: str, b: str) -> float:
@@ -116,6 +118,11 @@ JUNK_RE = re.compile(
     r"^(讲|聊|分享)一个|项目内容|个人情况|技术学习")
 # 残句特征（实测来自笔试解析帖的断行）
 FRAGMENT_RE = re.compile(r"^[的了吗呢吧（），、：；。]|^而不是|^就是|^先看|；$|）$")
+# 侧栏噪音（2026-11-24 根治误配：正文 body 混入页面侧栏热帖/榜单，
+# "大疆求职进展汇总 792万次浏览" 曾把汇川帖抢配成大疆——历史 6 次误配同根源）
+SIDEBAR_RE = re.compile(
+    r"次浏览|人参与|正在热议|创作者周榜|求职进展汇总|晒晒我的|竞争力报告|"
+    r"^更多$|^更多 |获赞top|收藏top|产品/项目/运营top|软件开发top")
 
 
 def is_quality(q: str) -> bool:
@@ -284,7 +291,11 @@ def main() -> int:
             manifest[pid] = {"company": "", "url": d["url"], "cards": [],
                              "seeded_at": TODAY, "note": "笔试解析帖，跳过"}
             continue
-        comp = match_company(d["title"] + " " + " ".join(d.get("body", [])[:80]))
+        # 公司归属：fetch 阶段已用干净标题+摘要匹配并存入 company（优先信任）；
+        # 缺失时才回退正文匹配，且先滤掉侧栏噪音行（历史 6 次误配皆因侧栏公司名）
+        comp = d.get("company") or match_company(
+            d["title"] + " " + " ".join(l for l in d.get("body", [])[:80]
+                                        if not SIDEBAR_RE.search(l)))
         if not comp:
             skipped_nocomp += 1
             unmatched.append(d["title"][:40])
@@ -307,7 +318,8 @@ def main() -> int:
             if not is_quality(q["q"]):
                 skipped_junk += 1
                 continue
-            mod, sub = module_of(q["q"] + " " + d["title"])
+            # 模块只按题面路由：帖标题含岗位词（如"嵌入式开发offer"）会把 C++/OS 题整批带偏
+            mod, sub = module_of(q["q"])
             n = alloc_id(mod, nxt)
             if n is None:
                 print(f"  ⚠ {comp} 号段满跳过：{q['q'][:44]}")
