@@ -15,7 +15,7 @@ CONTENT = ROOT / "content"
 OUT = ROOT / "docs" / "taxonomy.md"
 
 MODULE_NAME = {
-    "project": "项目深挖", "cpp": "C++", "linux": "Linux",
+    "project": "项目深挖", "cpp": "C++",
     "algo": "算法机考", "deploy": "模型部署", "ros2": "ROS2",
     "imaging": "医学影像", "robot": "机器人学",
     "hardware": "硬件嵌入式", "cv_pytorch": "深度学习",
@@ -23,12 +23,13 @@ MODULE_NAME = {
     "agent": "Agent 应用",
     "scene": "场景系统设计", "ai_native": "AI-Native 能力",
 }
-BASE = {"project": 100, "cpp": 600, "linux": 1100, "algo": 1600,
+BASE = {"project": 100, "cpp": 600, "algo": 1600,
         "deploy": 2100, "ros2": 2600, "imaging": 3100, "robot": 3600,
         "hardware": 4100, "cv_pytorch": 4600, "python": 5100, "backend": 5600,
         "agent": 6600, "scene": 7100, "ai_native": 7600}
-# hardware 合并了旧 09_hardware(4100) 与 13_hardware2(6100) 两段
-EXTRA_BASES = {"hardware": (6100,)}
+# cpp 吸收了旧 linux(1100) 号段；hardware 合并了旧 09_hardware(4100) 与 13_hardware2(6100) 两段，
+# 且原 linux 的内核驱动题（11xx/15xx 段）并入 hardware 时保留原编号（2026-11-24 补）
+EXTRA_BASES = {"hardware": (6100, 1100), "cpp": (1100,)}
 
 
 def main() -> int:

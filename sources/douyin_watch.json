@@ -1,0 +1,44 @@
+{
+  "updated": "2026-11-24",
+  "schedule": "weekly-sunday",
+  "route_note": "route=image → tools/douyin_works.py 枚举 + douyin_ocr.py OCR + douyin_seed.py 切题判重；route=video_asr → douyin_works.py 枚举 + douyin_video.py 下载转写。新博主：加一条目即可，流水线每周日全量扫描新作品。",
+  "bloggers": [
+    {
+      "id": "b1",
+      "name": "嵌入式/端侧AI秋招博主",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAPLRtDcOVy4eeFqYfpEK7SKB75QwKK7-EEqG2aVCN8s5FFSMDMTdCYbss_GUmErDx",
+      "route": "image",
+      "works_file": "sources/douyin_works.json",
+      "added": "2026-11-23",
+      "last_checked": "2026-11-23"
+    },
+    {
+      "id": "b2",
+      "name": "Java/后端/Agent博主",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAA-b4tOhQRRkvueNDSt-wRZ5YgisYXX6WFjheATtBQtxKWzSD516bwIi8fBjYcO1oC",
+      "route": "image",
+      "works_file": "sources/douyin_works_b2.json",
+      "added": "2026-11-23",
+      "last_checked": "2026-11-23"
+    },
+    {
+      "id": "b3",
+      "name": "嵌入式秋招博主(大疆ssp/拓竹/智元)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAWKPpyY2jmBE2eqGOVWCTUkVanGeEmq1YhLnhi27neZm44UhDZ2U5cq49JOf8HK0P",
+      "route": "image",
+      "works_file": "sources/douyin_works_b3.json",
+      "added": "2026-11-23",
+      "last_checked": "2026-11-23"
+    },
+    {
+      "id": "b4",
+      "name": "嵌入式面经博主(沁恒/经纬恒润/中控/兆易创新)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAAAzSnitWuZ5ormgGtY1fRQvFmtOnWg0LKHTyh2ziXS_By4KLEsTKFolh-0YUb1cU",
+      "route": "video_asr",
+      "works_file": "sources/douyin_works_b4.json",
+      "transcript_file": "sources/douyin_transcript_b4.jsonl",
+      "added": "2026-11-24",
+      "last_checked": "2026-11-24"
+    }
+  ]
+}

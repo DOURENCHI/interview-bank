@@ -20,7 +20,7 @@ CONTENT = ROOT / "content"
 DIST = ROOT / "dist"
 
 MODULE_NAME = {
-    "project": "项目深挖", "cpp": "C++", "linux": "Linux",
+    "project": "项目深挖", "cpp": "C++",
     "algo": "算法机考", "deploy": "模型部署", "ros2": "ROS2",
     "imaging": "医学影像", "robot": "机器人学",
     "hardware": "硬件嵌入式", "cv_pytorch": "深度学习",

@@ -4,8 +4,9 @@
 
 把 _cache/nc_posts/ 里已渲染、且命中公司注册表的帖子落成题卡骨架：
   · 公司归属：companies/targets.json 的 nc_keywords 匹配（title + 正文）
-  · 模块归属：按题目内容关键词映射（CAN/驱动→09，进程/线程→03，训练/模型→10 …）
-  · 编号：各模块现有最大 id + 1（自建/视频/牛客三层号段互不冲突）
+  · 模块归属：按题目内容关键词映射（CAN/驱动→hardware，进程/线程→cpp，RAG/Agent→agent，
+    MySQL/Redis→backend，训练/模型→cv_pytorch …），号段与 validate.py 保持一致
+  · 编号：各模块号段内从第一个空闲 id 顺延（跳过磁盘已占用文件，不覆盖旧卡）
   · 去重：题面归一化后与库内现有标题 Dice ≥0.75 视为重复，跳过
   · 状态：indexed（待补充）——答案由自动化代理择优用 .cards 补写
 
@@ -25,52 +26,68 @@ SEEDED = ROOT / "sources" / "nowcoder_seeded.json"
 TODAY = datetime.now().strftime("%Y-%m-%d")
 
 # 模块归属规则：自上而下第一个命中的为准
+# 2026-11-24 适配模块语义化改名（02_cpp→cpp 等）与 linux 模块拆分：
+#   OS 理论/系统编程 → cpp（系统与进程），内核实现/驱动 → hardware（关键词已在 hardware 规则里）
 MODULE_RULES = [
-    ("06_ros2",   r"ros2?|ROS|SLAM|slam|导航算法|话题|TF2?|激光雷达"),
-    ("09_hardware", r"\bCAN\b|CANopen|驱动|U-Boot|[Uu]-?[Bb]oot|Bootloader|单片机|STM32|FreeRTOS|"
-                    r"\bRTOS\b|嵌入式|PWM|I2C|IIC|SPI|UART|串口|Flash|寄存器|PCB|运放|GPIO|"
-                    r"中断|DMA|Cache一致性|晶振|示波器"),
-    ("05_deploy", r"k8s|K8s|KubeVirt|容器|docker|Docker|推理服务|ONNX|[Oo]nnx|TensorRT|"
+    ("ros2",      r"ros2?|ROS|SLAM|slam|导航算法|话题|TF2?|激光雷达"),
+    ("hardware",  r"\bCAN\b|CANopen|驱动|U-Boot|[Uu]-?[Bb]oot|Bootloader|单片机|STM32|FreeRTOS|"
+                  r"\bRTOS\b|嵌入式|PWM|I2C|IIC|SPI|UART|串口|Flash|寄存器|PCB|运放|GPIO|"
+                  r"中断|DMA|Cache一致性|晶振|示波器"),
+    ("deploy",    r"k8s|K8s|KubeVirt|容器|docker|Docker|推理服务|ONNX|[Oo]nnx|TensorRT|"
                   r"端侧|[Jj]etson|CUDA|cuda|算子|量化部署"),
-    ("10_cv_pytorch", r"训练|模型|transformer|Transformer|attention|Attention|量化|KV [Cc]ache|"
-                      r"大模型|深度学习|卷积|梯度|过拟合|激活函数|损失|YOLO|检测|分割|"
-                      r"pytorch|PyTorch|LLM|[Tt]oken|词表|batch|epoch|预训练|微调|"
-                      r"推理优化|batch=|kv_heads"),
-    ("04_algo", r"手撕|实现一个|时间复杂度|空间复杂度|动态规划|二叉树|链表|排序|回文|"
-                r"top[Kk]| LeetCode |算法题|求出|输出.{0,12}(多少|结果)"),
-    ("03_linux", r"进程|线程|锁|epoll|TCP|UDP|Linux|linux|内核|信号|socket|Socket|"
-                 r"调度|死锁|内存泄漏|TIME_WAIT| fork |管道|虚拟内存|页表|GCC|gdb|GDB"),
-    ("02_cpp", r"C\+\+|c\+\+|虚函数|STL|指针|引用|构造|析构|智能指针|多态|编译|链接|"
-               r"template|模板|lambda"),
+    ("agent",     r"RAG|rag|Agent|agent|智能体|\bMCP\b|Function Call|function call|工具调用|"
+                  r"提示词|[Pp]rompt工程|上下文工程|上下文窗口|ReAct|幻觉|意图识别|槽位|"
+                  r"向量数据库|[Ee]mbedding|多轮对话"),
+    ("backend",   r"MySQL|mysql|\bSQL\b|索引|事务|隔离级别|MVCC|[Rr]edis|缓存穿透|缓存击穿|"
+                  r"缓存雪崩|Spring|[Jj]ava|\bJVM\b|消息队列|Kafka|RabbitMQ|RocketMQ|分布式锁|"
+                  r"微服务|分库分表|主从延迟|主从复制|读写分离|限流|幂等|秒杀|分布式事务|\bCAP\b|Nginx"),
+    ("python",    r"\bPython\b|python|GIL|装饰器|解释器|pandas|[Nn]umpy|列表推导|Pythonic"),
+    ("cv_pytorch", r"训练|模型|transformer|Transformer|attention|Attention|量化|KV [Cc]ache|"
+                   r"大模型|深度学习|卷积|梯度|过拟合|激活函数|损失|YOLO|检测|分割|"
+                   r"pytorch|PyTorch|LLM|[Tt]oken|词表|batch|epoch|预训练|微调|"
+                   r"推理优化|batch=|kv_heads"),
+    ("algo",      r"手撕|实现一个|时间复杂度|空间复杂度|动态规划|二叉树|链表|排序|回文|"
+                  r"top[Kk]| LeetCode |算法题|求出|输出.{0,12}(多少|结果)"),
+    ("cpp",       r"C\+\+|c\+\+|虚函数|STL|指针|引用|构造|析构|智能指针|多态|编译|链接|"
+                  r"template|模板|lambda|进程|线程|锁|epoll|TCP|UDP|Linux|linux|内核|信号|"
+                  r"socket|Socket|调度|死锁|内存泄漏|TIME_WAIT| fork |管道|虚拟内存|页表|GCC|gdb|GDB"),
 ]
 SUB_RULES = {
-    "03_linux": [(r"锁|线程|进程|死锁|信号|fork", "并发"),
-                 (r"TCP|UDP|epoll|socket|TIME_WAIT|网络", "网络编程"),
-                 (r"内核|页表|内存泄漏|中断", "内核与驱动")],
-    "09_hardware": [(r"\bCAN\b|CANopen|SocketCAN", "总线协议"),
-                    (r".*", "嵌入式软件")],
-    "10_cv_pytorch": [(r"训练|梯度|过拟合|预训练|微调|epoch|DDP|多卡", "训练"),
-                      (r"KV [Cc]ache|大模型|LLM|Transformer|attention|Attention|量化|"
-                       r"推理|Token|词表", "大模型与推理"),
-                      (r".*", "基础")],
-    "05_deploy": [(r".*", "部署工程化")],
-    "04_algo": [(r".*", "模拟")],
-    "06_ros2": [(r".*", "ROS2")],
-    "02_cpp": [(r".*", "语言基础")],
+    "cpp":     [(r"锁|线程|进程|死锁|信号量|fork|epoll", "并发"),
+                (r"TCP|UDP|socket|Socket|TIME_WAIT|网络|粘包|HTTP", "网络编程"),
+                (r"Linux|linux|内核|内存泄漏|虚拟内存|页表|调度|GCC|gdb|GDB|管道|信号", "系统与进程"),
+                (r".*", "语言基础")],
+    "hardware": [(r"U-Boot|[Uu]-?[Bb]oot|Bootloader|驱动|内核|寄存器|上电|复位|时钟|中断", "内核与驱动"),
+                 (r"\bCAN\b|CANopen|SocketCAN", "总线协议"),
+                 (r".*", "嵌入式软件")],
+    "cv_pytorch": [(r"训练|梯度|过拟合|预训练|微调|epoch|DDP|多卡", "训练"),
+                   (r"KV [Cc]ache|大模型|LLM|Transformer|attention|Attention|量化|"
+                    r"推理|Token|词表", "大模型与推理"),
+                   (r".*", "基础")],
+    "agent":   [(r"RAG|rag|召回|检索|知识库|向量", "RAG与检索"),
+                (r"MCP|工具|Function Call|function call|ReAct", "工具与协议"),
+                (r".*", "Agent 设计")],
+    "backend": [(r"MySQL|mysql|\bSQL\b|索引|事务|隔离|MVCC|主从", "MySQL"),
+                (r"[Rr]edis|缓存|分布式锁|限流|幂等|秒杀", "Redis与缓存"),
+                (r".*", "后端基础")],
+    "python":  [(r".*", "语言机制")],
+    "deploy":  [(r".*", "部署工程化")],
+    "algo":    [(r".*", "模拟")],
+    "ros2":    [(r".*", "ROS2")],
 }
-DEFAULT_MODULE = "02_cpp"
+DEFAULT_MODULE = "cpp"
 
 
 def module_of(text: str) -> tuple[str, str]:
     for mod, pat in MODULE_RULES:
         if re.search(pat, text):
-            sub = DEFAULT_SUB = mod
+            sub = mod
             for sp, sname in SUB_RULES.get(mod, [(r".*", "语言基础")]):
                 if re.search(sp, text):
                     sub = sname
                     break
             return mod, sub
-    return DEFAULT_MODULE, SUB_RULES[DEFAULT_MODULE][0][1]
+    return DEFAULT_MODULE, "语言基础"
 
 
 def dice(a: str, b: str) -> float:
@@ -141,34 +158,41 @@ def clean_title(q: str) -> str:
     return t
 
 
-ID_BASE = {"01_project": 100, "02_cpp": 600, "03_linux": 1100, "04_algo": 1600,
-           "05_deploy": 2100, "06_ros2": 2600, "07_imaging": 3100,
-           "08_robot": 3600, "09_hardware": 4100, "10_cv_pytorch": 4600,
-           "11_python": 5100, "12_backend": 5600, "13_hardware2": 6100}
-SPAN = 500
+# 号段与 tools/validate.py 的 ID_BASE / ID_EXTRA_BASES 保持一致（2026-11-24 适配模块改名）：
+# cpp 吸收旧 linux(1101~1599)；hardware 含旧 09_hardware(4101~4599)、13_hardware2(6101~6599)
+RANGES = {
+    "project":   [(101, 599)],
+    "cpp":       [(601, 1099), (1101, 1599)],
+    "algo":      [(1601, 2099)],
+    "deploy":    [(2101, 2599)],
+    "ros2":      [(2601, 3099)],
+    "imaging":   [(3101, 3599)],
+    "robot":     [(3601, 4099)],
+    "hardware":  [(4101, 4599), (6101, 6599)],
+    "cv_pytorch": [(4601, 5099)],
+    "python":    [(5101, 5599)],
+    "backend":   [(5601, 6099)],
+    "agent":     [(6601, 7099)],
+    "scene":     [(7101, 7599)],
+    "ai_native": [(7601, 8099)],
+}
 
 
 def alloc_id(mod: str, nxt: dict):
-    """返回模块 mod 的下一个空闲编号：跳过磁盘上已存在的卡文件，且不越出号段。
+    """按模块号段顺序找下一个空闲编号：跳过磁盘上已存在的卡文件（含变体名），全满返回 None。
 
     修复 2026-11-13 覆盖事故：旧逻辑在号段顶部回退到"最小空位"后，
     循环里 nxt += 1 盲增，会一路穿过被占用的编号，把旧卡覆盖掉。
-    新逻辑每次分配都检查目标文件是否存在，号段满返回 None（调用方决定溢出或跳过）。
-    （号段与 tools/validate.py 的 ID_BASE 保持一致）"""
-    lo, hi = ID_BASE.get(mod, 0) + 1, ID_BASE.get(mod, 0) + SPAN - 1
-    n = max(nxt.get(mod, lo), lo)
-    while n <= hi:
-        # 前缀匹配：Q-0767.md 与 Q-0767-sdk.md 这类变体名都算占用
-        if not list((ROOT / "content" / mod).glob(f"Q-{n:04d}*.md")):
-            nxt[mod] = n + 1
-            return n
-        n += 1
+    新逻辑每次分配都检查目标文件是否存在，段满自动进下一号段（hardware 4101→6101）。"""
+    for idx, (lo, hi) in enumerate(RANGES.get(mod) or []):
+        n = max(nxt.get((mod, idx), lo), lo)
+        while n <= hi:
+            # 前缀匹配：Q-0767.md 与 Q-0767-sdk.md 这类变体名都算占用
+            if not list((ROOT / "content" / mod).glob(f"Q-{n:04d}*.md")):
+                nxt[(mod, idx)] = n + 1
+                return n
+            n += 1
     return None
-
-
-# 号段溢出：09_hardware（4101~4599）2026-11-23 已满 499/499，
-# 硬件题自动落到 13_hardware2（6101~6599），模块名/子类保持硬件语义
-OVERFLOW_MODULE = {"09_hardware": "13_hardware2"}
 
 
 def skeleton(qid, title, mod, sub, comp, role, url, rnd) -> str:
@@ -285,9 +309,6 @@ def main() -> int:
                 continue
             mod, sub = module_of(q["q"] + " " + d["title"])
             n = alloc_id(mod, nxt)
-            if n is None and mod in OVERFLOW_MODULE:
-                mod = OVERFLOW_MODULE[mod]
-                n = alloc_id(mod, nxt)
             if n is None:
                 print(f"  ⚠ {comp} 号段满跳过：{q['q'][:44]}")
                 continue
