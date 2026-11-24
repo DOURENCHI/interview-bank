@@ -39,7 +39,29 @@
       "added": "2026-11-24",
       "last_checked": "2026-11-24",
       "text_file": "sources/douyin_text_b4.jsonl",
-      "note": "17 篇文字笔记(aweme_type=163)已抓 16 篇；主页标 30 作品仅捕获 26，灵动微电子等 4 条待补"
+      "note": "登录态下已枚举全量 38 条(article 20/video 10/post 8)；后续周检可直接带登录态枚举"
+    },
+    {
+      "id": "b5",
+      "name": "硬件就业指导博主(硬件工程师乔·薪资路线分享→career模块)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAA8-jO-Wf_gG1Max3pyM5JU1AWCJ-94UK2TDjn6qfasrg5aToTS14Duv_IJHeoT66r",
+      "route": "video_asr",
+      "works_file": "sources/douyin_works_b5.json",
+      "added": "2026-11-24",
+      "last_checked": "2026-11-24",
+      "transcript_file": "sources/douyin_transcript_b5.jsonl",
+      "note": "27 条视频转写 25 成功(36650 字)；技术候选 0，全部走 career 模块存档卡(要点速览/展开讲讲/对我的适用/来源 四节 share 卡，Q-8101..)"
+    },
+    {
+      "id": "b6",
+      "name": "秋招经历/情绪向博主(混流搬运，无干货)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAxv0UbNtPSjYaCAywP7hqFc06o86gMPE_IwakQyux14VV2LzXVRATWN175y6sygh2",
+      "route": "article",
+      "works_file": "sources/douyin_works_b6.json",
+      "added": "2026-11-24",
+      "last_checked": "2026-11-24",
+      "transcript_file": "sources/douyin_transcript_b6.jsonl",
+      "note": "2026-11-24 定性：长视频为蹭流搬运(佛教/法律/vlog)，图文为情绪贴，无可提取干货，未写卡；保留观察，若后续发干货再处理"
     }
   ]
 }

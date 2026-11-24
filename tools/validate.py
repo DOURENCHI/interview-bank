@@ -24,7 +24,8 @@ ID_BASE = {"project": 100, "cpp": 600, "algo": 1600,
            "deploy": 2100, "ros2": 2600, "imaging": 3100,
            "robot": 3600, "hardware": 4100, "cv_pytorch": 4600,
            "python": 5100, "backend": 5600,
-           "agent": 6600, "scene": 7100, "ai_native": 7600}
+           "agent": 6600, "scene": 7100, "ai_native": 7600,
+           "career": 8100}
 # cpp 吸收了旧 linux(1100) 号段；hardware 由 09_hardware 与 13_hardware2 合并而来（保留两段号段），
 # 且原 linux 的内核驱动题（11xx/15xx 段）并入 hardware 时保留原编号（2026-11-24 补）
 ID_EXTRA_BASES = {"hardware": (6100, 1100), "cpp": (1100,)}
@@ -45,6 +46,9 @@ VALID_STATUS = {"indexed", "draft", "answered", "verified"}
 VALID_SRC = {"self_doc", "self_exp", "upstream", "official", "inferred", "video",
              "nowcoder", "douyin"}
 SECTIONS = ["口述答案", "讲深一层", "高频追问", "易错点", "关联项目", "来源"]
+# 分享类模块（薪资/路线/资源）不是问答卡，用轻量小节集
+SHARE_SECTIONS = ["要点速览", "展开讲讲", "对我的适用", "来源"]
+SHARE_MODULES = {"career"}
 # 代码题型额外要求题面小节
 CODING_SECTIONS = ["题目"]
 
@@ -115,7 +119,10 @@ def main() -> int:
             errors.append(f"{qid}: 文件在 {f.parent.name}/，但 module={mod}")
 
         # 正文小节
-        need = list(SECTIONS)
+        if mod in SHARE_MODULES:
+            need = list(SHARE_SECTIONS)
+        else:
+            need = list(SECTIONS)
         # 项目深挖不要求「来源」：出处已经写进「关联项目」的文档路径里
         if meta.get("qtype") == "project":
             need = [s for s in need if s != "来源"]
@@ -126,16 +133,17 @@ def main() -> int:
             if not re.search(rf"^##+\s*{s}", body, re.M):
                 errors.append(f"{qid}: 缺小节「{s}」")
 
-        # 已答不能是空壳（只看「口述答案」本节，不跨到下一节）
+        # 已答不能是空壳（只看首个内容小节，不跨到下一节）
         if meta.get("status") in ("answered", "verified", "draft"):
-            m = re.search(r"^##\s*口述答案\s*$(.*?)(?=^##\s|\Z)", body, re.M | re.S)
+            first_sec = "要点速览" if mod in SHARE_MODULES else "口述答案"
+            m = re.search(rf"^##\s*{first_sec}\s*$(.*?)(?=^##\s|\Z)", body, re.M | re.S)
             seg = m.group(1) if m else ""
             if "待补充" in seg or not seg.strip():
-                errors.append(f"{qid}: status={meta.get('status')} 但口述答案仍是空的")
+                errors.append(f"{qid}: status={meta.get('status')} 但{first_sec}仍是空的")
 
-        # 标题问句化（祈使式提问算合规；问号不必在末尾，括号补充说明也算）
+        # 标题问句化（祈使式提问算合规；分享类模块标题为主题短语，不检查）
         title = meta.get("title", "")
-        if not (("？" in title or "?" in title)
+        if mod not in SHARE_MODULES and not (("？" in title or "?" in title)
                 or re.match(r"^(用一句话|介绍|讲讲|说说|描述|解释|谈谈|聊)", title)):
             warns.append(f"{qid}: 标题不是问句 → {title[:30]}")
 

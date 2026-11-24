@@ -22,11 +22,12 @@ MODULE_NAME = {
     "python": "Python", "backend": "后端基础",
     "agent": "Agent 应用",
     "scene": "场景系统设计", "ai_native": "AI-Native 能力",
+    "career": "薪资和路线分享",
 }
 BASE = {"project": 100, "cpp": 600, "algo": 1600,
         "deploy": 2100, "ros2": 2600, "imaging": 3100, "robot": 3600,
         "hardware": 4100, "cv_pytorch": 4600, "python": 5100, "backend": 5600,
-        "agent": 6600, "scene": 7100, "ai_native": 7600}
+        "agent": 6600, "scene": 7100, "ai_native": 7600, "career": 8100}
 # cpp 吸收了旧 linux(1100) 号段；hardware 合并了旧 09_hardware(4100) 与 13_hardware2(6100) 两段，
 # 且原 linux 的内核驱动题（11xx/15xx 段）并入 hardware 时保留原编号（2026-11-24 补）
 EXTRA_BASES = {"hardware": (6100, 1100), "cpp": (1100,)}
