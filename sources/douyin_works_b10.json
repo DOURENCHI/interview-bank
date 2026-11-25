@@ -1,0 +1,324 @@
+{
+ "profile_url": "https://www.douyin.com/user/MS4wLjABAAAA_m2uUFVgClGzWURDMx6RDpWMHRJBoif1qeuz6ojAJncac3gs_tzhKIpiHgfff3_L",
+ "sec_user_id": "MS4wLjABAAAA_m2uUFVgClGzWURDMx6RDpWMHRJBoif1qeuz6ojAJncac3gs_tzhKIpiHgfff3_L",
+ "fetched_at": "2026-11-25 11:20:45",
+ "count": 26,
+ "note_count": 18,
+ "image_total": 36,
+ "works": [
+  {
+   "aweme_id": "7709438451545081551",
+   "desc": "一套STM32固件，如何适配多块Pcb.#STM32 #嵌入式开发 #硬件版本管理 #PCB设计  #单片机",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/os5bVAAKqDEEULY9C9iiwaBqAfA9WXAIExfJor~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=UVo%2FWpHNUW%2BhouXbW5BnoT7pZGY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oIxqWnaYAAA9A9CZwEiLfboBqf5LJVriEACD9I~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=ARVY4OxKnXyEwk5WC2%2FiYXUeyXQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/os5bVAAKqDEEULY9C9iiwaBqAfA9WXAIExfJor~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=MNvPQuNqvm3vzRnQzhzJ72PaLBI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794993517,
+   "date": "2026-11-18",
+   "url": "https://www.douyin.com/note/7709438451545081551"
+  },
+  {
+   "aweme_id": "7709068073282318454",
+   "desc": "STM32如何精准解码未知方波频率？#STM32 #方波频率 #定时器输入捕获 #滑动平均滤波 #嵌入式开发",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oooVbCxKAAA3A7ljgEFKfH8DWffz7FBEJBED8I~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=V6%2FDsGPU4lsa41qR6cErkJN%2BnE0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEOvmLRDIQHIAee3D4eiWAtA2Ae1rG4VTAmKJP~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=MabFXYmYc1n0ZLwqOWnARUxTDgU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oooVbCxKAAA3A7ljgEFKfH8DWffz7FBEJBED8I~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=%2BadZ0p%2FcBqVYSyt3aoT4dgQlEe4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794907282,
+   "date": "2026-11-17",
+   "url": "https://www.douyin.com/note/7709068073282318454"
+  },
+  {
+   "aweme_id": "7708718589180897722",
+   "desc": "不用定时器，STM32也能解码编码器！#STM32 #编码器 #四倍频解码 #外部中断 #嵌入式开发",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/og3AiEAiXEA6D9AwQvAfP8IWTH3VBfICoitqc6~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=YhIpMYNHncun%2FUg14RZ9TXvleJE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o0vcE3fBoE609XqAQ33IDfPW6CiAyi8AiAAVIw~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=IAmWIdN21oliCZbUd9ac32sV%2Bak%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/og3AiEAiXEA6D9AwQvAfP8IWTH3VBfICoitqc6~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=aE2QtGzMtrXllL1OCmJYIwmS52A%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794825911,
+   "date": "2026-11-16",
+   "url": "https://www.douyin.com/note/7708718589180897722"
+  },
+  {
+   "aweme_id": "7708343491390816121",
+   "desc": "STM32的16个寄存器，你真的懂吗？#STM32 #CPU寄存器 #ARM架构 #嵌入式开发 #单片机",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oUv5kV4Ki0WYAiuDiA8EAgJikeAeELB1BITf7O~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=6C7cEWCekDvNZv%2BM1wIp9YsFXHs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/osinzAEex8AqfIQVH8LeJEgOcEoAJYIr7AGUB7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=xVN173qo0lalzYvYkHR98k6MoJA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oUv5kV4Ki0WYAiuDiA8EAgJikeAeELB1BITf7O~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=GhluEliTndy4E0eMooXflooYLNg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794738577,
+   "date": "2026-11-15",
+   "url": "https://www.douyin.com/note/7708343491390816121"
+  },
+  {
+   "aweme_id": "7707968768493064058",
+   "desc": "Keil点击编译，背后到底发生了什么？#Keil #STM32 #嵌入式开发 #单片机 #ARM编译器",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/owIDVeAoBu1DBEPeGVRJw3AAED8H48AEVgfF7N~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=Y7nMKEdRsbAhPo5JSJvacun0%2BdY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ocDVE4lAE1HF3DNALgKEeQeA7RVuDJAoBfWI88~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=Erh0%2FDzh6LDTNyEPGxHM2Q3VlCA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/owIDVeAoBu1DBEPeGVRJw3AAED8H48AEVgfF7N~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=DaMa1nxbaIozGzUPRH2zo3PEKWc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794651330,
+   "date": "2026-11-14",
+   "url": "https://www.douyin.com/note/7707968768493064058"
+  },
+  {
+   "aweme_id": "7707590487099892197",
+   "desc": "一旦HardFault，如何快速排查！#STM32 #Keil #HardFault #嵌入式开发 #单片机",
+   "type": "note",
+   "images": [
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o4EicIIwPiHdhDnyA3AbpMalD2BBitAa2vAvA~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=ka8GxbkFYmHDsPZuhVQKjbSySvg%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oUpwmAHnaPli3MIBAdAtiZDIAABivvE2kchbE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=kHamilIWkUU5uz%2FKA9u6hzJTMzI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o4EicIIwPiHdhDnyA3AbpMalD2BBitAa2vAvA~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=iBHF5bP4mssdSbaWhlVIiTebxKw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794563254,
+   "date": "2026-11-13",
+   "url": "https://www.douyin.com/note/7707590487099892197"
+  },
+  {
+   "aweme_id": "7707227473679802041",
+   "desc": "RTOS内存明明够，为何申请失败？#FreeRTOS #STM32 #嵌入式开发 #内存管理 #单片机",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/okNqsOl7AAA7A9MxwEiiekeBFfGQQosiEAED1I~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=mbLibI9VuTGrO1N5biaLW%2BpuTxk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oU71lqGNisHsAibDQAeEAwEkJFAeEjB7AIof9Q~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=Zsmio0dH%2FsjYrtzIXW4Ok%2Bytmi8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/okNqsOl7AAA7A9MxwEiiekeBFfGQQosiEAED1I~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=dqQXmcuvwSjR%2FEU12L23X%2Bhlsnw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794478733,
+   "date": "2026-11-12",
+   "url": "https://www.douyin.com/note/7707227473679802041"
+  },
+  {
+   "aweme_id": "7706885574834580603",
+   "desc": "STM32上电后，CPU 的执行流程。#STM32 #单片机 #嵌入式开发 #CortexM #启动流程",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogE0IAEA9Wv9ARDqEFDSff7tDusAUEAwo1F5Cb~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=4k5wiOtky9mrAcUDhPKH%2B%2Fb6thM%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o07FcWJmA2p8Hw6SyVPeAIQoCAIBQArfMLteQg~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=%2BE1Kp6jbetysLRkbPQeo23HYupE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogE0IAEA9Wv9ARDqEFDSff7tDusAUEAwo1F5Cb~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=smYBXz8Mq05n3iQYApjGpzmsqEQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794399129,
+   "date": "2026-11-11",
+   "url": "https://www.douyin.com/note/7706885574834580603"
+  },
+  {
+   "aweme_id": "7706676106031918501",
+   "desc": "Flash只改4字节，为什么要备份整页？#STM32 #嵌入式开发 #Flash读写 #单片机 #项目实战",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oA2DFEe65A1A4D0zEAAQEfsNen8lqIAFpEB9wC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=FqX%2F7pwO1sitMypeChAlvfNRp%2BI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ok4z95tWqEeAAAE1nE8FiD0EIeDA62ABNwfvQF~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=jCjTs4HYHwuhAh86nb8Cch0%2BBgo%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oA2DFEe65A1A4D0zEAAQEfsNen8lqIAFpEB9wC~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=ZJOnWY%2FI842SiB8LT7hyE6WQo%2FA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794350360,
+   "date": "2026-11-11",
+   "url": "https://www.douyin.com/note/7706676106031918501"
+  },
+  {
+   "aweme_id": "7706468514560143995",
+   "desc": "RTOS这个配置错了，系统可能直接崩溃。#FreeRTOS #STM32 #中断优先级 #嵌入式开发 #单片机",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogyPIMAvOAEB9gMiC48a2qAdADFDBLi5vAEqO~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=7Wan%2FqRzm7DxcpWfzBgjTdFoBbc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o4AOB4ACAEiDEM3ALPDq98igI5yvvaDtAqBMg~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=trS2N8LYZXwP5u1l6aIK6ddvhu0%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/ogyPIMAvOAEB9gMiC48a2qAdADFDBLi5vAEqO~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=hbZtNZEDMvbTWPFGTTmvEtze4xQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794302025,
+   "date": "2026-11-10",
+   "url": "https://www.douyin.com/note/7706468514560143995"
+  },
+  {
+   "aweme_id": "7706108939214313081",
+   "desc": "学会这套帧协议，才算真正掌握串口通信！#STM32 #串口通信 #UART #嵌入式开发 #单片机",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8AJAMMxyfVIeFKANDGzTEZZQ4m7IGLgASfBGQ~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=A5sval83ISyYYSWdijHpd7yji3g%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEGZGNAHEIMfwUAJzmVBxGMF4IzQQTAegAfLD7~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=BC07KGo3XLyznS3yPfmOhXQ3TQ8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8AJAMMxyfVIeFKANDGzTEZZQ4m7IGLgASfBGQ~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=%2BlkTE3tKU5FUSb6qBOTCH1ObVoQ%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794218305,
+   "date": "2026-11-09",
+   "url": "https://www.douyin.com/note/7706108939214313081"
+  },
+  {
+   "aweme_id": "7705718198754150394",
+   "desc": "STM32升级突然断电，设备还能救回来吗。#STM32 #Bootloader #嵌入式开发 #OTA升级 #单片机编程",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8NvwMXwaZP5AOpaAAdAxD4APrJ1iPAEBAxiI~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=UR7vIoD2S4Pfhf7aiYw9W2rQyNY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8N5AOADPBd5AxPzAwiajJaAixvPAarpIk1EM~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=ozE1%2B0IsaHzOyTkMZt4j%2FQ5Rhvo%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o8NvwMXwaZP5AOpaAAdAxD4APrJ1iPAEBAxiI~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=f2gkAG6cGEwo0mJhJWfGVpzW53w%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794127328,
+   "date": "2026-11-08",
+   "url": "https://www.douyin.com/note/7705718198754150394"
+  },
+  {
+   "aweme_id": "7705275657638412218",
+   "desc": "ADC采样值一直跳，我是这样处理的！#STM32 #ADC采样 #嵌入式开发 #单片机 #C语言",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYDTdkfMAjNqqFAA9KgEAjeUE7QERIgw92HAYe~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=CivKQWhRzdfTl18hSmfoColHUcc%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQ5A7DidGEBARwAAGrAwfwiJ1uIPe1REeAy1oE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=QtU31gr0W27OWq8ij0A1l3SaZH8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oYDTdkfMAjNqqFAA9KgEAjeUE7QERIgw92HAYe~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=DqvMQVck%2FefKqSiJS2t6sItmAgY%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1794024291,
+   "date": "2026-11-07",
+   "url": "https://www.douyin.com/note/7705275657638412218"
+  },
+  {
+   "aweme_id": "7704987773820879498",
+   "desc": "STM32中断写不好，迟早出大问题！#STM32 #嵌入式开发 #单片机 #中断 #程序设计",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oMIAbFqLZCAHEDDDQff6AoAwE5ON473IkH2A9x~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=DWw3kMw6WKz8cE8Px66UMVjrReI%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQiuatAADyVqDIABn2PPAYh7iBMgalAgdmi9E~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=3oqHI1Ey6W5ejvNRO9PYYK37mrE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oMIAbFqLZCAHEDDDQff6AoAwE5ON473IkH2A9x~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=93mYlXyXcuzZ1hRsKBxi0y9658M%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1793957263,
+   "date": "2026-11-06",
+   "url": "https://www.douyin.com/note/7704987773820879498"
+  },
+  {
+   "aweme_id": "7704697891616894201",
+   "desc": "STM32按键驱动，高手都这样设计！#STM32 #嵌入式开发 #单片机 #C语言 #按键消抖",
+   "type": "note",
+   "images": [
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oAlIwAdEAaAlEd1JvikyA3iAsB5WfXA3eAEqDe~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=nXfmiGo%2BFj1fdBETTjBy%2BLhvRL8%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oc1DEs3AABiWlwAAKlHEfiW5qEe3yIvAekda4A~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=y8JzmhzwURaUFQeY1lTp9%2BJcTe4%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oAlIwAdEAaAlEd1JvikyA3iAsB5WfXA3eAEqDe~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=GBiu%2FidGIhZJdK2QpPnSyf9GSug%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1793889769,
+   "date": "2026-11-05",
+   "url": "https://www.douyin.com/note/7704697891616894201"
+  },
+  {
+   "aweme_id": "7704254790344189433",
+   "desc": "STM32高手，早就不用Delay了！#STM32 #嵌入式开发 #单片机 #C语言 #项目实战",
+   "type": "note",
+   "images": [
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/os9EymMAPia5BHizCJAAAIpsABnAqjPhDArYu~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=20WjizvS9omKZ5LRozUbE3HgVrs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oUDAuBAAKmiAOI5APwBZnAIHarEPzMCpsAiqj~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=izZPnrSxkN3xj00hg%2Ft3tbkrEGA%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/os9EymMAPia5BHizCJAAAIpsABnAqjPhDArYu~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=v4tmmUhnWoo40Iw5XJpilm3rdDw%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1793786602,
+   "date": "2026-11-04",
+   "url": "https://www.douyin.com/note/7704254790344189433"
+  },
+  {
+   "aweme_id": "7703898639622836155",
+   "desc": "STM32项目越写越乱？问题在这里。#STM32 #嵌入式开发 #单片机 #C语言 #项目实战",
+   "type": "note",
+   "images": [
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oMq0v1ADfAETAbBqAt1p96IwbieWNd0AEeiEE1~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=ZNlDhbdZ2MN0rFOA%2BcioFTXC390%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQEAp1EAhENA1web0bIADiiE9vBHqdAW6f2qte~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=Pxedr4JAzQmE%2B18hgmF%2BVp57tdE%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oMq0v1ADfAETAbBqAt1p96IwbieWNd0AEeiEE1~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=pkE2v3lGNWp4TAjLD%2FiUeqqmOwk%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1793703679,
+   "date": "2026-11-03",
+   "url": "https://www.douyin.com/note/7703898639622836155"
+  },
+  {
+   "aweme_id": "7703589057054408635",
+   "desc": "嵌入式开发，真正难的是排查Bug！#STM32 #嵌入式开发 #单片机 #程序调试 #27届秋招",
+   "type": "note",
+   "images": [
+    "https://p9-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o0oYw6DAAIqAFDfRCofC94g3GnLApKA9AEEvWE~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=rt%2BIqd507APASJdo6MNLN8GOO5E%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12",
+    "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oQEAIoIfKGLE9bA9gp6q4AFRwArDYDwEAfnCoC~tplv-dy-aweme-images-v2:3000:3000:q75.webp?lk3s=138a59ce&x-expires=1798167600&x-signature=WfG1mk%2BEw%2Bha5FqTbxTL2FO3Y7U%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=image&biz_tag=aweme_images&l=20261125112034E1DB1A9B1736DBEE0A12"
+   ],
+   "cover": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/o0oYw6DAAIqAFDfRCofC94g3GnLApKA9AEEvWE~noop.jpeg?lk3s=138a59ce&x-expires=1796785200&x-signature=vUX%2F%2BDeBqaJlzum4j9hE1EDg6CU%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&biz_tag=pcweb_cover&l=20261125112034E1DB1A9B1736DBEE0A12",
+   "create_time": 1793631599,
+   "date": "2026-11-02",
+   "url": "https://www.douyin.com/note/7703589057054408635"
+  },
+  {
+   "aweme_id": "7711739368213653750",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7711739368213653750"
+  },
+  {
+   "aweme_id": "7634597791478585065",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7634597791478585065"
+  },
+  {
+   "aweme_id": "7255231386590727439",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7255231386590727439"
+  },
+  {
+   "aweme_id": "7257883826746133799",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7257883826746133799"
+  },
+  {
+   "aweme_id": "7130086209958825229",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7130086209958825229"
+  },
+  {
+   "aweme_id": "7094595198491036967",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7094595198491036967"
+  },
+  {
+   "aweme_id": "7494242136225860873",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7494242136225860873"
+  },
+  {
+   "aweme_id": "7143240349899640099",
+   "desc": "",
+   "type": "video",
+   "images": [],
+   "cover": "",
+   "create_time": 0,
+   "date": "",
+   "url": "https://www.douyin.com/video/7143240349899640099"
+  }
+ ]
+}

@@ -62,6 +62,46 @@
       "last_checked": "2026-11-24",
       "transcript_file": "sources/douyin_transcript_b6.jsonl",
       "note": "2026-11-24 定性：长视频为蹭流搬运(佛教/法律/vlog)，图文为情绪贴，无可提取干货，未写卡；保留观察，若后续发干货再处理"
+    },
+    {
+      "id": "b7",
+      "name": "嵌入式八股教学博主(结构体对齐/看门狗/驱动入门)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAArV7kyjAdCM4SFQ0l3Piu4IkNaM6-ZJMdUCLOVMsTBjw",
+      "route": "image",
+      "works_file": "sources/douyin_works_b7.json",
+      "added": "2026-11-25",
+      "last_checked": "2026-11-25",
+      "note": "18 图文+8 视频；seed 候选 0，内容全被题库覆盖；教学型非面经，不挂出现记录，无需写卡"
+    },
+    {
+      "id": "b8",
+      "name": "嵌入式求职教学博主(谈薪/方向选择/学习路线→career模块)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAA_yMAnlPUPMmTWSw-5R2ZlN19DmtRNzAP-LxWgnokHOHXbGL19rt-GLaA5WLE4ff_",
+      "route": "image",
+      "works_file": "sources/douyin_works_b8.json",
+      "added": "2026-11-25",
+      "last_checked": "2026-11-25",
+      "note": "15 图文高质量(谈薪/五方向/学习路线/非技术题→career Q-8111..8114)+技术教学 8 篇(题库已覆盖)+2 广告；视频为搬运噪音(物理课/菜谱/摩托)忽略"
+    },
+    {
+      "id": "b9",
+      "name": "嵌入式面试营销号(200问/速成类，八股旧题重述)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAqaW9Mslx5XoT9RkileIrxMPv_OoQ7tZ9ZADx8L-2nreOZ_RCc8vOSEQtHsqyhs9f",
+      "route": "image",
+      "works_file": "sources/douyin_works_b9.json",
+      "added": "2026-11-25",
+      "last_checked": "2026-11-25",
+      "note": "3 图文+8 视频；seed 候选 56=经典八股重述，子代理甄别 A/B/C 分类后按既有规则处理"
+    },
+    {
+      "id": "b10",
+      "name": "STM32技术贴博主(固件适配/编码器/OTA实操)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAA_m2uUFVgClGzWURDMx6RDpWMHRJBoif1qeuz6ojAJncac3gs_tzhKIpiHgfff3_L",
+      "route": "image",
+      "works_file": "sources/douyin_works_b10.json",
+      "added": "2026-11-25",
+      "last_checked": "2026-11-25",
+      "note": "18 图文+8 视频；3 候选全命中已有卡(Q-6152 协议帧/Q-6117 OTA)，无需写卡"
     }
   ]
 }
