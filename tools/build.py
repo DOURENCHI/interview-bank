@@ -188,6 +188,22 @@ def render_md(md: str) -> str:
 
 # ------------------------------------------------------------------ 装载
 
+def extract_anchor(body: str) -> str:
+    """A2 锚点背诵卡：从卡面 md 提取「记忆锚点：xxx」句。
+
+    格式变体（行首锚定，防正文里的「精确锚点/正则锚点」等术语误命中）：
+      **记忆锚点**：xxx ／ 记忆锚点：**xxx** ／ **锚点：xxx** ／ 锚点：**xxx**
+    """
+    for line in body.splitlines():
+        s = line.strip()
+        if not re.match(r"^\*{0,2}(?:记忆)?锚点\*{0,2}[：:]", s):
+            continue
+        t = re.sub(r"^\*{0,2}(?:记忆)?锚点\*{0,2}[：:]\s*", "", s).strip()
+        t = t.strip("*").strip().strip("「」").strip()
+        return t[:120]
+    return ""
+
+
 def load_questions() -> list[dict]:
     qs = []
     for f in sorted(CONTENT.rglob("*.md")):
@@ -221,6 +237,8 @@ def load_questions() -> list[dict]:
             "html": render_md(body),
             # 搜索用纯文本
             "plain": re.sub(r"<[^>]+>", " ", body),
+            # A2 锚点背诵：提取卡内的「记忆锚点/锚点」句（行首锚定，排除正文里的术语误命中）
+            "anchor": extract_anchor(body),
         })
     qs.sort(key=lambda q: (MODULE_ORDER.index(q["module"]) if q["module"] in MODULE_ORDER else 99,
                            PRI_ORDER.get(q["priority"], 9), q["id"]))
@@ -504,6 +522,10 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .rscore.m3{color:#0550ae;background:#eaf1fb}
 .rscore.m12{color:#a63a2e;background:#fdf1ee}
 .hempty{font-size:12.5px;color:var(--muted);line-height:1.8}
+.arow{font-size:13.5px;line-height:1.7;padding:5px 8px;border-bottom:1px dashed var(--line);cursor:pointer}
+.arow:hover{background:#fdf8ea}
+.arow code{font:12px/1 ui-monospace,Consolas,monospace;color:var(--muted);
+  background:var(--soft);padding:2px 5px;border-radius:4px;margin-right:8px}
 .trgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 .trcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;
   padding:13px 15px;cursor:pointer}
@@ -863,6 +885,7 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
         <button class="mini" id="tr_due">📋 今日该复习</button>
         <button class="mini" id="tr_weak">🩹 薄弱题清单</button>
         <button class="mini" id="tr_wrong">❌ 错题本</button>
+        <button class="mini" id="tr_wrongdrill" title="错题全部拉进模拟面试模式：先口述完整回答 → 揭示高频追问 → 自评，不限时">🔁 错题重练</button>
       </div>
     </div>
   </div>
@@ -870,6 +893,10 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <h3>📚 项目连环问（顺序过题 · 不限时 · 面试官就是这个问法）</h3>
     <div class="trgrid" id="tr_projects"></div>
   </div>
+  <details class="panel" id="anchorbox">
+    <summary>⚡ 锚点速记 <span class="rnum" id="anchor_meta"></span> — 每张卡一句话的「记忆锚点」，考前快速过一遍</summary>
+    <div id="anchor_body" style="margin-top:10px"></div>
+  </details>
 </section>
 
 <section id="view-jobs" class="view">
@@ -2488,6 +2515,34 @@ $('h_profs').addEventListener('click', e => {
 });
 
 // ---- 训练视图：入口 + 项目连环问列表 ----
+function wrongDrill(){
+  // B5+G6 错题重练：错题本整体拉进模拟面试流——先口述完整回答，再揭示高频追问自评
+  const qs = shuffle([...wrong].map(id => DATA.find(q => q.id === id)).filter(Boolean));
+  if (!qs.length) { alert('错题本是空的，没有需要重练的题。\n（自评 1~2 分的题会自动进错题本）'); return; }
+  MOCK.list = qs; MOCK.i = 0; MOCK.graded = []; MOCK.notes = {};
+  MOCK.secs = 0; MOCK.live = true; MOCK.drill = '错题重练';
+  $('m_src').textContent = `错题重练 · ${qs.length} 题 · 不限时 · 先口述再揭示追问`;
+  $('m_conf').textContent = '';
+  $('m_setup').style.display = 'none';
+  $('m_run').style.display = 'block';
+  $('m_end').style.display = 'none';
+  $('mockov').style.display = 'block';
+  showQ();
+}
+
+function renderAnchors(){
+  // A2 锚点速记：把每张卡的「记忆锚点」按模块列出，考前快速过
+  const cards = DATA.filter(q => q.anchor);
+  $('anchor_meta').textContent = `${cards.length} 张卡有锚点`;
+  if (!cards.length) { $('anchor_body').innerHTML = '<div class="hempty">还没有卡写「记忆锚点」句。</div>'; return; }
+  const by = {};
+  cards.forEach(q => { (by[q.moduleName] = by[q.moduleName] || []).push(q); });
+  $('anchor_body').innerHTML = Object.entries(by).map(([m, qs]) =>
+    `<div style="margin-bottom:10px"><b style="color:var(--blue)">${esc(m)}</b>` +
+    qs.map(q => `<div class="arow" data-aid="${esc(q.id)}" title="点击在题库中打开"><code>${esc(q.id)}</code>${esc(q.anchor)}</div>`).join('') +
+    `</div>`).join('');
+}
+
 function renderTrain(){
   const subs = Object.keys(PROJ).sort((a, b) => PROJ[b].length - PROJ[a].length);
   $('tr_projects').innerHTML = subs.map(s => {
@@ -2499,6 +2554,7 @@ function renderTrain(){
       <span class="pbar"><i style="width:${pct}%"></i></span>
     </div>`;
   }).join('');
+  renderAnchors();
 }
 $('tr_projects').addEventListener('click', e => {
   const c = e.target.closest('.trcard'); if (!c) return;
@@ -2509,6 +2565,11 @@ $('tr_due').addEventListener('click', () => runAct('due'));
 $('tr_weak').addEventListener('click', () => runAct('weak'));
 $('tr_wrong').addEventListener('click', () => {
   $('wrong').checked = true; showView('bank'); render();
+});
+$('tr_wrongdrill').addEventListener('click', wrongDrill);
+$('anchor_body').addEventListener('click', e => {
+  const r = e.target.closest('[data-aid]'); if (!r) return;
+  $('q').value = r.dataset.aid; showView('bank'); render();
 });
 
 // ---- 岗位视图：收藏 + JD 技能匹配分析（规则版，JD → 题库缺口联动） ----
@@ -2521,7 +2582,7 @@ function loadJobs(){
 // 技能规则表：JD 关键词 → 题库模块。匹配分析的核心映射，随题库方向扩展
 const SKILLS = [
   {name: 'C++', tier: 'core', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['cpp']},
-  {name: 'Linux', tier: 'core', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['linux']},
+  {name: 'Linux', tier: 'core', kws: ['linux', 'shell', 'gdb', 'makefile', '系统编程', '进程', 'epoll'], mods: ['cpp', 'hardware']},
   {name: '算法机考', tier: 'eng', kws: ['算法', '数据结构', '手撕', '机考', '编程题'], mods: ['algo']},
   {name: '模型部署', tier: 'core', kws: ['tensorrt', 'onnx', '推理', '部署', '量化', 'cuda', '边缘计算', '性能优化', 'fp16', 'int8'], mods: ['deploy']},
   {name: 'ROS2/中间件', tier: 'core', kws: ['ros2', 'ros', 'dds', '中间件', 'ethercat', 'can总线', '串口', '通信'], mods: ['ros2']},

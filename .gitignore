@@ -11,3 +11,6 @@ _cache/
 dist/_mock.html
 dist/_m*.png
 _fill/
+
+# 本机隐私：投递记录（G1 漏斗数据源，不入公开仓库）
+applications.json
