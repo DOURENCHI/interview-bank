@@ -27,7 +27,7 @@ MODULE_NAME = {
     "python": "Python", "backend": "后端基础",
     "agent": "Agent 应用",
     "scene": "场景系统设计", "ai_native": "AI-Native 能力",
-    "career": "薪资和路线分享",
+    "career": "薪资和路线分享", "embodied": "具身智能",
 }
 MODULE_ORDER = list(MODULE_NAME)
 PRI_ORDER = {"P0": 0, "P1": 1, "P2": 2}

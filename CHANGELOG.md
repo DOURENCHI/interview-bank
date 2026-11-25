@@ -1,5 +1,30 @@
 # Changelog
 
+## CareerOS 内容 V2.15 — 2026-11-25（具身智能模块上线：b11 博主 13 张知识卡 + 作品汇总 HTML）
+
+- **新模块「具身智能」（embodied，号段 8600）**：validate.py/gen_taxonomy/build/README 全部登记；
+  题库首次覆盖 VLA/VLN/世界模型/具身强化学习方向（对应端侧 AI→车端/机器人部署的职业延伸）。
+- **b11（抖音@Clip，具身智能科普）接入**：28 作品=27 视频+1 笔记；ASR 25/27（重试 --ids 救回 2 条
+  最新视频；2 条旧无 desc 视频无内容）；4 条生活类+4 条无内容（空转写/ASR 失败/笔记无正文）共 8 条不收录。
+  视频讲解型博主处理先例：转写成段讲解不走 seed 切题，读转写人工甄别提炼（docs/douyin_pipeline.md 补节）。
+- **13 张 embodied 知识卡**（source_type=douyin，三日期 2026-11-25，5 个子代理+规格核对）：
+  Q-8601 VLA 基础（V 看 L 听 A 动/遥操数据瓶颈）、Q-8602 VLA vs VLN vs 世界模型辨析（手/腿/脑内预演，
+  Genie 隐动作+复印机效应）、Q-8603 大脑-操作-运动控制三层架构（System2 VLM/1kHz 运控，各层学习范式）、
+  Q-8604 模仿学习卡 80% 与 RL 超越示范（RLToken 插网线 146/228/66 步）、Q-8605 VLA+RL 三路线
+  （LoRA/动作专家/噪声小模型；缺 critic/动作概率/奖励）、Q-8606 GRPO vs PPO（组内相对优势替代 critic）、
+  Q-8607 真机 RL 三篇（π0.6 Recap 13h 咖啡/字节 SEED 穿鞋带 45.7→83.3%/RLToken 螺丝 20→65%，
+  on/off/offline-policy 取舍）、Q-8608 Mimic 与域随机化（Deep Mimic 2018/奖励=像不像/H100 3h vs 128 卡 7 天）、
+  Q-8609 VLA 微调六铁律（全参 76% vs LoRA 52.5%/验证集 loss 与真机无关/场景多样性>数据量/+1h 慢而稳→90%）、
+  Q-8610 RTC 部署衔接（动作块跳变根因/新块以旧块未来步为条件，同步 53%→RTC 93%）、
+  Q-8611 四大开源 VLA 选型（π0.5/GR00T N1.7 双系统/WALL-OSS MoT 三损失/LingBot-VLA 2.0 MoE 双蒸馏）、
+  Q-8612 数据瓶颈与 API 化（仿真合成/隐动作伪本体/π API/Dream API $3/h/大小脑混合 26→48%）、
+  Q-8613 入门路线+本体选型（design：OpenPI 代码线→仿真 MuJoCo/Isaac→ROS2/LeRobot→SO-101 真机；
+  Franka/UR5e/宇树 Go2·G1/Spot 速记）。
+- **作品汇总 HTML 交付**：D:\工程\具身智能\具身智能博主作品汇总.html——19 条知识作品（16 具身+3 AI 工作流），
+  用户固定模板（内置 CSS/目录锚点 work-1..19/最新在前/content-block 六要素/footer 固定文字），离线可读。
+- **回归**：1790 题/16 模块；validate ✅（91 条提醒均为存量老卡「标题不是问句」类，Q-8611/8613 沿用
+  任务指定标题，非阻塞）；radar_test 36/36 ✅；ui_test ✅；dist 重建。
+
 ## CareerOS 内容 V2.14 — 2026-11-25（b7~b10 四博主接入：b8 career 4 张 + b9 甄别 3 新卡 + 监控清单扩到 10 博主）
 
 - **b7~b10 四博主接入**（用户提供链接）：枚举 86 作品（b7=26/b8=23/b9=11/b10=26），

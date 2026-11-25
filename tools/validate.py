@@ -25,7 +25,7 @@ ID_BASE = {"project": 100, "cpp": 600, "algo": 1600,
            "robot": 3600, "hardware": 4100, "cv_pytorch": 4600,
            "python": 5100, "backend": 5600,
            "agent": 6600, "scene": 7100, "ai_native": 7600,
-           "career": 8100}
+           "career": 8100, "embodied": 8600}
 # cpp 吸收了旧 linux(1100) 号段；hardware 由 09_hardware 与 13_hardware2 合并而来（保留两段号段），
 # 且原 linux 的内核驱动题（11xx/15xx 段）并入 hardware 时保留原编号（2026-11-24 补）
 ID_EXTRA_BASES = {"hardware": (6100, 1100), "cpp": (1100,)}

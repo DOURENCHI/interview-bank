@@ -131,13 +131,24 @@ python tools/douyin_article.py --fetch --works sources/douyin_works_b4.json --ou
 - **视频两分支判定**（2026-11-24 实测 ADC+DMA 视频得出）：ASR 转 0 字且音量正常（mean_volume ≈ -12dB）→ 多半是**图卡动画+BGM 无旁白**，改走抽帧 OCR：`ffmpeg -i x.bin -vf fps=1 frames/f%03d.png` + RapidOCR 逐帧去重；有旁白的教学视频才走 whisper（vad_filter=True）。CUDA 转写报 `cublas64_12.dll is not found` → douyin_video.py 已修（torch/lib 加 DLL 目录）；图卡视频转写结果记 `"model": "frames+rapidocr"`；
 - 文字正文转成 `douyin_ocr_*.jsonl` 兼容格式（text 当作单页 OCR 结果，conf=1.0）后，照常走 `douyin_seed.py` 切题判重。
 
+## 视频讲解型博主（video_asr 路线，2026-11-25 实践）
+
+纯视频博主（如 b11 具身智能科普）的转写是**成段讲解**，不是题面清单，`douyin_seed.py` 的切题规则
+（6~60 字、必须含疑问词）不适用——**不走 seed，人工/AI 读转写甄别**：
+
+1. `douyin_works.py` 枚举 → 视频列表 → `douyin_video.py --ids <id>...` 批量 ASR（有旁白教学视频直接 whisper；0 字图卡视频走抽帧 OCR，见上节两分支判定）；
+2. 读转写全文，人工甄别：**知识密集的长视频**（>2000 字讲解）按主题合并提炼成知识卡（`source_type: douyin`，note 标注「视频转写提炼」，ASR 错别字需人工校正：居身→具身、派零点五→π0.5、访真→仿真 等）；短贴/生活内容/无转写的不入库；
+3. 科普知识卡不挂「出现记录」（不是面经），来源节保留视频 URL 与日期。
+
+先例：b11 博主 28 作品 → 25 条有效转写 → 19 条知识作品 → HTML 汇总文档（`D:\工程\具身智能\`）+ 题库 embodied 模块 13 张卡。
+
 ## 每周例行（DSH 定时任务，周日 10:00）
 
 配置在 `sources/douyin_watch.json`（博主清单，route=image/article/video_asr）：
 
 1. 逐博主枚举作品，与已存 works 文件 diff 出新作品；
 2. 新作品按 route 处理：图文→OCR，文字笔记→article 正文，视频→登录态+ASR；
-3. `douyin_seed.py` 切题判重 → 人工甄别（真新题写卡 / 经典八股挂出现记录 / HR 题不入库）；
+3. 图文/文字走 `douyin_seed.py` 切题判重；**视频讲解型读转写人工甄别**（见上节）→ 处置（真新题写卡 / 经典八股挂出现记录 / 知识提炼 / HR 题不入库）；
 4. `validate.py` → `gen_taxonomy.py` → `build.py` → CHANGELOG → push。
 
 **注意**：未登录枚举可能只拿到部分作品（b4 主页标 30 实测未登录只给 18~26 条），登录态（`_cache/douyin_state.json`）能拿全量；登录态过期时用 `tools/douyin_login.py` 重新扫码。
@@ -153,7 +164,7 @@ python tools/douyin_article.py --fetch --works sources/douyin_works_b4.json --ou
 
 ## 当前状态
 
-- 四个脚本已就位并跑通（枚举 → OCR/正文 → 切题去重 → 登录）；
+- 四个脚本已就位并跑通（枚举 → OCR/正文 → 切题去重 → 登录）+ ASR（douyin_video.py，两分支判定）；
 - `source_type: douyin` 已在 `tools/validate.py` 登记；
-- 博主清单 `sources/douyin_watch.json`（b1 嵌入式/b2 Java后端/b3 嵌入式/b4 嵌入式·文字笔记）；
-- 每周日 10:00 DSH 定时任务自动周检；未覆盖的视频 ASR 路线工具已就绪（douyin_video.py）。
+- 博主清单 `sources/douyin_watch.json`（b1~b10：嵌入式×3/Java 后端/嵌入式·文字笔记/就业指导×2/求职教学/营销号/STM32；b11 具身智能·纯视频）；
+- 每周日 10:00 DSH 定时任务自动周检；视频讲解型博主走 ASR+人工甄别（见上节先例）。

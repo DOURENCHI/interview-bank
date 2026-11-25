@@ -102,6 +102,17 @@
       "added": "2026-11-25",
       "last_checked": "2026-11-25",
       "note": "18 图文+8 视频；3 候选全命中已有卡(Q-6152 协议帧/Q-6117 OTA)，无需写卡"
+    },
+    {
+      "id": "b11",
+      "name": "具身智能科普博主(VLA/世界模型/具身强化学习→embodied模块)",
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAOLrN9mvM9He6YnJ7OuBxGhdPUwzO-naRnuZivEo-HOY",
+      "route": "video_asr",
+      "works_file": "sources/douyin_works_b11.json",
+      "added": "2026-11-25",
+      "last_checked": "2026-11-25",
+      "transcript_file": "sources/douyin_transcript_b11.jsonl",
+      "note": "28 作品=27 视频+1 图文；核心系列：具身强化学习三弹/VLA 模型盘点/VLN/世界模型 Genie 4/真机 π*0.6；另产出 D:\\工程\\具身智能 汇总 HTML"
     }
   ]
 }
