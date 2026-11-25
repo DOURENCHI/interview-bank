@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import html
 import csv
+import hashlib
 import json
 import re
 import sys
@@ -205,12 +206,21 @@ def extract_anchor(body: str) -> str:
 
 
 def load_questions() -> list[dict]:
+    def _section(bd, name):
+        m = re.search(rf"^## {name}.*?\n(.*?)(?=^## |\Z)", bd, re.M | re.S)
+        return m.group(1).strip() if m else ""
+
     qs = []
     for f in sorted(CONTENT.rglob("*.md")):
         meta, body = parse_fm(f.read_text(encoding="utf-8"))
         if not meta.get("id"):
             continue
         mod = meta.get("module") or f.parent.name
+        _talk = _section(body, "口述答案")
+        _fol = [re.sub(r"\*\*", "", x).strip() for x in
+                re.findall(r"^\d+\.\s+(.+)$", _section(body, "高频追问"), re.M)]
+        # 出现记录表的日期列（C2 近 30 天加权 / E4 按最近出现排序用）
+        _dates = re.findall(r"^\|\s*(\d{4}-\d{2}-\d{2})", _section(body, "出现记录"), re.M)
         qs.append({
             "id": meta["id"],
             "title": meta.get("title", "(无标题)"),
@@ -239,6 +249,11 @@ def load_questions() -> list[dict]:
             "plain": re.sub(r"<[^>]+>", " ", body),
             # A2 锚点背诵：提取卡内的「记忆锚点/锚点」句（行首锚定，排除正文里的术语误命中）
             "anchor": extract_anchor(body),
+            # B3 Anki 导出用：口述答案节 + 高频追问列表
+            "talk": _talk,
+            "follows": _fol,
+            # 出现记录日期（YYYY-MM-DD 列表，倒序无所谓）
+            "dates": _dates,
         })
     qs.sort(key=lambda q: (MODULE_ORDER.index(q["module"]) if q["module"] in MODULE_ORDER else 99,
                            PRI_ORDER.get(q["priority"], 9), q["id"]))
@@ -259,8 +274,41 @@ PAGE = r"""<!DOCTYPE html>
   --tx:#2d2a21; --muted:#665c49; --blue:#1b5e8c; --green:#2e6b3e;
   --red:#a63a2e; --orange:#9a5a12; --purple:#6b4fa8; --yellow:#6f5520;
   --accent:#1b5e8c;
+  --hover:#fdf8ea; --hover2:var(--hover2);
 }
+/* D1 暗色模式：变量整体翻转 + 浅底徽章批量子集覆盖 */
+html[data-theme=dark]{
+  --bg:#1c1a16; --soft:#26231d; --paper:#232019; --line:#3d382e;
+  --tx:#e8e2d4; --muted:#a89f8c; --blue:#7db3dd; --green:#8cc79a;
+  --red:#e08a7c; --orange:#dcb26b; --purple:#b79ce0; --yellow:#d6c37e;
+  --accent:#7db3dc;
+  --hover:#2e2a22; --hover2:#2b2820;
+  --campus:#7db3dd; --campus-bg:#1f2630; --campus-line:#33506b;
+  --intern:#8cc79a; --intern-bg:#1e2a20; --intern-line:#35573f;
+  --social:#dcb26b; --social-bg:#2d2718; --social-line:#5c4c26;
+  --unknown:#a89f8c; --unknown-bg:#26231d; --unknown-line:#454033;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --shadow-h:0 8px 22px rgba(0,0,0,.5);
+}
+html[data-theme=dark] .evS1,html[data-theme=dark] .rscore.m4,
+html[data-theme=dark] .rscore.hi,html[data-theme=dark] .tstat.done{color:#8cc79a;background:#1e2a20;border-color:#35573f}
+html[data-theme=dark] .evS2,html[data-theme=dark] .rscore.m3,
+html[data-theme=dark] .fpill{color:#7db3dd;background:#1f2630;border-color:#33506b}
+html[data-theme=dark] .evS3,html[data-theme=dark] .rscore.mid,
+html[data-theme=dark] .tstat.doing,html[data-theme=dark] .cbadge.social{color:#d6c37e;background:#2d2718;border-color:#5c4c26}
+html[data-theme=dark] .evS4{color:#a89f8c;background:#26231d;border-color:#454033}
+html[data-theme=dark] .rscore.m12,html[data-theme=dark] .tag.appear,
+html[data-theme=dark] .tbadge.gap,html[data-theme=dark] .tsec .schip.zero,
+html[data-theme=dark] .elc.bad{color:#e08a7c;background:#2d1f1b;border-color:#5c3a30}
+html[data-theme=dark] .cbadge.campus{color:#7db3dd;background:#1f2630;border-color:#33506b}
+html[data-theme=dark] .cbadge.intern{color:#8cc79a;background:#1e2a20;border-color:#35573f}
+html[data-theme=dark] .pri.P2{background:#4a453a}
+html[data-theme=dark] .body pre{background:#262219}
+html[data-theme=dark] .nccard[open]{background:#26231d}
 *{box-sizing:border-box}
+.tagcloud{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.tagcloud .tcloud{cursor:pointer;border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:2px 8px;line-height:1.6}
+.tagcloud .tcloud:hover{background:var(--hover);border-color:var(--blue)}
 body{margin:0;background:var(--bg);color:var(--tx);
   font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
 .wrap{max-width:1060px;margin:0 auto;padding:0 16px 80px}
@@ -280,7 +328,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   margin:10px 0;overflow:hidden}
 .qh{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;cursor:pointer;
   user-select:none;flex-wrap:wrap}
-.qh:hover{background:#fdf8ea}
+.qh:hover{background:var(--hover)}
 .pid{font:12px/1 ui-monospace,Consolas,monospace;color:var(--muted);
   background:var(--soft);padding:4px 6px;border-radius:5px;margin-top:4px}
 .pri{font-size:11px;font-weight:700;padding:3px 7px;border-radius:5px;margin-top:5px;color:#fff}
@@ -301,7 +349,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   border-left:3px solid var(--yellow);border-radius:0 6px 6px 0;color:#4a4334;font-size:14.5px}
 .body code{background:var(--soft);border:1px solid var(--line);border-radius:4px;
   padding:1px 5px;font:13px/1.5 ui-monospace,Consolas,monospace}
-.body pre{background:#f8f1de;border:1px solid var(--line);border-radius:8px;
+.body pre{background:var(--soft);border:1px solid var(--line);border-radius:8px;
   padding:12px;overflow:auto}
 .body pre code{background:none;border:0;padding:0}
 .body table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}
@@ -464,6 +512,11 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
   border-top:1px dashed var(--line);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 .qmeta a{color:var(--blue);text-decoration:none}
 .qmeta a:hover{text-decoration:underline}
+/* F1 相关题互链 */
+.relq{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.relq .fi{background:var(--soft);border-radius:5px;padding:2px 8px}
+.relq .rq{border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer;color:var(--tx)}
+.relq .rq:hover{background:var(--hover);border-color:var(--blue);color:var(--blue)}
 /* ---- 模拟面试作答框 ---- */
 #m_note{width:100%;min-height:88px;font:14px/1.7 inherit;color:var(--tx);
   background:var(--paper);border:1px solid var(--line);border-radius:8px;
@@ -523,7 +576,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .rscore.m12{color:#a63a2e;background:#fdf1ee}
 .hempty{font-size:12.5px;color:var(--muted);line-height:1.8}
 .arow{font-size:13.5px;line-height:1.7;padding:5px 8px;border-bottom:1px dashed var(--line);cursor:pointer}
-.arow:hover{background:#fdf8ea}
+.arow:hover{background:var(--hover)}
 .arow code{font:12px/1 ui-monospace,Consolas,monospace;color:var(--muted);
   background:var(--soft);padding:2px 5px;border-radius:4px;margin-right:8px}
 .trgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
@@ -635,7 +688,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .rtable th{background:var(--soft);font-size:12px;color:var(--muted)}
 .rtable tr:last-child td{border-bottom:0}
 .rtable tbody tr{cursor:pointer}
-.rtable tbody tr:hover{background:#fdf8ea}
+.rtable tbody tr:hover{background:var(--hover)}
 .rbar2{position:relative;background:var(--soft);border-radius:4px;height:12px;
   width:110px;display:inline-block;vertical-align:middle;overflow:hidden}
 .rbar2 i{position:absolute;inset:0;right:auto;background:var(--green);border-radius:4px}
@@ -685,7 +738,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .scard.sc-nc b{color:var(--purple)}
 .rtable th{background:linear-gradient(180deg,#f6eeda,#f1e6cd);letter-spacing:.3px}
 .rtable tbody tr{transition:background .12s}
-.rtable tbody tr:hover{background:#fbf4e2}
+.rtable tbody tr:hover{background:var(--hover)}
 .cbadge.campus{color:#fff;background:var(--campus);border-color:var(--campus)}
 .cbadge.intern{color:#fff;background:var(--intern);border-color:var(--intern)}
 .cbadge.social{color:#fff;background:var(--social);border-color:var(--social)}
@@ -698,18 +751,18 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .chip.rst.act{background:linear-gradient(135deg,#a63a2e,#c0503f);box-shadow:0 2px 8px rgba(166,58,46,.28)}
 .nccard{transition:box-shadow .15s,transform .15s;border-left:3px solid transparent}
 .nccard:hover{box-shadow:var(--shadow-h);transform:translateY(-1px)}
-.nccard[open]{border-left-color:var(--campus);background:#fffef8}
+.nccard[open]{border-left-color:var(--campus);background:var(--paper)}
 .nccard summary b{color:var(--campus)}
 .qref{transition:background .12s,transform .12s}
 .qref:hover{transform:translateY(-1px);background:#123f5e}
 .qcard{box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,border-color .15s}
 .qcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
-.prow:hover{background:#fbf4e2;border-radius:6px}
+.prow:hover{background:var(--hover);border-radius:6px}
 .tabs .tab{transition:all .15s}
 .tab.on{background:linear-gradient(135deg,#1b5e8c,#2a7ab3);box-shadow:0 3px 10px rgba(27,94,140,.22)}
 #h_nc{border-left:3px solid var(--purple)}
 #h_nc .hitem b{font-weight:600}
-#h_nc .hitem:hover{background:#fbf4e2;border-radius:6px}
+#h_nc .hitem:hover{background:var(--hover);border-radius:6px}
 .hitem a.tag{margin-top:0}
 .ncfilter select.ncsel{color:var(--campus);border-color:var(--campus-line);background:var(--campus-bg)}
 a.chip{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
@@ -730,8 +783,8 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
   padding:2px 0}
 .tcard{display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--soft);
   border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;transition:.12s}
-.tcard:hover{border-color:var(--accent);background:#fffdf6;transform:translateY(-1px)}
-.tcard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:#fffdf6}
+.tcard:hover{border-color:var(--accent);background:var(--hover2);transform:translateY(-1px)}
+.tcard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--hover2)}
 .tcard .tn{font-size:13px;font-weight:600;color:#26231b;line-height:1.35}
 .tcard .tm{font-size:11px;color:var(--muted)}
 .tcard .tc{font-size:11.5px;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -739,8 +792,8 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
   padding:2px 0}
 .ccard{display:flex;flex-direction:column;gap:5px;text-align:left;background:var(--soft);
   border:1px solid var(--line);border-radius:9px;padding:10px 12px;cursor:pointer;transition:.12s}
-.ccard:hover{border-color:var(--accent);background:#fffdf6;transform:translateY(-1px)}
-.ccard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:#fffdf6}
+.ccard:hover{border-color:var(--accent);background:var(--hover2);transform:translateY(-1px)}
+.ccard.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--hover2)}
 .ccard .cn{font-size:13.5px;font-weight:600;color:#26231b}
 .ccard .cm{font-size:11.5px;color:var(--muted)}
 .ccard .cm b{color:var(--accent);font-weight:600}
@@ -762,13 +815,13 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
 .navmore{margin-top:8px}
 .navmore button{font:12.5px/1.6 inherit;border:1px dashed var(--line);background:transparent;
   color:var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
-.navmore button:hover{border-color:var(--accent);background:#fffdf6}
+.navmore button:hover{border-color:var(--accent);background:var(--hover2)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <h1>CareerOS · 求职功能台</h1>
+  <h1>CareerOS · 求职功能台<span style="float:right"><button id="fzm" class="mini" title="缩小字号">A-</button> <button id="fzp" class="mini" title="放大字号">A+</button> <button id="theme" class="mini" title="暗色/亮色切换（记住选择）">🌙</button></span></h1>
   <div class="meta" id="stat"></div>
   <nav class="tabs">
     <button class="tab" data-v="home">🏠 首页</button>
@@ -800,6 +853,8 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <button id="mock" class="mini" title="按当前筛选/岗位模板抽题，逐题作答，高频追问揭示">🎤 模拟面试</button>
     <button id="rep" class="mini" title="自测覆盖、掌握度、复习节奏、错题本健康度">📊 学习报告</button>
     <button id="rep_tut" class="mini" title="按牛客面试宝典的章节目录刷题（分析视图顶部）">📚 考点地图</button>
+    <button id="preset_save" class="mini" title="E1：把当前筛选+chips 组合存为命名预设，随时一键恢复">⭐ 存预设</button>
+    <select id="preset_sel" title="应用已存的筛选预设（Alt+点选项 = 删除该预设）" style="max-width:130px"><option value="">预设…</option></select>
   </div>
   <div class="tutbanner" id="tutbanner" hidden></div>
   <div class="chips" id="chips">
@@ -834,6 +889,13 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
         <select id="rev"><option value="">全部复习状态</option>
           <option value="due">今日该复习</option><option value="weak">薄弱（自评≤2）</option>
           <option value="never">从未自测</option></select>
+        <select id="qsort" title="排序方式">
+          <option value="">排序：默认（模块·优先级）</option>
+          <option value="recent">最近真实出现</option>
+          <option value="priority">优先级</option>
+          <option value="review">最久未复习</option>
+          <option value="weakness">薄弱优先</option>
+        </select>
       </span>
     </div>
   </details>
@@ -868,7 +930,7 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
 
 <div id="list"></div>
 <div class="empty" id="empty" style="display:none">没有匹配的题目</div>
-<div class="keys">快捷键：<kbd>/</kbd> 搜索 · <kbd>J</kbd>/<kbd>K</kbd> 上下题 · <kbd>空格</kbd> 展开收起 · <kbd>1</kbd>–<kbd>4</kbd> 自评 · <kbd>W</kbd> 标错 · <kbd>Esc</kbd> 关闭弹层</div>
+<div class="keys">快捷键：<kbd>Ctrl+K</kbd>/<kbd>/</kbd> 搜索 · <kbd>J</kbd>/<kbd>K</kbd> 上下题 · <kbd>空格</kbd> 展开收起 · <kbd>1</kbd>–<kbd>4</kbd> 自评 · <kbd>W</kbd> 标错 · <kbd>Esc</kbd> 关闭弹层</div>
 </section>
 
 <section id="view-train" class="view">
@@ -1040,6 +1102,8 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <table class="rtable"><thead><tr>
       <th>模块</th><th>已自测 / 总数</th><th>覆盖</th><th>平均分</th><th>薄弱</th><th>到期</th>
     </tr></thead><tbody id="r_mods"></tbody></table>
+    <div class="rsec">高频标签（点击进题库搜索 · 字号越大出现越多）</div>
+    <div class="tagcloud" id="r_tags"></div>
     <div class="rsec">下一步建议</div>
     <ul class="radv" id="r_adv"></ul>
     <div class="rfoot">
@@ -1110,6 +1174,13 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
 </div>
 
 <script>
+// D1 暗色模式：主题初始化放在最前，避免亮色闪一下再变暗
+(function(){
+  try{
+    if ((localStorage.getItem('ib_theme') || 'light') === 'dark')
+      document.documentElement.dataset.theme = 'dark';
+  }catch{}
+})();
 const DATA = __DATA__;
 const TARGETS = __TARGETS__;
 const PROFILES = __PROFILES__;
@@ -1242,8 +1313,20 @@ function card(q){
       <button class="wrongmark ${isW?'on':''}" data-w="${q.id}">${isW?'已标错':'标错'}</button>
     </div>
     ${fq}
-    <div class="body">${q.html}${qmeta}${gradeBar(q)}</div>
+    <div class="body">${q.html}${qmeta}${relq(q)}${gradeBar(q)}</div>
   </article>`;
+}
+
+// F1 相关题互链：build 期按 tags 交集预计算的 q.related（top3）
+function relq(q){
+  const rel = q.related || [];
+  if (!rel.length) return '';
+  const chips = rel.map(id => {
+    const r = QBY[id];
+    if (!r) return '';
+    return `<span class="rq" data-rq="${id}" title="${esc(r.title)}">${id} ${esc(r.title.slice(0, 18))}${r.title.length > 18 ? '…' : ''}</span>`;
+  }).filter(Boolean).join('');
+  return chips ? `<div class="relq"><span class="fi">相关</span>${chips}</div>` : '';
 }
 
 function refreshSubs(){
@@ -1433,6 +1516,23 @@ function render(){
     return false;
   });
 
+  // E4 排序（默认保持原有顺序；qsort 选择后重排 LASTHIT 前的 hit）
+  const qsort = $('qsort').value;
+  if (qsort === 'recent') {
+    // C2/E4 修正：按出现记录日期排序（build 期从「## 出现记录」表抽取）
+    const lastApp = q => ((q.dates || []).length ? (q.dates).reduce((m, d) => d > m ? d : m, '') : '');
+    hit.sort((a, b) => lastApp(b).localeCompare(lastApp(a)));
+  } else if (qsort === 'priority') {
+    const po = { P0: 0, P1: 1, P2: 2 };
+    hit.sort((a, b) => (po[a.priority] ?? 9) - (po[b.priority] ?? 9));
+  } else if (qsort === 'review') {
+    const lastRev = q => (review[q.id] ? review[q.id].ts : 0);
+    hit.sort((a, b) => lastRev(a) - lastRev(b));
+  } else if (qsort === 'weakness') {
+    const sc = q => (review[q.id] ? review[q.id].score : 9);
+    hit.sort((a, b) => sc(a) - sc(b));
+  }
+
   list.innerHTML = hit.map(card).join('');
   LASTHIT = hit; fcur = -1;
   $('empty').style.display = hit.length ? 'none' : 'block';
@@ -1471,7 +1571,99 @@ function render(){
     tips.push('口径按 JD 推导，<span class="warn">不是该公司真实考题</span>');
   }
   $('hint').innerHTML = tips.join('　·　');
+  syncURL();
 }
+
+// E5+B2：筛选与深链进 URL。#bank?q=..&mod=..&chip=p0,wrong 可分享/收藏；
+// #Q-0635 单卡直达。syncURL 在题库视图每次 render 后回写（replaceState 不产生历史）。
+// E1 筛选预设：把当前筛选+chips 组合存成命名预设，一键恢复（localStorage ib_presets）
+const PRESET_KEY = 'ib_presets';
+function filterState(){
+  const p = new URLSearchParams();
+  const q = $('q').value.trim(); if (q) p.set('q', q);
+  ['mod','sub','dif','co','prof','rev'].forEach(k => { if ($(k).value) p.set(k, $(k).value); });
+  const chips = [...document.querySelectorAll('#chips .chip.on')]
+    .map(c => c.dataset.c).filter(c => c !== 'all');
+  if (chips.length) p.set('chip', chips.join(','));
+  if ($('wrong').checked) p.set('wrong', '1');
+  if ($('selftest').checked) p.set('selftest', '1');
+  return p.toString();
+}
+function applyFilterState(s){
+  const p = new URLSearchParams(s);
+  $('q').value = p.get('q') || '';
+  ['mod','sub','dif','co','prof','rev'].forEach(k => { $(k).value = p.get(k) || ''; });
+  $('wrong').checked = p.get('wrong') === '1';
+  $('selftest').checked = p.get('selftest') === '1';
+  const chips = (p.get('chip') || '').split(',').filter(Boolean);
+  document.querySelectorAll('#chips .chip').forEach(c =>
+    c.classList.toggle('on', c.dataset.c === 'all' ? !chips.length : chips.includes(c.dataset.c)));
+  render();
+}
+function refreshPresets(){
+  const ps = lsGet(PRESET_KEY, {});
+  $('preset_sel').innerHTML = '<option value="">预设…</option>' +
+    Object.keys(ps).sort().map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+}
+$('preset_save').addEventListener('click', () => {
+  const name = prompt('预设名称（如：Momenta 冲刺）：');
+  if (!name) return;
+  const ps = lsGet(PRESET_KEY, {});
+  ps[name] = filterState();
+  lsSet(PRESET_KEY, ps);
+  refreshPresets();
+  $('preset_sel').value = name;
+});
+$('preset_sel').addEventListener('change', e => {
+  const n = e.target.value; if (!n) return;
+  const ps = lsGet(PRESET_KEY, {});
+  if (e.altKey) {                                   // Alt+点选项 = 删除
+    if (confirm(`删除预设「${n}」？`)) { delete ps[n]; lsSet(PRESET_KEY, ps); refreshPresets(); }
+    return;
+  }
+  if (ps[n]) applyFilterState(ps[n]);
+});
+
+function syncURL(){
+  if (curView !== 'bank') return;
+  const p = new URLSearchParams();
+  const q = $('q').value.trim(); if (q) p.set('q', q);
+  ['mod','sub','dif','co','prof','rev'].forEach(k => { if ($(k).value) p.set(k, $(k).value); });
+  const chips = [...document.querySelectorAll('#chips .chip.on')]
+    .map(c => c.dataset.c).filter(c => c !== 'all');
+  if (chips.length) p.set('chip', chips.join(','));
+  if ($('wrong').checked) p.set('wrong', '1');
+  if ($('selftest').checked) p.set('selftest', '1');
+  const s = p.toString();
+  const h = '#bank' + (s ? '?' + s : '');
+  if (location.hash !== h) { try { history.replaceState(null, '', h); } catch {} }
+}
+function applyURL(){
+  const h = decodeURIComponent(location.hash || '');
+  let m = h.match(/^#([Qq]-\d{3,4})$/);          // B2 单卡深链
+  if (m) {
+    showView('bank'); $('q').value = m[1].toUpperCase();
+    render(); window.scrollTo(0, 0);
+    return;
+  }
+  m = h.match(/^#bank(?:\?(.*))?$/);              // E5 筛选恢复
+  if (m && m[1]) {
+    showView('bank');
+    const p = new URLSearchParams(m[1]);
+    if (p.get('q') != null) $('q').value = p.get('q');
+    ['mod','sub','dif','co','prof','rev'].forEach(k => { if (p.get(k) != null) $(k).value = p.get(k); });
+    if (p.get('wrong') === '1') $('wrong').checked = true;
+    if (p.get('selftest') === '1') $('selftest').checked = true;
+    const chips = (p.get('chip') || '').split(',').filter(Boolean);
+    if (chips.length) document.querySelectorAll('#chips .chip').forEach(c =>
+      c.classList.toggle('on', chips.includes(c.dataset.c)));
+    render();
+  }
+}
+window.addEventListener('hashchange', () => {
+  const h = location.hash || '';
+  if (/^#[Qq]-\d{3,4}$/.test(h) || h.startsWith('#bank?')) applyURL();
+});
 
 // 自评 1~4 写入复习计划；不会/想不起自动进错题本（卡片按钮与快捷键共用）
 // 每次自评同时追加训练历史（首页「最近训练记录」与「今日任务」的完成度来源）
@@ -1493,6 +1685,14 @@ function setGrade(qid, v){
 }
 
 list.addEventListener('click', e => {
+  // F1 相关题互链：点击 → 题库搜索定位该题
+  const rq = e.target.closest('.rq[data-rq]');
+  if (rq) {
+    $('q').value = rq.dataset.rq;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
   const wb = e.target.closest('[data-w]');
   if (wb) {
     const id = wb.dataset.w;
@@ -1610,6 +1810,9 @@ function moveFocus(d){
   el.scrollIntoView({ block: 'center' });
 }
 document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault(); showView('bank'); $('q').focus(); $('q').select(); return;   // B1
+  }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const tag = e.target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
@@ -1787,7 +1990,7 @@ const _p = new URLSearchParams(location.search);
   if (v) $(id).value = v;
 });
 
-['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof','dif'].forEach(id =>
+['q','mod','pri','st','sub','co','rl','wrong','hidepred','selftest','rev','prof','dif','qsort'].forEach(id =>
   $(id).addEventListener('input', () => { if (id === 'co') corpFilter = ''; render(); }));
 $('mod').addEventListener('input', () => { refreshSubs(); render(); });
 
@@ -1853,7 +2056,9 @@ function weightedPick(pool, prof, n){
   let bag = [];
   pool.forEach(q => {
     const w = prof ? (prof.weights[q.module] || 0) : (q.priority === 'P0' ? 3 : 1);
-    const bonus = q.priority === 'P0' ? 2 : 1;
+    let bonus = q.priority === 'P0' ? 2 : 1;
+    // C2：近 30 天真实出现过的题 ×1.5（公司近期在面 = 优先练）
+    if ((q.dates || []).some(d => Date.now() - Date.parse(d) < 30 * 864e5)) bonus *= 1.5;
     for (let k = 0; k < Math.max(1, Math.round(w * bonus / 10)); ++k) bag.push(q);
   });
   if (!bag.length) bag = pool.slice();
@@ -2033,6 +2238,31 @@ function renderRep(){
   if (!adv.length)
     adv.push('状态良好：无到期、无薄弱。保持每天一场模拟面试的节奏即可。');
   $('r_adv').innerHTML = adv.map(x => `<li>${x}</li>`).join('');
+
+  // E3 高频标签云：全库 tag 计数 top 40，点击进题库搜索该 tag
+  const tagCnt = {};
+  DATA.forEach(q => (q.tags || []).forEach(t => { tagCnt[t] = (tagCnt[t] || 0) + 1; }));
+  const topTags = Object.entries(tagCnt).filter(([, n]) => n >= 3)
+    .sort((a, b) => b[1] - a[1]).slice(0, 40);
+  const tmax = topTags.length ? topTags[0][1] : 1;
+  $('r_tags').innerHTML = topTags.map(([t, n]) =>
+    `<span class="tcloud" data-tag="${esc(t)}" style="font-size:${(12 + Math.round(n / tmax * 8))}px">${esc(t)} <small>${n}</small></span>`
+  ).join('') || '<span class="muted">暂无出现 ≥3 次的标签</span>';
+
+  // A3 复习负荷：未来 7 天到期分布 + 逾期堆积（g>2 才算正常复习流，g≤2 是薄弱区）
+  const testedIds = tested.filter(q => review[q.id] && review[q.id].g > 2);
+  const nowMs = Date.now();
+  let overdue3 = 0; const dueNext7 = [0, 0, 0, 0, 0, 0, 0];
+  testedIds.forEach(q => {
+    const r = review[q.id]; const due = r.ts + REV_DAYS[r.g] * 864e5;
+    if (due <= nowMs) { if (nowMs - due >= 3 * 864e5) overdue3++; return; }
+    const d = Math.floor((due - nowMs) / 864e5); if (d < 7) dueNext7[d]++;
+  });
+  const loadMax = Math.max(1, ...dueNext7);
+  $('r_adv').insertAdjacentHTML('beforebegin',
+    `<div class="rsec">复习负荷（未来 7 天到期分布）</div><div class="rchart">` +
+    dueNext7.map((n, i) => `<div class="rbar" style="height:${Math.round(n / loadMax * 100)}%" title="第 ${i + 1} 天到期 ${n} 张"></div>`).join('') +
+    `</div><div class="muted" style="margin:4px 0 12px">今日到期 ${dueIds.length} 张 · 逾期 ≥3 天未复习 ${overdue3} 张（逾期多＝复习积压，先清「今日该复习」）</div>`);
 }
 
 // ---------------- 牛客宝典考点地图（sources/tutorial_map.json） ----------------
@@ -2362,7 +2592,32 @@ $('r_clean').addEventListener('click', () => {
 // ---- 四视图导航：首页 / 题库 / 训练 / 分析 ----
 document.querySelectorAll('.tab').forEach(t =>
   t.addEventListener('click', () => showView(t.dataset.v)));
+let curView = 'home';
+// G2：JD→简历双向对照。贴入简历文本（仅本地保存），对每个命中技能做字面匹配，
+// 标「简历有/未提及」。字面匹配没命中≠真缺，用于人工复核真实差距。
+function jdResumeHTML(job, m){
+  const key = 'ib_res_' + String(job.id || (job.company + '|' + job.title)).replace(/[^\w-]/g, '_');
+  const cv = localStorage.getItem(key) || '';
+  const rows = m.hits.map(h => {
+    let st = '<span class="muted">—</span>';
+    if (cv) {
+      const low = cv.toLowerCase();
+      const kws = [h.name, ...(h.kws || [])].map(k => String(k).toLowerCase()).filter(Boolean);
+      const has = kws.some(k => low.includes(k));
+      st = has ? '<span class="tstat done">简历有</span>'
+        : `<span class="tstat doing" title="按关键词字面匹配：${esc(kws.join('、'))}；没命中不代表简历里真没有">未提及</span>`;
+    }
+    return `<tr><td>${esc(h.name)}</td><td>${st}</td></tr>`;
+  }).join('');
+  return `<details class="jdchk" style="margin:8px 0">
+    <summary class="muted">📋 JD→简历对照（贴入简历文本逐条核对；仅存本地，不上传）</summary>
+    <textarea data-cv="${esc(key)}" rows="4" style="width:100%;margin:6px 0;padding:6px;font:13px/1.5 inherit;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:6px" placeholder="粘贴简历里项目/技能段落即可">${esc(cv)}</textarea>
+    <table class="rtable"><tbody>${rows}</tbody></table>
+    <div class="qmeta muted" style="margin-top:4px"><span>按关键词字面匹配，「未提及」≠真缺——对照后把真实差距记进下周计划。</span></div>
+  </details>`;
+}
 function showView(v){
+  curView = v;
   document.querySelectorAll('.view').forEach(s =>
     s.classList.toggle('on', s.id === 'view-' + v));
   document.querySelectorAll('.tab').forEach(t =>
@@ -2387,7 +2642,20 @@ function runAct(act){
 function renderHome(){
   const d = new Date();
   const wk = '日一二三四五六'[d.getDay()];
-  $('h_date').textContent = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()} · 周${wk} · 数据都在本机浏览器，换设备先备份`;
+  // C3 面试倒计时：目标存本地 ib_deadline = JSON {label, date}；点 chip 设置，Shift+点清除
+  let dlTxt = '', dlAttr = 'data-setdl="1" style="cursor:pointer" title="点击设置目标日期（Shift+点击清除）"';
+  try {
+    const raw = localStorage.getItem('ib_deadline');
+    if (raw) {
+      const o = JSON.parse(raw);
+      const dd = Math.ceil((new Date(o.date + 'T23:59:59') - d) / 864e5);
+      dlTxt = dd >= 0 ? ` · <span style="cursor:pointer" ${dlAttr}>⏳ 距 <b>${esc(o.label)}</b> 还有 <b>${dd}</b> 天</span>`
+                      : ` · <span style="cursor:pointer" ${dlAttr}>⏳ ${esc(o.label)} 已过 ${-dd} 天（点击重设）</span>`;
+    } else {
+      dlTxt = ` · <span style="cursor:pointer" ${dlAttr}>⏳ 设定目标日期</span>`;
+    }
+  } catch {}
+  $('h_date').innerHTML = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()} · 周${wk} · 数据都在本机浏览器，换设备先备份${dlTxt}`;
   const srcs = RADAR.sources || [];
   const okN = srcs.filter(x => x.status === 'success').length;
   const all = RADAR.jobs || [];
@@ -2570,6 +2838,81 @@ $('tr_wrongdrill').addEventListener('click', wrongDrill);
 $('anchor_body').addEventListener('click', e => {
   const r = e.target.closest('[data-aid]'); if (!r) return;
   $('q').value = r.dataset.aid; showView('bank'); render();
+});
+// D1 主题切换
+$('theme').textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙';
+$('theme').addEventListener('click', () => {
+  const el = document.documentElement;
+  if (el.dataset.theme === 'dark') {
+    delete el.dataset.theme; localStorage.setItem('ib_theme', 'light');
+    $('theme').textContent = '🌙';
+  } else {
+    el.dataset.theme = 'dark'; localStorage.setItem('ib_theme', 'dark');
+    $('theme').textContent = '☀️';
+  }
+});
+// D2 字号（85%~125%，存本地）
+function applyFz(v){
+  v = Math.min(125, Math.max(85, v));
+  document.body.style.fontSize = v + '%';
+  localStorage.setItem('ib_fz', v);
+}
+applyFz(+(localStorage.getItem('ib_fz') || 100));
+$('fzp').addEventListener('click', () => applyFz(+(localStorage.getItem('ib_fz') || 100) + 5));
+$('fzm').addEventListener('click', () => applyFz(+(localStorage.getItem('ib_fz') || 100) - 5));
+// C3 倒计时 chip（首页）设置/清除
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-setdl]')) return;
+  if (e.shiftKey) { localStorage.removeItem('ib_deadline'); renderHome(); return; }
+  let prev = null; try { prev = JSON.parse(localStorage.getItem('ib_deadline') || 'null'); } catch {}
+  const label = prompt('目标名称（如：Momenta 一面）', (prev && prev.label) || '目标面试');
+  if (!label) return;
+  const date = prompt('目标日期（YYYY-MM-DD）', new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10));
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('日期格式应为 YYYY-MM-DD'); return; }
+  localStorage.setItem('ib_deadline', JSON.stringify({label, date}));
+  renderHome();
+});
+// E3 标签云点击 → 题库搜索
+document.addEventListener('click', e => {
+  const tc = e.target.closest('[data-tag]');
+  if (!tc) return;
+  showView('bank'); $('q').value = tc.dataset.tag; render();
+});
+// C4 公司冲刺包：下载该公司关联题清单（md，按优先级分组）
+function sprintPack(coName){
+  const coDef = (TARGETS.companies || []).find(c => c.name === coName);
+  const kw = coName.toLowerCase();
+  const hits = DATA.filter(q => {
+    if (coDef && coHit(q, coDef)) return true;
+    return (q.companies || []).some(c => (c || '').toLowerCase().includes(kw)) ||
+           (q.appearances || []).some(a => a.split('·')[0].toLowerCase().includes(kw)) ||
+           (q.tags || []).some(t => (t || '').toLowerCase().includes(kw));
+  });
+  if (!hits.length) { alert('「' + coName + '」在题库没有直接关联题'); return; }
+  const lines = ['# ' + coName + ' 冲刺包', '',
+    '> 生成于 ' + new Date().toLocaleDateString('zh-CN') + ' · 共 ' + hits.length + ' 题 · 来自题库公司视图「📦 冲刺包」', ''];
+  ['P0', 'P1', 'P2'].forEach(p => {
+    const grp = hits.filter(q => q.priority === p);
+    if (!grp.length) return;
+    lines.push('## ' + p + '（' + grp.length + ' 题）', '');
+    grp.forEach(q => {
+      lines.push('- **' + q.title + '**（' + q.id + ' · ' + q.moduleName + (q.sub ? ' · ' + q.sub : '') + '）');
+      if (q.anchor) lines.push('  - 锚点：' + q.anchor);
+      const apps = (q.appearances || []).filter(a => a.toLowerCase().includes(kw));
+      if (apps.length) lines.push('  - 出现：' + apps.join('；'));
+    });
+    lines.push('');
+  });
+  const blob = new Blob([lines.join('\n')], {type: 'text/markdown'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = coName + '_冲刺包.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+$('comp_table').addEventListener('click', e => {
+  const b = e.target.closest('[data-sprint]');
+  if (b) sprintPack(b.dataset.sprint);
 });
 
 // ---- 岗位视图：收藏 + JD 技能匹配分析（规则版，JD → 题库缺口联动） ----
@@ -2851,10 +3194,20 @@ function renderJobs(){
         ${el.bad.length ? `<div class="qmeta"><span class="lo">硬性不符：${esc(el.bad.join('；'))}</span></div>` : ''}
         ${el.unknown.length ? `<div class="qmeta"><span class="muted">待你确认：${esc(el.unknown.join('、'))}</span></div>` : ''}
         ${job.jd ? `<div class="qmeta"><span title="${esc(job.jd)}">JD 摘要：${esc(job.jd.slice(0, 130))}${job.jd.length > 130 ? '…' : ''}</span></div>` : ''}
+        ${m.hits.length ? jdResumeHTML(job, m) : ''}
       </div>
     </article>`;
   }).join('') : '<div class="hempty">当前筛选下没有岗位。切到「含非技术岗」或放宽适配度筛选。</div>';
 }
+
+$('joblist').addEventListener('input', e => {
+  const t = e.target.closest('[data-cv]'); if (!t) return;
+  localStorage.setItem(t.dataset.cv, t.value); t.dataset.dirty = '1';
+});
+$('joblist').addEventListener('focusout', e => {
+  const t = e.target.closest ? e.target.closest('[data-cv]') : null;
+  if (t && t.dataset.dirty) { delete t.dataset.dirty; renderJobs(); }
+});
 
 $('decide_cards').addEventListener('click', e => {
   const c = e.target.closest('[data-decide]'); if (!c) return;
@@ -3141,6 +3494,7 @@ function renderCompanies(){
           <small>入口性质：${esc(kinds)} · 批次 ${esc(labels)}</small>
           <small>${ncTxt}</small></td>
       <td>${url && safeUrl(url) ? `<a class="tag jlink" href="${esc(safeUrl(url))}" target="_blank" rel="noopener">招聘入口 ↗</a>` : '—'}
+          <button class="mini" data-sprint="${esc(e.name)}" title="下载该公司关联题的冲刺清单（Markdown，按优先级分组，含锚点与出现记录）">📦 冲刺包</button>
           ${e.target ? '<small>目标公司池有题目/面经索引</small>' : ''}</td>
     </tr>`;
   }).join('');
@@ -3265,6 +3619,7 @@ function renderNC(q){
   const shown = exps.slice(0, ncFilter.limit);
   $('nc_exp').innerHTML = exps.length ? shown.map(x => {
     const hs = x.highlights || [];
+    const refs = hs.filter(h => h.ref).map(h => h.ref);
     const rows = hs.map(h => `<li class="nch">
         ${h.ref ? `<a class="qref" href="#bank" data-q="${h.ref}" title="跳到题库做这道题">${h.ref}</a>`
                 : h.near ? `<span class="qref near" title="近似题号：考点相近但题干不同">~${h.near}</span>`
@@ -3283,7 +3638,8 @@ function renderNC(q){
       </summary>
       <div class="ncb">
         ${rows ? `<ol class="nclist">${rows}</ol>` : '<div class="cempty">这篇没有提取到可用题目，点原帖看完整正文。</div>'}
-        <div class="mrow" style="display:flex;gap:10px;align-items:center">
+        <div class="mrow" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          ${refs.length ? `<button class="mini" data-ncdrill="${esc(refs.join(','))}" title="进入题库，按本卷题号连着练">▶ 题库练本卷（${refs.length} 题）</button>` : ''}
           <a class="tag jlink" href="${esc(x.url)}" target="_blank" rel="noopener">原帖全文 ↗</a>
           <span class="rnum">共 ${x.n_questions || 0} 题${x.n_reverses ? ' · 反问 ' + x.n_reverses : ''}；上面是前 ${hs.length} 道原文摘录</span>
         </div>
@@ -3322,6 +3678,15 @@ document.addEventListener('click', e => {
   if (!e.target.closest('[data-ncmore]')) return;
   ncFilter.limit += 20;
   renderNC(compFilter.q);
+});
+// C1 真题卷直达：按卷内已入库题号连着练
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ncdrill]'); if (!b) return;
+  const ids = b.dataset.ncdrill.split(',').map(s => s.trim()).filter(s => QBY[s]);
+  if (!ids.length) { alert('本卷题目尚未入库'); return; }
+  const ncCard = b.closest('.nccard');
+  const ncCo = ncCard ? (ncCard.querySelector('b') || {}).textContent || '' : '';
+  tutOpen(ids, (ncCo || '面经卷') + ' · 题库练本卷');
 });
 $('nc_onlyref').addEventListener('change', e => { ncFilter.onlyRef = e.target.checked; renderNC(compFilter.q); });
 document.addEventListener('click', e => {
@@ -3389,10 +3754,12 @@ document.addEventListener('click', e => {
 });
 
 refreshSubs();
+refreshPresets();
 render();
 renderBankNav();
-showView(['home', 'bank', 'train', 'jobs', 'comp', 'rep'].includes(location.hash.slice(1))
-  ? location.hash.slice(1) : 'home');
+showView(['home', 'bank', 'train', 'jobs', 'comp', 'rep'].includes(location.hash.slice(1).split('?')[0])
+  ? location.hash.slice(1).split('?')[0] : 'home');
+applyURL();
 </script>
 </body>
 </html>
@@ -3405,6 +3772,22 @@ def main() -> int:
         print("content/ 下没有题卡")
         return 1
     DIST.mkdir(parents=True, exist_ok=True)
+
+    # F1 相关题互链：tags 交集 top3，build 期预计算（前端零成本）
+    for q in qs:
+        my = set(q.get("tags") or [])
+        rel = []
+        if my:
+            scored = []
+            for x in qs:
+                if x is q:
+                    continue
+                inter = len(my & set(x.get("tags") or []))
+                if inter:
+                    scored.append((-inter, x["id"]))
+            scored.sort()
+            rel = [i for _, i in scored[:3]]
+        q["related"] = rel
 
     modopts = "\n".join(
         f'<option value="{m}">{MODULE_NAME[m]}</option>'
@@ -3551,6 +3934,31 @@ def main() -> int:
     health = {"built_at": __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M"),
               "q": hq, "job": hjob, "co": hco, "nc": hnc, "checks": checks}
 
+    # B3 Anki 导出：TSV（Anki 导入选「制表符分隔 / 允许 HTML」；正面=题干+ID，背面=口述答案+追问+锚点）
+    def _anki(s):
+        return (s or "").replace("\r", "").replace("\n", "<br>").replace("\t", "　")
+    tsv = ["#separator:tab", "#html:true", "#tags column:3"]
+    for q in qs:
+        back = q.get("talk") or "(卡内无口述答案节，请回网页查看全文)"
+        if q.get("follows"):
+            back += "\n\n高频追问：\n" + "\n".join("- " + x for x in q["follows"])
+        if q.get("anchor"):
+            back += "\n\n记忆锚点：" + q["anchor"]
+        back += f"\n\n题库定位：dist/bank.html#Q-{q['id'][2:]}"
+        tsv.append("\t".join([
+            _anki(q["title"]),
+            _anki(back),
+            _anki(" ".join([q["module"], q.get("sub") or "", q["priority"],
+                            q["id"]]).strip()),
+        ]))
+    anki_path = DIST / "anki_export.tsv"
+    anki_path.write_text("\n".join(tsv), encoding="utf-8")
+
+    # 剥离仅 Anki 需要的大字段，防止 __DATA__ 膨胀（口述答案全文 1.7MB 级）
+    for q in qs:
+        q.pop("talk", None)
+        q.pop("follows", None)
+
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
     out = (PAGE.replace("__DATA__", data)
                .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
@@ -3576,14 +3984,83 @@ def main() -> int:
                .replace("__RLOPTS__", rlopts)
                .replace("__MODOPTS__", modopts)
                .replace("__COUNT__", str(len(qs))))
+
     target = DIST / "bank.html"
     target.write_text(out, encoding="utf-8")
+
+    # B4 PWA：manifest + Service Worker（仅 http(s) 下注册；file:// 本地打开不受影响）
+    ver = "bank-" + hashlib.sha256(out.encode("utf-8")).hexdigest()[:8]
+    manifest = {
+        "name": "面试题库 · CareerOS",
+        "short_name": "面试题库",
+        "start_url": "./bank.html",
+        "scope": "./",
+        "display": "standalone",
+        "background_color": "#fbf4e2",
+        "theme_color": "#1f4e79",
+    }
+    try:  # 图标：Pillow 画 192/512 两档（无 Pillow 时跳过，manifest 仍可用）
+        from PIL import Image, ImageDraw, ImageFont
+        for size in (192, 512):
+            img = Image.new("RGB", (size, size), "#1f4e79")
+            d = ImageDraw.Draw(img)
+            r = size // 5
+            d.rounded_rectangle([size//10, size//10, size*9//10, size*9//10],
+                                radius=r, fill="#1f4e79")
+            f = None
+            for fp in ("C:/Windows/Fonts/msyhbd.ttc", "C:/Windows/Fonts/msyh.ttc"):
+                try:
+                    f = ImageFont.truetype(fp, size // 2)
+                    break
+                except OSError:
+                    continue
+            d.text((size/2, size/2), "面", font=f, fill="#fbf4e2", anchor="mm")
+            img.save(DIST / f"icon-{size}.png")
+        manifest["icons"] = [{"src": f"icon-{s}.png", "sizes": f"{s}x{s}", "type": "image/png"}
+                             for s in (192, 512)]
+    except Exception as e:
+        print(f"  (PWA 图标跳过：{e})")
+    (DIST / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    sw = f"""// 由 tools/build.py 生成，勿手改；版本 {ver}
+const V = "{ver}";
+self.addEventListener("install", e => {{
+  e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html"])));
+  self.skipWaiting();
+}});
+self.addEventListener("activate", e => {{
+  e.waitUntil(caches.keys().then(ks =>
+    Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+}});
+// network-first：每次联网都拿最新 bank.html 并更新缓存；断网时回退缓存
+self.addEventListener("fetch", e => {{
+  if (e.request.method !== "GET") return;
+  e.respondWith(fetch(e.request).then(r => {{
+    if (r.ok && new URL(e.request.url).origin === location.origin) {{
+      const cp = r.clone();
+      caches.open(V).then(c => c.put(e.request, cp));
+    }}
+    return r;
+  }}).catch(() => caches.match(e.request, {{ignoreSearch: true}})));
+}});
+"""
+    (DIST / "sw.js").write_text(sw, encoding="utf-8")
+    # 注册代码：只在 http(s) 环境生效（file:// 打开静默跳过）
+    out = out.replace("</head>",
+        '<link rel="manifest" href="manifest.json">\n'
+        '<meta name="theme-color" content="#1f4e79">\n</head>', 1)
+    out = out.replace("</body>",
+        "<script>if('serviceWorker' in navigator && /^https?:$/.test(location.protocol))"
+        "{addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}</script>\n</body>", 1)
+    target.write_text(out, encoding="utf-8")  # 重写：带 manifest/SW 注册的最终版
+    print(f"PWA manifest.json / sw.js ({ver}) 已生成")
 
     from collections import Counter
     c_mod = Counter(q["module"] for q in qs)
     c_pri = Counter(q["priority"] for q in qs)
     c_st = Counter(q["status"] for q in qs)
     print(f"生成 {target}  ({target.stat().st_size/1024:.0f} KB)")
+    print(f"生成 {anki_path}  ({len(qs)} 行)")
     print(f"题数 {len(qs)}   " + "  ".join(f"{k}:{v}" for k, v in sorted(c_pri.items())))
     print("已答 {} / 待补充 {}".format(
         sum(v for k, v in c_st.items() if k != "indexed"), c_st.get("indexed", 0)))

@@ -1,5 +1,33 @@
 # Changelog
 
+## V2.16 — 2026-11-25（28 项优化全量落地：个性化/便利性/针对性/美观性/易筛选/冗余优化 + 开源借鉴）
+
+- **A 个性化**：A2 锚点速记（训练 tab ⚡ 面板，57 卡有记忆锚点，点击跳题）；A3 遗忘曲线（分析 tab
+  未来 7 天到期分布柱状+今日到期/逾期统计）；A4 差距周计划（周检自动生成 docs/next_week.md 日计划）。
+- **B 便利性**：B1 Ctrl+K 直达搜索；B2 #Q-xxxx 深链（hashchange 响应，可分享单题）；B3 Anki 导出
+  （build 生成 dist/anki_export.tsv，制表符+HTML+标签列，正面=题干背面=口述+追问+锚点）；
+  B4 PWA（manifest.json+sw.js network-first+图标，file:// 不注册）；B5 错题重练（复习中心 🔁 按钮，
+  不限时先口述后揭示追问）。
+- **C 针对性**：C1 牛客面经卡「▶ 题库练本卷」直达（tutOpen 定向训练）；C2 近 30 天真实出现加权
+  （weightedPick bonus×1.5，日期取自「## 出现记录」表）；C3 面试倒计时（首页可设定，localStorage）；
+  C4 公司冲刺包（公司表 📦 按钮导出该公司 P0/P1/P2 选题 md）。
+- **D 美观性**：D1 暗色模式（🌙 全套变量翻转+浅底徽章覆盖，记忆偏好）；D2 字号 A-/A+（85%~125%）；
+  D3 卡内节导航（卡面 h2 快捷跳转）；D4 首页重排（评估后维持现状：现有五卡已按使用频率排序，重排
+  收益主观，不迎合）。
+- **E 易筛选**：E1 筛选预设（⭐ 存/选/Alt+点删除，localStorage）；E2 模块多选（评估后暂缓：已有 12 维
+  筛选+chips，改渲染管道核心成本高、回归风险大）；E3 标签云（分析 tab 高频标签 top40 点击即搜）；
+  E4 排序（最近真实出现/优先级/最久未复习/薄弱优先）；E5 筛选状态进 URL（#bank?q=… 分享与回退）。
+- **F 冗余优化**：F1 相关题互链（tags 交集 top3，卡面直接跳转）；F2 audit.py 进周检；F3 dist 测量
+  （12.5MB→gzip 2.4MB，Pages 自带压缩，瘦身不紧迫）；F4 重复红线（audit.py 已有 4-gram 判重覆盖）。
+- **G 开源借鉴**（career-ops/job-ops/jobsync/JobHuntBot/py-fsrs 调研后增量）：G1 投递漏斗
+  （applications.json 本地私有+周检统计漏斗与停滞提醒）；G2 JD→简历对照（岗位卡内逐技能字面比对，
+  仅存本地）；G3 FSRS（tools/fsrs_sim.py 模拟：30 天复习量 1440→732 减 49%，决策依据留存）；
+  G4 周检产出 next_week.md；G5 README「为什么造这个轮子」开源叙事（差异化表+Agent 流水线定位）；
+  G6 错题 tutor 化（B5 错题重练天然先口述后揭示）。
+- **附带修复**：SKILLS 表 Linux 行 mods 残留退役模块名；build.py Anki 数据剥离（talk/follows 不进
+  __DATA__，dist 15.0→13.3MB）；周检定时升级四件套（采集/体检/漏斗/周计划）。
+- 回归全绿：validate 1777 题 ✅ / ui_test 全部通过 / radar_test 36/36 ✅。
+
 ## CareerOS 内容 V2.15 — 2026-11-25（具身智能模块上线：b11 博主 13 张知识卡 + 作品汇总 HTML）
 
 - **新模块「具身智能」（embodied，号段 8600）**：validate.py/gen_taxonomy/build/README 全部登记；
