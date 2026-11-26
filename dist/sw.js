@@ -1,7 +1,7 @@
-// 由 tools/build.py 生成，勿手改；版本 bank-08b190d7
-const V = "bank-08b190d7";
+// 由 tools/build.py 生成，勿手改；版本 bank-843c2e54
+const V = "bank-843c2e54";
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html", "./bank-data.js"])));
+  e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html", "./bank-data.js", "./fsrs-5.4.2.umd.js"])));
   self.skipWaiting();
 });
 self.addEventListener("activate", e => {

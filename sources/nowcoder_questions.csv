@@ -11,19 +11,25 @@ Skill、MCP、Function Calling、Workflow、SubAgent，分别解决什么问题�
 整体Agent流程使用workflow，为什么该场景适合workflow？Agent执行流程有哪些形式，相互差异是什么？,2,question,美团,,一面,0.27,你们组那个 Skill 是什么，和 workflow 有什么区别？,https://www.nowcoder.com/discuss/950796586802479104
 测试报告/测试用例设计，如何判断符合本次新需求改动？新功能无历史问题单，怎么设计测试用例？,2,question,美团,,一面,0.29,如何设计测试用例？,https://www.nowcoder.com/discuss/950796586802479104
 选取一个真实问题单，完整描述从Agent接收输入，走完全流程，到产出最终结果的整条链路？,2,question,美团,,一面,1.0,选取一个真实问题单，完整描述从Agent接收输入，走完全流程，到产出最终结果的整,https://www.nowcoder.com/discuss/950796586802479104
-3% 写了半年，从来没人问过我分母是什么。真被问到的时候，我才发现自己也不确定。,2,question,京东,,一面,0.16,"模型判""不确定""的时候，走人工还是走规则？",https://www.nowcoder.com/discuss/949423805343035392
+select poll epoll 的区别 epoll 为什么高效 底层数据结构是什么,2,question,华为,Linux,二面,0.72,select、poll、epoll 有什么区别？epoll 为什么高效？,https://www.nowcoder.com/discuss/947059125291118592
+3% 写了半年，从来没人问过我分母是什么。真被问到的时候，我才发现自己也不确定。,2,question,京东,,一面,0.15,模型判“不确定”的时候，走人工还是走规则？,https://www.nowcoder.com/discuss/949423805343035392
 项目使用Python+FastAPI，数据库层如何接入？数据库表是否由你设计？,2,question,美团,,一面,1.0,项目使用Python+FastAPI，数据库层如何接入？数据库表是否由你设计？,https://www.nowcoder.com/discuss/950796586802479104
 用户输入不完整的信息，系统如何校验、补全参数并继续执行？哪些参数必须用户确认？,2,question,美团,,一面,1.0,用户输入不完整的信息，系统如何校验、补全参数并继续执行？哪些参数必须用户确认？,https://www.nowcoder.com/discuss/950796586802479104
-他们用 Agent 在日常工作中的应用。答的感觉没什么具体的，就说重度应用,2,question,快手,,,0.23,项目背景，为什么引入 Agent？,https://www.nowcoder.com/discuss/946891033357381632
+字符串处理 strcpy 和 memcpy 区别 strcpy 有什么隐患,2,question,华为,Linux,一面,0.51,memcpy 和 memmove 有什么区别？,https://www.nowcoder.com/discuss/947059125291118592
+他们用 Agent 在日常工作中的应用。答的感觉没什么具体的，就说重度应用,2,question,快手,,,0.23,1）三级 Agent 是否必要，编排层为什么也要用 Agent？,https://www.nowcoder.com/discuss/946891033357381632
 Agent开发中，知识维护、记忆模块（短期/长期记忆）你是怎么考虑设计的？,2,question,美团,,一面,0.27,Agent 有哪些核心模块？ReAct 是怎么跑起来的？,https://www.nowcoder.com/discuss/950796586802479104
 提到将xx耗时从1小时压缩到3分钟，耗时瓶颈在哪，哪些环节快、哪些慢？,2,question,美团,,一面,0.12,H100 和 B200 有什么区别？LLM 推理瓶颈在哪？,https://www.nowcoder.com/discuss/950796586802479104
 讲讲你对skill的理解，skill只包含流程说明，还是包含完整设计？,2,question,美团,,一面,0.21,Skill 的边界怎么定，什么该进 Skill，什么该留在代码里？,https://www.nowcoder.com/discuss/950796586802479104
 "你对事务的理解.(ACID说的很清楚,为什么能把同一个问题问两遍?)",2,question,字节跳动,算法,,0.21,缺失的第一个正数：为什么能把数组本身当哈希表？,https://www.nowcoder.com/discuss/949320447437332480
 外部环境、参数变化，会不会导致相同测试任务执行结果不一样？如何处理？,2,question,美团,,一面,1.0,外部环境、参数变化，会不会导致相同测试任务执行结果不一样？如何处理？,https://www.nowcoder.com/discuss/950796586802479104
 为什么要把skill/工具执行流程封装成CLI，这种方案有什么好处？,2,question,美团,,一面,1.0,为什么要把skill/工具执行流程封装成CLI，这种方案有什么好处？,https://www.nowcoder.com/discuss/950796586802479104
+malloc 申请的内存 free 之后能不能继续访问 会发生什么,2,question,华为,Linux,一面,0.86,malloc 申请的内存 free 之后还能继续访问吗？会发生什么？,https://www.nowcoder.com/discuss/947059125291118592
 你们组那个 Skill 是什么，和 workflow 有什么区别。,2,question,快手,,,1.0,你们组那个 Skill 是什么，和 workflow 有什么区别？,https://www.nowcoder.com/discuss/947982288917110784
 Skill 的边界怎么定，什么该进 Skill，什么该留在代码里。,2,question,快手,,,1.0,Skill 的边界怎么定，什么该进 Skill，什么该留在代码里？,https://www.nowcoder.com/discuss/947982288917110784
 最终产出的结果只是文本，是否会执行真实任务？哪些环节需要人工确认？,2,question,美团,,一面,1.0,最终产出的结果只是文本，是否会执行真实任务？哪些环节需要人工确认？,https://www.nowcoder.com/discuss/950796586802479104
+自我介绍完直接让我讲简历里那个 Linux 项目 数据是怎么流的,2,question,华为,Linux,一面,0.19,数据是怎么标的？标注一致性怎么保证？,https://www.nowcoder.com/discuss/947059125291118592
+结构体内存对齐 给了个结构体让我算大小 然后问怎么优化排布省内存,2,question,华为,Linux,一面,0.34,给一个结构体怎么算大小？怎么调整成员顺序更省内存？,https://www.nowcoder.com/discuss/947059125291118592
+多线程里为什么需要锁 不加锁具体会出什么问题 从 CPU 层面说,2,question,华为,Linux,二面,0.75,多线程为什么需要锁？不加锁在 CPU 层面会出什么问题？,https://www.nowcoder.com/discuss/947059125291118592
 图像一帧数据从 sensor 出来到你处理，中间大概经过哪些环节,2,question,大疆,嵌入式,二面,0.75,一帧图像从 sensor 出来到处理，中间经过哪些环节？,https://www.nowcoder.com/discuss/946697884479594496
 Agent项目2，对比项目1，在Agent设计层面有什么差异？,2,question,美团,,一面,0.34,项目背景，为什么引入 Agent？,https://www.nowcoder.com/discuss/950796586802479104
 volatile 什么场景必须加，中断和寄存器读写为什么要加,2,question,大疆,嵌入式,一面,0.41,volatile 能保证线程安全吗？为什么？,https://www.nowcoder.com/discuss/946697884479594496
@@ -33,16 +39,20 @@ DMA 搬运的时候 CPU 同时访问那块内存会冲突吗，怎么办,2,quest
 你用了一个 key 一个线程，key 有几万个的时候怎么办？,2,question,京东,,一面,0.2,工具升级，参数加了一个必填字段，历史会话怎么办？,https://www.nowcoder.com/discuss/949423805343035392
 你通过哪些渠道学习AI、Java相关知识，如何跟进技术发展？,2,question,美团,,一面,0.2,如何提高电路抗干扰能力 （相关知识点）,https://www.nowcoder.com/discuss/950796586802479104
 介绍 LSTM 的原理，门控机制是为了解决什么问题而提出的？,2,question,快手,推理,,1.0,介绍 LSTM 的原理，门控机制是为了解决什么问题而提出的？,https://www.nowcoder.com/discuss/953683777228656640
+服务器上出现大量 TIME_WAIT 是什么原因 怎么处理,2,question,华为,Linux,二面,1.0,服务器上出现大量 TIME_WAIT 是什么原因？怎么处理？,https://www.nowcoder.com/discuss/947059125291118592
 结构体内存对齐，给了个结构体让我算大小，再问怎么重排省内存,2,question,大疆,嵌入式,一面,0.36,给一个结构体怎么算大小？怎么调整成员顺序更省内存？,https://www.nowcoder.com/discuss/946697884479594496
 多个任务抢 CPU，你怎么安排采集、控制、图像处理的优先级,2,question,大疆,嵌入式,二面,0.76,多个任务抢 CPU，采集/控制/图像处理优先级怎么排？,https://www.nowcoder.com/discuss/946697884479594496
 只置标志，任务里跑的是一个不带取消语义的第三方库，怎么停？,2,question,京东,,一面,0.15,中断里写、任务里读，怎么保证数据不乱？,https://www.nowcoder.com/discuss/949423805343035392
 Redis在Java开发中的作用、适用场景，底层原理考量？,2,question,美团,,一面,0.25,一、哪些场景适合用 Redis 做缓存？,https://www.nowcoder.com/discuss/950796586802479104
 你手上目前有其他 offer 吗？期望薪资大概是什么水平？,2,question,迈瑞医疗,嵌入式,,0.19,嵌入式五个主流方向怎么选？offer 怎么对比？,https://www.nowcoder.com/discuss/951410681079787520
+TIME_WAIT 状态为什么要存在 为什么是 2MSL,2,question,华为,Linux,二面,0.81,TIME_WAIT 为什么要存在？为什么等 2MSL？,https://www.nowcoder.com/discuss/947059125291118592
 DMA 有什么好处，搬图像这种大数据量为什么爱用 DMA,2,question,大疆,嵌入式,一面,0.24,PCB 铺铜有什么好处和风险？,https://www.nowcoder.com/discuss/946697884479594496
 面试官说：那你说说，为什么你会先删 key 再处理业务。,2,question,快手,,,1.0,面试官说：那你说说，为什么你会先删 key 再处理业务？,https://www.nowcoder.com/discuss/947982288917110784
 有没有研究过快手的主要竞争对手?他们的优势和不足在哪里?,2,question,快手,算法,,0.11,差分放大电路的主要特点,https://www.nowcoder.com/discuss/948612478953332736
 两个QA同时输入相同查询，Agent给出的报告是否一致？,2,question,美团,,一面,1.0,两个QA同时输入相同查询，Agent给出的报告是否一致？,https://www.nowcoder.com/discuss/950796586802479104
 介绍下AICoding笔试题，拿到题目后如何解读、实现？,2,question,美团,,一面,0.29,平时手写代码多还是用 AI Coding 多？怎么看这件事？,https://www.nowcoder.com/discuss/950796586802479104
+又手撕了一个 判断字符串是不是回文 要求不申请额外空间,2,question,华为,Linux,一面,0.73,手撕：如何不申请额外空间判断字符串是不是回文？,https://www.nowcoder.com/discuss/947059125291118592
+一个进程内存一直涨 你怎么定位是哪儿泄漏了 说完整流程,2,question,华为,Linux,二面,0.72,一个进程的内存一直涨，怎么定位是哪里泄漏？说完整流程。,https://www.nowcoder.com/discuss/947059125291118592
 I2C 和 SPI 怎么选，云台上那些传感器一般走哪个,2,question,大疆,嵌入式,一面,0.23,多个任务同时访问 SPI/I2C，怎么避免资源冲突？,https://www.nowcoder.com/discuss/946697884479594496
 写完追问，如果窗口很大，每次都重新累加太慢，怎么优化。,2,question,大疆,嵌入式,一面,0.19,"LIMIT 1000000,20 为什么慢？怎么优化深分页？",https://www.nowcoder.com/discuss/946697884479594496
 陀螺仪和加速度计各测什么，为什么要融合，单用一个不行吗,2,question,大疆,嵌入式,二面,1.0,陀螺仪和加速度计各测什么，为什么要融合，单用一个不行吗？,https://www.nowcoder.com/discuss/946697884479594496
@@ -57,28 +67,39 @@ YUV 和 RGB 的区别，为什么图像传输爱用 YUV,2,question,大疆,嵌入
 他问：最大轮次到了，它其实没做完，你给用户返回什么。,2,question,快手,,,1.0,他问：最大轮次到了，它其实没做完，你给用户返回什么？,https://www.nowcoder.com/discuss/947982288917110784
 可以详细介绍一下项目：项目场景、设计方案、开发内容？,2,question,美团,,一面,0.22,介绍一下你项目中的 RAG 是怎么搭的？,https://www.nowcoder.com/discuss/950796586802479104
 项目里封装了CLI工具，介绍下CLI的实际开发内容？,2,question,美团,,一面,0.16,为什么要把skill/工具执行流程封装成CLI，这种方案有什么好处？,https://www.nowcoder.com/discuss/950796586802479104
+指针和数组的区别 函数传参传数组的时候到底传了什么,2,question,华为,Linux,一面,0.38,指针和数组在函数传参时到底差在哪？为什么数组传进去会退化成指针？,https://www.nowcoder.com/discuss/947059125291118592
 什么是实时性，硬实时软实时的区别，云台控制属于哪种,2,question,大疆,嵌入式,二面,0.93,什么是实时性？硬实时和软实时的区别？云台控制属于哪种？,https://www.nowcoder.com/discuss/946697884479594496
 面对紧急情况下的产品问题，你会如何快速反应并解决?,2,question,快手,算法,,0.19,如何解决模型幻觉的问题？,https://www.nowcoder.com/discuss/948612478953332736
 需求文档、技术方案为什么没有作为输入信息纳入系统？,2,question,美团,,一面,0.23,这个项目为什么没有自动化测试？,https://www.nowcoder.com/discuss/950796586802479104
+死锁的四个必要条件 你项目里怎么避免的 怎么检测,2,question,华为,Linux,二面,0.78,死锁的四个必要条件是什么？项目里怎么避免、怎么检测？,https://www.nowcoder.com/discuss/947059125291118592
+让我讲一个自己遇到过的最难的 bug 怎么定位的,2,question,华为,Linux,二面,0.18,一个进程的内存一直涨，怎么定位是哪里泄漏？说完整流程。,https://www.nowcoder.com/discuss/947059125291118592
 浮点和定点的区别，云台控制里为什么有时候要用定点,2,question,大疆,嵌入式,一面,1.0,浮点和定点的区别，云台控制里为什么有时候要用定点？,https://www.nowcoder.com/discuss/946697884479594496
 你项目里用了 SPI，讲下时序，四种模式区别在哪,2,question,大疆,嵌入式,一面,0.26,SPI总线的四种工作模式,https://www.nowcoder.com/discuss/946697884479594496
 云台要做增稳，你知道大概是怎么根据姿态去补偿的吗,2,question,大疆,嵌入式,二面,1.0,云台要做增稳，你知道大概是怎么根据姿态去补偿的吗？,https://www.nowcoder.com/discuss/946697884479594496
 你们系统里 QPS 最高的接口是多少，怎么扛的。,2,question,快手,,,0.19,量化之后精度掉了多少，怎么评的？,https://www.nowcoder.com/discuss/947982288917110784
 LoRA 微调的数据从哪里来？数据结构是怎样的？,2,question,快手,推理,,1.0,LoRA 微调的数据从哪里来？数据结构是怎样的？,https://www.nowcoder.com/discuss/953683777228656640
+互斥锁在内核里怎么实现的 加锁失败的线程去哪了,2,question,华为,Linux,二面,0.93,互斥锁在内核里是怎么实现的？加锁失败的线程去哪了？,https://www.nowcoder.com/discuss/947059125291118592
+读写锁和互斥锁的区别 什么场景下读写锁反而更慢,2,question,华为,Linux,二面,0.79,读写锁和互斥锁有什么区别？什么场景读写锁反而更慢？,https://www.nowcoder.com/discuss/947059125291118592
+TCP 的滑动窗口和拥塞控制具体怎么配合工作的,2,question,华为,Linux,二面,0.8,TCP 滑动窗口和拥塞控制是怎么配合工作的？,https://www.nowcoder.com/discuss/947059125291118592
+拥塞控制那几个阶段分别在干什么 为什么要慢启动,2,question,华为,Linux,二面,0.83,拥塞控制的几个阶段分别在干什么？为什么要有慢启动？,https://www.nowcoder.com/discuss/947059125291118592
 一个控制周期要求几百微秒跑完，你怎么保证不超时,2,question,大疆,嵌入式,二面,1.0,一个控制周期要求几百微秒跑完，你怎么保证不超时？,https://www.nowcoder.com/discuss/946697884479594496
 为什么把 workflow 改成 Skill。,2,question,快手,,,0.56,你们组那个 Skill 是什么，和 workflow 有什么区别？,https://www.nowcoder.com/discuss/947982288917110784
 如果设计一个操作系统，只有进程没有线程好不好？,2,question,拼多多,结构,,0.19,操作系统：分页和分段的区别？,https://www.nowcoder.com/discuss/948262807051444224
 如何确保你的产品设计考虑到了不同用户的需求 ?,2,question,快手,算法,,0.23,产品可靠性指标（要求写 3 个），你在设计中如何确保产品的可靠性？,https://www.nowcoder.com/discuss/948612478953332736
+TCP 和 UDP 的区别 分别用在什么场景,2,question,华为,Linux,一面,0.43,TCP 和 UDP 有什么区别？各自的连接流程是什么？,https://www.nowcoder.com/discuss/947059125291118592
+volatile 能不能保证线程安全 为什么,2,question,华为,Linux,二面,0.86,volatile 能保证线程安全吗？为什么？,https://www.nowcoder.com/discuss/947059125291118592
 Agent 怎么判断分析完成了，然后停下来。,2,question,快手,,,0.33,Agent 不听从指令怎么办？,https://www.nowcoder.com/discuss/947982288917110784
 在制定内容运营策略时，你会考虑哪些关键因素?,2,question,快手,算法,,0.18,选一颗 MCU 时，你会看哪些硬指标？,https://www.nowcoder.com/discuss/948612478953332736
 4B 参数的模型部署需要多少显存？如何估算？,2,question,快手,推理,,1.0,4B 参数的模型部署需要多少显存？如何估算？,https://www.nowcoder.com/discuss/953683777228656640
 陀螺仪积分为什么会漂，加速度计为什么怕振动,2,question,大疆,嵌入式,二面,1.0,陀螺仪积分为什么会漂，加速度计为什么怕振动？,https://www.nowcoder.com/discuss/946697884479594496
+原子操作是怎么实现的 和加锁比开销差在哪,2,question,华为,Linux,二面,1.0,原子操作是怎么实现的？和加锁比开销差在哪？,https://www.nowcoder.com/discuss/947059125291118592
 先自我介绍，然后挑一个最有挑战的项目讲。,2,question,大疆,嵌入式,一面,0.15,介绍一个 AI 应用项目，怎么说明它确实是 Agent？,https://www.nowcoder.com/discuss/946697884479594496
 自我介绍，介绍一下自己做过的嵌入式项目。,2,question,理想汽车,嵌入式,一面,0.25,介绍一下你项目中的 RAG 是怎么搭的？,https://www.nowcoder.com/discuss/946697948182646784
 上下文压缩之后，你怎么评估关键信息没丢。,2,question,快手,,,1.0,上下文压缩之后，你怎么评估关键信息没丢？,https://www.nowcoder.com/discuss/947982288917110784
 Skill 里模型不按文档走，怎么保证。,2,question,快手,,,0.32,怎么判断一个 Skill 写得好不好？,https://www.nowcoder.com/discuss/947982288917110784
 在设计产品原型时，你通常会使用哪些工具?,2,question,快手,算法,,0.22,【开放题】你在设计PCB layout时通常会遵循哪些原则和规范?,https://www.nowcoder.com/discuss/948612478953332736
 残缺信息无法唯一确定资源，系统如何选择？,2,question,美团,,一面,1.0,残缺信息无法唯一确定资源，系统如何选择？,https://www.nowcoder.com/discuss/950796586802479104
+内存泄漏是怎么产生的 你平时怎么发现的,2,question,华为,Linux,一面,0.48,野指针、悬垂指针、内存泄漏分别是怎么产生的？,https://www.nowcoder.com/discuss/947059125291118592
 怎么判断一个 Skill 写得好不好。,2,question,快手,,,1.0,怎么判断一个 Skill 写得好不好？,https://www.nowcoder.com/discuss/947982288917110784
 指数退避的基数取多少，为什么要有抖动。,2,question,快手,,,1.0,指数退避的基数取多少，为什么要有抖动？,https://www.nowcoder.com/discuss/947982288917110784
 你主要负责哪些模块、哪些具体开发工作？,2,question,美团,,一面,0.18,U-Boot 在 Linux 启动过程中负责哪些工作？典型启动流程是什么？,https://www.nowcoder.com/discuss/950796586802479104
@@ -88,8 +109,12 @@ workflow 的缺点具体是什么。,2,question,快手,,,0.45,你们组那个 Sk
 多 Agent 之间上下文怎么隔离。,2,question,快手,,,1.0,多 Agent 之间上下文怎么隔离？,https://www.nowcoder.com/discuss/947982288917110784
 生产者确认和消费者确认分别解决什么。,2,question,快手,,,0.33,MTD、UBI、UBIFS 分别解决什么问题？,https://www.nowcoder.com/discuss/947982288917110784
 如何看待短视频行业未来的趋势和挑战?,2,question,快手,算法,,0.1,纹波如何测量 （没有动手测过的同学可以去b站搜一搜视频）,https://www.nowcoder.com/discuss/948612478953332736
+[ ] 准备好自我介绍和常见问题回答,2,question,大疆,嵌入式,,0.14,请描述硬件测试的基本步骤和常见流程。,https://www.nowcoder.com/discuss/955049183243685888
 他问：那用户怎么知道这是没做完的。,2,question,快手,,,0.23,他问：最大轮次到了，它其实没做完，你给用户返回什么？,https://www.nowcoder.com/discuss/947982288917110784
 核心业务和普通业务的重试策略区别。,2,question,快手,,,1.0,核心业务和普通业务的重试策略区别？,https://www.nowcoder.com/discuss/947982288917110784
+二级指针什么时候用 举个实际场景,2,question,华为,Linux,一面,1.0,二级指针什么时候用？举个实际场景。,https://www.nowcoder.com/discuss/947059125291118592
+三次握手为什么是三次 两次行不行,2,question,华为,Linux,一面,0.45,TCP 三次握手和四次挥手为什么是 3 和 4？,https://www.nowcoder.com/discuss/947059125291118592
+内存屏障是干嘛的 什么时候需要,2,question,华为,Linux,二面,0.85,内存屏障是干什么的？什么时候需要？,https://www.nowcoder.com/discuss/947059125291118592
 高合规场景下，模型越权怎么兜。,2,question,快手,,,0.19,大模型出现幻觉怎么办？,https://www.nowcoder.com/discuss/947982288917110784
 消息丢失可能发生在哪几个环节。,2,question,快手,,,1.0,消息丢失可能发生在哪几个环节？,https://www.nowcoder.com/discuss/947982288917110784
 能否谈下你应聘这个岗位的优势？,2,question,快手,,,0.1,为什么选这个题目？,https://www.nowcoder.com/discuss/948736231557361664
@@ -99,6 +124,7 @@ workflow 的缺点具体是什么。,2,question,快手,,,0.45,你们组那个 Sk
 评测集多少条，覆盖哪些意图。,2,question,快手,,,0.22,意图识别树怎么设计？评测集和指标怎么选？,https://www.nowcoder.com/discuss/947982288917110784
 TCP 和 UDP 的区别。,2,question,海康威视,嵌入式,二面,0.48,TCP 和 UDP 有什么区别？各自的连接流程是什么？,https://www.nowcoder.com/discuss/949224879369318400
 怎么定义一个Starter？,2,question,联友科技,,,1.0,怎么定义一个Starter？,https://www.nowcoder.com/discuss/949595756812312576
+TCP 怎么保证可靠传输的,2,question,华为,Linux,一面,0.73,TCP 靠什么保证可靠传输？,https://www.nowcoder.com/discuss/947059125291118592
 你们怎么自测 Skill。,2,question,快手,,,0.4,怎么判断一个 Skill 写得好不好？,https://www.nowcoder.com/discuss/947982288917110784
 项目3整体架构、模块分层？,2,question,美团,,一面,0.26,传统推荐系统的整体架构是什么？,https://www.nowcoder.com/discuss/950796586802479104
 他问：所以参数该怎么配。,2,question,快手,,,0.22,MCU 的低功耗模式怎么选？唤醒源又该怎么配？,https://www.nowcoder.com/discuss/947982288917110784
@@ -123,6 +149,7 @@ volatile 在中断、硬件寄存器、DMA 场景中何时必须使用？它能�
 "你觉得你的编程水平如何,工程能力如何?(你在问什么,我讲了一下我是如何构建packetGhost的,如何解决包循环的问题?显然他对这个项目不是很感兴趣).",1,reverse,字节跳动,算法,,0.14,如果发生了重复下单的问题，可能的原因是什么？如何解决？,https://www.nowcoder.com/discuss/949320447437332480
 面向无 MMU、小内存 MCU 与面向带 MMU、丰富外设的 Linux 平台，在启动入口、内存管理、并发模型、故障恢复和调试可观测性上有哪些架构级差异？,1,question,小鹏,嵌入式,,0.8,面向无 MMU、小内存 MCU 与面向带 MMU、丰富外设的 Linux 平台，,https://www.nowcoder.com/discuss/952322801585725440
 ——DMA、内存对齐、中断异常区别、FreeRTOS堆管理、函数调用开销那几题都在；二面里volatile、优先级反转、死锁四条件这种通用题也都覆盖了。,1,reverse,智元机器人,嵌入式,二面,0.24,优先级继承和优先级天花板有什么区别？FreeRTOS 支持哪种？,https://www.nowcoder.com/discuss/948152252059938816
+我顺着面经想了个重试的例子：你说工具调用失败了就重试，那如果对面已经执行成功，只是结果没传回来呢？再调会不会重复操作？用户等不及点了取消，后台还跑不跑？,1,question,腾讯,,,0.12,工具调用超时，重试几次，重试的时候幂等怎么保证？,https://www.nowcoder.com/discuss/955172954214563840
 从上电复位到业务服务可用，引导固件、内核解压与初始化、根文件系统挂载和服务编排各阶段应承担哪些职责？在安全启动和 OTA 回滚场景下启动链应如何调整？,1,question,小鹏,嵌入式,,0.13,国产 CPU 平台从固件复位到 Linux init 的启动链经过哪些阶段？板卡,https://www.nowcoder.com/discuss/952322801585725440
 是否了解 vLLM 的 PagedAttention？Chunked Prefill 是如何实现的？是否了解 Continuous Batching？,1,question,快手,推理,,0.28,你们 Agent 的工具调用用的是什么模式？function calling 有,https://www.nowcoder.com/discuss/952744812497653760
 "​	我先说了数据库的行锁,我说代码设计可能可以用阻塞队列,他说有没有什么更好的,我说CAS,用SQL语句实现这个CAS,SQL怎么写,大概说了一下.",1,reverse,字节跳动,算法,,0.12,MySQL 四个隔离级别各解决什么问题？MVCC 是怎么实现的？,https://www.nowcoder.com/discuss/949320447437332480
@@ -247,7 +274,7 @@ OSI 七层网络架构分别是什么，物理层主要完成什么功能？这�
 04 Chunk、Embedding、Hybrid Search、Rerank分别解决什么问题？,1,question,字节跳动,后端,,0.3,Embedding 前置与否，对准确率和召回率分别有什么影响？,https://www.nowcoder.com/discuss/945001410880442368
 沿着提示词继续问：笔记、示例和历史对话越来越长，超过上下文限制怎么办？直接截掉最后一部分行不行？,1,question,百度,结构,,1.0,沿着提示词继续问：笔记、示例和历史对话越来越长，超过上下文限制怎么办？直接截掉最,https://www.nowcoder.com/discuss/948980939399372800
 MCP 和 Function Calling 有什么关系？接入 MCP 就可以省掉工具适配层吗？,1,question,阿里巴巴,,,0.43,你们 Agent 的工具调用用的是什么模式？function calling 有,https://www.nowcoder.com/discuss/949385383874195456
-Linux字符设备驱动的基本框架是什么？cdev和file_operations分别有什么作用？,1,question,OPPO,C++,二面,0.29,Linux 驱动的三大基础设备类型是什么？,https://www.nowcoder.com/discuss/949597050885120000
+Linux字符设备驱动的基本框架是什么？cdev和file_operations分别有什么作用？,1,question,OPPO,C++,二面,0.32,Linux 的文件描述符（fd）是什么？和 FILE* 有什么区别？,https://www.nowcoder.com/discuss/949597050885120000
 如果两个用户几乎同时保存，SQLite 使用 WAL 模式就能让它们同时写了吗？该怎样处理忙锁？,1,question,百度,,,0.51,SQLite 的 WAL 模式能让两个用户同时写吗？忙锁怎么处理？,https://www.nowcoder.com/discuss/950086216752361472
 平时学习 LLM 推理框架、Agent 框架及微调工具，主要是出于工作业务需要还是个人兴趣驱动？,1,question,拼多多,C++,,0.17,如何限制 Agent 在某些步骤不调用工具？,https://www.nowcoder.com/discuss/950818894371893248
 （手撕题追问）该并发控制题目能否改用 Java 或 C++ 语言实现（侧重考察多线程同步原语）？,1,question,拼多多,C++,,0.13,Java 注解的实现原理是什么？为什么加了注解，框架就能找到它？,https://www.nowcoder.com/discuss/950818894371893248
@@ -314,7 +341,6 @@ JVM GC 的原理；如何判断一个对象是否可回收；如何保证 GC Roo
 消息重复可以识别，但顺序乱了怎么办？比如同一草稿先后产生v2和v3，v2结果却更晚回来。,1,question,字节跳动,,,1.0,消息重复可以识别，但顺序乱了怎么办？比如同一草稿先后产生v2和v3，v2结果却更,https://www.nowcoder.com/discuss/953075892136259584
 讲一下 GRPO 中的公式；实际使用时是否了解 π_θ 与 π_old？是否手推过公式？,1,question,快手,推理,,0.15,你这个GRPO强化学习中的Loss是怎么设置的？,https://www.nowcoder.com/discuss/953683777228656640
 有依赖关系的一串工具调用，用有向无环图和状态机分别擅长表达什么？用户中途改主意怎么表示？,1,question,vivo,,,1.0,有依赖关系的一串工具调用，用有向无环图和状态机分别擅长表达什么？用户中途改主意怎,https://www.nowcoder.com/discuss/953777276263333888
-select poll epoll 的区别 epoll 为什么高效 底层数据结构是什么,1,question,华为,Linux,二面,0.72,select、poll、epoll 有什么区别？epoll 为什么高效？,https://www.nowcoder.com/discuss/947059125291118592
 上家公司测试流程、接口主要关注哪些点、性能测试之前怎么做的、怎么抓包的、MySQL题目,1,question,华为,,,0.26,MySQL的SQL优化怎么做？,https://www.nowcoder.com/discuss/949607832196804608
 面试官最喜欢问的是RAG、LangGraph、Tool Calling，还是项目评测？,1,question,字节跳动,后端,,0.22,你们 Agent 的工具调用用的是什么模式？function calling 有,https://www.nowcoder.com/discuss/945001410880442368
 Spring AI Agent 项目：是否为个人学习项目，Agent 核心理念与关键点,1,question,美团,后端,二面,0.25,Agent harness engineering 是什么？你怎么理解？,https://www.nowcoder.com/discuss/947459858423443456
@@ -354,6 +380,7 @@ AI-ready 项目知识库：是否 0-1 搭建，多类型文档处理、入库与
 SFT 之后常见的 Post-Training 方法还有哪些？各自的设计目的是什么？,1,question,快手,推理,,0.28,怎么判断pretraining和sft分别训练好了？,https://www.nowcoder.com/discuss/952744812497653760
 用户说“帮我看看下周哪天下午有空，我想约个复盘”。你的 Agent 第一步会做什么？,1,question,vivo,结构,,1.0,用户说“帮我看看下周哪天下午有空，我想约个复盘”。你的 Agent 第一步会做什,https://www.nowcoder.com/discuss/953318284886122496
 简单讲下哈希表，哈希冲突怎么解决？map 和 unordered_map 底层区别？,1,question,OPPO,C++,,0.59,map 和 unordered_map 有什么区别？怎么选？,https://www.nowcoder.com/discuss/954685006931034112
+难度肉眼可见上了一个台阶 基本全是并发和协议栈的实现层  不问你会不会用 直接问底层,1,question,华为,Linux,二面,0.15,你会不会把 OCR 结果直接喂给模型？,https://www.nowcoder.com/discuss/955424236850421760
 2️⃣ 追问：“多视图映射（Multi-Mapping）和42位指针是什么关系？”,1,question,阿里巴巴,,,0.27,multiprocessing 怎么绕过 GIL？代价是什么？,https://www.nowcoder.com/discuss/945724989339111424
 Reward 怎么实现？规则 reward 和 reward model 怎么选？,1,question,小米汽车,算法,一面,1.0,Reward 怎么实现？规则 reward 和 reward model 怎么选,https://www.nowcoder.com/discuss/946881373397082112
 （1）把一批数据交给后台异步保存，接收方立刻复用同一块内存接收下一批，这样安全吗？,1,question,商汤科技,部署,,0.17,引用就是「给同一块内存再起个名字」？,https://www.nowcoder.com/discuss/948271943319384064
@@ -380,7 +407,7 @@ volatile 和 const 有什么区别？什么场景必须用 volatile？,1,questio
 过往学习或实践中，你有没有做过需要梳理流程、分析数据或推动方案的工作？请简单描述,1,question,快手,算法,,0.09,mos管的工作原理,https://www.nowcoder.com/discuss/948612478953332736
 如果你入职后需要快速熟悉不同类型App的商业化流量逻辑，你会用什么方法高效学习？,1,question,快手,算法,,0.13,map 的 key 为什么必须可比较？装自定义类型要注意什么？,https://www.nowcoder.com/discuss/948612478953332736
 你如何理解平台产品经理-商业产品在快手提升商业化效率、拓展变现场景中的核心价值？,1,question,快手,算法,,0.15,介绍 LoRA 的原理，如何理解其中的“低秩”？,https://www.nowcoder.com/discuss/948612478953332736
-针对“优化运营策略和流程，提升整体团队内容运营能力”，你有什么具体的想法或建议？,1,question,快手,,,0.14,"什么是”线与""逻辑，要实现它，在硬件特性上有什么具体要求？",https://www.nowcoder.com/discuss/948736231557361664
+针对“优化运营策略和流程，提升整体团队内容运营能力”，你有什么具体的想法或建议？,1,question,快手,,,0.14,什么是“线与”逻辑，要实现它，在硬件特性上有什么具体要求？,https://www.nowcoder.com/discuss/948736231557361664
 共享区在jdk8之后变成元空间了，了解这个升级的背景吗？升级之后解决什么问题了？,1,question,腾讯,C++,,1.0,共享区在jdk8之后变成元空间了，了解这个升级的背景吗？升级之后解决什么问题了？,https://www.nowcoder.com/discuss/949072652134522880
 项目里为什么要做 FreeRTOS 内核方面的创新，当时主要是针对什么问题去做的,1,question,大疆,嵌入式,,0.34,为什么 FreeRTOS 需要自己的一块堆？,https://www.nowcoder.com/discuss/949089979538366464
 #define 宏和 const 的区别，C++ 中 const 还有哪些用法？,1,question,中兴通讯,C++,,1.0,#define 宏和 const 的区别，C++ 中 const 还有哪些用法？,https://www.nowcoder.com/discuss/949325715286024192
@@ -439,7 +466,7 @@ FreeRTOS 多任务共享数据，如何保证数据一致性？互斥锁会带�
 他说太长了，模型对超过 80 字的描述注意力就散了，问我信不信。我说没测过。,1,question,阿里巴巴,,,0.11,多轮对话后用户输入轮次过多导致模型注意力分散，怎么处理？,https://www.nowcoder.com/discuss/947983580246859776
 Prompt injection，用户让 Agent 忽略之前指令，怎么防。,1,question,阿里巴巴,,,0.33,Agent 不听从指令怎么办？,https://www.nowcoder.com/discuss/947983580246859776
 。面试官更关心它解决了什么问题、你是否理解它的工作过程、结果有没有经过验证。,1,question,美团,,,0.25,说说你对 K8s 的理解：它解决什么问题？核心组件各干什么？,https://www.nowcoder.com/discuss/948228136699785216
-有些同学被问住后，觉得无论如何都要给出答案，结果越解释越没把握。更好的做法是,1,question,美团,,,0.07,信息如何持续积累、迭代更新？执行失败后的结果如何回流？,https://www.nowcoder.com/discuss/948228136699785216
+有些同学被问住后，觉得无论如何都要给出答案，结果越解释越没把握。更好的做法是,1,question,美团,,,0.08,强化学习上真机难在哪？三篇工作给出三种答案,https://www.nowcoder.com/discuss/948228136699785216
 大学校内报考的是信息与计算科学专业，当时为什么选择报考这个专业与计算机方向？,1,question,拼多多,结构,,0.21,为什么选这个题目？,https://www.nowcoder.com/discuss/948262807051444224
 （1）场景越来越多时，是让 Agent 专门处理一类任务，还是集成多种能力？,1,question,商汤科技,部署,,0.23,Agent 处理复杂任务要分解任务，下列说法哪项是对的？,https://www.nowcoder.com/discuss/948271943319384064
 （1）任务由 Agent 触发，还是独立运行？调用是定期发起，还是按需触发？,1,question,商汤科技,部署,,0.22,一个 Agent 调用另一个 Agent，返回值格式怎么定？,https://www.nowcoder.com/discuss/948271943319384064
@@ -459,13 +486,13 @@ U-Boot的启动流程大致是什么？进入U-Boot之前还需要完成哪些�
 滑窗会让前十名挤满同一次演示。时间上的非极大值抑制怎样做？阈值设太低会怎样？,1,question,快手,,,1.0,滑窗会让前十名挤满同一次演示。时间上的非极大值抑制怎样做？阈值设太低会怎样？,https://www.nowcoder.com/discuss/954012052081606656
 C++ 智能指针有哪几种？各自作用？shared_ptr 循环引用怎么解决？,1,question,OPPO,C++,,0.48,shared_ptr 循环引用为什么会泄漏？weak_ptr 怎么破环？,https://www.nowcoder.com/discuss/954685006931034112
 C++ 构造函数、析构函数有什么特点？能不能虚析构？构造函数可以是虚函数吗？,1,question,OPPO,C++,,0.32,为什么基类的析构函数必须是虚函数？,https://www.nowcoder.com/discuss/954685006931034112
+最近真正在面 AI 岗的，你们体感是基础问得少了，还是换成在项目里追着问了？,1,question,腾讯,,,0.11,除了单例，你还在项目里用过哪些设计模式？结合场景讲讲？,https://www.nowcoder.com/discuss/955172954214563840
 CAN 中断处理为什么分上半部和下半部？中断里为什么不能使用 mutex？,1,question,地平线,嵌入式,,0.88,中断处理为什么分上半部和下半部？中断里为什么不能用 mutex？,https://www.nowcoder.com/discuss/945100814861815808
-字符串处理 strcpy 和 memcpy 区别 strcpy 有什么隐患,1,question,华为,Linux,一面,0.51,memcpy 和 memmove 有什么区别？,https://www.nowcoder.com/discuss/947059125291118592
 忽略容量限制、假设所有请求都能并行：第 6 组会输出 14，正确是 50。,1,written,华为,推理,,0.09,这段 C++ 代码输出什么？（03 类型 · 第 6 题）,https://www.nowcoder.com/discuss/948632550891593728
 了一下之前工作的项目内容、在实习过程中主要学习到了什么、以及自己的个人情况,1,question,华为,,,0.14,中断是怎么工作的，从触发到进 ISR 中间发生了什么？,https://www.nowcoder.com/discuss/949607832196804608
 如何让一个线程绑定在一个CPU核心上，使得这个CPU核心一直运行某个线程？,1,question,网易,结构,,1.0,如何让一个线程绑定在一个CPU核心上，使得这个CPU核心一直运行某个线程？,https://www.nowcoder.com/discuss/944979238002733056
 如果在执行某项任务过程中，AI会调用一些工具，但是我不想调用它，该怎么做？,1,question,网易,结构,,0.13,不想让编译器做字节对齐，该怎么办？,https://www.nowcoder.com/discuss/944979238002733056
-是否会在规划阶段使用能力较强的模型，在执行阶段使用成本较低的模型？为什么？,1,question,小红书,,,0.15,短路为什么会在瞬间烧毁器件？,https://www.nowcoder.com/discuss/945056130978394112
+是否会在规划阶段使用能力较强的模型，在执行阶段使用成本较低的模型？为什么？,1,question,小红书,,,0.17,什么是 VLA 模型？为什么说它给大模型装上了手,https://www.nowcoder.com/discuss/945056130978394112
 select 和 epoll 的区别？epoll 水平触发和边缘触发差异？,1,question,网易,C++,,0.49,select、poll、epoll 有什么区别？epoll 为什么高效？,https://www.nowcoder.com/discuss/946067334249164800
 "(这一问让我明白，参数不能只说""经验值""。你得说得出往两边偏会付出什么。)",1,question,小米汽车,算法,二面,0.13,为什么不能用 int 存时间戳？会出什么问题？,https://www.nowcoder.com/discuss/946881373397082112
 坑：抖动不能省，不加抖动一千个请求会在同一毫秒一起重试，把下游再打挂一次。,1,question,快手,后端,,0.08,再回到缓存未命中：十个请求同时计算同一份素材，怎样只让其中一个负责计算，又不把不,https://www.nowcoder.com/discuss/947236309687345152
@@ -584,7 +611,6 @@ CPU 已经改了缓存里的数据，但 DMA 读到的还是旧数据，怎么�
 C 语言全局、局部变量未初始化默认值？malloc 申请内存初始值？,1,question,大疆,C++,,1.0,C 语言全局、局部变量未初始化默认值？malloc 申请内存初始值？,https://www.nowcoder.com/discuss/954324894362107904
 自旋锁和互斥锁的区别 分别用在什么场景 为什么中断上下文只能用自旋锁,1,question,中兴通讯,C++,二面,0.43,自旋锁和互斥锁有什么区别？各自适合什么场景？,https://www.nowcoder.com/discuss/954342387147341824
 const 有哪些用法？define 和 const 的区别是什么？,1,question,OPPO,C++,,0.71,#define 宏和 const 的区别，C++ 中 const 还有哪些用法？,https://www.nowcoder.com/discuss/954685006931034112
-malloc 申请的内存 free 之后能不能继续访问 会发生什么,1,question,华为,Linux,一面,0.86,malloc 申请的内存 free 之后还能继续访问吗？会发生什么？,https://www.nowcoder.com/discuss/947059125291118592
 追问：如果我要建立只读映射，mmap() 函数的参数应该传递什么？,1,question,网易,结构,,0.48,mmap 建立只读映射时参数应该怎么传？常见错误是什么？,https://www.nowcoder.com/discuss/944979238002733056
 CAN 总线仲裁怎么工作？如果节点一直发高优先级报文会有什么影响？,1,question,奇瑞集团,嵌入式,,1.0,CAN 总线仲裁怎么工作？如果节点一直发高优先级报文会有什么影响？,https://www.nowcoder.com/discuss/945246824707739648
 1️⃣ ZGC的颜色指针为什么只用42位？剩下的22位用来做什么？,1,question,阿里巴巴,,,0.2,环形链表：快慢指针为什么一定相遇？,https://www.nowcoder.com/discuss/945724989339111424
@@ -604,7 +630,7 @@ OOM是什么？Linux在什么情况下可能触发OOM Killer？,1,question,vivo,
 面对不断变化的市场和用户需求，你如何保持自己的运营策略持续有效 ?,1,question,快手,算法,,0.09,为什么 FreeRTOS 需要自己的一块堆？,https://www.nowcoder.com/discuss/948612478953332736
 有没有遇到过需要快速学习新技能以完成任务的情况?你是如何处理的 ?,1,question,快手,算法,,0.14,外部环境、参数变化，会不会导致相同测试任务执行结果不一样？如何处理？,https://www.nowcoder.com/discuss/948612478953332736
 面对紧急情况下的热点事件，你会如何快速响应并将其融入到产品运营中？,1,question,快手,,,0.12,设计一个校园网环境下的即时通讯软件，你会怎么做？,https://www.nowcoder.com/discuss/948736231557361664
-面对技术团队时，如果遇到他们难以理解或实现的产品需求，你会怎么办？,1,question,快手,,,0.14,如果数据产生速度大于发送速度怎么办？,https://www.nowcoder.com/discuss/948736231557361664
+面对技术团队时，如果遇到他们难以理解或实现的产品需求，你会怎么办？,1,question,快手,,,0.16,布隆过滤器怎么实现的？,https://www.nowcoder.com/discuss/948736231557361664
 我一开始按功能讲，讲到一半被打断：这部分是谁做的？你自己写了哪些？,1,question,大疆,嵌入式,,0.09,HTTPS 相比 HTTP 具体多做了哪些事情？,https://www.nowcoder.com/discuss/949089979538366464
 DMA启动时要配置哪些信息？源地址、目的地址、传输长度分别是什么？,1,question,大疆,嵌入式,,0.21,DMA 是什么？没有它行不行？,https://www.nowcoder.com/discuss/949089979538366464
 循环DMA写到缓冲区末尾之后怎么办？软件怎么知道哪些字节还没处理？,1,question,大疆,嵌入式,,1.0,循环DMA写到缓冲区末尾之后怎么办？软件怎么知道哪些字节还没处理？,https://www.nowcoder.com/discuss/949089979538366464
@@ -627,9 +653,6 @@ PPO 的损失是 token 级别还是 sequence 级别的？,1,question,百度,推�
 Linux进程调度怎么工作的 schedule函数什么时候会被调用,1,question,中兴通讯,C++,二面,1.0,Linux进程调度怎么工作的 schedule函数什么时候会被调用？,https://www.nowcoder.com/discuss/954342387147341824
 Agent 范式 ReAct 的名字，是哪两个英文单词拼在一起？,1,written,华为,推理,,0.88,Agent 范式 ReAct 的名字是哪两个英文单词拼起来的？,https://www.nowcoder.com/discuss/945497946403971072
 考点：H100 和 B200 有什么区别？LLM 推理瓶颈在哪？,1,question,小鹏,推理,,0.95,H100 和 B200 有什么区别？LLM 推理瓶颈在哪？,https://www.nowcoder.com/discuss/945709685955395584
-自我介绍完直接让我讲简历里那个 Linux 项目 数据是怎么流的,1,question,华为,Linux,一面,0.19,数据是怎么标的？标注一致性怎么保证？,https://www.nowcoder.com/discuss/947059125291118592
-结构体内存对齐 给了个结构体让我算大小 然后问怎么优化排布省内存,1,question,华为,Linux,一面,0.34,给一个结构体怎么算大小？怎么调整成员顺序更省内存？,https://www.nowcoder.com/discuss/947059125291118592
-多线程里为什么需要锁 不加锁具体会出什么问题 从 CPU 层面说,1,question,华为,Linux,二面,0.75,多线程为什么需要锁？不加锁在 CPU 层面会出什么问题？,https://www.nowcoder.com/discuss/947059125291118592
 01 为什么这个业务需要Agent，Workflow能不能替代？,1,question,字节跳动,后端,,0.36,为什么这里需要 Agent？直接一次调用模型不行吗？,https://www.nowcoder.com/discuss/945001410880442368
 为什么选择中兴？对通信嵌入式岗位怎么理解？之前在中兴实习干了啥？,1,question,中兴通讯,嵌入式,,0.2,什么是交叉编译？为什么嵌入式要交叉编译？,https://www.nowcoder.com/discuss/945003571001511936
 C++ RAII 机制是什么？解决什么问题，举几个实际使用场景？,1,question,网易,C++,,0.3,pimpl 惯用法解决什么问题？代价是什么？,https://www.nowcoder.com/discuss/946067334249164800
@@ -677,8 +700,8 @@ MHA 是什么？有哪些改进？介绍 DeepSeek 的 MLA。,1,question,百度,�
 虚拟内存原理，malloc 返回虚拟地址，物理内存什么时候分配？,1,question,大疆,C++,,0.29,内核里有哪些常见的内存分配接口？kmalloc、kzalloc、vmalloc有,https://www.nowcoder.com/discuss/954324894362107904
 static修饰局变量 全局变量 函数分别啥效果 生命周期怎么变,1,question,中兴通讯,C++,一面,0.6,static修饰局部变量、全局变量和函数分别有什么作用？,https://www.nowcoder.com/discuss/954342387147341824
 平时写代码会不会使用 AI 辅助工具，怎么看待 AI 编程工具？,1,question,OPPO,C++,,0.3,平时手写代码多还是用 AI Coding 多？怎么看这件事？,https://www.nowcoder.com/discuss/954685006931034112
-1）三级 Agent 是否必要，编排层为什么也要用 Agent？,1,question,字节跳动,,,0.36,编排层单独做成一个 Agent，代价是什么？,https://www.nowcoder.com/discuss/955052079385477120
-4）GRPO 和 PPO 的奖励归因、critic 有什么区别？,1,question,字节跳动,,,0.59,PPO 和 GRPO 的差异，除了 critic 还有什么？,https://www.nowcoder.com/discuss/955052079385477120
+1）三级 Agent 是否必要，编排层为什么也要用 Agent？,1,question,字节跳动,,,1.0,1）三级 Agent 是否必要，编排层为什么也要用 Agent？,https://www.nowcoder.com/discuss/955052079385477120
+4）GRPO 和 PPO 的奖励归因、critic 有什么区别？,1,question,字节跳动,,,1.0,4）GRPO 和 PPO 的奖励归因、critic 有什么区别？,https://www.nowcoder.com/discuss/955052079385477120
 CAN 总线错误处理有哪些？什么是 Bus-Off？怎么恢复？,1,question,地平线,嵌入式,,0.78,CAN 总线的错误处理有哪些？Bus-Off 是什么？怎么恢复？,https://www.nowcoder.com/discuss/945100814861815808
 追问：怎么能够让 Python进程读取时不超过内存对象的边界？,1,question,网易,结构,,0.42,Python 进程内存一直涨，怎么排查？,https://www.nowcoder.com/discuss/944979238002733056
 追问：栈的大小是多少？堆内存最大能申请多少？以x86结构为例。,1,question,网易,结构,,0.33,Linux 下栈默认多大？堆最大能申请多少？（x86-64）,https://www.nowcoder.com/discuss/944979238002733056
@@ -754,7 +777,7 @@ UART轮询、中断、DMA接收有什么差别，你为什么选DMA？,1,questio
 指针发进队列后，原来的缓冲区什么时候能重新使用？谁负责决定？,1,question,大疆,嵌入式,,0.2,二级指针什么时候用？举个实际场景。,https://www.nowcoder.com/discuss/949089979538366464
 能不能保证线程安全吗？如果只做一次读和一次写，还需要加锁吗？,1,question,海康威视,嵌入式,一面,0.33,volatile 能保证线程安全吗？为什么？,https://www.nowcoder.com/discuss/949224879369318400
 如果换了更强的新模型，你怎么判断可以删掉一些提示和编排步骤？,1,question,阿里巴巴,,,1.0,如果换了更强的新模型，你怎么判断可以删掉一些提示和编排步骤？,https://www.nowcoder.com/discuss/949385383874195456
-"OCR 识别错了，比如把""0""认成""O""，后面链路会怎么样？",1,question,京东,,一面,1.0,"OCR 识别错了，比如把""0""认成""O""，后面链路会怎么样？",https://www.nowcoder.com/discuss/949423805343035392
+"OCR 识别错了，比如把""0""认成""O""，后面链路会怎么样？",1,question,京东,,一面,0.74,OCR 识别错了，比如把“0”认成“O”，后面链路会怎么样？,https://www.nowcoder.com/discuss/949423805343035392
 设备树主要解决什么问题？驱动是怎么获取设备树中的硬件资源的？,1,question,OPPO,C++,二面,1.0,设备树主要解决什么问题？驱动是怎么获取设备树中的硬件资源的？,https://www.nowcoder.com/discuss/949597050885120000
 CPU访问内存的大致过程是什么？Cache在里面起什么作用？,1,question,OPPO,C++,二面,1.0,CPU访问内存的大致过程是什么？Cache在里面起什么作用？,https://www.nowcoder.com/discuss/949597050885120000
 多核CPU下为什么要考虑Cache一致性？硬件一般怎么保证？,1,question,OPPO,C++,二面,1.0,多核CPU下为什么要考虑Cache一致性？硬件一般怎么保证？,https://www.nowcoder.com/discuss/949597050885120000
@@ -776,7 +799,6 @@ SFT和GRPO的区别是什么，做完SFT为什么还要做GRPO,1,question,科大
 操作系统：什么是颠簸（抖动 thrashing），产生原因？,1,question,OPPO,C++,,1.0,操作系统：什么是颠簸（抖动 thrashing），产生原因？,https://www.nowcoder.com/discuss/954685006931034112
 fork 创建子进程时，地址空间怎么处理？什么是写时复制？,1,question,地平线,嵌入式,,1.0,fork 创建子进程时地址空间怎么处理？什么是写时复制？,https://www.nowcoder.com/discuss/945100814861815808
 Agent 处理复杂任务时需要分解任务。下列哪一项是对的？,1,written,华为,推理,,0.77,Agent 处理复杂任务要分解任务，下列说法哪项是对的？,https://www.nowcoder.com/discuss/945497946403971072
-服务器上出现大量 TIME_WAIT 是什么原因 怎么处理,1,question,华为,Linux,二面,1.0,服务器上出现大量 TIME_WAIT 是什么原因？怎么处理？,https://www.nowcoder.com/discuss/947059125291118592
 了一下面试官实习生进去做什么，面试官大概说的就是推理优化。,1,question,地平线,推理,,0.14,讲一下秒杀抢购的整体逻辑，每一层分别做什么？,https://www.nowcoder.com/discuss/949071997969985536
 追问：把在堆内存、栈内存、静态存储区上申请的情况都讲一讲。,1,question,网易,结构,,0.44,堆内存、栈内存、静态存储区分别怎么申请？各自特点是什么？,https://www.nowcoder.com/discuss/944979238002733056
 模型选型是怎么考虑的？为什么不同复杂度的任务使用不同模型？,1,question,小红书,,,0.23,写放大是怎么来的，为什么小数据频繁写特别伤？,https://www.nowcoder.com/discuss/945056130978394112
@@ -805,7 +827,7 @@ volatile解决什么问题，为什么不能拿它代替同步措施？,1,questi
 讲一下你项目里电机控制是怎么做的？串级 PID 实现思路？,1,question,中兴通讯,C++,,1.0,讲一下你项目里电机控制是怎么做的？串级 PID 实现思路？,https://www.nowcoder.com/discuss/949325715286024192
 你项目中遇到印象最深的 bug，现象、定位手段、修复过程？,1,question,中兴通讯,C++,,0.18,项目中遇到深浅拷贝问题，举个实际案例？怎么避免复发？,https://www.nowcoder.com/discuss/949325715286024192
 2）Embedding 召回与重排模型在原理上有什么区别？,1,question,美团,算法,,0.5,Embedding 是什么？余弦相似度和内积有什么区别？,https://www.nowcoder.com/discuss/949374159144902656
-Linux中断的处理流程是什么？上半部和下半部有什么区别？,1,question,OPPO,C++,一面,0.33,中断处理为什么分上半部和下半部？中断里为什么不能用 mutex？,https://www.nowcoder.com/discuss/949597050885120000
+Linux中断的处理流程是什么？上半部和下半部有什么区别？,1,question,OPPO,C++,一面,0.37,Linux 的文件描述符（fd）是什么？和 FILE* 有什么区别？,https://www.nowcoder.com/discuss/949597050885120000
 Tool 能访问敏感数据，但当前用户没权限，怎么防止越权？,1,question,拼多多,部署,,1.0,Tool 能访问敏感数据，但当前用户没权限，怎么防止越权？,https://www.nowcoder.com/discuss/949737047076380672
 该 IM 系统自定义设计的通信协议具体格式和结构是怎样的？,1,question,拼多多,C++,,0.25,自定义通信协议帧如何设计？如何保障无线通信链路的可靠性？,https://www.nowcoder.com/discuss/950818894371893248
 算法题 1：请使用非递归（迭代）方法计算二叉树的最大深度。,1,question,拼多多,C++,,0.4,二叉树的最大深度：递归和层序各自怎么算？,https://www.nowcoder.com/discuss/950818894371893248
@@ -826,11 +848,10 @@ Prompt 长度加倍，首 token 延迟是否也会加倍？,1,question,快手,�
 On-policy 与 Off-policy 有什么区别？,1,question,百度,推理,,0.38,epoll 的 LT 和 ET 有什么区别？,https://www.nowcoder.com/discuss/953684827926994944
 多任务并发，怎么防止脏数据？互斥锁、自旋锁区别，选型原则？,1,question,大疆,C++,,0.24,自旋锁和互斥锁有什么区别？各自适合什么场景？,https://www.nowcoder.com/discuss/954324894362107904
 extern C是干嘛的 为什么C++里调C的东西要加这个,1,question,中兴通讯,C++,一面,0.49,"extern ""C""：为什么 C++ 调不了 C 的函数？",https://www.nowcoder.com/discuss/954342387147341824
-2）主子 Agent 的上下文怎么交接，摘要丢字段怎么办？,1,question,字节跳动,,,0.44,多 Agent 之间上下文怎么隔离？,https://www.nowcoder.com/discuss/955052079385477120
+2）主子 Agent 的上下文怎么交接，摘要丢字段怎么办？,1,question,字节跳动,,,1.0,2）主子 Agent 的上下文怎么交接，摘要丢字段怎么办？,https://www.nowcoder.com/discuss/955052079385477120
 给定两个位数可能极多的非负整数，请求出它们相加后的结果。,1,written,华为,,,0.51,两个位数可能极长的非负整数相加，怎么实现？,https://www.nowcoder.com/discuss/945494649353830400
 给工具附上说明文字，写明能做什么、参数怎么填、会出什么错,1,written,华为,推理,,0.2,命令行参数怎么解析？那个「-」是什么意思？,https://www.nowcoder.com/discuss/945497946403971072
 延伸考点：平台怎么管理异构算力？（顺理成章问到了云原生）,1,question,小鹏,推理,,0.41,深度学习平台怎么管理异构算力（不同代次的 GPU）？,https://www.nowcoder.com/discuss/945709685955395584
-TIME_WAIT 状态为什么要存在 为什么是 2MSL,1,question,华为,Linux,二面,0.81,TIME_WAIT 为什么要存在？为什么等 2MSL？,https://www.nowcoder.com/discuss/947059125291118592
 题面允许「主动清空缓存」，但清空只会把某个请求已经花掉的,1,written,华为,推理,,0.1,查询向量化前置与跨请求缓存有什么区别？,https://www.nowcoder.com/discuss/948632550891593728
 Redis 的跳表是怎么实现的？为什么用跳表不用红黑树？,1,question,字节跳动,后端,一面,0.74,Redis 为什么用跳表不用红黑树？,https://www.nowcoder.com/discuss/999999999999999999
 追问：如果 Python进程读取到一半的情况会发生什么？,1,question,网易,结构,,0.35,Python 进程内存一直涨，怎么排查？,https://www.nowcoder.com/discuss/944979238002733056
@@ -861,7 +882,7 @@ Embedding 是什么？余弦相似度和内积有什么区别？,1,question,阿�
 "怎样实现了链路素材的可复用性,到底做了什么,优化了什么.",1,question,微软,,,0.25,一次中断从发生到返回，CPU 到底做了什么？,https://www.nowcoder.com/discuss/949321126574841856
 平时开发会不会使用 AI 工具？怎么看待 AI 写代码？,1,question,中兴通讯,C++,,0.32,平时手写代码多还是用 AI Coding 多？怎么看这件事？,https://www.nowcoder.com/discuss/949325715286024192
 1）RRF 融合与简单加权有什么区别，怎样判断是否适合？,1,question,美团,算法,,0.98,RRF 融合与简单加权有什么区别？怎样判断是否适合？,https://www.nowcoder.com/discuss/949374159144902656
-"图和文冲突：图片写""纯棉""，详情写""聚酯纤维""，你信谁？",1,question,京东,,一面,1.0,"图和文冲突：图片写""纯棉""，详情写""聚酯纤维""，你信谁？",https://www.nowcoder.com/discuss/949423805343035392
+"图和文冲突：图片写""纯棉""，详情写""聚酯纤维""，你信谁？",1,question,京东,,一面,0.73,图和文冲突：图片写“纯棉”，详情写“聚酯纤维”，你信谁？,https://www.nowcoder.com/discuss/949423805343035392
 堆和栈有什么区别？函数调用时，栈里面一般会保存哪些内容？,1,question,OPPO,C++,一面,1.0,堆和栈有什么区别？函数调用时，栈里面一般会保存哪些内容？,https://www.nowcoder.com/discuss/949597050885120000
 Linux进程和线程有什么区别？进程之间有哪些通信方式？,1,question,OPPO,C++,一面,0.55,进程和线程有什么区别？,https://www.nowcoder.com/discuss/949597050885120000
 SPI的四种模式分别是什么？CPOL、CPHA怎么理解？,1,question,OPPO,C++,一面,0.7,SPI 的四种工作模式是什么？CPOL 和 CPHA 怎么配？,https://www.nowcoder.com/discuss/949597050885120000
@@ -879,13 +900,11 @@ NOR Flash 和 NAND Flash 有什么区别,1,question,华为,驱动,二面,1.0,NAN
 除了风险、影响和依赖关系之外，还有其他需要考虑的因素吗？,1,question,百度,,,0.19,集成运放选型时，需要考虑的基本参数有哪些,https://www.nowcoder.com/discuss/952603605389910016
 新增的第四层消歧编码是怎么编码的？会不会对语义有所折损？,1,question,百度,算法,,0.15,新增一条规则，怎么验证不会误伤历史商品？,https://www.nowcoder.com/discuss/953259010898079744
 介绍 BERT，BERT 的 mask 是如何起作用的？,1,question,快手,推理,,1.0,介绍 BERT，BERT 的 mask 是如何起作用的？,https://www.nowcoder.com/discuss/953683777228656640
-介绍 DPO、PPO、GRPO 的原理，以及三者的区别。,1,question,百度,推理,,0.29,SFT和GRPO的区别是什么，做完SFT为什么还要做GRPO？,https://www.nowcoder.com/discuss/953684827926994944
+介绍 DPO、PPO、GRPO 的原理，以及三者的区别。,1,question,百度,推理,,0.37,PPO 和 GRPO 的区别？具身场景为什么偏爱 GRPO,https://www.nowcoder.com/discuss/953684827926994944
 如果更换另一套通信协议，这套框架改动工作量？如何做验证？,1,question,大疆,C++,,0.17,自定义通信协议帧如何设计？如何保障无线通信链路的可靠性？,https://www.nowcoder.com/discuss/954324894362107904
 MMU怎么把虚拟地址翻成物理地址 TLB在里面起什么作用,1,question,中兴通讯,C++,二面,0.29,U-Boot早期启动使用物理地址还是虚拟地址？MMU一般什么时候开启？,https://www.nowcoder.com/discuss/954342387147341824
 计算机网络：TIME_WAIT 状态是什么，存在的意义？,1,question,OPPO,C++,,0.47,TIME_WAIT 为什么要存在？为什么等 2MSL？,https://www.nowcoder.com/discuss/954685006931034112
 "下列激活函数中，值域为开区间 (0,1) 的是哪一个？",1,written,华为,推理,,1.0,"下列激活函数中，值域为开区间 (0,1) 的是哪一个？",https://www.nowcoder.com/discuss/945497946403971072
-又手撕了一个 判断字符串是不是回文 要求不申请额外空间,1,question,华为,Linux,一面,0.73,手撕：如何不申请额外空间判断字符串是不是回文？,https://www.nowcoder.com/discuss/947059125291118592
-一个进程内存一直涨 你怎么定位是哪儿泄漏了 说完整流程,1,question,华为,Linux,二面,0.72,一个进程的内存一直涨，怎么定位是哪里泄漏？说完整流程。,https://www.nowcoder.com/discuss/947059125291118592
 平时怎么推进测试工作、怎么看加班的 、遇到问题如何解决,1,question,华为,,,0.31,缓存一致性问题如何解决？,https://www.nowcoder.com/discuss/949607832196804608
 .epoll 的边缘触发和水平触发你在项目里怎么选的？,1,question,字节跳动,后端,一面,0.27,epoll 的 LT 和 ET 有什么区别？,https://www.nowcoder.com/discuss/999999999999999999
 为什么引入Redis以后，业务接口响应不一定明显变快？,1,question,字节跳动,后端,,0.83,为什么引入 Redis 之后接口响应不一定明显变快？,https://www.nowcoder.com/discuss/945001410880442368
@@ -947,7 +966,7 @@ volatile 在懒汉单例里有什么用，为什么需要它？,1,question,腾�
 Reward 函数是如何设计的？数据集的配比是怎样的？,1,question,快手,推理,,1.0,Reward 函数是如何设计的？数据集的配比是怎样的？,https://www.nowcoder.com/discuss/953683777228656640
 模块业务上有什么核心要求？遇到哪些通信问题，怎么解决？,1,question,大疆,C++,,0.29,多继承的菱形继承会有什么问题？虚继承怎么解决？,https://www.nowcoder.com/discuss/954324894362107904
 中断的上半部和下半部 为什么要拆开 下半部有哪几种机制,1,question,中兴通讯,C++,二面,0.36,中断处理为什么分上半部和下半部？中断里为什么不能用 mutex？,https://www.nowcoder.com/discuss/954342387147341824
-3）两个多层 JSON 怎么深度合并，类型冲突怎么办？,1,question,字节跳动,,,0.21,VS Code 的 tasks.json 怎么配一个「编译 + 运行」任务？,https://www.nowcoder.com/discuss/955052079385477120
+3）两个多层 JSON 怎么深度合并，类型冲突怎么办？,1,question,字节跳动,,,1.0,3）两个多层 JSON 怎么深度合并，类型冲突怎么办？,https://www.nowcoder.com/discuss/955052079385477120
 请实现按信息增益建树的决策树分类器。每条训练样本形如,1,written,华为,推理,,0.15,训练样本怎么构造，曝光未点击算负样本吗？,https://www.nowcoder.com/discuss/945497946403971072
 追问：你说的CPU亲和性指的是什么？能具体说一下吗？,1,question,网易,结构,,0.33,什么是 CPU 亲和性？它解决什么问题？,https://www.nowcoder.com/discuss/944979238002733056
 追问：内存映射的方式有哪几种？分别都在哪些地方使用？,1,question,网易,结构,,0.57,内存映射（mmap）的方式有哪几种？分别用在哪里？,https://www.nowcoder.com/discuss/944979238002733056
@@ -997,8 +1016,8 @@ AI Agent 的上下文工程和记忆管理是什么关系？,1,question,腾讯,,
 带货直播间的商品数量较多，请设计一个方案来降低时延。,1,question,百度,推理,,0.14,设计一个校园网环境下的即时通讯软件，你会怎么做？,https://www.nowcoder.com/discuss/953684827926994944
 简单 2‑3 分钟自我介绍，讲学习、实习、项目经历。,1,question,大疆,C++,,0.11,这个项目只有 240 行，是不是太简单了？,https://www.nowcoder.com/discuss/954324894362107904
 AI 以后会完全取代程序员吗？人在哪些场景能起作用？,1,question,腾讯,,,0.16,一、哪些场景适合用 Redis 做缓存？,https://www.nowcoder.com/discuss/954811868558721024
+怎样做单元测试，如何检查 AI 生成测试的覆盖缺口？,1,question,美团,后端,,0.21,怎么给一个 C++ 库做单元测试？依赖外部硬件怎么办？,https://www.nowcoder.com/discuss/955418209694273536
 驱动出现 Kernel Panic，一般怎么定位？,1,question,地平线,嵌入式,,0.68,CAN 驱动突然 Kernel Panic，你怎么定位？,https://www.nowcoder.com/discuss/945100814861815808
-指针和数组的区别 函数传参传数组的时候到底传了什么,1,question,华为,Linux,一面,0.38,指针和数组在函数传参时到底差在哪？为什么数组传进去会退化成指针？,https://www.nowcoder.com/discuss/947059125291118592
 输出一个整数，即全部请求处理完毕所需的总时间步数。,1,written,华为,推理,,0.22,KV 缓存批处理调度：怎么按接纳规则模拟出总时间步数？,https://www.nowcoder.com/discuss/948632550891593728
 测试流程、测试用例设计、测试时间来不及、如何去沟通,1,question,华为,,,0.46,如何设计测试用例？,https://www.nowcoder.com/discuss/949607832196804608
 面试中真正有价值的回答，不是Agent能够做什么。,1,question,字节跳动,后端,,0.29,项目背景，为什么引入 Agent？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1038,13 +1057,11 @@ PID 控制周期如何选择？调参有什么工程上的心得？,1,question,�
 如果再从系统稳定性角度补充测试用例，你会测试哪些？,1,question,百度,,,0.21,如何设计测试用例？,https://www.nowcoder.com/discuss/952603605389910016
 你项目里的排序模型承担的是重排任务，还是精排任务？,1,question,百度,算法,,0.17,项目里的 MCU 怎么选型？为什么选这款？,https://www.nowcoder.com/discuss/953259010898079744
 介绍你在百度的实习工作，并展开讲讲具体的工作细节。,1,question,百度,推理,,0.14,mos管的工作原理,https://www.nowcoder.com/discuss/953684827926994944
-平时训练或微调 LLM / VLM 时有哪些心得？,1,question,百度,推理,,0.17,vLLM 的原理是什么？它是如何进行调度的？,https://www.nowcoder.com/discuss/953684827926994944
+平时训练或微调 LLM / VLM 时有哪些心得？,1,question,百度,推理,,0.27,VLA 微调有哪些反直觉的铁律？,https://www.nowcoder.com/discuss/953684827926994944
 11．同一时间有很多需求测试只有三个人如何协调工作,1,question,华为,,HR面,0.13,如何设计测试用例？,https://www.nowcoder.com/discuss/954333813201502208
 实时操作系统的调度器怎么设计 上下文具体怎么保存的,1,question,中兴通讯,C++,二面,0.2,上下文从主 Agent 传到子 Agent，怎么保证不丢？,https://www.nowcoder.com/discuss/954342387147341824
 什么是左值、右值？std::move 作用是什么？,1,question,OPPO,C++,,0.36,std::move 到底做了什么？为什么它不移动任何东西？,https://www.nowcoder.com/discuss/954685006931034112
 发出调用之前，先检查参数类型和取值范围是否说得通,1,written,华为,推理,,0.11,函数调用的参数是按什么顺序压栈的？,https://www.nowcoder.com/discuss/945497946403971072
-死锁的四个必要条件 你项目里怎么避免的 怎么检测,1,question,华为,Linux,二面,0.78,死锁的四个必要条件是什么？项目里怎么避免、怎么检测？,https://www.nowcoder.com/discuss/947059125291118592
-让我讲一个自己遇到过的最难的 bug 怎么定位的,1,question,华为,Linux,二面,0.18,一个进程的内存一直涨，怎么定位是哪里泄漏？说完整流程。,https://www.nowcoder.com/discuss/947059125291118592
 ：请求到达系统的时刻（时间步从 0 开始编号）；,1,written,华为,推理,,0.13,传统推荐系统的整体架构是什么？,https://www.nowcoder.com/discuss/948632550891593728
 06 Tool调用超时、失败或者重复执行怎么办？,1,question,字节跳动,后端,,0.29,并发聚合中某服务失败或超时怎么办？,https://www.nowcoder.com/discuss/945001410880442368
 09 Agent如何防止无限循环和无效工具调用？,1,question,字节跳动,后端,,0.36,如何限制 Agent 在某些步骤不调用工具？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1088,7 +1105,7 @@ Flash 写满以后怎么回收，回收时又掉电怎么办,1,question,华为,�
 进一步追问：局部变快，为什么整体没有同比例变快？,1,question,美团,,一面,0.21,detach 之后线程访问局部变量会发生什么？,https://www.nowcoder.com/discuss/950796586802479104
 之前有接触过移动端客户端编程或 App 开发吗？,1,question,拼多多,C++,,0.11,如果客户端突然断网，服务端如何发现？,https://www.nowcoder.com/discuss/950818894371893248
 MCU为什么要求内存对齐？不对齐访问可能会怎样？,1,question,小米集团,C++,,0.26,SPI 发送为什么要等 TXE？不清标志会怎样？,https://www.nowcoder.com/discuss/951091308192399360
-手撕：最小堆的 push 和 pop 怎么实现？,1,question,拼多多,C++,,0.21,堆排序和简单选择排序怎么实现？,https://www.nowcoder.com/discuss/952197269770547200
+手撕：最小堆的 push 和 pop 怎么实现？,1,question,拼多多,C++,,0.23,布隆过滤器怎么实现的？,https://www.nowcoder.com/discuss/952197269770547200
 为什么选择快手？你觉得你做产品经理的优势是什么？,1,question,快手,,,0.22,为什么选这个题目？,https://www.nowcoder.com/discuss/952377581985177600
 单看 SQL 从多少降到多少？有无优化前后对比？,1,question,滴滴,机器人,一面,0.21,MySQL的SQL优化怎么做？,https://www.nowcoder.com/discuss/952696051016716288
 什么“记忆”会导致重复 @ 提问者？具体是什么？,1,question,滴滴,机器人,三面,0.17,迭代器是什么？,https://www.nowcoder.com/discuss/952696051016716288
@@ -1103,10 +1120,6 @@ PPO 和 DPO 在对齐阶段的主要区别是什么？,1,question,快手,推理,
 DMA是什么 用它有啥好处 跟CPU搬运比强在哪,1,question,中兴通讯,C++,一面,0.31,DMA 是什么？没有它行不行？,https://www.nowcoder.com/discuss/954342387147341824
 FreeRTOS任务调度怎么调的 抢占式怎么理解,1,question,中兴通讯,C++,一面,0.55,FreeRTOS 任务调度的底层原理是什么？,https://www.nowcoder.com/discuss/954342387147341824
 C++ 多态是什么，实现原理？虚函数表存在哪里？,1,question,OPPO,C++,,0.38,实现原理：虚函数表 vtable 与隐藏 vptr？,https://www.nowcoder.com/discuss/954685006931034112
-互斥锁在内核里怎么实现的 加锁失败的线程去哪了,1,question,华为,Linux,二面,0.93,互斥锁在内核里是怎么实现的？加锁失败的线程去哪了？,https://www.nowcoder.com/discuss/947059125291118592
-读写锁和互斥锁的区别 什么场景下读写锁反而更慢,1,question,华为,Linux,二面,0.79,读写锁和互斥锁有什么区别？什么场景读写锁反而更慢？,https://www.nowcoder.com/discuss/947059125291118592
-TCP 的滑动窗口和拥塞控制具体怎么配合工作的,1,question,华为,Linux,二面,0.8,TCP 滑动窗口和拥塞控制是怎么配合工作的？,https://www.nowcoder.com/discuss/947059125291118592
-拥塞控制那几个阶段分别在干什么 为什么要慢启动,1,question,华为,Linux,二面,0.83,拥塞控制的几个阶段分别在干什么？为什么要有慢启动？,https://www.nowcoder.com/discuss/947059125291118592
 ，这种结构能缓解深层网络的退化。其核心逻辑是？,1,written,华为,推理,,0.3,残差块写成 y = F(x) + x，缓解退化的核心逻辑是什么？,https://www.nowcoder.com/discuss/948632550891593728
 给一段代码，问这段代码中有什么错误，此处省略。,1,question,网易,结构,,0.19,这段 C++ 代码输出什么？（03 类型 · 第 4 题）,https://www.nowcoder.com/discuss/944979238002733056
 追问：在64位系统下，这些数据能够申请成功吗？,1,question,网易,结构,,0.3,64 位系统下一次 malloc 几十 GB 能成功吗？成功等于能用吗？,https://www.nowcoder.com/discuss/944979238002733056
@@ -1114,9 +1127,9 @@ TCP 的滑动窗口和拥塞控制具体怎么配合工作的,1,question,华为,
 为什么使用Kafka，回答异步解耦、削峰填谷。,1,question,字节跳动,后端,,0.19,Kafka 和 RocketMQ 有什么区别？各自适合什么场景？,https://www.nowcoder.com/discuss/945001410880442368
 03 RAG在哪个步骤使用，检索效果怎么验证？,1,question,字节跳动,后端,,0.2,Chunk 怎么切，效果怎么测？,https://www.nowcoder.com/discuss/945001410880442368
 DMA的工作原理是什么？什么时候会使用DMA？,1,question,理想汽车,嵌入式,一面,0.45,DMA的工作原理？双缓存区的好处？,https://www.nowcoder.com/discuss/946697948182646784
-PPO 和 GRPO 在信用分配上的核心区别？,1,question,吉利汽车,算法,一面,0.32,PPO 和 GRPO 的差异，除了 critic 还有什么？,https://www.nowcoder.com/discuss/946799856226476032
+PPO 和 GRPO 在信用分配上的核心区别？,1,question,吉利汽车,算法,一面,0.39,PPO 和 GRPO 的区别？具身场景为什么偏爱 GRPO,https://www.nowcoder.com/discuss/946799856226476032
 动态采样过滤掉全对和全错，为什么这算一种加速？,1,question,吉利汽车,算法,一面,0.18,为什么不该让异常穿过动态库边界？,https://www.nowcoder.com/discuss/946799856226476032
-"业务方要求""不许说错话""，你怎么用技术手段兜？",1,question,小米汽车,算法,二面,1.0,"业务方要求""不许说错话""，你怎么用技术手段兜？",https://www.nowcoder.com/discuss/946881373397082112
+"业务方要求""不许说错话""，你怎么用技术手段兜？",1,question,小米汽车,算法,二面,0.84,业务方要求“不许说错话”，你怎么用技术手段兜？,https://www.nowcoder.com/discuss/946881373397082112
 这套系统上线三个月后，你觉得最先坏掉的是哪块？,1,question,小米汽车,算法,二面,1.0,这套系统上线三个月后，你觉得最先坏掉的是哪块？,https://www.nowcoder.com/discuss/946881373397082112
 分布式锁用 Redis 怎么实现，会有什么问题,1,question,快手,后端,,1.0,分布式锁用 Redis 怎么实现，会有什么问题？,https://www.nowcoder.com/discuss/947236309687345152
 多轮对话上下文怎么存，存 Redis 还是存库,1,question,快手,后端,,1.0,多轮对话上下文怎么存，存 Redis 还是存库？,https://www.nowcoder.com/discuss/947236309687345152
@@ -1165,8 +1178,6 @@ Pre-train 是怎么做的，用了哪些数据？,1,question,快手,推理,,0.39
 为什么 LoRA 只训练少量参数就能实现功能？,1,question,百度,推理,,0.22,微调的具体实现，LoRA 的 rank 怎么定？,https://www.nowcoder.com/discuss/953684827926994944
 进程与线程区别？线程切换开销，上下文包含什么？,1,question,大疆,C++,,0.31,线程上下文切换的底层都做了什么？,https://www.nowcoder.com/discuss/954324894362107904
 平时做需求，怎么保证 AI 写代码的输出可靠？,1,question,腾讯,,,0.24,平时手写代码多还是用 AI Coding 多？怎么看这件事？,https://www.nowcoder.com/discuss/954811868558721024
-TCP 和 UDP 的区别 分别用在什么场景,1,question,华为,Linux,一面,0.43,TCP 和 UDP 有什么区别？各自的连接流程是什么？,https://www.nowcoder.com/discuss/947059125291118592
-volatile 能不能保证线程安全 为什么,1,question,华为,Linux,二面,0.86,volatile 能保证线程安全吗？为什么？,https://www.nowcoder.com/discuss/947059125291118592
 会溢出成 inf。工程上通用的稳定化写法是？,1,written,华为,推理,,0.11,奇异点在什么情况下出现？工程上怎么规避？,https://www.nowcoder.com/discuss/948632550891593728
 针对本地部署，追问了“实际做到了什么程度”。,1,question,地平线,推理,,0.2,介绍一下二维云台这个项目：硬件、软件栈、做到什么程度？,https://www.nowcoder.com/discuss/949071997969985536
 操作系统是如何将虚拟内存映射到物理内存上的？,1,question,网易,结构,,0.62,操作系统如何把虚拟内存映射到物理内存？（页表/TLB/缺页）,https://www.nowcoder.com/discuss/944979238002733056
@@ -1276,7 +1287,7 @@ Agent 越权有哪几种，你防住了哪几种。,1,question,阿里巴巴,,,0.
 遇到过什么不好复现的问题，怎么确认修好了？,1,question,大疆,嵌入式,,0.24,系统出现性能问题怎么排查？有什么依据？,https://www.nowcoder.com/discuss/949089979538366464
 如果程序运行几天后内存越来越高，怎么定位？,1,question,海康威视,嵌入式,一面,0.26,堆和栈的区别 程序运行的时候内存是怎么布局的？,https://www.nowcoder.com/discuss/949224879369318400
 好在一面过了，面完没一会hr就发了二面邀请,1,question,快手,,,0.06,thread_local 的作用是什么？,https://www.nowcoder.com/discuss/949414652021108736
-"模型判""不确定""的时候，走人工还是走规则？",1,question,京东,,一面,1.0,"模型判""不确定""的时候，走人工还是走规则？",https://www.nowcoder.com/discuss/949423805343035392
+"模型判""不确定""的时候，走人工还是走规则？",1,question,京东,,一面,0.82,模型判“不确定”的时候，走人工还是走规则？,https://www.nowcoder.com/discuss/949423805343035392
 同一张图换了个文件名重传，内容哈希一样吗？,1,question,京东,,一面,0.17,幂等键怎么设计的？业务单号还是内容哈希？,https://www.nowcoder.com/discuss/949423805343035392
 自动装配和@Autowired有什么区别？,1,question,联友科技,,,0.45,auto、auto&、auto&& 有什么区别？,https://www.nowcoder.com/discuss/949595756812312576
 追问：自定义Starter最容易踩什么坑？,1,question,联友科技,,,0.47,怎么定义一个Starter？,https://www.nowcoder.com/discuss/949595756812312576
@@ -1293,7 +1304,6 @@ Pre-train 之后如何进行 SFT？,1,question,快手,推理,,0.46,怎么判断p
 如何评估模型效果？从哪些维度设计量化指标？,1,question,快手,推理,,0.26,Agent 系统里，怎么量化评估模型回答的效果？,https://www.nowcoder.com/discuss/953683777228656640
 Function Call 是如何实现的？,1,question,百度,推理,,0.43,Function Calling 的完整流程是什么？在你的项目里怎么用？,https://www.nowcoder.com/discuss/953684827926994944
 面试官未要求进行自我介绍（但仍需准备充分）,1,question,华为,,HR面,0.11,面试官给了个从没见过的场景题，现场怎么不冷场？,https://www.nowcoder.com/discuss/954333813201502208
-原子操作是怎么实现的 和加锁比开销差在哪,1,question,华为,Linux,二面,1.0,原子操作是怎么实现的？和加锁比开销差在哪？,https://www.nowcoder.com/discuss/947059125291118592
 ：该请求还需要生成的 Token 个数；,1,written,华为,推理,,0.21,Prompt 长度加倍，首 token 延迟是否也会加倍？,https://www.nowcoder.com/discuss/948632550891593728
 ：还剩多少个 Token 没生成，初始为,1,written,华为,推理,,0.22,Prompt 长度加倍，首 token 延迟是否也会加倍？,https://www.nowcoder.com/discuss/948632550891593728
 如果一个命令执行特别慢，会造成什么影响？,1,question,字节跳动,后端,,0.79,Redis 里一个命令执行特别慢会造成什么影响？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1310,7 +1320,7 @@ clip 系数调大调小，分别会发生什么？,1,question,吉利汽车,算�
 MCP 工具的参数、权限和错误怎么约束？,1,question,快手,,,1.0,MCP 工具的参数、权限和错误怎么约束？,https://www.nowcoder.com/discuss/947219963637460992
 介绍一下自己最熟悉的项目，主要负责什么？,1,question,vivo,C++,二面,0.28,介绍一下西门子杯这个项目，你具体负责哪部分？,https://www.nowcoder.com/discuss/947423015300505600
 系统发生随机Crash，可能有哪些原因？,1,question,vivo,C++,二面,0.25,操作系统：什么是颠簸（抖动 thrashing），产生原因？,https://www.nowcoder.com/discuss/947423015300505600
-碰到陌生技术领域，如何快速学习、推进任务,1,question,美团,后端,三面,0.09,外部环境、参数变化，会不会导致相同测试任务执行结果不一样？如何处理？,https://www.nowcoder.com/discuss/947459858423443456
+碰到陌生技术领域，如何快速学习、推进任务,1,question,美团,后端,三面,0.11,给 VLA 加强化学习难在哪？三条技术路线怎么选,https://www.nowcoder.com/discuss/947459858423443456
 #大厂实习和小厂实习最大的区别是什么？#,1,question,快手,,,0.34,双指针和滑动窗口的区别是什么？,https://www.nowcoder.com/discuss/947982288917110784
 实时性：中断延迟的来源有哪些？怎么优化？,1,question,智元机器人,嵌入式,二面,1.0,实时性：中断延迟的来源有哪些？怎么优化？,https://www.nowcoder.com/discuss/948152252059938816
 死锁的四个必要条件？工程实践里怎么避免？,1,question,智元机器人,嵌入式,二面,0.63,死锁的四个必要条件是什么？项目里怎么避免、怎么检测？,https://www.nowcoder.com/discuss/948152252059938816
@@ -1353,7 +1363,6 @@ Embedding 为什么能够表示语义？,1,question,快手,算法,,0.45,Embeddin
 SFT 过程中遇到了哪些问题？如何解决？,1,question,快手,推理,,0.38,缓存一致性问题如何解决？,https://www.nowcoder.com/discuss/953683777228656640
 消息顺序、重复消费和丢失，分别怎么处理？,1,question,拼多多,,,0.52,消息队列重复消费怎么处理？,https://www.nowcoder.com/discuss/953964865771577344
 SPI通信过程讲一下 几根线 速率怎么配,1,question,中兴通讯,C++,一面,0.27,DHT11 一共几根线？怎么通信？,https://www.nowcoder.com/discuss/954342387147341824
-内存泄漏是怎么产生的 你平时怎么发现的,1,question,华为,Linux,一面,0.48,野指针、悬垂指针、内存泄漏分别是怎么产生的？,https://www.nowcoder.com/discuss/947059125291118592
 追问：如果说 AI 出现了幻觉怎么办？,1,question,网易,结构,,0.43,大模型出现幻觉怎么办？,https://www.nowcoder.com/discuss/944979238002733056
 用户修改目标岗位，之前的规划怎么处理？,1,question,字节跳动,后端,,0.28,用户切到后台，推理任务怎么处理？,https://www.nowcoder.com/discuss/945001410880442368
 “Agent一直循环调用工具怎么办？”,1,question,字节跳动,后端,,0.41,Agent 不听从指令怎么办？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1497,7 +1506,7 @@ LightGBM排序模型，介绍一下。,1,question,百度,算法,,1.0,LightGBM排
 请介绍一下你实习的公司及你的工作内容,1,question,华为,,主管面,0.29,介绍一下你的本科毕设，四层链路分别是什么？,https://www.nowcoder.com/discuss/954333813201502208
 你在实习期间具体做了哪些方面的工作？,1,question,华为,,主管面,0.25,HTTPS 相比 HTTP 具体多做了哪些事情？,https://www.nowcoder.com/discuss/954333813201502208
 什么是内存对齐，为什么需要内存对齐？,1,question,OPPO,C++,,0.31,为什么需要 IoC 容器？不用 IoC 会怎样？,https://www.nowcoder.com/discuss/954685006931034112
-[ ] 准备好自我介绍和常见问题回答,1,question,大疆,嵌入式,,0.14,请描述硬件测试的基本步骤和常见流程。,https://www.nowcoder.com/discuss/955049183243685888
+Agent 开发过程中怎样实施约束？,1,question,美团,后端,,0.36,Agent 的权限管理怎样设计？,https://www.nowcoder.com/discuss/955418209694273536
 平时怎么推进测试工作、怎么看加班的,1,question,字节跳动,后端,一面,0.16,C++20 的协程是怎么工作的？,https://www.nowcoder.com/discuss/999999999999999999
 哪一种是进程间通信效率最高的方式？,1,question,网易,结构,,0.53,哪种进程间通信方式效率最高？为什么？,https://www.nowcoder.com/discuss/944979238002733056
 岗位名称、技术缩写检索不到怎么办？,1,question,字节跳动,后端,,0.17,大模型出现幻觉怎么办？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1518,8 +1527,8 @@ OPD 和常规知识蒸馏的本质区别？,1,question,吉利汽车,算法,二�
 调用失败后，怎么避免模型一直重试？,1,question,快手,,,1.0,调用失败后，怎么避免模型一直重试？,https://www.nowcoder.com/discuss/947219963637460992
 什么情况下会 OOM，怎么提前发现,1,question,快手,后端,,1.0,什么情况下会 OOM，怎么提前发现？,https://www.nowcoder.com/discuss/947236309687345152
 上下文压缩你是在压缩什么，丢了什么,1,question,快手,后端,,0.3,线程上下文切换的底层都做了什么？,https://www.nowcoder.com/discuss/947236309687345152
-"用户投诉""回答变笨了""，你怎么定位",1,question,小红书,推理,一面,1.0,"用户投诉""回答变笨了""，你怎么定位？",https://www.nowcoder.com/discuss/947237875282632704
-Linux里的虚拟内存是怎么回事？,1,question,vivo,C++,一面,0.25,Linux 内核的启动流程分哪几个阶段？,https://www.nowcoder.com/discuss/947423015300505600
+"用户投诉""回答变笨了""，你怎么定位",1,question,小红书,推理,一面,0.79,用户投诉“回答变笨了”，你怎么定位？,https://www.nowcoder.com/discuss/947237875282632704
+Linux里的虚拟内存是怎么回事？,1,question,vivo,C++,一面,0.28,Linux 的 Buddy（伙伴）内存分配算法是怎么工作的？为什么说它没有外部碎,https://www.nowcoder.com/discuss/947423015300505600
 开始介绍你从事的工作和做过的项目？,1,question,汇川技术,软件工程师,三面,0.17,mos管的工作原理,https://www.nowcoder.com/discuss/947892354675961856
 DMA的工作原理？双缓存区的好处？,1,question,智元机器人,嵌入式,一面,1.0,DMA的工作原理？双缓存区的好处？,https://www.nowcoder.com/discuss/948152252059938816
 PID你写过吗？积分饱和怎么处理？,1,question,智元机器人,嵌入式,二面,0.25,什么是缓存穿透，怎么处理？,https://www.nowcoder.com/discuss/948152252059938816
@@ -1532,7 +1541,7 @@ volatile 什么场景必须加？,1,question,大疆,嵌入式,,0.5,volatile 能�
 "数据流向是什么,(大概讲清楚了).",1,question,字节跳动,算法,,0.24,迭代器是什么？,https://www.nowcoder.com/discuss/949320447437332480
 我感觉答的一般.最后居然没做算法?,1,question,字节跳动,算法,,0.09,Agent 一般几步能完成任务？到最大步数还没做完怎么办？要不要设 Plan？,https://www.nowcoder.com/discuss/949320447437332480
 是否会负责业务agent优化和微调,1,question,海尔,,,0.29,Agent 不听从指令怎么办？,https://www.nowcoder.com/discuss/949356321336205312
-这个冲突你自己判过吗？还是靠规则？,1,question,京东,,一面,0.13,"模型判""不确定""的时候，走人工还是走规则？",https://www.nowcoder.com/discuss/949423805343035392
+这个冲突你自己判过吗？还是靠规则？,1,question,京东,,一面,0.12,模型判“不确定”的时候，走人工还是走规则？,https://www.nowcoder.com/discuss/949423805343035392
 你有没有跑过全量回归？跑一次多久？,1,question,京东,,一面,0.1,有没有使用GPIO模拟过SPI？软件模拟和硬件SPI有什么区别？,https://www.nowcoder.com/discuss/949423805343035392
 漏放一个违规商品，平台损失是什么？,1,question,京东,,一面,0.21,迭代器是什么？,https://www.nowcoder.com/discuss/949423805343035392
 分布式环境下自动装配是怎么运作的？,1,question,联友科技,,,0.24,分布式：两台机器怎么通信？,https://www.nowcoder.com/discuss/949595756812312576
@@ -1547,13 +1556,11 @@ Java 并发容器、原子类了解吗？,1,question,滴滴,机器人,二面,0.2
 agent间是怎么串起来上下文的。,1,question,网易,,,0.48,多 Agent 之间上下文怎么隔离？,https://www.nowcoder.com/discuss/953575859544129536
 该项目中使用模型时遇到了哪些困难？,1,question,快手,推理,,0.16,项目中遇到深浅拷贝问题，举个实际案例？怎么避免复发？,https://www.nowcoder.com/discuss/953683777228656640
 使用的是多模态模型还是纯文本模型？,1,question,百度,推理,,0.21,一般在消费电子产品中，电源部分使用的是DCDC还是LDO?,https://www.nowcoder.com/discuss/953684827926994944
-PPO 与 GRPO 有什么区别？,1,question,百度,推理,,0.45,阻塞 IO 和非阻塞 IO 有什么区别？,https://www.nowcoder.com/discuss/953684827926994944
+PPO 与 GRPO 有什么区别？,1,question,百度,推理,,0.47,4）GRPO 和 PPO 的奖励归因、critic 有什么区别？,https://www.nowcoder.com/discuss/953684827926994944
 GDB常用哪些命令 段错误怎么定位,1,question,中兴通讯,C++,一面,1.0,GDB常用哪些命令 段错误怎么定位？,https://www.nowcoder.com/discuss/954342387147341824
 上下文切换的时候系统到底做了哪些事,1,question,中兴通讯,C++,二面,0.4,线程上下文切换的底层都做了什么？,https://www.nowcoder.com/discuss/954342387147341824
 谈谈你对现在纯软件开发岗位的看法？,1,question,OPPO,C++,,0.23,谈谈你对SPI总线的了解,https://www.nowcoder.com/discuss/954685006931034112
 考点：多卡训练是怎么同步梯度的？,1,question,小鹏,推理,,0.63,多卡训练是怎么同步梯度的？DDP 的底层机制是什么？,https://www.nowcoder.com/discuss/945709685955395584
-二级指针什么时候用 举个实际场景,1,question,华为,Linux,一面,1.0,二级指针什么时候用？举个实际场景。,https://www.nowcoder.com/discuss/947059125291118592
-三次握手为什么是三次 两次行不行,1,question,华为,Linux,一面,0.45,TCP 三次握手和四次挥手为什么是 3 和 4？,https://www.nowcoder.com/discuss/947059125291118592
 ：到达时刻，用来判断是否已到达。,1,written,华为,推理,,0.18,RRF 融合与简单加权有什么区别？怎样判断是否适合？,https://www.nowcoder.com/discuss/948632550891593728
 阶段一：自我介绍及 PPT 展示,1,question,地平线,推理,,0.1,介绍 I2C 协议架构,https://www.nowcoder.com/discuss/949071997969985536
 追问：共享内存的底层原理是什么？,1,question,网易,结构,,0.67,共享内存的底层原理是什么？为什么是最快的 IPC？,https://www.nowcoder.com/discuss/944979238002733056
@@ -1607,9 +1614,8 @@ PPO 的优势函数是如何计算的？,1,question,百度,推理,,0.33,PPO 中�
 4．对比一下tcp和ucp的区别,1,question,华为,,HR面,0.29,TCP 和 UDP 有什么区别？各自的连接流程是什么？,https://www.nowcoder.com/discuss/954333813201502208
 你之前的工作是实习还是正式工作？,1,question,华为,,主管面,0.19,mos管的工作原理,https://www.nowcoder.com/discuss/954333813201502208
 你当时为什么选择去XX城市实习？,1,question,华为,,主管面,0.29,为什么选这个题目？,https://www.nowcoder.com/discuss/954333813201502208
-内存屏障是干嘛的 什么时候需要,1,question,华为,Linux,二面,0.85,内存屏障是干什么的？什么时候需要？,https://www.nowcoder.com/discuss/947059125291118592
 扫描时遇到第一个装不下的请求就,1,written,华为,推理,,0.13,字符串中第一个唯一字符：为什么用计数数组？,https://www.nowcoder.com/discuss/948632550891593728
-平时怎么进行技术学习、个人规划,1,question,华为,,,0.17,动态规划的状态怎么定义？,https://www.nowcoder.com/discuss/949607832196804608
+平时怎么进行技术学习、个人规划,1,question,华为,,,0.18,给 VLA 加强化学习难在哪？三条技术路线怎么选,https://www.nowcoder.com/discuss/949607832196804608
 “为什么这里需要Agent？”,1,question,字节跳动,后端,,0.63,为什么这里需要 Agent？直接一次调用模型不行吗？,https://www.nowcoder.com/discuss/945001410880442368
 “介绍一下你项目中的RAG。”,1,question,字节跳动,后端,,0.76,介绍一下你项目中的 RAG 是怎么搭的？,https://www.nowcoder.com/discuss/945001410880442368
 “如果工具调用失败了怎么办？”,1,question,字节跳动,后端,,0.3,调用失败后，怎么避免模型一直重试？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1723,14 +1729,14 @@ Redis 分布式锁如何实现,1,question,拼多多,结构,一面,0.52,分布式
 题4：模型出现幻觉怎么处理？,1,question,华为,,,0.7,大模型出现幻觉怎么办？,https://www.nowcoder.com/discuss/952889528929329152
 算是hr面试吧，看看意向度？,1,question,腾讯,,,0.07,thread_local 的作用是什么？,https://www.nowcoder.com/discuss/953241708928512000
 还有什么方法可以降低碰撞率？,1,question,百度,算法,,0.3,DAC 和 ADC 的实现各有什么方法？,https://www.nowcoder.com/discuss/953259010898079744
-多任务微调中设计了哪些任务？,1,question,百度,算法,,0.16,什么是任务抖动？哪些因素会造成任务抖动？,https://www.nowcoder.com/discuss/953259010898079744
+多任务微调中设计了哪些任务？,1,question,百度,算法,,0.17,VLA 微调有哪些反直觉的铁律？,https://www.nowcoder.com/discuss/953259010898079744
 针对新需求的有效执行率有多少,1,question,网易,,,0.12,输入有多少组不知道，只说到文件结束，C++ 怎么写？,https://www.nowcoder.com/discuss/953575859544129536
 怎么评价你最终测试的这个项目,1,question,华为,,HR面,0.31,这个项目为什么没有自动化测试？,https://www.nowcoder.com/discuss/954333813201502208
 你之前在哪个单位工作/实习？,1,question,华为,,主管面,0.16,槽函数在哪个线程执行？由什么决定？,https://www.nowcoder.com/discuss/954333813201502208
 哪些公司面试官让你印象深刻？,1,question,汇川技术,,,0.12,面试官给了个从没见过的场景题，现场怎么不冷场？,https://www.nowcoder.com/discuss/954451244314042368
 操作系统：分页和分段的区别？,1,question,OPPO,C++,,1.0,操作系统：分页和分段的区别？,https://www.nowcoder.com/discuss/954685006931034112
 为什么这个毛病这么难自己发现,1,question,大华股份,,一面,0.3,为什么选这个题目？,https://www.nowcoder.com/discuss/955042295202447360
-TCP 怎么保证可靠传输的,1,question,华为,Linux,一面,0.73,TCP 靠什么保证可靠传输？,https://www.nowcoder.com/discuss/947059125291118592
+会使用 AI 做代码审查吗？,1,question,美团,后端,,0.18,平时手写代码多还是用 AI Coding 多？怎么看这件事？,https://www.nowcoder.com/discuss/955418209694273536
 （已完成请求数）与当前时刻,1,written,华为,推理,,0.1,快照读和当前读有什么区别？,https://www.nowcoder.com/discuss/948632550891593728
 不同用户之间如何隔离数据？,1,question,字节跳动,后端,,0.33,AI 平台多产品线、多用户之间怎么做数据隔离？,https://www.nowcoder.com/discuss/945001410880442368
 相关岗位资料是否能够召回。,1,question,字节跳动,后端,,0.09,向量召回耗时怎么测？Rerank 做了什么？怎么评估检索结果和问题是否匹配？,https://www.nowcoder.com/discuss/945001410880442368
@@ -1783,7 +1789,7 @@ pytest用过哪些装饰器,1,question,网易,,,0.3,单元测试该怎么写？p
 大模型推理慢的原因有哪些？,1,question,快手,推理,,0.22,IIC 外设有哪些,https://www.nowcoder.com/discuss/953683777228656640
 生成素材采用的是什么方案？,1,question,快手,推理,,0.25,迭代器是什么？,https://www.nowcoder.com/discuss/953683777228656640
 如何设计一个模型服务平台？,1,question,快手,推理,,0.33,如何设计测试用例？,https://www.nowcoder.com/discuss/953683777228656640
-压缩专家机制是如何实现的？,1,question,百度,推理,,0.15,ROS2 服务端实现的关键点有哪些？,https://www.nowcoder.com/discuss/953684827926994944
+压缩专家机制是如何实现的？,1,question,百度,推理,,0.2,布隆过滤器怎么实现的？,https://www.nowcoder.com/discuss/953684827926994944
 怎么看待 AI 辅助编程？,1,question,大疆,C++,,0.24,你的 AI 辅助开发工作流是什么样的？怎么保证效率和质量？,https://www.nowcoder.com/discuss/954324894362107904
 项目中你测试负责了哪些内容,1,question,华为,,HR面,0.17,堆和栈有什么区别？函数调用时，栈里面一般会保存哪些内容？,https://www.nowcoder.com/discuss/954333813201502208
 你为什么没有留在实习公司？,1,question,华为,,主管面,0.33,这个项目为什么没有自动化测试？,https://www.nowcoder.com/discuss/954333813201502208
@@ -1937,14 +1943,15 @@ TCP 为什么可靠？,1,question,海康威视,嵌入式,二面,0.44,TCP 靠什�
 6．什么是MAC地址,1,question,华为,,HR面,0.54,什么是 MAC 地址？它在以太网里起什么作用？,https://www.nowcoder.com/discuss/954333813201502208
 双非能在秋招上岸吗？,1,question,汇川技术,,,0.06,2026 届硬件秋招市场：单位不培养了，到岗就要能干活,https://www.nowcoder.com/discuss/954451244314042368
 如何提高实习转正率？,1,question,汇川技术,,,0.33,单片机如何提高驱动能力,https://www.nowcoder.com/discuss/954451244314042368
-布隆过滤器怎么实现的,1,question,腾讯,,,0.3,原子操作是怎么实现的？和加锁比开销差在哪？,https://www.nowcoder.com/discuss/954876220116566016
+布隆过滤器怎么实现的,1,question,腾讯,,,1.0,布隆过滤器怎么实现的？,https://www.nowcoder.com/discuss/954876220116566016
+大模型幻觉怎样处理？,1,question,美团,后端,,0.47,大模型出现幻觉怎么办？,https://www.nowcoder.com/discuss/955418209694273536
 自我介绍、项目介绍,1,question,华为,,,0.18,介绍一下你项目中的 RAG 是怎么搭的？,https://www.nowcoder.com/discuss/949607832196804608
 这里的区别就在于：,1,question,字节跳动,后端,,0.24,有源滤波器和无源滤波器的区别,https://www.nowcoder.com/discuss/945001410880442368
 最后怎么验证效果？,1,question,字节跳动,后端,,0.29,怎么验证虚函数表在内存里的布局？,https://www.nowcoder.com/discuss/945001410880442368
 任务是否成功完成。,1,question,字节跳动,后端,,0.11,最终产出的结果只是文本，是否会执行真实任务？哪些环节需要人工确认？,https://www.nowcoder.com/discuss/945001410880442368
 请算出总耗时不超过,1,written,拼多多,,,0.09,你的项目需要等待模型生成内容。流式输出能解决什么问题？首字延迟和总耗时应该怎么区,https://www.nowcoder.com/discuss/945487386463510528
 为什么想来这个岗位,1,question,快手,,,0.4,为什么选这个题目？,https://www.nowcoder.com/discuss/946891033357381632
-LRU 怎么实现？,1,question,拼多多,,,0.33,堆排序和简单选择排序怎么实现？,https://www.nowcoder.com/discuss/947443546225700864
+LRU 怎么实现？,1,question,拼多多,,,0.4,布隆过滤器怎么实现的？,https://www.nowcoder.com/discuss/947443546225700864
 【这轮准备怎么补】,1,question,拼多多,,,0.21,这种掉电场景你准备怎么测试，总不能真靠手拔电源吧？,https://www.nowcoder.com/discuss/947443546225700864
 怎样合并重叠区间？,1,question,阿里巴巴,结构,,0.19,合并区间：按什么排序，为什么是左端点？,https://www.nowcoder.com/discuss/947565026150211584
 你以往做了哪些项目,1,question,华为,算法,,0.25,HTTPS 相比 HTTP 具体多做了哪些事情？,https://www.nowcoder.com/discuss/947899091478929408

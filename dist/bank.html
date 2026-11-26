@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CareerOS 求职功能台 · 1790 题</title>
+<title>CareerOS 求职功能台 · 1792 题</title>
 <style>
 :root{
   --bg:#faf3e2; --soft:#f3e9d2; --paper:#fffcf3; --line:#dbcba5;
@@ -847,7 +847,7 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     </div>
     <div class="panel">
       <h3>🩹 复习中心</h3>
-      <div class="hempty">间隔复习按自评分安排：1~2 分次日/三日重来，3 分一周，4 分三周。自评不会的题自动进错题本。</div>
+      <div class="hempty">间隔复习由 FSRS-5 模型按自评分（1~4）自适应排程：答得越差间隔越短，答得越稳间隔越长；首次评分的题从短间隔起步。自评不会的题自动进错题本。</div>
       <div class="mrow">
         <button class="mini" id="tr_due">📋 今日该复习</button>
         <button class="mini" id="tr_weak">🩹 薄弱题清单</button>
@@ -1078,6 +1078,7 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
   </div>
 </div>
 
+<script src="fsrs-5.4.2.umd.js"></script>
 <script src="bank-data.js"></script>
 <script>
 // 壳层错误提示：数据就绪前脚本报错 → 加载屏显示原因（不再一片空白）
@@ -1104,6 +1105,45 @@ const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
 // 间隔复习：自评分 1~4 → 下次复习间隔天数（SM-2 简化版）
 const REV_DAYS = {1: 1, 2: 3, 3: 7, 4: 21};
+// A1 FSRS-5 排程（vendored ts-fsrs 5.4.2，UMD 全局 window.FSRS，MIT）：
+// 自评 1~4 → repeat() 由模型算下次到期，答得越差间隔越短并自适应；
+// 存量自评只有 REV_DAYS 记录、无 FSRS 状态 → 回退旧固定间隔，兼容旧数据。
+const FSRS_KEY = 'ib_fsrs_v1';
+const FSRS_LIB = window.FSRS || null;
+const fsrs = FSRS_LIB ? new FSRS_LIB.FSRS() : null;
+let fsrsCards = {};
+if (fsrs) {
+  const _raw = lsGet(FSRS_KEY, {});
+  Object.keys(_raw).forEach(id => {
+    const c = _raw[id];
+    c.due = new Date(c.due);
+    if (c.last_review) c.last_review = new Date(c.last_review);
+    fsrsCards[id] = c;
+  });
+}
+function fsrsSave(){
+  const out = {};
+  Object.keys(fsrsCards).forEach(id => {
+    const c = fsrsCards[id];
+    out[id] = { due: c.due.toISOString(), stability: c.stability, difficulty: c.difficulty,
+      state: c.state, reps: c.reps, lapses: c.lapses, learning_steps: c.learning_steps,
+      scheduled_days: c.scheduled_days, last_review: c.last_review ? c.last_review.toISOString() : null };
+  });
+  lsSet(FSRS_KEY, out);
+  return out;
+}
+function fsrsGrade(qid, grade, nowMs){
+  if (!fsrs) return null;
+  let card = fsrsCards[qid];
+  if (!card) {
+    card = { due: new Date(nowMs), stability: 0, difficulty: 0, state: FSRS_LIB.State.New,
+      reps: 0, lapses: 0, learning_steps: 0, scheduled_days: 0, last_review: null };
+  }
+  card = fsrs.next(card, new Date(nowMs), grade).card;   // ts-fsrs 5.x: next() 按评分返回 {card, log}
+  fsrsCards[qid] = card;
+  fsrsSave();
+  return card;
+}
 const OPEN_ALL = location.hash === '#all';   // 调试用：全部展开
 const SCHEMA_VERSION = 2;                     // 本地数据/备份格式版本，导入时校验与迁移
 
@@ -1138,8 +1178,10 @@ let tutTab = ((TUT.tutorials || [])[0] || {}).id;
 function revState(q){
   const r = review[q.id];
   if (!r) return 'never';
-  const due = (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
   if (r.g <= 2) return 'weak';
+  const due = (fsrs && fsrsCards[q.id])
+    ? fsrsCards[q.id].due.getTime() <= Date.now()
+    : (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
   return due ? 'due' : 'ok';
 }
 
@@ -1586,10 +1628,12 @@ function setGrade(qid, v){
   review[qid] = { g: v, ts: Date.now() };
   localStorage.setItem(REV_KEY, JSON.stringify(review));
   pushHist(qid, v);
+  const fcard = fsrsGrade(qid, v, Date.now());   // A1: FSRS 排程
   if (v <= 2 && !wrong.has(qid)) {
     wrong.add(qid);
     localStorage.setItem(WRONG_KEY, JSON.stringify([...wrong]));
   }
+  return fcard;
 }
 
 list.addEventListener('click', e => {
@@ -1615,13 +1659,18 @@ list.addEventListener('click', e => {
   const gbtn = e.target.closest('.gbtn');
   if (gbtn) {
     const qid = gbtn.dataset.g, v = +gbtn.dataset.v;
-    setGrade(qid, v);
+    const fcard = setGrade(qid, v);
     const bar = gbtn.closest('.grade');
     bar.querySelectorAll('.gbtn').forEach(b =>
       b.classList.toggle('on', +b.dataset.v === v));
     const gs = bar.querySelector('.gstat');
-    if (gs) gs.textContent = `上次自评 ${v} · ${new Date().toLocaleDateString()}`
-      + (v <= 2 ? ' · 已标薄弱' : ` · ${REV_DAYS[v]} 天后复习`);
+    let nextTxt;
+    if (v <= 2) nextTxt = ' · 已标薄弱';
+    else if (fcard) {
+      const days = Math.max(0, Math.round((fcard.due.getTime() - Date.now()) / 864e5));
+      nextTxt = days <= 0 ? ' · 今日复训' : ` · ${days} 天后复习（FSRS）`;
+    } else nextTxt = ` · ${REV_DAYS[v]} 天后复习`;
+    if (gs) gs.textContent = `上次自评 ${v} · ${new Date().toLocaleDateString()}` + nextTxt;
     render();
     return;
   }
@@ -1632,7 +1681,7 @@ list.addEventListener('click', e => {
 // ---- 顶部学习数据卡：点击跳对应筛选 ----
 function renderScards(){
   const tested = Object.keys(review).filter(id => QBY[id]);
-  const dueN  = tested.filter(id => isDue(review[id])).length;
+  const dueN  = tested.filter(id => isDue(id)).length;
   const weakN = tested.filter(id => review[id].g <= 2).length;
   $('scards').innerHTML = `
     <div class="scard" data-s="none"><b>${DATA.length}</b><small>总题目 · 已自测 ${tested.length}</small></div>
@@ -1777,8 +1826,9 @@ function backupPayload(){
     app: 'CareerOS', schema_version: SCHEMA_VERSION,
     exported_at: new Date().toISOString(),
     counts: {review: Object.keys(review).length, wrong: wrong.size,
-             hist: hist.length, jobs: jobs.length, dismiss: [...loadDismiss()].length},
-    data: {wrong: [...wrong], review, hist, jobs, dismiss: [...loadDismiss()]}
+             hist: hist.length, jobs: jobs.length, fsrs: Object.keys(fsrsCards).length,
+             dismiss: [...loadDismiss()].length},
+    data: {wrong: [...wrong], review, hist, jobs, fsrs: fsrsSave(), dismiss: [...loadDismiss()]}
   };
 }
 $('exp').addEventListener('click', () => {
@@ -1791,7 +1841,7 @@ $('exp').addEventListener('click', () => {
 
 // 校验 + 归一化：返回 {errs, warns, review, wrong, hist, jobs, dismiss, ver}
 function parseBackup(text){
-  const out = {errs: [], warns: [], review: {}, wrong: [], hist: [], jobs: [], dismiss: [], ver: 0};
+  const out = {errs: [], warns: [], review: {}, wrong: [], hist: [], jobs: [], fsrs: {}, dismiss: [], ver: 0};
   let d;
   try { d = JSON.parse(text); } catch { out.errs.push('不是合法 JSON'); return out; }
   if (!d || typeof d !== 'object' || Array.isArray(d)) { out.errs.push('顶层不是对象'); return out; }
@@ -1825,6 +1875,16 @@ function parseBackup(text){
   if (data.dismiss != null && Array.isArray(data.dismiss)) {
     out.dismiss = data.dismiss.filter(k => typeof k === 'string');
   }
+  if (data.fsrs != null) {
+    if (typeof data.fsrs !== 'object' || Array.isArray(data.fsrs)) out.errs.push('fsrs 应为对象');
+    else Object.entries(data.fsrs).forEach(([id, v]) => {
+      if (!v || typeof v !== 'object' || !v.due || [0, 1, 2, 3].indexOf(Number(v.state)) < 0) {
+        out.warns.push('跳过格式异常的 FSRS 记录'); return;
+      }
+      if (!valid.has(id)) { out.warns.push('跳过题库里不存在的题号'); return; }
+      out.fsrs[id] = v;
+    });
+  }
   return out;
 }
 
@@ -1844,7 +1904,8 @@ function planImport(p){
   const histAdd = p.hist.filter(x => !histKeys.has(JSON.stringify(x)));
   const dis = loadDismiss();
   const disAdd = p.dismiss.filter(k => !dis.has(k));
-  return {revAdd, revUpd, wrongAdd, jobsAdd, histAdd, disAdd};
+  const fsrsAdd = Object.keys(p.fsrs).filter(id => !fsrsCards[id]);
+  return {revAdd, revUpd, wrongAdd, jobsAdd, histAdd, fsrsAdd, disAdd};
 }
 
 $('impb').addEventListener('click', () => $('imp').click());
@@ -1862,6 +1923,7 @@ $('imp').addEventListener('change', e => {
       + `将合并到本机（不覆盖较新的记录）：\n`
       + `· 自测：新增 ${plan.revAdd.length} 条，更新 ${plan.revUpd.length} 条\n`
       + `· 错题：新增 ${plan.wrongAdd.length} 条\n`
+      + `· FSRS 排程：新增 ${plan.fsrsAdd.length} 条\n`
       + `· 岗位：新增 ${plan.jobsAdd.length} 个\n`
       + `· 训练记录：新增 ${plan.histAdd.length} 条\n`
       + `· 忽略清单：新增 ${plan.disAdd.length} 条`
@@ -1881,6 +1943,13 @@ $('imp').addEventListener('change', e => {
     p.jobs.forEach(j => { if (!curKeys.has(jobKeyOf(j))) { curJobs.push(j); curKeys.add(jobKeyOf(j)); } });
     const dis = loadDismiss();
     p.dismiss.forEach(k => dis.add(k));
+    if (fsrs) {
+      Object.entries(p.fsrs).forEach(([id, v]) => {
+        if (!fsrsCards[id]) fsrsCards[id] = Object.assign({}, v, {
+          due: new Date(v.due), last_review: v.last_review ? new Date(v.last_review) : null });
+      });
+      fsrsSave();
+    }
 
     const okAll = lsSet(REV_KEY, review) & lsSet(WRONG_KEY, [...wrong]) &
       lsSet(HIST_KEY, hist) & lsSet(LOCAL_JOBS_KEY, curJobs) & lsSet(DISMISS_KEY, [...dis]);
@@ -2070,14 +2139,19 @@ function weekStart(ts){
 }
 const MODQ = {}; DATA.forEach(q => (MODQ[q.module] = MODQ[q.module] || []).push(q));
 const QBY = {}; DATA.forEach(q => QBY[q.id] = q);
-const isDue = r => r && r.g > 2 && (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
+const isDue = id => {
+  const r = review[id];
+  if (!r || r.g <= 2) return false;
+  if (fsrs && fsrsCards[id]) return fsrsCards[id].due.getTime() <= Date.now();
+  return (Date.now() - r.ts) >= REV_DAYS[r.g] * 864e5;
+};
 
 function renderRep(){
   const now = Date.now();
   const valid = new Set(DATA.map(q => q.id));
   const tested = Object.keys(review).filter(id => valid.has(id));
   const weakIds = tested.filter(id => review[id].g <= 2);
-  const dueIds  = tested.filter(id => isDue(review[id]));
+  const dueIds  = tested.filter(id => isDue(id));
   const strongIds = tested.filter(id => review[id].g === 4);
   const cov = Math.round(tested.length / DATA.length * 100);
   $('r_gen').textContent = '生成于 ' + new Date(now).toLocaleString();
@@ -2115,7 +2189,7 @@ function renderRep(){
     const avg = done.length ? done.reduce((a, q) => a + review[q.id].g, 0) / done.length : null;
     return { m, name: MODNAME[m] || m, total: qs.length, tested: done.length, avg,
       weak: done.filter(q => review[q.id].g <= 2).length,
-      due: done.filter(q => isDue(review[q.id])).length };
+      due: done.filter(q => isDue(q.id)).length };
   }).sort((a, b) => (a.avg == null ? 9 : a.avg) - (b.avg == null ? 9 : b.avg));
   $('r_mods').innerHTML = rows.map(r => {
     const pct = Math.round(r.tested / r.total * 100);
@@ -2162,7 +2236,8 @@ function renderRep(){
   const nowMs = Date.now();
   let overdue3 = 0; const dueNext7 = [0, 0, 0, 0, 0, 0, 0];
   testedIds.forEach(q => {
-    const r = review[q.id]; const due = r.ts + REV_DAYS[r.g] * 864e5;
+    const r = review[q.id];
+    const due = (fsrs && fsrsCards[q.id]) ? fsrsCards[q.id].due.getTime() : r.ts + REV_DAYS[r.g] * 864e5;   // A1
     if (due <= nowMs) { if (nowMs - due >= 3 * 864e5) overdue3++; return; }
     const d = Math.floor((due - nowMs) / 864e5); if (d < 7) dueNext7[d]++;
   });
