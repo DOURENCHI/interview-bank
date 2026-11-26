@@ -1,0 +1,13 @@
+# Jekyll / GitHub Pages 构建配置
+# 本仓库只发布 dist/（单文件题库应用）+ 根目录 index.html 跳转页。
+# content/ 下 1777 个卡片 md 带 YAML frontmatter，Jekyll 全量渲染会失败且极慢，
+# 其余目录全是构建源数据，一律排除，不进站点。
+exclude:
+  - content
+  - companies
+  - docs
+  - sources
+  - tools
+  - CHANGELOG.md
+  - README.md
+  - .gitattributes
