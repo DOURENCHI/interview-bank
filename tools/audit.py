@@ -38,22 +38,66 @@ def bigrams(s: str):
     return frozenset(s[i:i + 2] for i in range(len(s) - 1)) or frozenset([s])
 
 
-def dup_scan(qs):
+def dup_scan(qs, threshold=0.80):
     """全库两两相似：按「标题+正文纯文本」比对（读程序题标题相同但代码不同，
-    只比标题会全量误报——实测 1020 对假阳性）。dice≥0.80 视为可疑重复。"""
+    只比标题会全量误报——实测 1020 对假阳性）。dice≥0.80 视为可疑重复。
+    快速路径（V2.20 提速）：df≥2 bigram 二值矩阵 + 分块 BLAS 矩阵乘得共享计数
+    （1792 题 ~0.5s，旧 O(n²) frozenset 版 ~11s），宽松阈值取候选后用同一
+    精确公式复核，输出与旧版完全一致；numpy 不可用/异常时回退逐对交集。"""
     items = [(q["id"], q["title"], bigrams(q["title"] + " " + q.get("plain", "")[:600]))
              for q in qs]
-    pairs = []
     n = len(items)
-    for i in range(n):
-        ida, ta, ba = items[i]
-        for j in range(i + 1, n):
+    cand = None
+    try:
+        import numpy as np
+        # 1) 词表只收 df≥2 的 bigram：单例 bigram 不可能被两题共享，去掉不改变共享计数
+        df = collections.Counter()
+        for _, _, s in items:
+            df.update(s)
+        vocab = {g: i for i, g in enumerate(g for g, c in df.items() if c >= 2)}
+        if vocab:
+            X = np.zeros((n, len(vocab)), dtype=np.float32)
+            for i, (_, _, s) in enumerate(items):
+                for g in s:
+                    j = vocab.get(g)
+                    if j is not None:
+                        X[i, j] = 1.0
+            # 2) 分块 BLAS 矩阵乘：S[i,j] = |set_i ∩ set_j|
+            S = np.empty((n, n), dtype=np.float32)
+            CH = 256
+            for a in range(0, n, CH):
+                S[a:a + CH] = X[a:a + CH] @ X.T
+            sizes = np.array([len(s) for _, _, s in items], dtype=np.float32)
+            # 3) 宽松阈值取候选（float32 舍入留 1e-3 裕量），下面用精确公式复核
+            iu, ju = np.triu_indices(n, k=1)
+            d = 2.0 * S[iu, ju] / (sizes[iu] + sizes[ju])
+            cand = np.where(d >= threshold - 1e-3)[0]
+    except Exception:
+        print("[audit] numpy 快速路径失败，回退 O(n²) 逐对比对", file=sys.stderr)
+        cand = None
+    pairs = []
+    if cand is None:
+        # 回退：O(n²) 逐对 frozenset 交集（慢但正确）
+        for i in range(n):
+            ida, ta, ba = items[i]
+            for j in range(i + 1, n):
+                idb, tb, bb = items[j]
+                inter = len(ba & bb)
+                if not inter:
+                    continue
+                dice = 2 * inter / (len(ba) + len(bb))
+                if dice >= threshold:
+                    pairs.append((round(dice, 2), ida, ta, idb, tb))
+    else:
+        for k in cand:
+            i, j = int(iu[k]), int(ju[k])
+            ida, ta, ba = items[i]
             idb, tb, bb = items[j]
             inter = len(ba & bb)
             if not inter:
                 continue
             dice = 2 * inter / (len(ba) + len(bb))
-            if dice >= 0.80:
+            if dice >= threshold:
                 pairs.append((round(dice, 2), ida, ta, idb, tb))
     pairs.sort(reverse=True)
     return pairs
@@ -91,7 +135,7 @@ def main() -> int:
     # ---- 3. 重复/相似 ----
     A("## 3. 相似/重复题扫描\n")
     pairs = dup_scan(qs)
-    A(f"可疑对 **{len(pairs)}** 组（阈值：dice≥0.72 或包含率≥0.85）。TOP20：\n")
+    A(f"可疑对 **{len(pairs)}** 组（阈值：dice≥0.80，标题+正文前 600 字字符 bigram）。TOP20：\n")
     A("| 相似度 | 题A | 题B |")
     A("|---|---|---|")
     for s, ia, ta, ib, tb in pairs[:20]:
