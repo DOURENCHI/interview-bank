@@ -535,6 +535,8 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .tab.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
 .view{display:none}
 .view.on{display:block}
+.bootspin{width:34px;height:34px;margin:0 auto;border-radius:50%;border:3px solid #e5d9bd;border-top-color:#1f4e79;animation:bootspin 0.9s linear infinite}
+@keyframes bootspin{to{transform:rotate(360deg)}}
 /* ---- 首页 / 训练视图面板 ---- */
 .hdate{font-size:13px;color:var(--muted);margin:14px 0 8px}
 .quick{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
@@ -832,6 +834,14 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <button class="tab" data-v="rep">📈 分析</button>
   </nav>
 </header>
+
+<section id="view-boot" class="view on">
+  <div style="text-align:center;padding:90px 20px">
+    <div class="bootspin"></div>
+    <p id="boot-msg" style="margin-top:18px;font-size:14px;color:#665c49">题库数据载入中（约 12 MB）…</p>
+    <p style="margin-top:6px;font-size:12px;color:#9a917d">网络较慢时可能需要一点时间，请勿关闭页面</p>
+  </div>
+</section>
 
 <section id="view-home" class="view">
   <div class="hdate" id="h_date"></div>
@@ -1173,6 +1183,16 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
   </div>
 </div>
 
+<script src="bank-data.js"></script>
+<script>
+// 壳层错误提示：数据就绪前脚本报错 → 加载屏显示原因（不再一片空白）
+window.addEventListener('error', function(){
+  var b = document.getElementById('view-boot');
+  var m = document.getElementById('boot-msg');
+  if (b && m && b.classList.contains('on'))
+    m.textContent = '页面加载出错，请刷新重试（Ctrl+F5 强制刷新）';
+});
+</script>
 <script>
 // D1 暗色模式：主题初始化放在最前，避免亮色闪一下再变暗
 (function(){
@@ -1181,16 +1201,9 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
       document.documentElement.dataset.theme = 'dark';
   }catch{}
 })();
-const DATA = __DATA__;
-const TARGETS = __TARGETS__;
-const PROFILES = __PROFILES__;
-const JOBS_SEED = __JOBS__;
-const RADAR = __RADAR__;
-const POOL = __POOL__;          // companies/radar_companies.json：全量公司池（含未接入源）
-const NC = __NC__;              // 牛客面经索引 + 公司真题卷元数据（每周增量同步）
-const TUT = __TUT__;            // 牛客面试宝典目录 + 每章命中题号（构建期统计，点进去结果一致）
-const PROJD = __PROJ__;         // companies/projects.json：项目证据档案（技能栈 + 证据三态）；PROJ 是项目题池，勿混
-const HEALTH = __HEALTH__;      // 构建期数据质量指标（系统健康面板）
+// 10 个数据常量（DATA/TARGETS/PROFILES/JOBS_SEED/RADAR/POOL/NC/TUT/PROJD/HEALTH）
+// 由 bank-data.js 提供（本脚本之前加载）——壳先行渲染，数据独立加载；
+// 慢网络下先显示「载入中」加载屏，而不是空白内容区。
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
 const WRONG_KEY = 'ib_wrong_v1';
 const REV_KEY = 'ib_review_v1';
@@ -3954,42 +3967,39 @@ def main() -> int:
     anki_path = DIST / "anki_export.tsv"
     anki_path.write_text("\n".join(tsv), encoding="utf-8")
 
-    # 剥离仅 Anki 需要的大字段，防止 __DATA__ 膨胀（口述答案全文 1.7MB 级）
+    # 剥离仅 Anki 需要的大字段，防止 bank-data.js 膨胀（口述答案全文 1.7MB 级）
     for q in qs:
         q.pop("talk", None)
         q.pop("follows", None)
 
     data = json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
-    out = (PAGE.replace("__DATA__", data)
-               .replace("__TARGETS__", json.dumps(targets, ensure_ascii=False,
-                                                 separators=(",", ":")))
-               .replace("__PROFILES__", json.dumps(profiles, ensure_ascii=False,
-                                                  separators=(",", ":")))
-               .replace("__JOBS__", json.dumps(jobs, ensure_ascii=False,
-                                               separators=(",", ":")))
-               .replace("__RADAR__", json.dumps(radar, ensure_ascii=False,
-                                                separators=(",", ":")))
-               .replace("__POOL__", json.dumps(pool, ensure_ascii=False,
-                                               separators=(",", ":")))
-               .replace("__NC__", json.dumps(nc, ensure_ascii=False,
-                                             separators=(",", ":")))
-               .replace("__TUT__", json.dumps(tut, ensure_ascii=False,
-                                              separators=(",", ":")))
-               .replace("__PROJ__", json.dumps(proj, ensure_ascii=False,
-                                               separators=(",", ":")))
-               .replace("__HEALTH__", json.dumps(health, ensure_ascii=False,
-                                                 separators=(",", ":")))
-               .replace("__PROFOPTS__", profopts)
-               .replace("__COOPTS__", coopts)
-               .replace("__RLOPTS__", rlopts)
-               .replace("__MODOPTS__", modopts)
-               .replace("__COUNT__", str(len(qs))))
+    # 数据常量进独立 bank-data.js：壳（头部/导航/加载屏）先渲染，12MB 数据单独加载；
+    # 慢网络下显示「载入中」加载屏，而不是空白内容区。序列化口径与原内联版一致。
+    _pairs = [("DATA", data),
+              ("TARGETS", json.dumps(targets, ensure_ascii=False, separators=(",", ":"))),
+              ("PROFILES", json.dumps(profiles, ensure_ascii=False, separators=(",", ":"))),
+              ("JOBS_SEED", json.dumps(jobs, ensure_ascii=False, separators=(",", ":"))),
+              ("RADAR", json.dumps(radar, ensure_ascii=False, separators=(",", ":"))),
+              ("POOL", json.dumps(pool, ensure_ascii=False, separators=(",", ":"))),
+              ("NC", json.dumps(nc, ensure_ascii=False, separators=(",", ":"))),
+              ("TUT", json.dumps(tut, ensure_ascii=False, separators=(",", ":"))),
+              ("PROJD", json.dumps(proj, ensure_ascii=False, separators=(",", ":"))),
+              ("HEALTH", json.dumps(health, ensure_ascii=False, separators=(",", ":")))]
+    data_js = "// 由 tools/build.py 生成，勿手改\n" + \
+              "\n".join("const %s = %s;" % (k, v) for k, v in _pairs) + "\n"
+    (DIST / "bank-data.js").write_text(data_js, encoding="utf-8")
+    out = (PAGE
+                .replace("__PROFOPTS__", profopts)
+                .replace("__COOPTS__", coopts)
+                .replace("__RLOPTS__", rlopts)
+                .replace("__MODOPTS__", modopts)
+                .replace("__COUNT__", str(len(qs))))
 
     target = DIST / "bank.html"
     target.write_text(out, encoding="utf-8")
 
     # B4 PWA：manifest + Service Worker（仅 http(s) 下注册；file:// 本地打开不受影响）
-    ver = "bank-" + hashlib.sha256(out.encode("utf-8")).hexdigest()[:8]
+    ver = "bank-" + hashlib.sha256((out + data_js).encode("utf-8")).hexdigest()[:8]
     manifest = {
         "name": "面试题库 · CareerOS",
         "short_name": "面试题库",
@@ -4025,7 +4035,7 @@ def main() -> int:
     sw = f"""// 由 tools/build.py 生成，勿手改；版本 {ver}
 const V = "{ver}";
 self.addEventListener("install", e => {{
-  e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html"])));
+  e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html", "./bank-data.js"])));
   self.skipWaiting();
 }});
 self.addEventListener("activate", e => {{
