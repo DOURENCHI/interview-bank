@@ -1,5 +1,5 @@
-// 由 tools/build.py 生成，勿手改；版本 bank-71e7e528
-const V = "bank-71e7e528";
+// 由 tools/build.py 生成，勿手改；版本 bank-08b190d7
+const V = "bank-08b190d7";
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(["./bank.html", "./bank-data.js"])));
   self.skipWaiting();

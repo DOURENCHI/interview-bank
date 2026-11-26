@@ -27,6 +27,7 @@ EVIDENCE = {
     "self_exp":  "S2 本人一手（亲历）",
     "nowcoder":  "S3 社区面经",
     "video":     "S3 社区面经",
+    "douyin":    "S3 社区面经",
     "inferred":  "S4 岗位推导预测",
 }
 REAL_EVIDENCE = ("S2", "S3")

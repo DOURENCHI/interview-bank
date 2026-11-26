@@ -242,7 +242,7 @@ def load_questions() -> list[dict]:
             "evidence": {
                 "official": "S1", "upstream": "S1",
                 "self_doc": "S2", "self_exp": "S2",
-                "nowcoder": "S3", "video": "S3",
+                "nowcoder": "S3", "video": "S3", "douyin": "S3",
             }.get(meta.get("source_type", "inferred"), "S4"),
             "html": render_md(body),
             # 搜索用纯文本
@@ -3925,6 +3925,25 @@ def main() -> int:
     _chk("题卡全部有答案", "ok" if hq["no_answer"] == 0 else "bad",
          f"{hq['total'] - hq['no_answer']} / {hq['total']} 已答")
     _chk("每题有来源", "ok" if hq["no_source"] == 0 else "warn", f"缺来源 {hq['no_source']} 题")
+    # P1 数据可信：证据分级透明化 + 核心公司真实面经缺口
+    _evc = {"S1": 0, "S2": 0, "S3": 0, "S4": 0}
+    for q in qs:
+        _k = q.get("evidence", "S4")
+        _evc[_k] = _evc.get(_k, 0) + 1
+    _ev4 = _evc.get("S4", 0)
+    _chk("证据分级", "ok" if _ev4 * 100 <= hq["total"] * 20 else "warn",
+         f"S1 官方 {_evc.get('S1',0)} · S2 一手 {_evc.get('S2',0)} · S3 社区 {_evc.get('S3',0)} · S4 预测 {_ev4}（{_ev4*100//max(1, hq['total'])}%）")
+    _zero = []
+    for _c in targets.get("companies", []):
+        if _c.get("tier") != "core":
+            continue
+        _real = sum(1 for q in qs
+                    if any((a or "").split("·")[0] == _c["name"]
+                           for a in (q.get("appearances") or [])))
+        if _real == 0:
+            _zero.append(_c["name"])
+    _chk("核心公司真实面经", "ok" if not _zero else "warn",
+         ("真实面经 0 道：" + "、".join(_zero)) if _zero else "核心公司均有真实面经")
     _chk("采集源成功率", "ok" if hjob["sources_ok"] >= hjob["sources"] * 0.9 else "warn",
          f"{hjob['sources_ok']} / {hjob['sources']} 成功")
     try:
