@@ -1,5 +1,38 @@
 # Changelog
 
+## V2.18 — 2026-11-26（A1 前端 FSRS 间隔复习 + E2 模块多选 + B4 PWA 线上验证）
+
+### A1 前端 FSRS（替代固定 1/3/7/21 天复习间隔）
+- 引入开源 **ts-fsrs 5.4.2**（MIT，vendor/ 内置；UMD 单文件 fsrs-5.4.2.umd.js 装配时复制进 dist/ 并
+  入 sw.js 预缓存）。选 5.x 而非 6.x：6.0 有破坏性 API 变更，且与 G3 模拟基线（py-fsrs FSRS-5）同算法。
+- 自评 1~4 直接对应 FSRS Rating Again/Hard/Good/Easy；新增 localStorage 键 ib_fsrs_v1 存每卡的
+  stability/difficulty/state/due；自评时 fsrs.next(card, now, grade) 推进一步。
+- 到期判定 revState / isDue / 首页今日复习 / A3 遗忘曲线分布 / 评分按钮文案 全部改走 FSRS 模型 due；
+  无 FSRS 记录的存量卡回退旧 REV_DAYS，兼容已有本地数据。备份导出/导入全量加 fsrs 字段（含合并）。
+- 效果（G3 模拟）：30 天复习量 1440 → 732 次，减 49%，间隔按遗忘概率自适应而非一刀切。
+- 踩坑：首版误用 fsrs.repeat(card,now).card（repeat 返回按评分分组的预览表，无顶层 .card）→ TypeError；
+  改 fsrs.next(...)（next 按单评分返回 card+log）后修复。
+
+### E2 模块多选
+- 题库筛选「模块」由单选改 multiple 多选（手机可连点、桌面 Ctrl/⌘+点），不选=全部；新增 modSel() 读
+  selectedOptions。主筛选、子方向联动、考点卡高亮、条件 pill（多模块显示「cpp、hardware 等 N 个」）全改
+  集合判定；程序化单设（岗位技能训练跳转/报告/首页/清除）走 .value 单选项，行为不变。
+- 回归实测：cpp(370)+hardware(581)=951 并集正确，无 JS 运行时错误。
+
+### B4 PWA 线上验证
+- 线上 https://dourenchi.github.io/interview-bank/ 实测：Service Worker **activated**（scope /dist/）、
+  manifest.json 链接在位、图标 192/512 齐全——手机「添加到主屏幕」可装为离线 PWA。
+
+### 记录在案（评估后不做）
+- D4 首页重排：现有首页已按使用频率排序，重排收益低，维持现状。
+- F4 重复红线：已由 tools/audit.py 判重覆盖（当前可疑重复 2 对，为 Q-1770/1772/1773 读程序同模板已知
+  模式），无需新增。
+
+### 附带
+- 牛客定时采集自动入库的新卡（cpp 10 + agent 3）随本次提交一并纳入；sources/nowcoder_* 与 tools/fill.py
+  的变更为采集器产出，属正常。
+- 回归：build / validate / ui_test（含无 JS 运行时错误断言）/ radar_test 全绿。
+
 ## V2.17 — 2026-11-26（P1 数据可信：证据分级误分类修复 + 健康面板两项检查）
 
 ### P1 数据可信（旧账收口）

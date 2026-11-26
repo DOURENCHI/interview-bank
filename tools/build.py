@@ -323,6 +323,9 @@ input[type=search],select{
   border:1px solid var(--line);border-radius:8px;padding:7px 10px;outline:none}
 input[type=search]{flex:1 1 240px;min-width:180px}
 input[type=search]:focus,select:focus{border-color:var(--blue)}
+#mod[multiple]{flex:1 1 100%;height:auto;padding:4px;max-height:168px;overflow:auto}
+#mod[multiple] option{padding:5px 8px;border-radius:5px}
+#mod[multiple] option:checked{background:var(--blue);color:#fff}
 label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);
   background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer}
 .q{background:var(--paper);border:1px solid var(--line);border-radius:10px;
@@ -881,7 +884,7 @@ a.chip:hover{border-color:var(--accent);color:var(--accent)}
     <div class="fgrid">
       <select id="co"><option value="">全部公司</option>__COOPTS__</select>
       <select id="prof" title="岗位模板：按真实 JD 归纳的模块权重过滤题目，并可作为模拟面试题源"><option value="">岗位模板…</option>__PROFOPTS__</select>
-      <select id="mod"><option value="">全部模块</option>__MODOPTS__</select>
+      <select id="mod" multiple size="5" title="模块多选：可点选多个，不选=全部"><option value="">全部模块</option>__MODOPTS__</select>
       <select id="sub"><option value="">全部子方向</option></select>
       <select id="dif" title="难度"><option value="">全部难度</option>
         <option value="1">★ 简单</option><option value="2">★★ 中等</option><option value="3">★★★ 困难</option></select>
@@ -1385,10 +1388,11 @@ function relq(q){
   return chips ? `<div class="relq"><span class="fi">相关</span>${chips}</div>` : '';
 }
 
+function modSel(){ return new Set(Array.from($('mod').selectedOptions).map(o => o.value).filter(v => v !== '')); }
 function refreshSubs(){
-  const mod = $('mod').value;
+  const ms = modSel();
   const cur = $('sub').value;
-  const set = [...new Set(DATA.filter(q => !mod || q.module === mod)
+  const set = [...new Set(DATA.filter(q => !ms.size || ms.has(q.module))
                                 .map(q => q.sub).filter(Boolean))].sort();
   $('sub').innerHTML = '<option value="">全部子方向</option>' +
     set.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
@@ -1471,9 +1475,9 @@ function renderBankNav(){
 }
 
 function syncNavSel(){
-  const mod = $('mod').value, sub = $('sub').value;
+  const ms = modSel(), sub = $('sub').value;
   document.querySelectorAll('#topicgrid .tcard').forEach(el =>
-    el.classList.toggle('on', el.dataset.mod === mod && el.dataset.sub === sub));
+    el.classList.toggle('on', ms.has(el.dataset.mod) && el.dataset.sub === sub));
   document.querySelectorAll('#corpgrid .ccard').forEach(el =>
     el.classList.toggle('on', (el.dataset.co || '') === corpFilter));
   const hint = $('drillhint');
@@ -1528,7 +1532,7 @@ $('drill10').addEventListener('click', () => {
 
 function render(){
   const kw = $('q').value.trim().toLowerCase();
-  const mod = $('mod').value, pri = $('pri').value, st = $('st').value;
+  const ms = modSel(), pri = $('pri').value, st = $('st').value;
   const sub = $('sub').value, dif = $('dif').value;
   const onlyW = $('wrong').checked;
   const coDef = TARGETS.companies.find(c => c.name === $('co').value);
@@ -1547,7 +1551,7 @@ function render(){
   }
 
   const hit = DATA.filter(q => {
-    if (mod && q.module !== mod) return false;
+    if (ms.size && !ms.has(q.module)) return false;
     if (corpFilter && !corpOf(q).includes(corpFilter)) return false;
     if (sub && q.sub !== sub) return false;
     if (pri && q.priority !== pri) return false;
@@ -1843,7 +1847,7 @@ function syncPills(){
     ['co', '公司', $('co').value],
     ['rl', '岗位', $('rl').value && (ROLE_BY_KEY[$('rl').value] || {}).name],
     ['prof', '模板', $('prof').value && (PROF_BY_ID[$('prof').value] || {}).name],
-    ['mod', '模块', $('mod').value && MODNAME[$('mod').value]],
+    ['mod', '模块', (()=>{const m=modSel();return m.size?(m.size===1?MODNAME[[...m][0]]:[...m].slice(0,2).map(x=>MODNAME[x]||x).join('、')+(m.size>2?' '+m.size+'个':'')):''})()],
     ['sub', '子方向', $('sub').value],
     ['pri', '优先级', $('pri').value],
     ['dif', '难度', $('dif').value && '★'.repeat(+$('dif').value)],
