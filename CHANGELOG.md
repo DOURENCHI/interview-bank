@@ -1,5 +1,19 @@
 # Changelog
 
+## V2.16.1 — 2026-11-26（GitHub Pages 上线 + 慢网络体验修复）
+
+- **Pages 上线**：https://dourenchi.github.io/interview-bank/（题库 /dist/bank.html）。三层排障：
+  ① 仓库实为 private（11-25 以为已转 public，API 实测仍 private）→ 核验 .gitignore 无敏感文件后转
+  public；② 构建 30+ 分钟卡死（status=errored）→ 根因是 Jekyll 把 1790 个 content/*.md 当源文件解析
+  frontmatter，其中 6 个卡片 title 内嵌直引号导致 YAML 非法 → 仓库根 `_config.yml` 排除
+  content/companies/docs/sources/tools（只发布 dist/），构建 3 分钟完成；③ 6 个坏 title 改中文弯引号
+  （Q-4680/Q-4681/Q-4754/Q-4793/Q-2323/Q-4403），全库复验 1790 frontmatter 全部 YAML 合法。
+- **壳与数据分离**（用户反馈「打开只显示一部分」——12.4MB 单文件在国内网络下载慢，JS 未执行内容区
+  空白）：bank.html 12.4MB → **202KB 壳**（头部/导航/加载屏立即可见）+ bank-data.js 12.8MB（10 个数据
+  常量，独立加载）；新增 #view-boot 加载屏（spinner+文案，数据就绪后由 showView 自动收起）+ 脚本错误
+  时加载屏显示「加载出错」而非空白；sw.js 预缓存同步加 bank-data.js，SW 版本号并入 data_js 哈希。
+  回归：validate/ui_test 全绿（file:// 本地双文件结构同样可用）。
+
 ## V2.16 — 2026-11-25（28 项优化全量落地：个性化/便利性/针对性/美观性/易筛选/冗余优化 + 开源借鉴）
 
 - **A 个性化**：A2 锚点速记（训练 tab ⚡ 面板，57 卡有记忆锚点，点击跳题）；A3 遗忘曲线（分析 tab
