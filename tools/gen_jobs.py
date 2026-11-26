@@ -45,9 +45,9 @@ def main() -> int:
             grad = int(m.group(1))
         jobs.append({
             "id": "job_" + p["id"],
-            "company": company or "待核实",
+            "company": p.get("company") or company or "待核实",
             "title": p["name"],
-            "city": "待核实",
+            "city": p.get("city") or "待核实",
             "type": "校招",
             "status": "待核实",
             "batch": f"{grad}届" if grad else "",

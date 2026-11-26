@@ -178,6 +178,7 @@ label.chk{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mut
 .elc.warn{border-color:var(--social-line);background:var(--social-bg);color:var(--orange)}
 .elc.unknown{border-style:dashed;color:var(--muted)}
 .tag.warn{background:var(--social-bg);border-color:var(--social-line);color:var(--orange)}
+.tag.ok{background:#e7f6ec;border-color:#7cc99d;color:#1e7a44}
 .mqtitle{font-size:17px;font-weight:700;margin:14px 0;padding:12px 14px;
   background:var(--soft);border-left:4px solid var(--accent);border-radius:6px}
 #m_follows{margin:12px 0;padding:10px 14px;background:var(--soft);border-radius:6px}
@@ -1100,7 +1101,7 @@ window.addEventListener('error', function(){
       document.documentElement.dataset.theme = 'dark';
   }catch{}
 })();
-// 10 个数据常量（DATA/TARGETS/PROFILES/JOBS_SEED/RADAR/POOL/NC/TUT/PROJD/HEALTH）
+// 11 个数据常量（DATA/TARGETS/PROFILES/JOBS_SEED/HQ_CITY/RADAR/POOL/NC/TUT/PROJD/HEALTH）
 // 由 bank-data.js 提供（本脚本之前加载）——壳先行渲染，数据独立加载；
 // 慢网络下先显示「载入中」加载屏，而不是空白内容区。
 const PROF_BY_ID = {}; PROFILES.forEach(p => PROF_BY_ID[p.id] = p);
@@ -2909,6 +2910,18 @@ function loadJobs(){
   try { local = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY) || '[]'); } catch {}
   return JOBS_SEED.concat(local);
 }
+// 总部城市推定（companies/hq_city.json → HQ_CITY 常量）：岗位 city 缺失时的展示层兜底。
+// 红线：city 是雷达岗位键成分，推定只进 UI，永不写回 jobs_radar.json（换键会导致疑似下线误报）。
+function dispCity(job){
+  const c = String((job && job.city) || '');
+  if (c && c.indexOf('待核实') < 0 && c.trim()) return {c: c, inf: false};
+  const hq = (HQ_CITY || {})[job && job.company];
+  return hq ? {c: hq + '（推定）', inf: true} : {c: '待核实', inf: false};
+}
+// 手动核实标记（A3）：localStorage 本地覆盖「待核实」状态，只影响展示，不动采集数据
+const VER_KEY = 'ib_verified_v1';
+function loadVerified(){ try { return JSON.parse(localStorage.getItem(VER_KEY) || '{}'); } catch { return {}; } }
+function jobVerified(job){ return loadVerified()[job && job.id] || 0; }
 // 技能规则表：JD 关键词 → 题库模块。匹配分析的核心映射，随题库方向扩展
 const SKILLS = [
   {name: 'C++', tier: 'core', kws: ['c++', 'c/c++', 'stl', '多线程', '内存管理', '智能指针', '模板', 'cmake', '编译', '链接', 'abi', '跨平台'], mods: ['cpp']},
@@ -3154,6 +3167,7 @@ function renderJobs(){
     return `<article class="q jcard" data-ji="${idx}">
       <div class="qh">
         <span class="pid">${esc(job.company)}</span>
+        ${job.src === 'job_profiles' ? '<span class="tag warn" title="参考岗：由 JD 档案合成（gen_jobs.py），供训练与缺口分析，不是真实在招岗位">参考岗</span>' : ''}
         <span class="tag dtag ${decideOf(job, m).cls}" title="${esc(decideOf(job, m).why)}">🎯 ${esc(decideOf(job, m).label)}</span>
         <span class="rscore ${rel.cls}" title="${esc(rel.why)}">相关度 ${esc(rel.lvl)}</span>
         <span class="rscore ${m.cover >= 60 ? 'hi' : m.cover >= 30 ? 'mid' : 'lo'}" title="知识覆盖：命中技能里题库有对应题目的比例，只代表「有资料」">知识覆盖 ${m.cover}%</span>
@@ -3161,10 +3175,16 @@ function renderJobs(){
         <span class="rscore ${m.evidence.total && m.evidence.covered / m.evidence.total >= 0.5 ? 'hi' : 'mid'}" title="工程证据：命中技能中，有项目档案（含代码证据）覆盖的项数">工程证据 ${m.evidence.covered}/${m.evidence.total}</span>
         <span class="rscore ${el.cls}" title="${esc(el.fields.map(f => f[0] + ':' + f[1]).join(' ｜ '))}">资格 ${esc(el.txt)}</span>
         <div class="qt">${esc(job.title)}</div>
-        <span class="tag">${esc(job.city || '待核实')}</span>
+        ${(() => { const dc = dispCity(job);
+          return dc.inf
+            ? `<span class="tag" title="按公司总部城市推定（HQ_CITY），非雇主声明">${esc(dc.c)}</span>`
+            : `<span class="tag">${esc(dc.c)}</span>`; })()}
         <span class="tag">${esc(job.type || '')}</span>
         ${job.family_conf === 'low' ? '<span class="tag warn" title="未归入五大目标岗位族，需人工复核">岗位族待复核</span>' : ''}
-        <span class="tag" title="招聘状态（采集/核实后更新）">${esc(job.status || '待核实')}</span>
+        ${jobVerified(job)
+          ? `<span class="tag ok" title="手动标记已核实 ${new Date(jobVerified(job)).toLocaleDateString('zh-CN')}（本地标记）">✓ 已核实</span>`
+          : `<span class="tag" title="招聘状态（采集/核实后更新）">${esc(job.status || '待核实')}</span>`}
+        ${job.id ? `<button class="mini" data-jverify="${esc(job.id)}" title="${jobVerified(job) ? '清除已核实标记' : '核实过这个岗位（如官网看过）？点一下标记（本地生效）'}">✓</button>` : ''}
         ${(job.links || []).length && safeUrl(job.links[0]) ? `<a class="tag jlink" href="${esc(safeUrl(job.links[0]))}" target="_blank" rel="noopener">JD 原文 ↗</a>` : ''}
         ${isLocal ? `<button class="wrongmark" data-jdel="${esc(job.id)}" title="删除本地岗位">删除</button>` : ''}
       </div>
@@ -3214,6 +3234,14 @@ $('jobfilter').addEventListener('click', e => {
 
 $('joblist').addEventListener('click', e => {
   if (e.target.closest('a')) return;               // 链接不触发展开
+  const vf = e.target.closest('[data-jverify]');
+  if (vf) {
+    const m = loadVerified();
+    if (m[vf.dataset.jverify]) delete m[vf.dataset.jverify];
+    else m[vf.dataset.jverify] = Date.now();
+    localStorage.setItem(VER_KEY, JSON.stringify(m));
+    renderJobs(); return;
+  }
   const del = e.target.closest('[data-jdel]');
   if (del) {
     if (!confirm('删除这个本地岗位？')) return;
@@ -3290,7 +3318,7 @@ function renderRadar(){
             <span class="rscore ${m.relevance.cls}" title="${esc(m.relevance.why)}">${esc(m.relevance.lvl)}</span>
             <span class="rscore ${gcls}" title="知识覆盖 ${m.cover}% ｜ 掌握 ${m.mastery.txt} ｜ 工程证据 ${m.evidence.covered}/${m.evidence.total}">覆盖 ${m.cover}%</span></div>
           <div class="rt">${esc(j.title)}</div>
-          <small>${esc(j.city)} ｜ ${esc((j.families || []).join('/'))}${j.family_conf === 'low' ? '（待复核）' : ''} ｜ 资格 ${esc(m.eligibility.txt)} ｜ ${esc(j.class_basis || '分类待重算')} ｜ 发现 ${esc(j.found || j.first_seen || '')}${j.status === 'suspect' ? ' ｜ ⚠ 疑似下线' : ''}</small>
+          <small>${esc(dispCity(j).c)} ｜ ${esc((j.families || []).join('/'))}${j.family_conf === 'low' ? '（待复核）' : ''} ｜ 资格 ${esc(m.eligibility.txt)} ｜ ${esc(j.class_basis || '分类待重算')} ｜ 发现 ${esc(j.found || j.first_seen || '')}${j.status === 'suspect' ? ` ｜ ⚠ 疑似下线（连续 ${j.consecutive_missing || 2} 次未见）` : ''}</small>
           <div class="mrow">
             <button class="mini" data-rcollect="${idx}">⭐ 收藏转正</button>
             <button class="mini" data-rdismiss="${idx}">忽略</button>
@@ -3388,7 +3416,7 @@ function renderCompanies(){
     if (b) b.textContent = cs[ch.dataset.v] || 0;
   });
   const cityCnt = {};
-  all.forEach(j => citiesOf(j.city).forEach(c => cityCnt[c] = (cityCnt[c] || 0) + 1));
+  all.forEach(j => citiesOf(dispCity(j).c).forEach(c => cityCnt[c] = (cityCnt[c] || 0) + 1));
   // 城市 chips 动态生成：苏南五城 + 实习五城优先固定，其余按岗位数降序，保证计数全覆盖
   const CITY_PRI = ['苏州', '南京', '无锡', '常州', '合肥', '上海', '北京', '深圳', '杭州'];
   const cityOrder = [
@@ -3440,7 +3468,7 @@ function renderCompanies(){
                  + e.pool.map(c => (c.ats_type || '') + ' ' + (c.directions || []).join(' ')).join(' ')).toLowerCase();
     if (q && hay.indexOf(q) < 0) return false;
     if (compFilter.city !== 'all') {
-      const set = new Set((jobsByCo[e.name] || []).flatMap(j => citiesOf(j.city)));
+      const set = new Set((jobsByCo[e.name] || []).flatMap(j => citiesOf(dispCity(j).c)));
       if (!set.has(compFilter.city)) return false;
     }
     const s = compFilter.src;
@@ -3462,7 +3490,7 @@ function renderCompanies(){
       .filter(Boolean).join(' / ') || (e.pool.length ? '校园招聘入口' : '—');
     const kinds = [...new Set((jobsByCo[e.name] || []).map(x => x.job_class))].join(' / ') || '—';
     const cities = {};
-    (jobsByCo[e.name] || []).forEach(j => citiesOf(j.city).forEach(c => cities[c] = (cities[c] || 0) + 1));
+    (jobsByCo[e.name] || []).forEach(j => citiesOf(dispCity(j).c).forEach(c => cities[c] = (cities[c] || 0) + 1));
     const cityTxt = Object.entries(cities).sort((a, b) => b[1] - a[1])
       .slice(0, 5).map(x => `${x[0]}${x[1] > 1 ? ' ' + x[1] : ''}`).join(' · ') || '—（尚未采集）';
     const nc = ncOf(e.name);
@@ -3497,7 +3525,7 @@ function renderCompanies(){
     if (st === 'open' && j.status !== 'open') return false;
     if (st === 'suspect' && j.status !== 'suspect') return false;
     if (['todo', 'saved', 'dismissed'].indexOf(st) >= 0 && h !== 'hs-' + st) return false;
-    if (compFilter.city !== 'all' && citiesOf(j.city).indexOf(compFilter.city) < 0) return false;
+    if (compFilter.city !== 'all' && citiesOf(dispCity(j).c).indexOf(compFilter.city) < 0) return false;
     if (q) {
       const hay = (j.company + ' ' + j.title + ' ' + (j.city || '') + ' ' + (j.batch || '') + ' '
                    + (j.label || '') + ' ' + (j.families || []).join(' ') + ' '
@@ -3517,10 +3545,10 @@ function renderCompanies(){
         : j.grad_year === USER_GRAD ? USER_GRAD + '届匹配' : '届别未标注 · 待核实';
       return `<tr class="cjobrow ${h[1]}">
         <td>${cbadge(g.c)}</td>
-        <td><div class="jt">${esc(j.title)}</div><small>${esc(j.company)} · ${esc(j.city || '待核实')} · ${esc((j.families || []).join('/') || '其他')}</small></td>
+        <td><div class="jt">${esc(j.title)}</div><small>${esc(j.company)} · ${esc(dispCity(j).c)} · ${esc((j.families || []).join('/') || '其他')}</small></td>
         <td>${esc(j.batch || j.label || '—')}<small>${gy} · ${eli}${j.jd ? '' : ' · 该源列表无 JD 正文，点入口看原文'}</small></td>
         <td><span class="conf ${j.class_conf}">${esc(j.class_basis)}</span><small>${esc(j.class_evidence || '')}${j.grad_year_raw ? ' · 已清除入口批次届别' : ''}</small></td>
-        <td>${j.status === 'suspect' ? '<span class="rscore lo">疑似下线</span>' : '<span class="rscore hi">在招</span>'}
+        <td>${j.status === 'suspect' ? `<span class="rscore lo" title="连续 ${j.consecutive_missing || 2} 次成功扫描未见（≥2 次才标疑似下线）">疑似下线 · ${j.consecutive_missing || 2} 次未见</span>` : '<span class="rscore hi">在招</span>'}
             <small>${h[0]} · 发现 ${esc(j.first_seen || '—')}</small></td>
         <td>${(j.links || []).length ? `<a class="tag jlink" href="${esc(j.links[0])}" target="_blank" rel="noopener">JD ↗</a>` : '—'}</td>
       </tr>`;

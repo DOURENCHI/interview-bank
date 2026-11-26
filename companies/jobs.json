@@ -26,11 +26,11 @@
    ],
    "prof": "A1_cpp_sdk",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_A2_rtnet",
-   "company": "待核实",
+   "company": "未指定公司",
    "title": "实时网络通信工程师（机器人方向）",
    "city": "待核实",
    "type": "校招",
@@ -50,7 +50,7 @@
    ],
    "prof": "A2_rtnet",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_B1_sysint",
@@ -73,7 +73,7 @@
    ],
    "prof": "B1_sysint",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_C1_deploy",
@@ -98,13 +98,13 @@
    ],
    "prof": "C1_deploy",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_C2_llminfra",
    "company": "WeRide",
    "title": "LLM 推理平台工程师",
-   "city": "待核实",
+   "city": "北京",
    "type": "校招",
    "status": "待核实",
    "batch": "2027届",
@@ -122,11 +122,11 @@
    ],
    "prof": "C2_llminfra",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_D1_percep",
-   "company": "待核实",
+   "company": "未指定公司",
    "title": "感知算法工程师",
    "city": "待核实",
    "type": "校招",
@@ -143,7 +143,7 @@
    ],
    "prof": "D1_percep",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_E1_embedded",
@@ -169,7 +169,7 @@
    ],
    "prof": "E1_embedded",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   },
   {
    "id": "job_F1_ros",
@@ -194,7 +194,7 @@
    ],
    "prof": "F1_ros",
    "src": "job_profiles",
-   "found": "2026-11-10"
+   "found": "2026-11-26"
   }
  ]
 }
