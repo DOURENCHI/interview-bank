@@ -2014,6 +2014,34 @@
       ],
       "main": "A · SDK / 基础软件",
       "extra": []
+    },
+    {
+      "name": "乐鑫",
+      "tier": "watch",
+      "nc_keywords": [
+        "乐鑫",
+        "Espressif"
+      ],
+      "roles": [
+        "E",
+        "A"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
+    },
+    {
+      "name": "众诺微电子",
+      "tier": "watch",
+      "nc_keywords": [
+        "众诺微电子",
+        "众诺",
+        "Zhono"
+      ],
+      "roles": [
+        "E"
+      ],
+      "main": "E · 嵌入式",
+      "extra": []
     }
   ],
   "universal": [
