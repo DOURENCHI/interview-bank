@@ -1878,5 +1878,52 @@
   ],
   "seeded_at": "2026-11-27",
   "note": "众诺微电子（广州，打印耗材芯片/RISC-V 主控 SoC，zhono.com.cn 可核实）嵌入式一面+二面「面经+答案讲解」帖，尾部含付费订阅引流提示（按 11-23 前例保留题单）；一面 7 题 seed 14 张（含二面帖）复核删 10（撞 pack/大小端/inline/位域/malloc 慎用/可重入/中断延迟/OTA 分区卡 + 2 条正文方法论句非面试题），保留 4 张真空考点。"
+ },
+ "955833823797727232": {
+  "company": "华为",
+  "url": "https://www.nowcoder.com/discuss/955833823797727232",
+  "cards": [],
+  "seeded_at": "2026-11-28",
+  "note": "全部与库内重复"
+ },
+ "955961652292132864": {
+  "company": "字节跳动",
+  "url": "https://www.nowcoder.com/discuss/955961652292132864",
+  "cards": [
+   "Q-5681",
+   "Q-5682",
+   "Q-6617",
+   "Q-6618",
+   "Q-0791"
+  ],
+  "seeded_at": "2026-11-28",
+  "note": "fetch阶段被正文mention抢配成腾讯(2026-11-28修正归属)"
+ },
+ "955962726310780928": {
+  "company": "小红书",
+  "url": "https://www.nowcoder.com/discuss/955962726310780928",
+  "cards": [],
+  "seeded_at": "2026-11-28"
+ },
+ "955964419811311616": {
+  "company": "小红书",
+  "url": "https://www.nowcoder.com/discuss/955964419811311616",
+  "cards": [
+   "Q-6619"
+  ],
+  "seeded_at": "2026-11-28"
+ },
+ "955965385369452544": {
+  "company": "小红书",
+  "url": "https://www.nowcoder.com/discuss/955965385369452544",
+  "cards": [],
+  "seeded_at": "2026-11-28",
+  "note": "fetch阶段被正文mention抢配成腾讯(2026-11-28修正归属)"
+ },
+ "956139036135915520": {
+  "company": "拼多多",
+  "url": "https://www.nowcoder.com/discuss/956139036135915520",
+  "cards": [],
+  "seeded_at": "2026-11-28"
  }
 }
